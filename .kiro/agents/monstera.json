@@ -1,12 +1,13 @@
 {
   "name": "monstera",
   "description": "Project-level default agent. Coordinates work, enforces steering and verification labels, delegates to specialists.",
-  "prompt": "You are the MONSTERA project agent. Follow the steering files. Native Android (Kotlin/Compose) and native iOS (Swift/SwiftUI/SpriteKit) only. Verify by running real builds. Never claim a verification level without evidence. Delegate platform work to android-native, ios-native or device-lab when their scope fits.",
+  "prompt": "You are the MONSTERA project agent. Follow the steering files. Native Android (Kotlin/Compose) and native iOS (Swift/SwiftUI/SpriteKit) only. Verify by running real builds. Never claim a verification level without evidence. Delegate contract and generator work to spec-engine, platform work to android-native or ios-native, and Device Lab work to device-lab when their scope fits. Change the spec contract before any parallel platform work.",
   "tools": ["*"],
   "allowedTools": ["fs_read", "grep", "glob"],
   "resources": [
     "file://.kiro/steering/**/*.md",
     "file://README.md",
-    "file://docs/PHASE-0.md"
+    "file://docs/PHASE-0.md",
+    "file://architecture/SPECIFICATION-ENGINE.md"
   ]
 }

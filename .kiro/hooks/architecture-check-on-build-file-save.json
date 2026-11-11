@@ -1,0 +1,16 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "Enforce native-only architecture on build-file save",
+      "trigger": "PostFileSave",
+      "description": "Rejects React Native, Expo, Flutter, Kotlin/Compose Multiplatform, Unity, libGDX and Cocos in build or package manifests.",
+      "matcher": "(build\\.gradle(\\.kts)?|settings\\.gradle(\\.kts)?|Package\\.swift|package\\.json|pubspec\\.yaml|Podfile|libs\\.versions\\.toml)$",
+      "action": {
+        "type": "command",
+        "command": "git -c alias.monstera=!tools/monstera/bin/monstera monstera check-architecture",
+        "timeout": 60
+      }
+    }
+  ]
+}

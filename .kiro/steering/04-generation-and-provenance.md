@@ -19,9 +19,17 @@ such, with the exact command and error. Never write a result you did not observe
 - Hand-maintained files must not live under `generated/`.
 - Gradle wrapper files are tool-generated and committed on purpose.
 
+## Generator output (G1)
+
+- `generated/<project.id>/` is entirely generator-owned; `MONSTERA-MANIFEST.json` records each
+  file's SHA-256, source template/schema and the spec SHA-256. It contains no timestamps.
+- Hand-maintained code never lives under `generated/`.
+
 ## Provenance of AI-authored content
 
-- Specs under `.kiro/specs/` are the source of truth for generated game code.
+- A project's `monstera.spec.json` is the source of truth for its generated code.
+  Kiro specs under `.kiro/specs/` (requirements/design/tasks) are the source of truth for how
+  MONSTERA itself is developed. (Clarified at G1; this line previously said `.kiro/specs/`.)
 - Generated assets record origin in `assets/PROVENANCE.md`: source, tool/model, license, date.
 - Do not commit third-party assets without a recorded license.
 - Device Lab reports are evidence: do not hand-edit them after the run.

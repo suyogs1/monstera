@@ -1,0 +1,16 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "Validate MONSTERA specs and schemas on save",
+      "trigger": "PostFileSave",
+      "description": "Runs deterministic validation of every spec under spec/samples/ whenever a spec, schema or fixture JSON file is saved.",
+      "matcher": "(monstera\\.spec\\.json|\\.schema\\.json)$",
+      "action": {
+        "type": "command",
+        "command": "git -c alias.monstera=!tools/monstera/bin/monstera monstera validate --all",
+        "timeout": 60
+      }
+    }
+  ]
+}

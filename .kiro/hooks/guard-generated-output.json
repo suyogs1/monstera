@@ -1,0 +1,16 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "Block hand edits to generated output",
+      "trigger": "PreToolUse",
+      "description": "Blocks file-tool writes, edits, moves and deletes under generated/. Generated projects must change only through the spec or templates plus `monstera generate`.",
+      "matcher": "^(fs_write|fs_append|str_replace|delete_file|smart_relocate|semantic_rename)$",
+      "action": {
+        "type": "command",
+        "command": "git -c alias.monstera=!tools/monstera/bin/monstera monstera guard-generated",
+        "timeout": 30
+      }
+    }
+  ]
+}
