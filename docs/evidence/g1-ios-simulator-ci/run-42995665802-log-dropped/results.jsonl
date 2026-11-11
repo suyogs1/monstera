@@ -1,0 +1,7 @@
+{"op":"build","target":"ios-simulator","status":"ok","run_id":"ci-42995665802","timestamp":"2026-11-11T09:31:09Z","artifact":"device-lab/reports/runs/ci-42995665802/ios-simulator/MonsteraSample.app"}
+{"op":"install","target":"ios-simulator","status":"ok","run_id":"ci-42995665802","timestamp":"2026-11-11T09:35:30Z"}
+{"op":"launch","target":"ios-simulator","status":"ok","run_id":"ci-42995665802","timestamp":"2026-11-11T09:35:35Z"}
+{"op":"screenshot","target":"ios-simulator","status":"ok","run_id":"ci-42995665802","timestamp":"2026-11-11T09:35:52Z","artifact":"device-lab/reports/runs/ci-42995665802/ios-simulator/01-launched.png"}
+{"op":"logs","target":"ios-simulator","status":"ok","run_id":"ci-42995665802","timestamp":"2026-11-11T09:37:03Z","artifact":"device-lab/reports/runs/ci-42995665802/ios-simulator/logs.txt"}
+{"op":"stop","target":"ios-simulator","status":"ok","run_id":"ci-42995665802","timestamp":"2026-11-11T09:37:07Z"}
+{"op":"report","target":"ios-simulator","status":"ok","run_id":"ci-42995665802","timestamp":"2026-11-11T09:37:08Z","artifact":"device-lab/reports/runs/ci-42995665802/ios-simulator/report.json"}

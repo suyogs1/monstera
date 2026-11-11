@@ -1,0 +1,1 @@
+Source: local Windows 11 workstation, 2026-11-11, AVD Pixel_9_Pro_XL (Android 16, swiftshader). Generated project generated/monstera-sample/android (spec sha256 88ddd663d84e52761fa0834f814e1b737e75f6a62d7dddceee8af37912a977e1), driven by device-lab/android/adapter.sh with DL_APP_DIR/DL_APP_PACKAGE/DL_APP_LOG_TAG. Files copied unchanged from RUN_ID g1-android-local.

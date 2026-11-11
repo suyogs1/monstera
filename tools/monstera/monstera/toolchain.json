@@ -1,0 +1,15 @@
+{
+  "android": {
+    "activityCompose": "1.12.4",
+    "androidGradlePlugin": "9.5.1",
+    "compileSdk": 36,
+    "composeBom": "2026.06.01",
+    "gradle": "9.9.1",
+    "kotlinComposePlugin": "2.4.21",
+    "targetSdk": 36
+  },
+  "ios": {
+    "swiftToolsVersion": "6.0",
+    "xtool": "1.24.0"
+  }
+}

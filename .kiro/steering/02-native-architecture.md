@@ -17,6 +17,9 @@
 ## Layout rules
 
 - `apps/android` and `apps/ios` are independent native projects. Neither imports the other.
-- Shared contracts (game specs, schemas, asset manifests) live outside both app trees.
+  They are the Phase 0 toolchain proofs and are kept as references.
+- Shared contracts (game specs, schemas, asset manifests) live outside both app trees: `spec/`.
+- Generated native projects live in `generated/<project.id>/{android,ios}` and are produced by
+  the generator in `tools/monstera/` (G1). The generator is build tooling, never shipped in an app.
 - Pin tool and dependency versions exactly. Record why when upgrading.
 - Platform build output (`build/`, `.build/`, `xtool/`) is never committed.

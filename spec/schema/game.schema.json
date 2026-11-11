@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Game",
+  "description": "Game-level presentation contract shared by all platforms. G1 defines presentation only: no gameplay, entities or rules.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["genre", "orientation", "targetFps", "world", "palette", "input"],
+  "properties": {
+    "genre": {
+      "title": "Genre",
+      "type": "string",
+      "enum": ["arcade-shooter", "endless-runner", "prototype"]
+    },
+    "orientation": {
+      "title": "Orientation",
+      "description": "Locked screen orientation (Android screenOrientation, iOS UISupportedInterfaceOrientations).",
+      "type": "string",
+      "enum": ["landscape", "portrait"]
+    },
+    "targetFps": {
+      "description": "Target frame rate for the render loop.",
+      "type": "integer",
+      "enum": [30, 60, 120]
+    },
+    "world": {
+      "title": "World",
+      "description": "Logical world size in world units. Platforms scale it to fit the screen.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["width", "height"],
+      "properties": {
+        "width": { "type": "number", "exclusiveMinimum": 0, "maximum": 100000 },
+        "height": { "type": "number", "exclusiveMinimum": 0, "maximum": 100000 }
+      }
+    },
+    "palette": {
+      "title": "Palette",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["background", "primary", "accent"],
+      "properties": {
+        "background": { "$ref": "#/$defs/color" },
+        "primary": { "$ref": "#/$defs/color" },
+        "accent": { "$ref": "#/$defs/color" }
+      }
+    },
+    "input": {
+      "title": "InputConfig",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["scheme"],
+      "properties": {
+        "scheme": {
+          "title": "InputScheme",
+          "type": "string",
+          "enum": ["drag", "swipe", "tap"]
+        }
+      }
+    }
+  },
+  "$defs": {
+    "color": {
+      "description": "Opaque sRGB color, #RRGGBB, uppercase hex.",
+      "type": "string",
+      "pattern": "^#[0-9A-F]{6}$"
+    }
+  }
+}

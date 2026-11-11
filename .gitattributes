@@ -1,6 +1,13 @@
 * text=auto
 *.sh text eol=lf
 gradlew text eol=lf
+
+# Generator inputs and generated output are byte-exact (manifest SHA-256s, `generate --check`):
+# keep them LF on every OS. Rules below override these for .bat and binaries.
+generated/** text eol=lf
+spec/** text eol=lf
+tools/monstera/** text eol=lf
+
 *.bat text eol=crlf
 *.png binary
 *.jar binary

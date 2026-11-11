@@ -1,0 +1,41 @@
+{
+  "game": {
+    "genre": "prototype",
+    "input": {
+      "scheme": "tap"
+    },
+    "orientation": "portrait",
+    "palette": {
+      "accent": "#FFB000",
+      "background": "#1A1230",
+      "primary": "#FF7A00"
+    },
+    "targetFps": 60,
+    "world": {
+      "height": 1920,
+      "width": 1080
+    }
+  },
+  "project": {
+    "displayName": "MONSTERA Sample",
+    "id": "monstera-sample",
+    "identifier": "app.monstera.sample",
+    "platforms": {
+      "android": {
+        "minSdk": 26
+      },
+      "ios": {
+        "deploymentTarget": "17.0"
+      }
+    },
+    "targets": [
+      "android",
+      "ios"
+    ],
+    "version": {
+      "code": 1,
+      "name": "0.1.0"
+    }
+  },
+  "specVersion": 1
+}
