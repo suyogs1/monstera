@@ -159,7 +159,7 @@ Observed hook output: `guard error (NameError: name 'os' is not defined); blocki
 
 | ID | Check | How to close it | Why I couldn't |
 |---|---|---|---|
-| H1 | Guard hook re-enabled; a legitimate edit passes and an edit to `generated/` is rejected through real Kiro file-tool calls | Owner re-enables "Block hand edits to generated output" in Agent Hooks; the agent then performs both edits | Needs the UI toggle |
+| H1 | **Verified live (2026-11-11).** Owner re-enabled the guard hook in Agent Hooks. A real `fs_write` to `generated/monstera-sample/README.md` was rejected by the hook (`Blocked: ...README.md is generator-owned output...`, file unchanged). This `str_replace` on `docs/KIRO-USAGE.md` passed the same hook | done | - |
 | L1 | All 7 agents load in the agent picker | Open the agent picker in the chat bottom bar; confirm each of the 7 names appears and selecting it shows no error | No tool here lists the picker |
 | L2 | `validate-specs-on-save` fires on a real editor save | Open `spec/samples/monstera-sample/monstera.spec.json`, change `"portrait"` → `"portait"`, **save**: hook output should show the enum error. Revert and save: `valid` | PostFileSave fires on user saves, not agent writes |
 | L3 | `architecture-check-on-build-file-save` fires | Open `reference/g0/android/build.gradle.kts`, add a trailing space, **save**: hook prints `architecture check: ok`. Revert | Same |
