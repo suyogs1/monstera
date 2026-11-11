@@ -1,0 +1,78 @@
+# xtool experiment: build the iOS app on Linux with xtool.
+#
+# xtool needs a Darwin Swift SDK generated from Xcode. Normally that comes from an Xcode.xip
+# downloaded with an Apple ID. Here a macOS job generates it from the runner's preinstalled
+# Xcode.app (`xtool sdk build` accepts Xcode.app), and the Linux job installs it. No Apple ID or
+# signing is used, so the result is an UNSIGNED device build: proof of compilation only.
+# The SDK artifact is kept for 1 day and only passed between these two jobs.
+name: xtool-linux
+
+on:
+  workflow_dispatch:
+    inputs:
+      swift_image:
+        description: "Swift Docker image for the Linux build"
+        default: "swift:6.4.2-noble"
+  push:
+    paths: ["apps/ios/**", "tools/xtool/**", ".github/workflows/xtool-linux.yml"]
+
+permissions:
+  contents: read
+
+env:
+  XTOOL_VERSION: "1.24.0"
+
+defaults:
+  run:
+    shell: bash # explicit bash => -eo pipefail, so `| tee` does not hide failures
+
+jobs:
+  darwin-sdk:
+    runs-on: macos-26
+    timeout-minutes: 40
+    steps:
+      - name: Toolchain versions
+        run: xcodebuild -version && swift --version
+      - name: Install xtool ${{ env.XTOOL_VERSION }}
+        run: |
+          curl -fsSL "https://github.com/xtool-org/xtool/releases/download/${XTOOL_VERSION}/xtool.app.zip" -o "$RUNNER_TEMP/xtool.zip"
+          ditto -x -k "$RUNNER_TEMP/xtool.zip" "$RUNNER_TEMP"
+      - name: Build Darwin SDK from preinstalled Xcode.app
+        run: |
+          XCODE="$(xcode-select -p | sed 's#/Contents/Developer##')"
+          echo "Using $XCODE"
+          mkdir -p "$RUNNER_TEMP/sdk"
+          "$RUNNER_TEMP/xtool.app/Contents/MacOS/xtool" sdk build "$XCODE" "$RUNNER_TEMP/sdk" 2>&1 | tee sdk-build.log
+          tar -C "$RUNNER_TEMP/sdk" -czf darwin.xtoolsdk.tar.gz darwin.xtoolsdk
+          ls -lh darwin.xtoolsdk.tar.gz
+      - uses: actions/upload-artifact@v4
+        with:
+          name: darwin-xtoolsdk
+          path: darwin.xtoolsdk.tar.gz
+          retention-days: 1
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: xtool-sdk-build-log
+          path: sdk-build.log
+
+  linux-build:
+    needs: darwin-sdk
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    container: ${{ inputs.swift_image || 'swift:6.4.2-noble' }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/download-artifact@v4
+        with:
+          name: darwin-xtoolsdk
+      - name: Build on Linux with xtool
+        run: bash tools/xtool/linux-build.sh darwin.xtoolsdk.tar.gz 2>&1 | tee xtool-linux-build.log
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: xtool-linux-build
+          path: |
+            xtool-linux-build.log
+            MonsteraHello-unsigned.app.tar.gz
+          if-no-files-found: warn

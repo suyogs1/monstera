@@ -9,7 +9,11 @@ ADB="${ADB:-adb}"; export ADB
 export MSYS_NO_PATHCONV=1 # see device-lab/lib.sh
 
 "$ADB" wait-for-device
-until [ "$("$ADB" shell getprop sys.boot_completed | tr -d '\r')" = "1" ]; do sleep 2; done
+for _ in $(seq 1 180); do
+  [ "$("$ADB" shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')" = "1" ] && break
+  sleep 2
+done
+[ "$("$ADB" shell getprop sys.boot_completed | tr -d '\r')" = "1" ] || { echo "emulator did not boot in 6 min" >&2; exit 1; }
 echo "device: $("$ADB" shell getprop ro.product.model | tr -d '\r'), Android $("$ADB" shell getprop ro.build.version.release | tr -d '\r')" >&2
 
 bash "$A" install

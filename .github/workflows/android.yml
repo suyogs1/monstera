@@ -1,0 +1,69 @@
+# Android: build the debug APK and run the Device Lab smoke test on a Linux emulator.
+# Proves the Android toolchain and emulator work on Linux (not only on the dev workstation).
+name: android
+
+on:
+  push:
+    paths: ["apps/android/**", "device-lab/**", "tools/scripts/android-*", ".github/workflows/android.yml"]
+  pull_request:
+    paths: ["apps/android/**", "device-lab/**", "tools/scripts/android-*", ".github/workflows/android.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  SYSTEM_IMAGE: "system-images;android-36;google_apis;x86_64"
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  build-and-emulator:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    env:
+      RUN_ID: ci-${{ github.run_id }}
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Use preinstalled JDK 21
+        run: echo "JAVA_HOME=$JAVA_HOME_21_X64" >> "$GITHUB_ENV"
+
+      - name: Build debug APK (Device Lab build op)
+        run: bash device-lab/android/adapter.sh build
+
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules && sudo udevadm trigger --name-match=kvm
+
+      - name: Install emulator and system image
+        run: |
+          SDKM="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+          yes | "$SDKM" --licenses > /dev/null || true
+          "$SDKM" --install "emulator" "platform-tools" "$SYSTEM_IMAGE" > /dev/null
+          echo "no" | "$ANDROID_HOME/cmdline-tools/latest/bin/avdmanager" create avd \
+            -n ci -k "$SYSTEM_IMAGE" -d pixel_6 --force
+          echo "$ANDROID_HOME/emulator" >> "$GITHUB_PATH"
+          echo "$ANDROID_HOME/platform-tools" >> "$GITHUB_PATH"
+
+      - name: Boot emulator
+        run: |
+          nohup emulator -avd ci -no-window -no-audio -no-snapshot -no-boot-anim \
+            -gpu swiftshader_indirect > emulator.log 2>&1 &
+          adb wait-for-device
+
+      - name: Smoke test (install, launch, tap, lifecycle, screenshots, logs, report)
+        run: bash tools/scripts/android-emulator-smoke.sh
+
+      - name: Upload Device Lab run
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-emulator-${{ github.run_id }}
+          path: |
+            device-lab/reports/runs/
+            emulator.log
+          if-no-files-found: warn

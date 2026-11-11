@@ -18,6 +18,9 @@ local.properties
 .build/
 .swiftpm/
 xtool/
+!tools/xtool/
+.build-xtool/
+MonsteraHello-unsigned.app.tar.gz
 DerivedData/
 *.ipa
 *.xcuserstate
