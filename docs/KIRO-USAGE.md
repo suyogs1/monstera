@@ -165,10 +165,34 @@ Observed hook output: `guard error (NameError: name 'os' is not defined); blocki
 | L3 | `architecture-check-on-build-file-save` fires | Open `reference/g0/android/build.gradle.kts`, add a trailing space, **save**: hook prints `architecture check: ok`. Revert | Same |
 | L4 | `gates-on-task-complete` fires | Mark any task in a Kiro Spec complete in the spec UI | PostTaskExec needs a spec task transition |
 | L5 | Prompts appear as `/` commands | Type `/` in chat; the 5 prompt names should be listed | No tool here lists slash commands |
-| L6 | Kiro connects to the MCP server and an agent calls a tool | Kiro panel → MCP servers: `monstera` connected, 4 tools. In a **new session**, ask: "call validate_spec on spec/samples/monstera-sample/monstera.spec.json" | Writing `.kiro/settings/mcp.json` is blocked for the agent by a Kiro permission rule; the owner must create it (content below), then start a new session |
+| L6 | **Verified live (2026-11-11).** The owner created `.kiro/settings/mcp.json` (command `uv run --frozen --project tools/monstera-mcp python tools/monstera-mcp/server.py`; `autoApprove` = `validate_spec`, `inspect_manifest`, `get_device_report`; `generate_project` not auto-approved). Kiro listed the server's four tools as `monstera::*` and the agent made real calls (results in "L6 tool-call evidence" below) | done | - |
+| L6 (original row) | Kiro connects to the MCP server and an agent calls a tool | Kiro panel → MCP servers: `monstera` connected, 4 tools. In a **new session**, ask: "call validate_spec on spec/samples/monstera-sample/monstera.spec.json" | Writing `.kiro/settings/mcp.json` is blocked for the agent by a Kiro permission rule; the owner must create it (content below), then start a new session |
 | L7 | Kiro's standalone `validate_workflow` on all 5 recipes | In a session where the tool is offered, ask Kiro to run it on each `.kiro/workflows/*.workflow.json` | `validate_workflow` is not in this session's tool set; W1 covers run-creation validation for one recipe |
 
-`.kiro/settings/mcp.json` (owner to create, L6):
+### L6 tool-call evidence (real calls from a Kiro agent through the MCP connection)
+
+`monstera::validate_spec {"path": "spec/samples/monstera-sample/monstera.spec.json"}`:
+
+```json
+{"valid": true, "sha256": "88ddd663d84e52761fa0834f814e1b737e75f6a62d7dddceee8af37912a977e1", "canonical": true, "issues": []}
+```
+
+This SHA-256 is the same value `monstera validate` and CI report.
+
+`monstera::inspect_manifest {"dir": "generated/monstera-sample"}` returned `layout: fixture`,
+`ownedRoots: ["."]`, `file_count: 25`, `files_by_kind: {model: 4, spec: 2, static: 4, template: 15}`
+and `verify: {clean: true, changed: [], missing: [], unexpected: []}`.
+
+`monstera::validate_spec {"path": "../outside/monstera.spec.json"}` was refused as a tool error:
+`spec_path: '../outside/monstera.spec.json' is outside the repository`.
+
+### Owner verification of L1–L5, L7
+
+Reported complete by the owner on 2026-11-11: all 7 agents load in the picker (L1), both save
+hooks fire on real editor saves (L2, L3), the task-completion hook fires (L4), the 5 prompts are
+listed under `/` (L5), and Kiro's `validate_workflow` passes on all 5 recipes (L7).
+
+`.kiro/settings/mcp.json` (as committed, L6):
 
 ```json
 {
