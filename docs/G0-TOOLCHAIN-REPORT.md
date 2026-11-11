@@ -100,7 +100,9 @@ Full record: [XTOOL-EXPERIMENT.md](XTOOL-EXPERIMENT.md).
 ## Device Lab
 
 - Contract: `device-lab/contract/README.md`, `result.schema.json`. Design: `architecture/DEVICE-LAB.md`.
-- `android-emulator`: all ops except `test` proven (local + Linux CI).
+- `android-emulator`: install, launch, stop, screenshot, logs, report proven locally and on Linux
+  CI; the `build` op is proven on Linux CI (locally the APK was built by Gradle directly);
+  `test` unsupported.
 - `ios-simulator`: build, install, launch, stop, screenshot, logs, report proven in CI.
   **`test` is unsupported: there are no automated iOS tests.**
 - `android-device`, `ios-device`: implemented, never run.

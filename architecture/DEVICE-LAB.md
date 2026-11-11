@@ -45,7 +45,7 @@ Key: **V** = implemented and verified by a recorded run. **I** = implemented, ne
 
 | Op | android-emulator | android-device | ios-simulator | ios-device |
 |---|---|---|---|---|
-| build | V (local Windows + Linux CI) | V (same APK as emulator) | V (CI, `xtool dev build --triple arm64-apple-ios-simulator`) | I (`xtool dev build --sign`; needs Apple ID) |
+| build | V (Linux CI run 42969821785; the local Windows build is evidenced by a direct Gradle log, not by this op) | I (same Gradle command as android-emulator, never run with this target kind) | V (CI, `xtool dev build --triple arm64-apple-ios-simulator`) | I (`xtool dev build --sign`; needs Apple ID) |
 | install | V | I | V | I |
 | launch | V | I | V | I |
 | stop | V | I | V | U |

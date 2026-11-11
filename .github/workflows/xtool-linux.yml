@@ -35,14 +35,14 @@ jobs:
     timeout-minutes: 30
     container: ${{ inputs.swift_image }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
       - name: xtool on Linux (builds only if a developer-installed Darwin SDK is present)
         env:
           XTOOL_ALLOW_NO_SDK: "1"
         run: bash tools/xtool/linux-build.sh 2>&1 | tee xtool-linux.log
       - name: Upload log only (no SDK, no app binary)
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: xtool-linux-log-${{ github.run_id }}
           path: xtool-linux.log
