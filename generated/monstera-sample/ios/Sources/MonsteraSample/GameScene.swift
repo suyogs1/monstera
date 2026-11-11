@@ -15,7 +15,7 @@ final class GameScene: SKScene {
     private let seed: UInt64
     private var lastTime: TimeInterval?
     private var nodes: [UInt32: SKShapeNode] = [:]
-    private let bounds = SKShapeNode()
+    private let worldFrame = SKShapeNode()
     private let hud = SKLabelNode(fontNamed: "Menlo")
     private var touchStart: CGPoint?
     private var touchTotal = CGPoint.zero
@@ -31,9 +31,9 @@ final class GameScene: SKScene {
         super.init(size: CGSize(width: spec.game.world.width, height: spec.game.world.height))
         scaleMode = .resizeFill
         backgroundColor = SKColor(hex: spec.game.palette.background)
-        bounds.strokeColor = SKColor(hex: spec.game.palette.primary)
-        bounds.lineWidth = 4
-        addChild(bounds)
+        worldFrame.strokeColor = SKColor(hex: spec.game.palette.primary)
+        worldFrame.lineWidth = 4
+        addChild(worldFrame)
         hud.fontSize = 14
         hud.fontColor = .white
         hud.horizontalAlignmentMode = .left
@@ -57,7 +57,7 @@ final class GameScene: SKScene {
     override func didChangeSize(_ oldSize: CGSize) {
         super.didChangeSize(oldSize)
         let o = origin
-        bounds.path = CGPath(rect: CGRect(x: o.x, y: o.y, width: worldWidth * scale, height: worldHeight * scale), transform: nil)
+        worldFrame.path = CGPath(rect: CGRect(x: o.x, y: o.y, width: worldWidth * scale, height: worldHeight * scale), transform: nil)
         hud.position = CGPoint(x: o.x + 8, y: Double(size.height) - o.y - 24)
     }
 

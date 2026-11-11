@@ -117,7 +117,8 @@ class ConformanceTest {
             loop.frame(10_000_000L + (x shr 8) % 25_000_000L)
         }
         val ticks = loop.world.tick.toInt()
-        assertTrue(ticks > 100)
+        // Some specs end early (lives run out); a finished world is a no-op in both loop and replay.
+        assertTrue(ticks > 10)
         val want = replay(GeneratedRuntimeConfig.config, 9uL, ticks, recorded, listOf(ticks)).single().hash
         assertEquals(want, loop.world.stateHash())
     }

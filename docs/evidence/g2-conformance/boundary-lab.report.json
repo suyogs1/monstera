@@ -6,14 +6,14 @@
       "status": "pass"
     },
     {
-      "detail": "cmd /c gradlew.bat --no-daemon --console=plain cleanTestDebugUnitTest testDebugUnitTest (cwd android) exit 1",
+      "detail": "cmd /c gradlew.bat --no-daemon --console=plain cleanTestDebugUnitTest testDebugUnitTest (cwd android) exit 0",
       "platform": "kotlin",
-      "status": "fail"
+      "status": "pass"
     },
     {
-      "detail": "docker run swift:6.1-noble swift test (package ios/Runtime) exit 1",
+      "detail": "docker run swift:6.1-noble swift test (package ios/Runtime) exit 0",
       "platform": "swift",
-      "status": "fail"
+      "status": "pass"
     }
   ],
   "reportVersion": 1,
@@ -44,7 +44,7 @@
     },
     {
       "path": "android/app/src/test/kotlin/app/monstera/boundarylab/runtime/ConformanceTest.kt",
-      "sha256": "1b7d7860c5f23a01ee316d587afebeed33feb27e992a5fde0b0d010d2695d635"
+      "sha256": "a84d971f3ddf7f226884663602d7e4cf921c302d50ed25cace683ceb4dc42744"
     },
     {
       "path": "ios/Runtime/Package.swift",
@@ -76,7 +76,7 @@
     },
     {
       "path": "ios/Runtime/Tests/MonsteraRuntimeTests/ConformanceTests.swift",
-      "sha256": "2f1b708f9b46e97a9009312c7bb60c0c6d97cb7167be293596e4ed024a0af5bb"
+      "sha256": "ceb12b86906bc127648203839241be3dce9d2af2a2b7967d1f0d9c7f946cbd56"
     },
     {
       "path": "ios/Runtime/Tests/MonsteraRuntimeTests/Resources/monstera-scenarios.txt",
@@ -218,5 +218,5 @@
     }
   ],
   "specSha256": "f8507b7ea40f3b4e840352118a1f08103338e126439b0096504c3dc6d5c1efc9",
-  "verdict": "fail"
+  "verdict": "pass"
 }

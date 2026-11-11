@@ -88,6 +88,25 @@ class LoopSemantics(unittest.TestCase):
         self.assertGreater(loop.world.tick, 100)
         self.assertEqual(sim.state_hash(loop.world), self.replay_hash(9, loop.world.tick, recorded))
 
+    def test_loop_matches_replay_when_the_game_ends_early(self) -> None:
+        """boundary-lab ends after a few taps (lives run out); a finished world is a no-op in loop and replay."""
+        lab = json.loads((REPO / "spec/samples/boundary-lab/monstera.spec.json").read_text(encoding="utf-8"))["game"]
+        cfg = sim.Config(lab)
+        loop = GameLoop(sim.new_world(cfg, 9), lab["simulation"]["tickRate"], lab["simulation"]["maxTicksPerFrame"])
+        recorded: dict = {}
+        gen = lcg(3)
+        for i in range(600):
+            if i % 7 == 0:
+                ev = {"type": "tap", "dx": 0, "dy": 0, "dir": "none"}
+                loop.submit(ev)
+                recorded.setdefault(loop.world.tick, []).append(ev)
+            loop.frame(10_000_000 + (next(gen) >> 8) % 25_000_000)
+        self.assertTrue(loop.world.ended)
+        w = sim.new_world(cfg, 9)
+        for t in range(loop.world.tick):
+            sim.step(w, recorded.get(t, []))
+        self.assertEqual(sim.state_hash(loop.world), sim.state_hash(w))
+
     def test_zero_tick_frame_keeps_events_queued_and_state_unchanged(self) -> None:
         loop = GameLoop(sim.new_world(self.cfg, 1), self.rate, self.cap)
         before = sim.serialize(loop.world)
