@@ -1,0 +1,26 @@
+# NOTE: .kiro/ is intentionally NOT ignored. Steering, agents, specs and hooks are project source.
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+*.iml
+
+# Android / Gradle
+.gradle/
+build/
+local.properties
+*.apk
+*.aab
+.kotlin/
+
+# iOS / SwiftPM / xtool
+.build/
+.swiftpm/
+xtool/
+DerivedData/
+*.ipa
+*.xcuserstate
+
+# Device Lab runtime output (reports/README.md and curated evidence are tracked explicitly)
+device-lab/reports/runs/
