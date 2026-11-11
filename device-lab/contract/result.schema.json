@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://monstera.local/device-lab/result.schema.json",
+  "title": "Device Lab operation result",
+  "description": "One JSON object per line, printed by an adapter for each operation it runs.",
+  "type": "object",
+  "required": ["op", "target", "status", "run_id", "timestamp"],
+  "additionalProperties": false,
+  "properties": {
+    "op": { "enum": ["build", "install", "launch", "stop", "screenshot", "logs", "test", "report"] },
+    "target": { "enum": ["android-emulator", "android-device", "ios-simulator", "ios-device"] },
+    "status": { "enum": ["ok", "failed", "unsupported"] },
+    "run_id": { "type": "string" },
+    "timestamp": { "type": "string", "description": "UTC, ISO 8601" },
+    "artifact": { "type": "string", "description": "Path to the produced file, relative to repo root" },
+    "detail": { "type": "string", "description": "Short human-readable message or error" }
+  }
+}

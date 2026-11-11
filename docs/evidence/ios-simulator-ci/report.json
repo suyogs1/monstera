@@ -1,0 +1,9 @@
+[
+{"op":"build","target":"ios-simulator","status":"ok","run_id":"ci-42972339058","timestamp":"2026-11-11T06:26:17Z","artifact":"device-lab/reports/runs/ci-42972339058/ios-simulator/MonsteraHello.app"},
+{"op":"install","target":"ios-simulator","status":"ok","run_id":"ci-42972339058","timestamp":"2026-11-11T06:28:46Z"},
+{"op":"launch","target":"ios-simulator","status":"ok","run_id":"ci-42972339058","timestamp":"2026-11-11T06:28:52Z"},
+{"op":"screenshot","target":"ios-simulator","status":"ok","run_id":"ci-42972339058","timestamp":"2026-11-11T06:29:09Z","artifact":"device-lab/reports/runs/ci-42972339058/ios-simulator/01-launched.png"},
+{"op":"logs","target":"ios-simulator","status":"ok","run_id":"ci-42972339058","timestamp":"2026-11-11T06:29:12Z","artifact":"device-lab/reports/runs/ci-42972339058/ios-simulator/logs.txt"},
+{"op":"stop","target":"ios-simulator","status":"ok","run_id":"ci-42972339058","timestamp":"2026-11-11T06:29:13Z"},
+{"op":"test","target":"ios-simulator","status":"unsupported","run_id":"ci-42972339058","timestamp":"2026-11-11T06:29:13Z","detail":"no automated tests in Phase 0 hello world"}
+]

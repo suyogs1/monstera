@@ -1,0 +1,6 @@
+Source: local Windows 11 workstation, 2026-11-11, AVD Pixel_9_Pro_XL (Android 16), Device Lab RUN_ID g0-android-emulator.
+Screenshots, logs.txt and report.json are copied unchanged from the run directory. The run used
+tools/scripts/android-emulator-smoke.sh, which does not call the `build` op.
+gradle-assembleDebug.log: output of `gradle assembleDebug` (Gradle 9.9.1 distribution, JBR 21).
+It was captured in UTF-16LE by PowerShell Tee-Object and converted to UTF-8 at G0 final review so
+git can diff it. The text content is unchanged.

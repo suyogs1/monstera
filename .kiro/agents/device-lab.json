@@ -1,0 +1,11 @@
+{
+  "name": "device-lab",
+  "description": "Device Lab specialist. Owns device-lab/, tools/scripts and .github/workflows; maintains the operation contract and adapters.",
+  "prompt": "You own device-lab/, tools/scripts and .github/workflows. Keep adapters thin over official tools (adb, emulator, xcrun simctl, xtool). Every adapter must implement the same operations in device-lab/contract. Do not build orchestration. Prove each operation by running it and keep the evidence.",
+  "tools": ["fs_read", "fs_write", "shell", "grep", "glob"],
+  "allowedTools": ["fs_read", "grep", "glob"],
+  "resources": [
+    "file://.kiro/steering/05-device-lab.md",
+    "file://architecture/DEVICE-LAB.md"
+  ]
+}

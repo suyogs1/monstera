@@ -1,0 +1,19 @@
+2026-11-11 06:28:50.988 Df MonsteraHello[4435:4cee] [com.apple.runningboard:connection] Initializing connection
+2026-11-11 06:28:50.988 Df MonsteraHello[4435:4cee] [com.apple.runningboard:process] Removing all cached process handles
+2026-11-11 06:28:50.988 I  MonsteraHello[4435:4cee] [com.apple.runningboard:assertion] Acquiring assertion: <RBSAssertionDescriptor| "Shared Background Assertion 0 for app.monstera.hello" ID:(null) target:4435>
+2026-11-11 06:28:50.992 Df MonsteraHello[4435:4cf4] [com.apple.runningboard:connection] Sending handshake request attempt #1 to server
+2026-11-11 06:28:50.994 Df MonsteraHello[4435:4cee] [com.apple.runningboard:connection] Creating connection to com.apple.runningboard
+2026-11-11 06:28:50.994 Df MonsteraHello[4435:4cee] [com.apple.xpc:connection] [0x1032068c0] activating connection: mach=true listener=false peer=false name=com.apple.runningboard
+2026-11-11 06:28:50.996 Df MonsteraHello[4435:4cf4] [com.apple.runningboard:connection] Handshake succeeded
+2026-11-11 06:28:50.996 Df MonsteraHello[4435:4cf4] [com.apple.runningboard:connection] Identity resolved as app<app.monstera.hello((null))>
+2026-11-11 06:28:50.997 Df MonsteraHello[4435:4cee] [com.apple.UIKit:BackgroundTask] Created background task <_UIBackgroundTaskInfo: 0x600001701b40>: taskID = 1, taskName = Launch Background Task for Coalescing, creationTime = 314 (elapsed = 0).
+2026-11-11 06:28:50.998 Df MonsteraHello[4435:4cea] [com.apple.runningboard:general] Added observer for process assertions expiration warning: <_RBSExpirationWarningClient: 0x600000211220>
+2026-11-11 06:28:51.019 A  MonsteraHello[4435:4cf6] (RunningBoardServices) didChangeInheritances
+2026-11-11 06:28:51.559 Df MonsteraHello[4435:4cea] [com.apple.UIKit:BackgroundTask] Ending task with identifier 1 and description: <_UIBackgroundTaskInfo: 0x600001701b40>: taskID = 1, taskName = Launch Background Task for Coalescing, creationTime = 314 (elapsed = 1), _expireHandler: (null)
+2026-11-11 06:28:51.559 Df MonsteraHello[4435:4cea] [com.apple.UIKit:BackgroundTask] Decrementing reference count for assertion <BKSProcessAssertion: 0x600002104230> (used by background task with identifier 1: <_UIBackgroundTaskInfo: 0x600001701b40>: taskID = 1, taskName = Launch Background Task for Coalescing, creationTime = 314 (elapsed = 1))
+2026-11-11 06:28:51.560 E  MonsteraHello[4435:4cf4] [com.apple.app_launch_measurement:General] Failed to send CA Event for app launch measurements for ca_event_type: 0 event_name: com.apple.app_launch_measurement.FirstFramePresentationMetric
+2026-11-11 06:28:51.567 A  MonsteraHello[4435:4cee] (RunningBoardServices) didChangeInheritances
+2026-11-11 06:28:51.571 I  MonsteraHello[4435:4cea] [app.monstera.hello:lifecycle] scenePhase: active
+2026-11-11 06:28:51.590 A  MonsteraHello[4435:4cf0] (RunningBoardServices) didChangeInheritances
+2026-11-11 06:28:52.193 A  MonsteraHello[4435:4cee] (RunningBoardServices) didChangeInheritances
+2026-11-11 06:28:52.313 E  MonsteraHello[4435:4cf1] [com.apple.app_launch_measurement:General] Failed to send CA Event for app launch measurements for ca_event_type: 1 event_name: com.apple.app_launch_measurement.ExtendedLaunchMetrics

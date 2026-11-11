@@ -1,0 +1,49 @@
+# EXPERIMENTAL, OPT-IN: xtool on Linux.
+#
+# This workflow never generates, transfers, or uploads an Apple (Darwin) SDK.
+# By default it checks the Linux side of the toolchain only: Swift, xtool AppImage, and the
+# SwiftPM manifest. It builds the iOS app only if the selected runner ALREADY has a Darwin SDK
+# that the runner's owner installed from their own Xcode download (e.g. a self-hosted runner).
+#
+# History: an earlier version generated the SDK on a hosted macOS runner and passed it to a
+# Linux job. That was disabled pending a licensing review. See docs/XTOOL-EXPERIMENT.md.
+name: xtool-linux (experimental)
+
+on:
+  workflow_dispatch:
+    inputs:
+      runner:
+        description: "Runner label. Use a self-hosted label whose user has a Darwin SDK installed to build."
+        default: "ubuntu-24.04"
+      swift_image:
+        description: "Swift container image"
+        default: "swift:6.4.2-noble"
+
+permissions:
+  contents: read
+
+env:
+  XTOOL_VERSION: "1.24.0"
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  linux:
+    runs-on: ${{ inputs.runner }}
+    timeout-minutes: 30
+    container: ${{ inputs.swift_image }}
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+      - name: xtool on Linux (builds only if a developer-installed Darwin SDK is present)
+        env:
+          XTOOL_ALLOW_NO_SDK: "1"
+        run: bash tools/xtool/linux-build.sh 2>&1 | tee xtool-linux.log
+      - name: Upload log only (no SDK, no app binary)
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: xtool-linux-log-${{ github.run_id }}
+          path: xtool-linux.log
+          retention-days: 7

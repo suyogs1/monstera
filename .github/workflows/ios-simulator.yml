@@ -1,0 +1,80 @@
+# iOS Simulator on hosted macOS: build the SwiftPM app with xtool for the simulator triple,
+# boot an iPhone simulator, install, launch, screenshot, and upload the evidence.
+name: ios-simulator
+
+on:
+  push:
+    paths: ["apps/ios/**", "device-lab/**", ".github/workflows/ios-simulator.yml"]
+  pull_request:
+    paths: ["apps/ios/**", "device-lab/**", ".github/workflows/ios-simulator.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  XTOOL_VERSION: "1.24.0"
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  simulator:
+    runs-on: macos-26
+    timeout-minutes: 45
+    env:
+      RUN_ID: ci-${{ github.run_id }}
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+
+      - name: Toolchain versions
+        run: |
+          sw_vers
+          xcodebuild -version
+          swift --version
+          xcrun -sdk iphonesimulator --show-sdk-path
+
+      - name: Install xtool ${{ env.XTOOL_VERSION }}
+        timeout-minutes: 5
+        run: |
+          curl -fsSL "https://github.com/xtool-org/xtool/releases/download/${XTOOL_VERSION}/xtool.app.zip" -o "$RUNNER_TEMP/xtool.zip"
+          ditto -x -k "$RUNNER_TEMP/xtool.zip" "$RUNNER_TEMP"
+          echo "XTOOL=$RUNNER_TEMP/xtool.app/Contents/Resources/bin/xtool" >> "$GITHUB_ENV"
+          "$RUNNER_TEMP/xtool.app/Contents/Resources/bin/xtool" --help | head -3
+
+      - name: Build for iOS Simulator (Device Lab build op)
+        timeout-minutes: 20
+        run: bash device-lab/ios/adapter.sh build
+
+      - name: Boot an available iPhone simulator
+        run: |
+          UDID="$(xcrun simctl list devices available | grep -m1 -E '^[[:space:]]+iPhone' | grep -oE '[0-9A-F-]{36}')"
+          test -n "$UDID"
+          xcrun simctl list devices available | grep "$UDID"
+          xcrun simctl boot "$UDID"
+          xcrun simctl bootstatus "$UDID" -b
+          echo "SIM_DEVICE=$UDID" >> "$GITHUB_ENV"
+
+      - name: Install, launch, screenshot, logs, report
+        run: |
+          A=device-lab/ios/adapter.sh
+          bash $A install
+          bash $A launch
+          sleep 5
+          bash $A screenshot 01-launched
+          bash $A logs
+          bash $A stop
+          bash $A test || true
+          bash $A report
+
+      - name: Upload Device Lab run
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: ios-simulator-${{ github.run_id }}
+          # Evidence only: screenshots, logs, reports. No .app bundles or SDK material.
+          path: |
+            device-lab/reports/runs/
+            !device-lab/reports/runs/**/*.app/
+          if-no-files-found: warn

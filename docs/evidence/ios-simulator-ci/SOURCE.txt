@@ -1,0 +1,1 @@
+Source: GitHub Actions run 42972339058 (ios-simulator, macos-26, Xcode 26.6, Swift 6.3.3, iPhoneSimulator26.5.sdk, iPhone 17 Pro simulator). logs-excerpt.txt = lines of logs.txt matching the app lifecycle subsystem or launch.

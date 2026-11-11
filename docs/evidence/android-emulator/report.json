@@ -1,0 +1,10 @@
+[
+{"op":"install","target":"android-emulator","status":"ok","run_id":"g0-android-emulator","timestamp":"2026-11-11T05:31:51Z"},
+{"op":"launch","target":"android-emulator","status":"ok","run_id":"g0-android-emulator","timestamp":"2026-11-11T05:31:53Z"},
+{"op":"screenshot","target":"android-emulator","status":"ok","run_id":"g0-android-emulator","timestamp":"2026-11-11T05:31:58Z","artifact":"device-lab/reports/runs/g0-android-emulator/android-emulator/01-launched.png"},
+{"op":"screenshot","target":"android-emulator","status":"ok","run_id":"g0-android-emulator","timestamp":"2026-11-11T05:32:04Z","artifact":"device-lab/reports/runs/g0-android-emulator/android-emulator/02-after-two-taps.png"},
+{"op":"screenshot","target":"android-emulator","status":"ok","run_id":"g0-android-emulator","timestamp":"2026-11-11T05:32:09Z","artifact":"device-lab/reports/runs/g0-android-emulator/android-emulator/03-resumed.png"},
+{"op":"logs","target":"android-emulator","status":"ok","run_id":"g0-android-emulator","timestamp":"2026-11-11T05:32:09Z","artifact":"device-lab/reports/runs/g0-android-emulator/android-emulator/logs.txt"},
+{"op":"stop","target":"android-emulator","status":"ok","run_id":"g0-android-emulator","timestamp":"2026-11-11T05:32:10Z"},
+{"op":"test","target":"android-emulator","status":"unsupported","run_id":"g0-android-emulator","timestamp":"2026-11-11T05:32:10Z","detail":"no automated tests in Phase 0 hello world"}
+]
