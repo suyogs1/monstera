@@ -1,0 +1,19 @@
+@@{header_slash}
+import SwiftUI
+import os
+
+private let log = Logger(subsystem: "@@{identifier}", category: "spec")
+
+@main
+struct @@{product}App: App {
+    init() {
+        let integrity = SpecIntegrity.check()
+        log.info("spec sha256=\(GeneratedSpec.sha256, privacy: .public) bundledMatches=\(integrity.hashMatches, privacy: .public) decodedMatches=\(integrity.decodedMatches, privacy: .public)")
+    }
+
+    var body: some Scene {
+        WindowGroup {
+            ContentView()
+        }
+    }
+}

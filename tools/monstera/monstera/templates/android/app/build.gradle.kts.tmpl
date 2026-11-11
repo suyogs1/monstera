@@ -1,0 +1,29 @@
+@@{header_slash}
+plugins {
+    id("com.android.application")
+    id("org.jetbrains.kotlin.plugin.compose")
+}
+
+android {
+    namespace = "@@{identifier}"
+    compileSdk = @@{compile_sdk}
+
+    defaultConfig {
+        applicationId = "@@{identifier}"
+        minSdk = @@{min_sdk}
+        targetSdk = @@{target_sdk}
+        versionCode = @@{version_code}
+        versionName = "@@{version_name}"
+    }
+
+    buildFeatures {
+        compose = true
+    }
+}
+
+dependencies {
+    implementation(platform("androidx.compose:compose-bom:@@{compose_bom}"))
+    implementation("androidx.compose.ui:ui")
+    implementation("androidx.compose.material3:material3")
+    implementation("androidx.activity:activity-compose:@@{activity_compose}")
+}
