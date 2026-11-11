@@ -10,14 +10,13 @@ import json
 import sys
 from pathlib import Path
 
-from . import GENERATOR_NAME, GENERATOR_VERSION, archcheck, generate
+from . import GENERATOR_NAME, GENERATOR_VERSION, archcheck, generate, kirocheck, targets
 from .jsonio import canonical_text
 from .schema import SchemaError, SchemaStore
 from .validate import Result, validate_path
 
-REPO_ROOT = Path(__file__).resolve().parents[3]
+REPO_ROOT = targets.REPO_ROOT
 DEFAULT_SCHEMAS = REPO_ROOT / "spec" / "schema"
-SPEC_GLOB_ROOT = REPO_ROOT / "spec" / "samples"
 
 
 def _label(path: Path) -> str:
@@ -50,7 +49,7 @@ def _report(path: Path, result: Result, as_json: bool) -> None:
 def cmd_validate(args: argparse.Namespace, store: SchemaStore) -> int:
     paths = [Path(p) for p in args.specs]
     if args.all:
-        paths += sorted(SPEC_GLOB_ROOT.rglob("monstera.spec.json"))
+        paths += targets.spec_files()
     if not paths:
         print("validate: give spec paths or --all", file=sys.stderr)
         return 2
@@ -87,8 +86,14 @@ def cmd_generate(args: argparse.Namespace, store: SchemaStore) -> int:
         _report(path, result, False)
         print("generate: refusing to generate from an invalid specification", file=sys.stderr)
         return 1
-    out = Path(args.out) if args.out else REPO_ROOT / "generated" / result.spec["project"]["id"]
-    files = generate.plan(result.spec, _label(path), store)
+    try:
+        default_dir, default_layout = targets.default_out(path, result.spec["project"]["id"])
+    except ValueError as exc:
+        print(f"generate: {exc}", file=sys.stderr)
+        return 2
+    out = Path(args.out) if args.out else default_dir
+    layout = args.layout or default_layout
+    files = generate.plan(result.spec, _label(path), store, layout=layout)
     if args.check:
         drift = generate.check(files, out)
         if drift.clean:
@@ -150,23 +155,95 @@ def _paths_in(value: object) -> list[str]:
     return found
 
 
+def generator_owned(target: Path) -> bool:
+    """True if `target` (resolved) is generator-owned: anything under generated/, or a path inside
+    the ownedRoots of the nearest MONSTERA-MANIFEST.json above it (e.g. apps/<id>/android/**)."""
+    generated = targets.GENERATED.resolve()
+    if target == generated or generated in target.parents:
+        return True
+    root = REPO_ROOT.resolve()
+    for directory in [target, *target.parents]:
+        if directory != root and root not in directory.parents:
+            break
+        manifest = generate.read_manifest(directory)
+        if manifest is not None:
+            rel = target.relative_to(directory).as_posix()
+            try:
+                return generate._in_owned(rel, generate._owned_from(manifest))
+            except generate.OutputError:
+                return True  # a corrupt manifest: fail closed
+        if directory == root:
+            break
+    return False
+
+
 def cmd_guard_generated(args: argparse.Namespace, store: SchemaStore) -> int:
-    """PreToolUse hook: exit 2 (block) if a file tool targets generated/. Reads hook JSON on stdin."""
+    """PreToolUse hook: exit 2 (block) if a file tool targets generator-owned output.
+    Reads the hook JSON on stdin."""
     raw = sys.stdin.read()
     try:
         payload = json.loads(raw) if raw.strip() else {}
     except json.JSONDecodeError:
         return 0  # not a structured tool call; nothing to guard
-    generated = (REPO_ROOT / "generated").resolve()
     for candidate in _paths_in(payload):
         target = Path(candidate)
         target = (target if target.is_absolute() else REPO_ROOT / target).resolve()
-        if target == generated or generated in target.parents:
+        if generator_owned(target):
             print(f"Blocked: {candidate} is generator-owned output. Edit the spec "
-                  "(spec/samples/...) or the templates (tools/monstera/monstera/templates/) and run "
+                  "(monstera.spec.json) or the templates (tools/monstera/monstera/templates/) and run "
                   "`monstera generate` instead.", file=sys.stderr)
             return 2
     return 0
+
+
+def cmd_gates(args: argparse.Namespace, store: SchemaStore) -> int:
+    """The single definition of "green", shared by the Kiro hook, the workflows and CI."""
+    import subprocess
+
+    results: list[tuple[str, bool, str]] = []
+
+    def gate(name: str, ok: bool, detail: str) -> None:
+        results.append((name, ok, detail))
+        print(f"{'PASS' if ok else 'FAIL'}  {name}: {detail}", flush=True)
+
+    if not args.skip_tests:
+        proc = subprocess.run(
+            [sys.executable, "-m", "unittest", "discover", "-s", "tools/monstera/tests", "-t", "tools/monstera"],
+            cwd=REPO_ROOT, capture_output=True, text=True)
+        summary = [ln for ln in proc.stderr.splitlines() if ln.startswith(("Ran ", "OK", "FAILED"))]
+        gate("unit-tests", proc.returncode == 0, " | ".join(summary) or f"exit {proc.returncode}")
+        if proc.returncode != 0:
+            print(proc.stderr[-4000:], file=sys.stderr)
+
+    for target in targets.all_targets():
+        label = _label(target.spec)
+        result = validate_path(target.spec, store)
+        gate(f"validate {label}", result.ok,
+             f"sha256 {result.sha256}" if result.ok else "; ".join(map(str, result.issues))[:500])
+        if not result.ok:
+            continue
+        gate(f"canonical {label}", target.spec.read_bytes() == result.canonical,
+             "canonical" if target.spec.read_bytes() == result.canonical else "run `monstera format`")
+        files = generate.plan(result.spec, label, store, layout=target.layout)
+        drift = generate.check(files, target.out)
+        gate(f"generate --check {_label(target.out)}", drift.clean,
+             f"{len(files)} files" if drift.clean else f"changed={list(drift.changed)} missing={list(drift.missing)} "
+                                                       f"unexpected={list(drift.unexpected)}")
+        if (target.out / generate.MANIFEST).exists():
+            try:
+                v = generate.verify(target.out)
+                gate(f"verify {_label(target.out)}", v.clean, "matches manifest" if v.clean else str(v))
+            except generate.OutputError as exc:
+                gate(f"verify {_label(target.out)}", False, str(exc))
+
+    violations = archcheck.check(REPO_ROOT)
+    gate("architecture", not violations, "ok" if not violations else "; ".join(map(str, violations)))
+    problems = kirocheck.check(REPO_ROOT)
+    gate("kiro-config", not problems, "ok" if not problems else "; ".join(problems))
+
+    failed = [name for name, ok, _ in results if not ok]
+    print(f"gates: {'FAILED' if failed else 'all passed'} ({len(results) - len(failed)}/{len(results)})")
+    return 1 if failed else 0
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -188,7 +265,11 @@ def build_parser() -> argparse.ArgumentParser:
 
     p = sub.add_parser("generate", help="generate native projects from a spec")
     p.add_argument("spec")
-    p.add_argument("--out", help="output directory (default: generated/<project.id>)")
+    p.add_argument("--out", help="output directory (default: apps/<id>/ for apps/<id>/monstera.spec.json, "
+                                 "otherwise generated/<project.id>)")
+    p.add_argument("--layout", choices=sorted(generate.LAYOUTS),
+                   help="fixture = generator owns the whole directory; app = only android/, ios/ and the "
+                        "Kiro guidance file (default: app for apps/<id>/, fixture otherwise)")
     p.add_argument("--check", action="store_true", help="compare with a fresh generation; write nothing")
     p.add_argument("--force", action="store_true",
                    help="discard hand edits and unmanaged files in the output directory (never follows symlinks)")
@@ -202,8 +283,12 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--root", help="directory to scan (default: repository root)")
     p.set_defaults(func=cmd_check_architecture)
 
-    p = sub.add_parser("guard-generated", help="hook: block file-tool edits under generated/ (reads stdin)")
+    p = sub.add_parser("guard-generated", help="hook: block file-tool edits to generator-owned paths (reads stdin)")
     p.set_defaults(func=cmd_guard_generated)
+
+    p = sub.add_parser("gates", help="run every quality gate (tests, specs, generation, architecture, Kiro config)")
+    p.add_argument("--skip-tests", action="store_true", help="skip the unit tests (used by the tests themselves)")
+    p.set_defaults(func=cmd_gates)
     return parser
 
 

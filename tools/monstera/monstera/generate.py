@@ -35,6 +35,8 @@ BUILD_OUTPUT_DIRS = (
     "ios/.build", "ios/.swiftpm", "ios/xtool", "ios/.bsp",
 )
 BUILD_OUTPUT_FILES = ("android/local.properties",)
+GUIDANCE_FILE = ".kiro/steering/monstera-generated.md"
+LAYOUTS = {"fixture", "app"}
 
 
 class _AtTemplate(string.Template):
@@ -68,7 +70,24 @@ def _rel(p: Path) -> str:
     return p.relative_to(PACKAGE_DIR).as_posix()
 
 
-def plan(spec: dict[str, Any], spec_path_label: str, store: SchemaStore) -> list[OutFile]:
+def owned_roots_for(layout: str, targets: list[str]) -> list[str]:
+    """Paths (relative to the output root) the generator owns, besides the manifest itself.
+
+    fixture: the whole directory (generated/<id>/, G1 behaviour).
+    app:     only the native projects and the single Kiro guidance file (apps/<id>/, G1.5).
+             Everything else under apps/<id>/ (spec, assets, README, ...) is hand-maintained.
+    """
+    if layout == "fixture":
+        return ["."]
+    if layout == "app":
+        return sorted([t for t in ("android", "ios") if t in targets] + [GUIDANCE_FILE])
+    raise ValueError(f"unknown layout {layout!r}")
+
+
+def plan(spec: dict[str, Any], spec_path_label: str, store: SchemaStore,
+         layout: str = "fixture") -> list[OutFile]:
+    if layout not in LAYOUTS:
+        raise ValueError(f"unknown layout {layout!r}; expected one of {sorted(LAYOUTS)}")
     canonical = canonical_bytes(spec)
     sha = sha256_hex(canonical)
     project, game = spec["project"], spec["game"]
@@ -125,7 +144,10 @@ def plan(spec: dict[str, Any], spec_path_label: str, store: SchemaStore) -> list
         files.append(OutFile(out, _render(path, ctx), _rel(path), "template",
                              0o755 if out in EXECUTABLE else 0o644))
 
-    template("README.md", "README.md.tmpl")
+    if layout == "fixture":
+        template("README.md", "README.md.tmpl")  # in the app layout README.md is hand-maintained
+    # One optional, documentation-only Kiro guidance file. No build reads it (decision 1, G1.5).
+    template(GUIDANCE_FILE, "kiro-guidance.md.tmpl")
 
     if "android" in project["targets"]:
         kt_dir = "android/app/src/main/kotlin/" + package.replace(".", "/")
@@ -169,6 +191,8 @@ def plan(spec: dict[str, Any], spec_path_label: str, store: SchemaStore) -> list
     manifest = {
         "generator": {"name": GENERATOR_NAME, "version": GENERATOR_VERSION},
         "spec": {"path": spec_path_label, "projectId": project["id"], "sha256": sha},
+        "layout": layout,
+        "ownedRoots": owned_roots_for(layout, project["targets"]),
         "schemas": store.digests(),
         "toolchain": tc,
         "files": [{"path": f.path, "sha256": sha256_hex(f.data), "source": f.source,
@@ -189,27 +213,63 @@ def _is_build_output(rel: str) -> bool:
     return rel in BUILD_OUTPUT_FILES or any(rel == d or rel.startswith(d + "/") for d in BUILD_OUTPUT_DIRS)
 
 
-def _scan(root: Path) -> tuple[set[str], list[str]]:
-    """Files under root that are not build output, plus any symlinks (never followed)."""
+def _in_owned(rel: str, owned: list[str]) -> bool:
+    return rel == MANIFEST or any(o == "." or rel == o or rel.startswith(o + "/") for o in owned)
+
+
+def _scan(root: Path, owned: list[str]) -> tuple[set[str], list[str]]:
+    """Non-build-output files inside the owned roots (plus the manifest), and any symlinks met
+    on the way (never followed). Files outside the owned roots are invisible: the generator
+    can't report, change or delete what it doesn't own."""
     files: set[str] = set()
     links: list[str] = []
-    for dirpath, dirnames, filenames in os.walk(root, followlinks=False):
-        base = Path(dirpath)
-        kept = []
-        for d in sorted(dirnames):
-            rel = (base / d).relative_to(root).as_posix()
-            if (base / d).is_symlink():
-                links.append(rel)
-            elif not _is_build_output(rel):
-                kept.append(d)
-        dirnames[:] = kept
-        for name in filenames:
-            rel = (base / name).relative_to(root).as_posix()
-            if (base / name).is_symlink():
-                links.append(rel)
-            elif not _is_build_output(rel):
-                files.add(rel)
-    return files, sorted(links)
+
+    def walk(start: Path) -> None:
+        for dirpath, dirnames, filenames in os.walk(start, followlinks=False):
+            base = Path(dirpath)
+            kept = []
+            for d in sorted(dirnames):
+                rel = (base / d).relative_to(root).as_posix()
+                if (base / d).is_symlink():
+                    links.append(rel)
+                elif not _is_build_output(rel):
+                    kept.append(d)
+            dirnames[:] = kept
+            for name in filenames:
+                rel = (base / name).relative_to(root).as_posix()
+                if (base / name).is_symlink():
+                    links.append(rel)
+                elif not _is_build_output(rel):
+                    files.add(rel)
+
+    if "." in owned:
+        walk(root)
+        return files, sorted(links)
+    for entry in sorted(set(owned) | {MANIFEST}):
+        target = root / entry
+        # A symlink anywhere on the way to an owned root would redirect writes outside it.
+        for i in range(1, len(Path(entry).parts) + 1):
+            hop = root.joinpath(*Path(entry).parts[:i])
+            if hop.is_symlink():
+                links.append(hop.relative_to(root).as_posix())
+                break
+        else:
+            if target.is_dir():
+                walk(target)
+            elif target.is_file():
+                files.add(entry)
+    return files, sorted(set(links))
+
+
+def _owned_from(manifest: dict[str, Any]) -> list[str]:
+    owned = manifest.get("ownedRoots", ["."])  # G1 manifests predate ownedRoots: whole dir
+    if not (isinstance(owned, list) and owned and all(isinstance(o, str) for o in owned)):
+        raise OutputError(f"{MANIFEST} has an invalid ownedRoots value")
+    for o in owned:
+        parts = Path(o).parts
+        if o != "." and (Path(o).is_absolute() or ".." in parts or not parts):
+            raise OutputError(f"{MANIFEST} ownedRoots entry {o!r} escapes the output directory")
+    return owned
 
 
 @dataclass(frozen=True)
@@ -223,9 +283,14 @@ class Drift:
         return not (self.changed or self.missing or self.unexpected)
 
 
+def _planned_manifest(files: list[OutFile]) -> dict[str, Any]:
+    return json.loads(next(f.data for f in files if f.path == MANIFEST))
+
+
 def check(files: list[OutFile], root: Path) -> Drift:
-    """Compare a directory with a fresh plan (used by `generate --check`)."""
-    present, links = _scan(root) if root.exists() else (set(), [])
+    """Compare a directory's owned roots with a fresh plan (used by `generate --check`)."""
+    owned = _owned_from(_planned_manifest(files))
+    present, links = _scan(root, owned) if root.exists() else (set(), [])
     wanted = {f.path: f for f in files}
     changed = sorted(p for p, f in wanted.items() if p in present and (root / p).read_bytes() != f.data)
     missing = sorted(p for p in wanted if p not in present)
@@ -253,7 +318,7 @@ def verify(root: Path) -> Drift:
     manifest = read_manifest(root)
     if manifest is None:
         raise OutputError(f"{root} has no valid {MANIFEST}")
-    present, links = _scan(root)
+    present, links = _scan(root, _owned_from(manifest))
     recorded = {e["path"]: e["sha256"] for e in manifest["files"]}
     changed = sorted(p for p, h in recorded.items() if p in present and sha256_hex((root / p).read_bytes()) != h)
     missing = sorted(p for p in recorded if p not in present)
@@ -264,9 +329,13 @@ def verify(root: Path) -> Drift:
 def write(files: list[OutFile], root: Path, force: bool = False) -> None:
     """Write a plan without ever silently destroying data.
 
-    Always refused (even with force): a non-empty directory without a valid manifest, and symlinks.
-    Refused unless force: the directory belongs to another project, contains a file the previous
-    manifest doesn't list (user file), or a generator-owned file modified since the last run.
+    Only the plan's owned roots (and the manifest) are ever read, changed or deleted. Files
+    outside them (e.g. apps/<id>/monstera.spec.json, assets/, README.md) are never touched.
+
+    Always refused (even with force): owned paths containing files but no valid manifest (not
+    generator-owned), a layout or owned-root change, and symlinks on or inside owned paths.
+    Refused unless force: another project's output, a file inside an owned root that the previous
+    manifest doesn't list, or a generator-owned file modified since the last run.
     Build-output locations are never touched.
     The manifest is written last, so an interrupted run is detected and can be re-run.
     """
@@ -276,15 +345,23 @@ def write(files: list[OutFile], root: Path, force: bool = False) -> None:
         raise OutputError(f"{root} is a symlink; refusing to write through it")
     planned = {f.path: f.data for f in files}
     new_manifest = json.loads(planned[MANIFEST])
-    present, links = _scan(root) if root.exists() else (set(), [])
+    owned = _owned_from(new_manifest)
+    present, links = _scan(root, owned) if root.exists() else (set(), [])
     if links:
         raise OutputError(f"{root} contains symlinks ({', '.join(links)}); refusing to write through them")
 
     previous = read_manifest(root) if root.exists() else None
     if present and previous is None:
         # Not overridable: --force must never wipe an arbitrary directory (e.g. `--out .`).
-        raise OutputError(f"{root} is not empty and has no valid {MANIFEST} (not generator-owned); "
-                          "choose an empty or generator-owned directory")
+        raise OutputError(f"{root} has files in generator-owned paths but no valid {MANIFEST} "
+                          "(not generator-owned); choose an empty or generator-owned directory")
+    if previous is not None:
+        old_layout = previous.get("layout", "fixture")
+        if old_layout != new_manifest["layout"] or _owned_from(previous) != owned:
+            # Not overridable: widening ownership (e.g. app -> fixture) could claim user files.
+            raise OutputError(f"{root} was generated with layout '{old_layout}' and ownedRoots "
+                              f"{_owned_from(previous)}; refusing to change them to '{new_manifest['layout']}' "
+                              f"{owned}. Use a fresh output directory.")
     problems: list[str] = []
     if previous is not None and previous.get("spec", {}).get("projectId") not in (None, new_manifest["spec"]["projectId"]):
         problems.append(f"{root} belongs to project '{previous['spec']['projectId']}', "
@@ -302,13 +379,15 @@ def write(files: list[OutFile], root: Path, force: bool = False) -> None:
                           + "\nMove your changes into the spec or templates, or re-run with --force to discard them.")
 
     for rel in sorted(present - set(planned)):
+        assert _in_owned(rel, owned), rel  # _scan only returns owned paths
         (root / rel).unlink()
     if root.exists():
-        for dirpath, _, _ in os.walk(root, topdown=False):  # deepest first; prune empty dirs
-            d = Path(dirpath)
-            rel = d.relative_to(root).as_posix()
-            if d != root and not _is_build_output(rel) and not any(d.iterdir()):
-                d.rmdir()
+        for start in (["."] if "." in owned else [o for o in owned if (root / o).is_dir()]):
+            for dirpath, _, _ in os.walk(root / start, topdown=False):  # deepest first; prune empty dirs
+                d = Path(dirpath)
+                rel = d.relative_to(root).as_posix()
+                if d != root and not _is_build_output(rel) and not any(d.iterdir()):
+                    d.rmdir()
     for f in sorted(files, key=lambda f: f.path == MANIFEST):  # manifest last
         target = root / f.path
         target.parent.mkdir(parents=True, exist_ok=True)
