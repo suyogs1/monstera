@@ -1,5 +1,7 @@
 # G1 Specification Report (Phase 1: Canonical Specification Engine)
 
+> **Paths (G1.5):** `apps/android` and `apps/ios` moved to `reference/g0/android` and `reference/g0/ios` in commit `dc29888`. The results below are unchanged.
+
 Date: 2026-11-11. Branch: `phase1/g1-spec-engine` (not merged; awaiting review). Updated after the G1 adversarial review.
 Labels follow `.kiro/steering/04-generation-and-provenance.md`. No game is implemented, and no
 deferred integration (auth, cloud sync, ads, notifications) was touched.

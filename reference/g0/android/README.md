@@ -12,7 +12,7 @@ logged under the `MonsteraHello` tag.
 ## Build
 
 ```bash
-cd apps/android
+cd reference/g0/android
 ./gradlew assembleDebug          # Windows: .\gradlew.bat assembleDebug
 # -> app/build/outputs/apk/debug/app-debug.apk
 ```

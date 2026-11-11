@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Build apps/ios on Linux with xtool, without an Apple ID (unsigned device build).
+# Build the G0 reference app reference/g0/ios on Linux with xtool, without an Apple ID (unsigned device build).
 # Usage: tools/xtool/linux-build.sh [Xcode.xip | Xcode.app | darwin.xtoolsdk(.tar.gz)]
 #   With an argument: install the Darwin SDK from YOUR OWN Xcode download, then build.
 #   Without:          use the Darwin SDK already installed for this user (`swift sdk list`).
@@ -33,7 +33,7 @@ XTOOL="$WORK/squashfs-root/AppRun"
 "$XTOOL" --help | head -3
 
 step "Validate package manifest on Linux"
-(cd "$ROOT/apps/ios" && swift package describe | head -20)
+(cd "$ROOT/reference/g0/ios" && swift package describe | head -20)
 
 step "Darwin SDK"
 if [ -n "$SDK_INPUT" ]; then
@@ -53,11 +53,11 @@ fi
 "$XTOOL" sdk status || true
 
 step "xtool dev build (arm64-apple-ios, unsigned)"
-cd "$ROOT/apps/ios"
+cd "$ROOT/reference/g0/ios"
 "$XTOOL" dev build
 
 step "Inspect output"
-APP="$ROOT/apps/ios/xtool/MonsteraHello.app"
+APP="$ROOT/reference/g0/ios/xtool/MonsteraHello.app"
 ls -la "$APP"
 BIN="$APP/MonsteraHello"
 od -An -tx1 -N8 "$BIN"   # Mach-O 64-bit magic: cf fa ed fe; cputype arm64: 0c 00 00 01

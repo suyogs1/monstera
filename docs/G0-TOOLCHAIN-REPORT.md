@@ -1,5 +1,7 @@
 # G0 Toolchain Report (Phase 0)
 
+> **Paths (G1.5):** `apps/android` and `apps/ios` moved to `reference/g0/android` and `reference/g0/ios` in commit `dc29888`. The results below are unchanged.
+
 Date: 2026-11-11. Branch: `phase0/toolchain-proof`.
 
 Labels follow `.kiro/steering/04-generation-and-provenance.md`: GENERATED < COMPILED <

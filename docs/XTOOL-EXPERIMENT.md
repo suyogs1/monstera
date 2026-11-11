@@ -1,5 +1,8 @@
 # xtool experiment (Phase 0)
 
+> **Paths (G1.5):** the G0 iOS app moved from `apps/ios` to `reference/g0/ios` (migration commit `dc29888`).
+> Commands below use the new path; recorded output from the original runs is quoted unchanged.
+
 Goal: find out, by trying it, whether the MONSTERA iOS app (SwiftUI + SpriteKit, SwiftPM) can be
 built on Linux with [xtool](https://github.com/xtool-org/xtool), and what blocks deployment to a
 physical iPhone.
@@ -92,7 +95,7 @@ Physical-device deployment needs:
 
 1. An Apple ID (free or paid) for `xtool setup` / `xtool auth`. Credentials go only to Apple.
 2. An iPhone connected by USB to a Linux host (or Windows + WSL + USBIPD), with Developer Mode on.
-3. Running `xtool dev` in `apps/ios`, trusting the device and the developer profile.
+3. Running `xtool dev` in `reference/g0/ios`, trusting the device and the developer profile.
 
 Nothing above was attempted, so iOS stays at **COMPILED** for Linux. It is not
 PHYSICAL-DEVICE-TESTED.
