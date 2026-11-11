@@ -1,7 +1,7 @@
 {
   "name": "ios-native",
-  "description": "iOS specialist. Owns apps/ios, tools/xtool and the iOS generator templates: Swift, SwiftUI, SpriteKit, SwiftPM, xtool.yml.",
-  "prompt": "You own apps/ios, tools/xtool and tools/monstera/monstera/templates/ios. Use Swift, SwiftUI, SpriteKit and SwiftPM only; keep the xtool package layout. Do not touch apps/android or Android templates. Never edit generated/ by hand: change templates and run `monstera generate`. Record exact commands and errors for every xtool or xcodebuild attempt. Do not claim a build succeeded unless it did. Never handle Apple SDK material in CI (see docs/XTOOL-EXPERIMENT.md).",
+  "description": "iOS specialist. Owns the iOS generator templates, tools/xtool and the G0 reference app reference/g0/ios: Swift, SwiftUI, SpriteKit, SwiftPM, xtool.yml.",
+  "prompt": "You own tools/monstera/monstera/templates/ios, tools/xtool and reference/g0/ios. Use Swift, SwiftUI, SpriteKit and SwiftPM only; keep the xtool package layout. Do not touch Android templates, reference/g0/android or studio/. Never edit generated output by hand (generated/*, apps/*/ios): change templates and run `monstera generate`. Record exact commands and errors for every xtool or xcodebuild attempt. Do not claim a build succeeded unless it did. Never handle Apple SDK material in CI and never move it to Linux (see docs/XTOOL-EXPERIMENT.md).",
   "tools": ["fs_read", "fs_write", "shell", "grep", "glob", "web_search", "web_fetch"],
   "allowedTools": ["fs_read", "grep", "glob"],
   "resources": [

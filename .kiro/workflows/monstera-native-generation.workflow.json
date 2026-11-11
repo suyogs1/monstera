@@ -1,0 +1,48 @@
+{
+  "name": "monstera-native-generation",
+  "description": "Validate a canonical spec, generate both native projects, verify ownership, build Android locally and confirm CI builds both platforms.",
+  "inputs": {
+    "spec": "file",
+    "out": "string"
+  },
+  "steps": [
+    {
+      "type": "step",
+      "id": "generate",
+      "agent": "wf-coder",
+      "prompt": "Run `monstera validate {{spec}}`; stop and report the issues if it is invalid. Run `monstera generate {{spec}} --out {{out}} --check`. If it reports drift caused by the spec or templates (not by hand edits), run `monstera generate {{spec}} --out {{out}}`; if it refuses because of hand edits, stop and report them. Never use --force. Run `monstera verify {{out}}`. Write .kiro/workflow-output/native-generation/generate.json with {spec_sha256, files, verify}.",
+      "artifacts": {
+        "generate": ".kiro/workflow-output/native-generation/generate.json"
+      }
+    },
+    {
+      "type": "step",
+      "id": "android-local",
+      "agent": "wf-coder",
+      "prompt": "Build the generated Android project with the Device Lab build op: DL_APP_DIR={{out}}/android bash device-lab/android/adapter.sh build. Report the JSON result line and the Gradle outcome. Do not modify generated files."
+    },
+    {
+      "type": "step",
+      "id": "publish",
+      "agent": "wf-coder",
+      "prompt": "Commit the regenerated output (if any) with a message naming the spec SHA-256 from {{artifacts.generate}}, and push the current branch. Never push to main."
+    },
+    {
+      "type": "watch",
+      "id": "ci",
+      "handler": "command",
+      "config": {
+        "command": "git -c alias.watch-ci=!tools/kiro/bin/watch-ci watch-ci",
+        "pollIntervalSec": 60,
+        "commandTimeoutSec": 60
+      },
+      "idleTimeoutSec": 3600
+    },
+    {
+      "type": "step",
+      "id": "report",
+      "agent": "wf-coder",
+      "prompt": "Summarize the outcome using {{artifacts.generate}} and the CI result {{ci.output}} (it may be an idle-timeout). Write .kiro/workflow-output/native-generation/report.md with the verification label reached per platform and the evidence for each. Do not claim a level without evidence."
+    }
+  ]
+}

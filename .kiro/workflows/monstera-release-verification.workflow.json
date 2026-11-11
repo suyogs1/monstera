@@ -1,0 +1,42 @@
+{
+  "name": "monstera-release-verification",
+  "description": "Run every gate, wait for CI on the release head, collect evidence unchanged, and have a read-only auditor check every claim in the release report.",
+  "inputs": {
+    "release": "string",
+    "report": "file"
+  },
+  "steps": [
+    {
+      "type": "step",
+      "id": "gates",
+      "agent": "wf-coder",
+      "prompt": "Run `monstera gates` and save the output to .kiro/workflow-output/release/gates.txt. Record the HEAD commit. Stop and report if any gate fails.",
+      "artifacts": {
+        "gates": ".kiro/workflow-output/release/gates.txt"
+      }
+    },
+    {
+      "type": "watch",
+      "id": "ci",
+      "handler": "command",
+      "config": {
+        "command": "git -c alias.watch-ci=!tools/kiro/bin/watch-ci watch-ci",
+        "pollIntervalSec": 60,
+        "commandTimeoutSec": 60
+      },
+      "idleTimeoutSec": 5400
+    },
+    {
+      "type": "step",
+      "id": "evidence",
+      "agent": "wf-coder",
+      "prompt": "CI result: {{ci.output}}. Download the artifacts of those runs with gh and copy the relevant ones unchanged to docs/evidence/{{release}}/, each folder with a SOURCE.txt (run id, job, commit, runner, what was copied). Never copy .app bundles or SDK material. Update {{report}} with the run ids and results; write no result you did not observe."
+    },
+    {
+      "type": "step",
+      "id": "audit",
+      "agent": "report-auditor",
+      "prompt": "Audit {{report}} against docs/evidence/{{release}}/ and the verification labels in .kiro/steering/04-generation-and-provenance.md. For every claim, cite the evidence file or mark it UNSUPPORTED. Flag any label higher than its evidence. End with VERDICT: PASS or VERDICT: FAIL."
+    }
+  ]
+}

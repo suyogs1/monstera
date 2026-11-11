@@ -2,26 +2,34 @@
 # Device Lab adapter: iOS Simulator (macOS, xcrun simctl) and physical iPhone (xtool).
 # Usage: device-lab/ios/adapter.sh <build|install|launch|stop|screenshot|logs|test|report> [args]
 # Env:
-#   DL_TARGET_KIND = ios-simulator (default) | ios-device
-#   SIM_DEVICE     = simulator UDID or "booted" (default "booted")
-#   XTOOL          = xtool executable (default "xtool")
-#   DL_APP_DIR, DL_APP_PRODUCT, DL_APP_BUNDLE_ID = select another SwiftPM app, e.g. a generated
-#                    project (defaults: apps/ios, MonsteraHello, app.monstera.hello)
+#   DL_TARGET_KIND   = ios-simulator (default) | ios-device
+#   SIM_DEVICE       = simulator UDID or "booted" (default "booted")
+#   XTOOL            = xtool executable (default "xtool")
+#   DL_APP_DIR       repo-relative SwiftPM app package dir  (required by build, install)
+#   DL_APP_PRODUCT   SwiftPM product / .app name           (required by build, install, logs)
+#   DL_APP_BUNDLE_ID bundle identifier                      (required by launch, stop, logs)
+#   There is no default app (since G1.5): the G0 reference app is reference/g0/ios.
 set -euo pipefail
 # shellcheck source-path=SCRIPTDIR source=../lib.sh
 source "$(dirname "$0")/../lib.sh"
 dl_init "${DL_TARGET_KIND:-ios-simulator}"
 
-APP_DIR="$DL_ROOT/${DL_APP_DIR:-apps/ios}"
-PRODUCT="${DL_APP_PRODUCT:-MonsteraHello}"
+APP_DIR="$DL_ROOT/${DL_APP_DIR:-}"
+PRODUCT="${DL_APP_PRODUCT:-}"
 APP="$APP_DIR/xtool/$PRODUCT.app"
-BUNDLE_ID="${DL_APP_BUNDLE_ID:-app.monstera.hello}"
+BUNDLE_ID="${DL_APP_BUNDLE_ID:-}"
 SIM="${SIM_DEVICE:-booted}"
 XTOOL="${XTOOL:-xtool}"
 
 sim() { xcrun simctl "$@"; }
 
 op="${1:?op required}"; shift || true
+
+case "$op" in
+  build|install) dl_require "$op" DL_APP_DIR DL_APP_PRODUCT ;;
+  launch|stop)   dl_require "$op" DL_APP_BUNDLE_ID ;;
+  logs)          dl_require "$op" DL_APP_BUNDLE_ID DL_APP_PRODUCT ;;
+esac
 
 if [ "$DL_TARGET" = "ios-device" ]; then
   # Physical device: xtool provides build+sign, install and launch. Screenshot/logs/stop are not

@@ -3,6 +3,13 @@
     {
       "kind": "template",
       "mode": "644",
+      "path": ".kiro/steering/monstera-generated.md",
+      "sha256": "fea7557b546a02288313588ee1c352e020ae40abde8c172e407dc74e4d43aaec",
+      "source": "templates/kiro-guidance.md.tmpl"
+    },
+    {
+      "kind": "template",
+      "mode": "644",
       "path": "README.md",
       "sha256": "92d4d73e2c067e14195b431c41274c19b94b6c617dd3ef8927bbf16c74d1e250",
       "source": "templates/README.md.tmpl"
@@ -173,6 +180,10 @@
     "name": "monstera-generator",
     "version": "0.1.0"
   },
+  "layout": "fixture",
+  "ownedRoots": [
+    "."
+  ],
   "schemas": {
     "game.schema.json": "9566934131b4b6ade03761e6cc1b7a0ab0613f76c4cf2e7c3d9edc3f7fd368b2",
     "monstera.spec.schema.json": "58a542b1370675801312710606ffec9132653dee6a9f36de99065f84ccdd4165",

@@ -35,8 +35,9 @@ Reports: [G0](docs/G0-TOOLCHAIN-REPORT.md), [G1](docs/G1-SPECIFICATION-REPORT.md
 | `spec/` | Canonical spec schemas, sample `monstera.spec.json`, invalid fixtures |
 | `tools/monstera/` | Specification engine and `monstera` CLI (Python 3.10+, stdlib only) |
 | `generated/` | Generator-owned native projects. Do not edit; run `monstera generate` |
-| `apps/android/` | Phase 0 reference Android app (Gradle, Kotlin, Compose) |
-| `apps/ios/` | Phase 0 reference iOS app (SwiftPM package + `xtool.yml`, SwiftUI + SpriteKit) |
+| `apps/` | The two Skeleton Crew apps (G3): `pumpkin-blaster/`, `trick-or-treat-rush/` |
+| `reference/g0/android/` | Phase 0 reference Android app (Gradle, Kotlin, Compose) |
+| `reference/g0/ios/` | Phase 0 reference iOS app (SwiftPM package + `xtool.yml`, SwiftUI + SpriteKit) |
 | `tools/xtool/` | xtool setup notes and Linux build scripts |
 | `tools/scripts/` | Developer and CI scripts |
 | `device-lab/` | Device Lab contract (`contract/`), per-platform adapters, run reports |
@@ -53,10 +54,10 @@ tools/monstera/bin/monstera validate --all
 tools/monstera/bin/monstera generate spec/samples/monstera-sample/monstera.spec.json
 
 # Android
-cd apps/android && ./gradlew assembleDebug
+cd reference/g0/android && ./gradlew assembleDebug
 
 # Android emulator smoke test (emulator already booted)
 tools/scripts/android-emulator-smoke.sh
 ```
 
-iOS: see [apps/ios/README.md](apps/ios/README.md).
+iOS: see [reference/g0/ios/README.md](reference/g0/ios/README.md).

@@ -4,9 +4,9 @@ name: android
 
 on:
   push:
-    paths: ["apps/android/**", "device-lab/**", "tools/scripts/android-*", ".github/workflows/android.yml"]
+    paths: ["reference/g0/android/**", "device-lab/**", "tools/scripts/android-*", ".github/workflows/android.yml"]
   pull_request:
-    paths: ["apps/android/**", "device-lab/**", "tools/scripts/android-*", ".github/workflows/android.yml"]
+    paths: ["reference/g0/android/**", "device-lab/**", "tools/scripts/android-*", ".github/workflows/android.yml"]
   workflow_dispatch:
 
 permissions:
@@ -27,6 +27,10 @@ jobs:
     timeout-minutes: 40
     env:
       RUN_ID: ci-${{ github.run_id }}
+      # G0 reference app (the adapters have no default app since G1.5).
+      DL_APP_DIR: reference/g0/android
+      DL_APP_PACKAGE: app.monstera.hello
+      DL_APP_LOG_TAG: MonsteraHello
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
 

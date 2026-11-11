@@ -4,9 +4,9 @@ name: ios-simulator
 
 on:
   push:
-    paths: ["apps/ios/**", "device-lab/**", ".github/workflows/ios-simulator.yml"]
+    paths: ["reference/g0/ios/**", "device-lab/**", ".github/workflows/ios-simulator.yml"]
   pull_request:
-    paths: ["apps/ios/**", "device-lab/**", ".github/workflows/ios-simulator.yml"]
+    paths: ["reference/g0/ios/**", "device-lab/**", ".github/workflows/ios-simulator.yml"]
   workflow_dispatch:
 
 permissions:
@@ -25,6 +25,10 @@ jobs:
     timeout-minutes: 45
     env:
       RUN_ID: ci-${{ github.run_id }}
+      # G0 reference app (the adapters have no default app since G1.5).
+      DL_APP_DIR: reference/g0/ios
+      DL_APP_PRODUCT: MonsteraHello
+      DL_APP_BUNDLE_ID: app.monstera.hello
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
 

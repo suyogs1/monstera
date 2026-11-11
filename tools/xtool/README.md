@@ -1,6 +1,6 @@
 # xtool tooling (experimental)
 
-`linux-build.sh` builds `apps/ios` on Linux with xtool 1.24.0, unsigned, without an Apple ID.
+`linux-build.sh` builds the G0 reference app `reference/g0/ios` on Linux with xtool 1.24.0, unsigned, without an Apple ID.
 
 ```bash
 tools/xtool/linux-build.sh <your Xcode.xip | Xcode.app | darwin.xtoolsdk>   # install SDK, then build
@@ -27,4 +27,4 @@ Details are in `docs/XTOOL-EXPERIMENT.md`.
   (the latter starts the GUI app).
 
 Physical device (**not tested**): `xtool setup` (Apple ID), connect the iPhone over USB
-(`usbmuxd`), then `xtool dev` in `apps/ios`.
+(`usbmuxd`), then `xtool dev` in `reference/g0/ios`.

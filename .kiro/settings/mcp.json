@@ -1,0 +1,21 @@
+{
+  "mcpServers": {
+    "monstera": {
+      "command": "uv",
+      "args": [
+        "run",
+        "--frozen",
+        "--project",
+        "tools/monstera-mcp",
+        "python",
+        "tools/monstera-mcp/server.py"
+      ],
+      "disabled": false,
+      "autoApprove": [
+        "validate_spec",
+        "inspect_manifest",
+        "get_device_report"
+      ]
+    }
+  }
+}

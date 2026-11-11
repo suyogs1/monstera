@@ -40,3 +40,15 @@ dl_report() {
 }
 
 dl_unsupported() { dl_result "$1" unsupported "" "${2:-not supported on $DL_TARGET}"; exit 3; }
+
+# dl_require <op> VAR... : fail the op (exit 2, contract line "failed") if any variable is unset.
+# Adapters have no default app since G1.5, so they never silently act on the wrong project.
+dl_require() {
+  local op="$1" var missing=""; shift
+  for var in "$@"; do [ -n "${!var:-}" ] || missing="$missing $var"; done
+  if [ -n "$missing" ]; then
+    echo "$op: set$missing (no default app since G1.5; see device-lab/contract/README.md)" >&2
+    dl_result "$op" failed "" "missing env:$missing"
+    exit 2
+  fi
+}

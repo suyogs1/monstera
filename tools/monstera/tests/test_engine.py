@@ -164,9 +164,14 @@ class GenerationTests(Base):
             drift = generate.check(files, root)
             self.assertEqual(drift.changed, ("README.md",))
             self.assertEqual(drift.unexpected, ("android/extra.txt",))
+            for force in (False, True):  # a stray file is never deleted, not even with --force (G1.5)
+                with self.assertRaises(generate.OutputError):
+                    generate.write(files, root, force=force)
+            self.assertTrue((root / "android" / "extra.txt").exists())
+            (root / "android" / "extra.txt").unlink()  # the user removes it deliberately
             with self.assertRaises(generate.OutputError):  # hand edits are never silently discarded
                 generate.write(files, root)
-            generate.write(files, root, force=True)  # explicit --force repairs drift, keeps build output
+            generate.write(files, root, force=True)  # explicit --force discards the edit, keeps build output
             self.assertTrue(generate.check(files, root).clean)
             self.assertTrue((root / "android" / "build" / "ignored.bin").exists())
 

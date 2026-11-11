@@ -1,11 +1,15 @@
 #!/usr/bin/env bash
-# Phase 0 Android smoke run on a booted emulator, via the Device Lab adapter.
+# Phase 0 Android smoke run on a booted emulator, via the Device Lab adapter (G0 reference app).
 # Proves: install, launch, Compose interaction, lifecycle (pause/stop/resume), screenshot, logs.
 # Usage: RUN_ID=<id> tools/scripts/android-emulator-smoke.sh   (emulator must already be booted)
 set -euo pipefail
 cd "$(dirname "$0")/../.."
 A=device-lab/android/adapter.sh
 ADB="${ADB:-adb}"; export ADB
+# This script drives the G0 reference app specifically (it taps its "Tap me" button).
+export DL_APP_DIR="${DL_APP_DIR:-reference/g0/android}"
+export DL_APP_PACKAGE="${DL_APP_PACKAGE:-app.monstera.hello}"
+export DL_APP_LOG_TAG="${DL_APP_LOG_TAG:-MonsteraHello}"
 export MSYS_NO_PATHCONV=1 # see device-lab/lib.sh
 
 "$ADB" wait-for-device
@@ -34,7 +38,7 @@ bash "$A" screenshot 02-after-two-taps
 
 # Background then foreground: exercises onPause/onStop/onStart/onResume.
 "$ADB" shell input keyevent KEYCODE_HOME; sleep 2
-"$ADB" shell am start -n app.monstera.hello/.MainActivity >/dev/null; sleep 2
+"$ADB" shell am start -n "$DL_APP_PACKAGE/.MainActivity" >/dev/null; sleep 2
 bash "$A" screenshot 03-resumed
 
 bash "$A" logs

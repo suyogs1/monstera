@@ -1,0 +1,15 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "Run MONSTERA gates when a Kiro Spec task completes",
+      "trigger": "PostTaskExec",
+      "description": "After a Kiro Spec task is marked completed, run `monstera gates` (tests, spec validation, generate --check, verify, architecture/CI safety, Kiro config). The single shared definition of green.",
+      "action": {
+        "type": "command",
+        "command": "git -c alias.monstera=!tools/monstera/bin/monstera monstera gates",
+        "timeout": 300
+      }
+    }
+  ]
+}
