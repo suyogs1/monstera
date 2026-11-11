@@ -1,0 +1,43 @@
+Source: GitHub Actions run 42972339280 (xtool-linux), job linux-build, container swift:6.4.2-noble on ubuntu-24.04 x86_64.
+SDK built on macos-26 runner from Xcode 26.6 with XTL_TOOLSET_TARBALL=toolset-x86_64.tar.gz (darwin-tools-linux-llvm v1.1.0). Result: COMPILED (unsigned).
+Excerpt (progress and tar warnings removed):
+
+=== Host ===
+Linux ec1abf11702a 7.0.0-1017-azure #17~24.04.1-Ubuntu SMP PREEMPT Thu Sep 24 18:46:57 UTC 2026 x86_64 x86_64 x86_64 GNU/Linux
+Ubuntu 24.04.5 LTS
+Swift version 6.4.2 (swift-6.4.2-RELEASE)
+Target: x86_64-unknown-linux-gnu
+=== Install xtool 1.24.0 (AppImage, extracted so FUSE is not needed) ===
+debconf: delaying package configuration, since apt-utils is not installed
+OVERVIEW: Cross-platform Xcode replacement
+USAGE: xtool <subcommand>
+=== Install Darwin SDK ===
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.TextEncoding'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.TextEncoding'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.TextEncoding'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.TextEncoding'
+Installing prebuilt SDK...
+Darwin SDK is installed
+  Path: /root/.swiftpm/swift-sdks/darwin.artifactbundle
+  Flavor: slim
+  Version: epoch=4,darwinTools=1.1.0,oam=1.4.1
+darwin
+=== xtool dev build (arm64-apple-ios, unsigned) ===
+Building for debugging...
+[Planning 1 / 67]
+[Starting]
+Build complete! (48.25 secs)
+Planning...
+[LSP] Created .bsp/xtool.json for enhanced IDE support. You may
+      need to restart your editor for the change to take effect.
+      You can disable this with `skipLSP: true` in xtool.yml.
+Wrote to /__w/monstera/monstera/apps/ios/xtool/MonsteraHello.app
+=== Inspect output ===
+total 176
+drwxr-xr-x 2 root root   4096 Nov 11 06:32 .
+drwxr-xr-x 4 root root   4096 Nov 11 06:32 ..
+-rw-r--r-- 1 root root   1524 Nov 11 06:32 Info.plist
+-rwxr-xr-x 1 root root 164072 Nov 11 06:32 MonsteraHello
+ cf fa ed fe 0c 00 00 01
+SpriteKit
+RESULT: COMPILED (unsigned) -> MonsteraHello-unsigned.app.tar.gz

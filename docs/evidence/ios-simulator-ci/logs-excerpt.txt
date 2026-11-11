@@ -1,40 +1,19 @@
-2026-11-11 06:07:02.722 Df MonsteraHello[18029:cf47] (libMobileGestalt.dylib) No persisted cache on this platform.
-2026-11-11 06:07:02.723 Df MonsteraHello[18029:cf4b] [com.apple.xpc:connection] [0x102705b90] activating connection: mach=true listener=false peer=false name=com.apple.cfprefsd.daemon
-2026-11-11 06:07:02.725 Df MonsteraHello[18029:cf4d] [com.apple.BoardServices:XPCErrors] [C:1] Alloc com.apple.frontboard.systemappservices
-2026-11-11 06:07:02.725 Df MonsteraHello[18029:cf4d] [com.apple.xpc:connection] [0x1038059a0] activating connection: mach=false listener=false peer=false name=(anonymous)
-2026-11-11 06:07:02.726 Df MonsteraHello[18029:cf4b] [com.apple.UIKit:BackgroundTask] Creating new assertion because there is no existing background assertion.
-2026-11-11 06:07:02.728 A  MonsteraHello[18029:cf4c] (CoreFoundation) Loading Preferences From User Session CFPrefsD
-2026-11-11 06:07:02.730 Df MonsteraHello[18029:cf4b] [com.apple.UIKit:BackgroundTask] Creating new background assertion
-2026-11-11 06:07:02.730 Df MonsteraHello[18029:cf4b] [com.apple.UIKit:BackgroundTask] Created new background assertion <BKSProcessAssertion: 0x600002103750>
-2026-11-11 06:07:02.730 Df MonsteraHello[18029:cf4b] [com.apple.runningboard:connection] Initializing connection
-2026-11-11 06:07:02.730 Df MonsteraHello[18029:cf4b] [com.apple.runningboard:process] Removing all cached process handles
-2026-11-11 06:07:02.730 Df MonsteraHello[18029:cf4b] [com.apple.runningboard:connection] Creating connection to com.apple.runningboard
-2026-11-11 06:07:02.730 Df MonsteraHello[18029:cf4b] [com.apple.xpc:connection] [0x102705ca0] activating connection: mach=true listener=false peer=false name=com.apple.runningboard
-2026-11-11 06:07:02.731 Df MonsteraHello[18029:cf52] [com.apple.runningboard:connection] Sending handshake request attempt #1 to server
-2026-11-11 06:07:02.732 A  MonsteraHello[18029:cf4e] (RunningBoardServices) didChangeInheritances
-2026-11-11 06:07:02.733 Df MonsteraHello[18029:cf52] [com.apple.runningboard:connection] Handshake succeeded
-2026-11-11 06:07:02.733 Df MonsteraHello[18029:cf52] [com.apple.runningboard:connection] Identity resolved as app<app.monstera.hello((null))>
-2026-11-11 06:07:02.735 Df MonsteraHello[18029:cf47] [com.apple.UIKit:Application] Deactivation reason added: 10; deactivation reasons: 0 -> 1024; animating application lifecycle event: 0
-2026-11-11 06:07:02.735 Df MonsteraHello[18029:cf4b] [com.apple.UIKit:BackgroundTask] Incrementing reference count for background assertion <BKSProcessAssertion: 0x600002103750>
-2026-11-11 06:07:02.735 Df MonsteraHello[18029:cf47] [com.apple.BoardServices:Injection] activating monitor for service com.apple.frontboard.open
-2026-11-11 06:07:02.735 Df MonsteraHello[18029:cf4b] [com.apple.UIKit:BackgroundTask] Created background task <_UIBackgroundTaskInfo: 0x6000017097c0>: taskID = 1, taskName = Launch Background Task for Coalescing, creationTime = 1036 (elapsed = 0).
-2026-11-11 06:07:02.736 Df MonsteraHello[18029:cf4b] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UIApplicationSceneKeyboardSettings on FBSSceneSettings
-2026-11-11 06:07:02.736 Df MonsteraHello[18029:cf47] [com.apple.BoardServices:Injection] activating monitor for service com.apple.frontboard.workspace-service
-2026-11-11 06:07:02.736 Df MonsteraHello[18029:cf47] [com.apple.FrontBoard:Common] FBSWorkspace registering source: com.apple.frontboard.systemappservices
-2026-11-11 06:07:02.740 Df MonsteraHello[18029:cf4b] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneOcclusionSettings> on FBSSceneSettings
-2026-11-11 06:07:02.740 Df MonsteraHello[18029:cf47] [com.apple.FrontBoard:Common] FBSWorkspace connected to endpoint : <BSServiceConnectionEndpoint: 0x60000020f760; target: com.apple.frontboard.systemappservices; service: com.apple.frontboard.workspace-service>
-2026-11-11 06:07:02.740 Df MonsteraHello[18029:cf47] [com.apple.FrontBoard:Common] <FBSWorkspaceScenesClient:0x600003000630 com.apple.frontboard.systemappservices> attempting immediate handshake from activate
-2026-11-11 06:07:02.741 Df MonsteraHello[18029:cf47] [com.apple.FrontBoard:Common] <FBSWorkspaceScenesClient:0x600003000630 com.apple.frontboard.systemappservices> sent handshake
-2026-11-11 06:07:02.741 Df MonsteraHello[18029:cf4b] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneInterfaceProtectionSettings> on FBSSceneSettings
-2026-11-11 06:07:02.741 Df MonsteraHello[18029:cf47] [com.apple.runningboard:general] Added observer for process assertions expiration warning: <_RBSExpirationWarningClient: 0x600000210220>
-2026-11-11 06:07:02.742 Df MonsteraHello[18029:cf4b] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UISceneLayoutPreferencesHostSettingsExtension on FBSSceneSettings
-2026-11-11 06:07:02.743 Df MonsteraHello[18029:cf4b] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UISceneSafeAreaSettingsExtension on FBSSceneSettings
-2026-11-11 06:07:02.744 Df MonsteraHello[18029:cf4b] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UISceneLayoutPreferenceClientSettingsExtension on FBSSceneClientSettings
-2026-11-11 06:07:02.745 Df MonsteraHello[18029:cf4b] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UIHomeAffordanceHostSceneSettings> on FBSSceneSettings
-2026-11-11 06:07:02.745 Df MonsteraHello[18029:cf4b] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UISystemShellSceneHostingEnvironmentSettings on FBSSceneSettings
-2026-11-11 06:07:02.745 Df MonsteraHello[18029:cf4b] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UISceneRenderingEnvironmentSettings on FBSSceneSettings
-2026-11-11 06:07:02.745 Df MonsteraHello[18029:cf4b] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneRenderingEnvironmentClientSettings> on FBSSceneClientSettings
-2026-11-11 06:07:02.748 Df MonsteraHello[18029:cf4b] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneTransitioningHostSettings> on FBSSceneSettings
-2026-11-11 06:07:02.749 Df MonsteraHello[18029:cf4b] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneFocusSystemSettings> on FBSSceneSettings
-2026-11-11 06:07:02.749 Df MonsteraHello[18029:cf4b] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UISceneOrientationSettingsExtension on FBSSceneSettings
-2026-11-11 06:07:02.749 Df MonsteraHello[18029:cf4b] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UISceneOrientationClientSettingsExtension on FBSSceneClientSettings
+2026-11-11 06:28:50.988 Df MonsteraHello[4435:4cee] [com.apple.runningboard:connection] Initializing connection
+2026-11-11 06:28:50.988 Df MonsteraHello[4435:4cee] [com.apple.runningboard:process] Removing all cached process handles
+2026-11-11 06:28:50.988 I  MonsteraHello[4435:4cee] [com.apple.runningboard:assertion] Acquiring assertion: <RBSAssertionDescriptor| "Shared Background Assertion 0 for app.monstera.hello" ID:(null) target:4435>
+2026-11-11 06:28:50.992 Df MonsteraHello[4435:4cf4] [com.apple.runningboard:connection] Sending handshake request attempt #1 to server
+2026-11-11 06:28:50.994 Df MonsteraHello[4435:4cee] [com.apple.runningboard:connection] Creating connection to com.apple.runningboard
+2026-11-11 06:28:50.994 Df MonsteraHello[4435:4cee] [com.apple.xpc:connection] [0x1032068c0] activating connection: mach=true listener=false peer=false name=com.apple.runningboard
+2026-11-11 06:28:50.996 Df MonsteraHello[4435:4cf4] [com.apple.runningboard:connection] Handshake succeeded
+2026-11-11 06:28:50.996 Df MonsteraHello[4435:4cf4] [com.apple.runningboard:connection] Identity resolved as app<app.monstera.hello((null))>
+2026-11-11 06:28:50.997 Df MonsteraHello[4435:4cee] [com.apple.UIKit:BackgroundTask] Created background task <_UIBackgroundTaskInfo: 0x600001701b40>: taskID = 1, taskName = Launch Background Task for Coalescing, creationTime = 314 (elapsed = 0).
+2026-11-11 06:28:50.998 Df MonsteraHello[4435:4cea] [com.apple.runningboard:general] Added observer for process assertions expiration warning: <_RBSExpirationWarningClient: 0x600000211220>
+2026-11-11 06:28:51.019 A  MonsteraHello[4435:4cf6] (RunningBoardServices) didChangeInheritances
+2026-11-11 06:28:51.559 Df MonsteraHello[4435:4cea] [com.apple.UIKit:BackgroundTask] Ending task with identifier 1 and description: <_UIBackgroundTaskInfo: 0x600001701b40>: taskID = 1, taskName = Launch Background Task for Coalescing, creationTime = 314 (elapsed = 1), _expireHandler: (null)
+2026-11-11 06:28:51.559 Df MonsteraHello[4435:4cea] [com.apple.UIKit:BackgroundTask] Decrementing reference count for assertion <BKSProcessAssertion: 0x600002104230> (used by background task with identifier 1: <_UIBackgroundTaskInfo: 0x600001701b40>: taskID = 1, taskName = Launch Background Task for Coalescing, creationTime = 314 (elapsed = 1))
+2026-11-11 06:28:51.560 E  MonsteraHello[4435:4cf4] [com.apple.app_launch_measurement:General] Failed to send CA Event for app launch measurements for ca_event_type: 0 event_name: com.apple.app_launch_measurement.FirstFramePresentationMetric
+2026-11-11 06:28:51.567 A  MonsteraHello[4435:4cee] (RunningBoardServices) didChangeInheritances
+2026-11-11 06:28:51.571 I  MonsteraHello[4435:4cea] [app.monstera.hello:lifecycle] scenePhase: active
+2026-11-11 06:28:51.590 A  MonsteraHello[4435:4cf0] (RunningBoardServices) didChangeInheritances
+2026-11-11 06:28:52.193 A  MonsteraHello[4435:4cee] (RunningBoardServices) didChangeInheritances
+2026-11-11 06:28:52.313 E  MonsteraHello[4435:4cf1] [com.apple.app_launch_measurement:General] Failed to send CA Event for app launch measurements for ca_event_type: 1 event_name: com.apple.app_launch_measurement.ExtendedLaunchMetrics
