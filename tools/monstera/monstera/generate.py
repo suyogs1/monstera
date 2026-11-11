@@ -87,8 +87,8 @@ def owned_roots_for(layout: str, targets: list[str]) -> list[str]:
     raise ValueError(f"unknown layout {layout!r}")
 
 
-RUNTIME_KOTLIN = ("Fixed", "Prng", "Simulation", "Replay")
-RUNTIME_SWIFT = ("Fixed", "Prng", "Simulation", "Replay")
+RUNTIME_KOTLIN = ("Fixed", "Prng", "Simulation", "Replay", "GameLoop")
+RUNTIME_SWIFT = ("Fixed", "Prng", "Simulation", "Replay", "GameLoop")
 SCENARIOS_RESOURCE = "monstera-scenarios.txt"
 
 
@@ -167,6 +167,7 @@ def plan(spec: dict[str, Any], spec_path_label: str, store: SchemaStore,
         template("android/app/build.gradle.kts", "android/app/build.gradle.kts.tmpl")
         template("android/app/src/main/AndroidManifest.xml", "android/app/src/main/AndroidManifest.xml.tmpl")
         template(f"{kt_dir}/MainActivity.kt", "android/app/src/main/kotlin/MainActivity.kt.tmpl")
+        template(f"{kt_dir}/GameScreen.kt", "android/app/src/main/kotlin/GameScreen.kt.tmpl")
         static = TEMPLATES / "android" / "static"
         for src in sorted(p for p in static.rglob("*") if p.is_file()):
             rel = "android/" + src.relative_to(static).as_posix()
@@ -203,7 +204,7 @@ def plan(spec: dict[str, Any], spec_path_label: str, store: SchemaStore,
         template("ios/Info.plist", "ios/Info.plist.tmpl")
         template(f"{src_dir}/{product}App.swift", "ios/Sources/App.swift.tmpl")
         template(f"{src_dir}/ContentView.swift", "ios/Sources/ContentView.swift.tmpl")
-        template(f"{src_dir}/SpecScene.swift", "ios/Sources/SpecScene.swift.tmpl")
+        template(f"{src_dir}/GameScene.swift", "ios/Sources/GameScene.swift.tmpl")
         template(f"{src_dir}/SpecIntegrity.swift", "ios/Sources/SpecIntegrity.swift.tmpl")
         files.append(OutFile(f"{src_dir}/Resources/{SPEC_FILE}", canonical, "spec", "spec"))
         files.append(OutFile(f"{src_dir}/Generated/MonsteraSpec.swift",

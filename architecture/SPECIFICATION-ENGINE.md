@@ -87,7 +87,7 @@ generated/<project.id>/
             app/src/main/kotlin/<identifier path>/MainActivity.kt
             app/src/main/kotlin/<identifier path>/generated/{MonsteraSpec,GeneratedSpec}.kt
   ios/      Package.swift, xtool.yml, Info.plist
-            Sources/<Product>/{<Product>App,ContentView,SpecScene,SpecIntegrity}.swift
+            Sources/<Product>/{<Product>App,ContentView,GameScene,SpecIntegrity}.swift
             Sources/<Product>/Resources/monstera.spec.json           canonical copy
             Sources/<Product>/Generated/{MonsteraSpec,GeneratedSpec}.swift
 ```

@@ -45,6 +45,90 @@ final class ConformanceTests: XCTestCase {
         XCTAssertEqual(bounded.nextBelow(1 << 31), 1771058001)
     }
 
+    private func clockRun(_ rate: Int, _ max: Int, _ frames: [Int64]) -> ([Int], Int64, Int64) {
+        var c = FrameClock(tickRate: rate, maxTicksPerFrame: max)
+        let ticks = frames.map { c.advance($0) }
+        return (ticks, c.remainder, c.alpha)
+    }
+
+    func testFrameClockVectors() {
+        func check(_ got: ([Int], Int64, Int64), _ ticks: [Int], _ rem: Int64, _ alpha: Int64, line: UInt = #line) {
+            XCTAssertEqual(got.0, ticks, line: line)
+            XCTAssertEqual(got.1, rem, line: line)
+            XCTAssertEqual(got.2, alpha, line: line)
+        }
+        check(clockRun(60, 5, Array(repeating: 16666667, count: 4)), [1, 1, 1, 1], 80, 0)
+        check(clockRun(60, 5, Array(repeating: 16666666, count: 4)), [0, 1, 1, 1], 999999840, 65535)
+        check(clockRun(60, 5, Array(repeating: 8333333, count: 6)), [0, 0, 1, 0, 1, 0], 999999880, 65535)
+        check(clockRun(60, 5, [500000000, 16666667]), [5, 1], 20, 0)
+        check(clockRun(60, 5, [-5, 0, 2000000000]), [0, 0, 5], 0, 0)
+        check(clockRun(60, 5, [8333333]), [0], 499999980, 32767)
+        check(clockRun(120, 5, [8333334, 8333333, 8333333]), [1, 1, 1], 0, 0)
+        var x: Int64 = 12345
+        var frames: [Int64] = []
+        for _ in 0..<1000 {
+            x = (x * 1103515245 + 12345) & 0x7FFFFFFF
+            frames.append(4_000_000 + (x >> 8) % 36_000_000)
+        }
+        var c = FrameClock(tickRate: 60, maxTicksPerFrame: 5)
+        var total = 0
+        for f in frames { total += c.advance(f) }
+        XCTAssertEqual(total, 490)
+        XCTAssertEqual(c.remainder, 103339700)
+    }
+
+    private func idleReplayHash(_ seed: UInt64, _ ticks: Int) -> UInt64 {
+        replay(config: GeneratedRuntimeConfig.config, seed: seed, ticks: ticks, inputs: [], checkpointTicks: [ticks])[0].hash
+    }
+
+    private func newLoop(_ seed: UInt64, maxTicks: Int = GeneratedRuntimeConfig.maxTicksPerFrame) -> GameLoop {
+        GameLoop(world: World(config: GeneratedRuntimeConfig.config, seed: seed),
+                 tickRate: GeneratedRuntimeConfig.tickRate, maxTicksPerFrame: maxTicks)
+    }
+
+    func testIdleStateIsIndependentOfDisplayRateAndJitter() {
+        for hz in [30, 60, 90, 120, 144] {
+            var loop = newLoop(7)
+            var x = Int64(hz)
+            for i in 0..<400 {
+                x = (x * 1103515245 + 12345) & 0x7FFFFFFF
+                loop.frame(elapsedNanos: 1_000_000_000 / Int64(hz) + (x >> 8) % 2_000_000 - 1_000_000)
+                if i % 40 == 0 {
+                    XCTAssertEqual(loop.world.stateHash(), idleReplayHash(7, Int(loop.world.tick)), "hz=\(hz) frame=\(i)")
+                }
+            }
+        }
+    }
+
+    func testInputsApplyAtTheStartOfTheNextTickInOrder() {
+        var loop = newLoop(9)
+        var recorded: [TickInput] = []
+        var x: Int64 = 3
+        for i in 0..<600 {
+            var events: [InputEvent] = []
+            if i % 7 == 0 { events.append(InputEvent(.tap)) }
+            if i % 11 == 0 { events.append(InputEvent(.drag, dx: Int64((i % 13) - 6) * 65536, dy: 0)) }
+            for ev in events {
+                loop.submit(ev)
+                recorded.append(TickInput(tick: Int(loop.world.tick), events: [ev]))
+            }
+            x = (x * 1103515245 + 12345) & 0x7FFFFFFF
+            loop.frame(elapsedNanos: 10_000_000 + (x >> 8) % 25_000_000)
+        }
+        let ticks = Int(loop.world.tick)
+        XCTAssertGreaterThan(ticks, 100)
+        let want = replay(config: GeneratedRuntimeConfig.config, seed: 9, ticks: ticks, inputs: recorded,
+                          checkpointTicks: [ticks])[0].hash
+        XCTAssertEqual(loop.world.stateHash(), want)
+    }
+
+    func testHitchIsCappedAndBacklogDropped() {
+        let cap = GeneratedRuntimeConfig.maxTicksPerFrame
+        var loop = newLoop(1, maxTicks: cap)
+        XCTAssertEqual(loop.frame(elapsedNanos: 2_000_000_000), cap)
+        XCTAssertEqual(loop.frame(elapsedNanos: 1_000_000), 0)
+    }
+
     private struct Scenario {
         let name: String
         let seed: UInt64

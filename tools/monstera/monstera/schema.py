@@ -37,7 +37,7 @@ RESERVED_TYPE_NAMES = frozenset({
     "Color", "ContentView", "Data", "Date", "Dictionary", "Double", "Equatable", "Error", "Float",
     "GeneratedSpec", "Int", "List", "Logger", "Long", "MainActivity", "Map", "Never", "Nothing",
     "Object", "Optional", "Package", "Protocol", "Result", "Scene", "Self", "Sendable", "Set",
-    "SpecIntegrity", "SpecScene", "SpecScreen", "String", "Target", "Type", "Unit", "View", "Void",
+    "GameScene", "GameScreen", "SpecIntegrity", "SpecScene", "SpecScreen", "String", "Target", "Type", "Unit", "View", "Void",
 })
 # Kotlin hard keywords plus Swift keywords: illegal (or needing escapes) as property names.
 FIELD_KEYWORDS = frozenset("""

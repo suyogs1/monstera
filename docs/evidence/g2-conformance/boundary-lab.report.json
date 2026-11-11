@@ -6,14 +6,14 @@
       "status": "pass"
     },
     {
-      "detail": "cmd /c gradlew.bat --no-daemon --console=plain cleanTestDebugUnitTest testDebugUnitTest (cwd android) exit 0",
+      "detail": "cmd /c gradlew.bat --no-daemon --console=plain cleanTestDebugUnitTest testDebugUnitTest (cwd android) exit 1",
       "platform": "kotlin",
-      "status": "pass"
+      "status": "fail"
     },
     {
-      "detail": "docker run swift:6.1-noble swift test (package ios/Runtime) exit 0",
+      "detail": "docker run swift:6.1-noble swift test (package ios/Runtime) exit 1",
       "platform": "swift",
-      "status": "pass"
+      "status": "fail"
     }
   ],
   "reportVersion": 1,
@@ -23,8 +23,12 @@
       "sha256": "cffb9781c6695667ffa6f383426c0324ec26d422f540585319d0966ea1aa5b8a"
     },
     {
+      "path": "android/app/src/main/kotlin/app/monstera/boundarylab/runtime/GameLoop.kt",
+      "sha256": "b9ce7c455353e0d6cf9eae454db188be497d9897d332eae07e101eedcd16ae28"
+    },
+    {
       "path": "android/app/src/main/kotlin/app/monstera/boundarylab/runtime/GeneratedRuntimeConfig.kt",
-      "sha256": "e22d5c9ed731755fa5181c9730a486036ec1de4f21f473ca5ef1d82b2c32bfc0"
+      "sha256": "66d874e64f93da8ae994dc9cab4c8dd0f97fddb4c40d0d7ce8fb60c804c0b334"
     },
     {
       "path": "android/app/src/main/kotlin/app/monstera/boundarylab/runtime/Prng.kt",
@@ -36,11 +40,11 @@
     },
     {
       "path": "android/app/src/main/kotlin/app/monstera/boundarylab/runtime/Simulation.kt",
-      "sha256": "4f8c32a86c5d4fae06946cf193dedc75d4a99410cfc607a9396dbd0a56ba12ac"
+      "sha256": "913f3d5418089d3aebaa929e2aa61c272a06694a3bd52bf3fd98d626ee6f4c59"
     },
     {
       "path": "android/app/src/test/kotlin/app/monstera/boundarylab/runtime/ConformanceTest.kt",
-      "sha256": "0e69991f1dcef946bc4b825693cce535b45b5f8b0b607c876f814b6c305ecb9c"
+      "sha256": "1b7d7860c5f23a01ee316d587afebeed33feb27e992a5fde0b0d010d2695d635"
     },
     {
       "path": "ios/Runtime/Package.swift",
@@ -51,8 +55,12 @@
       "sha256": "e21417e76f2c8b5ad51e0d514119564f704d68077b745f018c2d14783903d491"
     },
     {
+      "path": "ios/Runtime/Sources/MonsteraRuntime/GameLoop.swift",
+      "sha256": "12f78be1b50d017ef611f60a0745b8114f2d5af4ec5ecb3ea92941d72ee334b3"
+    },
+    {
       "path": "ios/Runtime/Sources/MonsteraRuntime/GeneratedRuntimeConfig.swift",
-      "sha256": "9dcfeddeca63c8a2247ac4b20c70dd812ff223d81e3a49ebd97340de2e93fb3e"
+      "sha256": "4aa4bec7ecc61ee9dd3d183bfc6a7f40a12a047131bf27164de3ec8e15d7d0c6"
     },
     {
       "path": "ios/Runtime/Sources/MonsteraRuntime/Prng.swift",
@@ -68,7 +76,7 @@
     },
     {
       "path": "ios/Runtime/Tests/MonsteraRuntimeTests/ConformanceTests.swift",
-      "sha256": "23bc4e363e50d16c6adaebc3ace128cc368655730d5c89b671c76ddba4846d68"
+      "sha256": "2f1b708f9b46e97a9009312c7bb60c0c6d97cb7167be293596e4ed024a0af5bb"
     },
     {
       "path": "ios/Runtime/Tests/MonsteraRuntimeTests/Resources/monstera-scenarios.txt",
@@ -210,5 +218,5 @@
     }
   ],
   "specSha256": "f8507b7ea40f3b4e840352118a1f08103338e126439b0096504c3dc6d5c1efc9",
-  "verdict": "pass"
+  "verdict": "fail"
 }

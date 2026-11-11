@@ -38,8 +38,15 @@
     {
       "kind": "template",
       "mode": "644",
+      "path": "android/app/src/main/kotlin/app/monstera/boundarylab/GameScreen.kt",
+      "sha256": "fa697ee81f4a0c83ffdcea298ef2087aa76d3f91646a75d80c0ed9438590ec6d",
+      "source": "templates/android/app/src/main/kotlin/GameScreen.kt.tmpl"
+    },
+    {
+      "kind": "template",
+      "mode": "644",
       "path": "android/app/src/main/kotlin/app/monstera/boundarylab/MainActivity.kt",
-      "sha256": "e7cd750e31ae6b1708ac7007fbc0c049c8aba781a2f2af1934c6811073dda318",
+      "sha256": "8c52ea423ad9ca174ccb2ee1cce5b9bccaa38bc99af15e42bf508eff98915f10",
       "source": "templates/android/app/src/main/kotlin/MainActivity.kt.tmpl"
     },
     {
@@ -64,10 +71,17 @@
       "source": "templates/android/runtime/Fixed.kt.tmpl"
     },
     {
+      "kind": "template",
+      "mode": "644",
+      "path": "android/app/src/main/kotlin/app/monstera/boundarylab/runtime/GameLoop.kt",
+      "sha256": "b9ce7c455353e0d6cf9eae454db188be497d9897d332eae07e101eedcd16ae28",
+      "source": "templates/android/runtime/GameLoop.kt.tmpl"
+    },
+    {
       "kind": "model",
       "mode": "644",
       "path": "android/app/src/main/kotlin/app/monstera/boundarylab/runtime/GeneratedRuntimeConfig.kt",
-      "sha256": "e22d5c9ed731755fa5181c9730a486036ec1de4f21f473ca5ef1d82b2c32bfc0",
+      "sha256": "66d874e64f93da8ae994dc9cab4c8dd0f97fddb4c40d0d7ce8fb60c804c0b334",
       "source": "spec"
     },
     {
@@ -88,14 +102,14 @@
       "kind": "template",
       "mode": "644",
       "path": "android/app/src/main/kotlin/app/monstera/boundarylab/runtime/Simulation.kt",
-      "sha256": "4f8c32a86c5d4fae06946cf193dedc75d4a99410cfc607a9396dbd0a56ba12ac",
+      "sha256": "913f3d5418089d3aebaa929e2aa61c272a06694a3bd52bf3fd98d626ee6f4c59",
       "source": "templates/android/runtime/Simulation.kt.tmpl"
     },
     {
       "kind": "template",
       "mode": "644",
       "path": "android/app/src/test/kotlin/app/monstera/boundarylab/runtime/ConformanceTest.kt",
-      "sha256": "0e69991f1dcef946bc4b825693cce535b45b5f8b0b607c876f814b6c305ecb9c",
+      "sha256": "1b7d7860c5f23a01ee316d587afebeed33feb27e992a5fde0b0d010d2695d635",
       "source": "templates/android/runtime/ConformanceTest.kt.tmpl"
     },
     {
@@ -183,10 +197,17 @@
       "source": "templates/ios/Runtime/Fixed.swift.tmpl"
     },
     {
+      "kind": "template",
+      "mode": "644",
+      "path": "ios/Runtime/Sources/MonsteraRuntime/GameLoop.swift",
+      "sha256": "12f78be1b50d017ef611f60a0745b8114f2d5af4ec5ecb3ea92941d72ee334b3",
+      "source": "templates/ios/Runtime/GameLoop.swift.tmpl"
+    },
+    {
       "kind": "model",
       "mode": "644",
       "path": "ios/Runtime/Sources/MonsteraRuntime/GeneratedRuntimeConfig.swift",
-      "sha256": "9dcfeddeca63c8a2247ac4b20c70dd812ff223d81e3a49ebd97340de2e93fb3e",
+      "sha256": "4aa4bec7ecc61ee9dd3d183bfc6a7f40a12a047131bf27164de3ec8e15d7d0c6",
       "source": "spec"
     },
     {
@@ -214,7 +235,7 @@
       "kind": "template",
       "mode": "644",
       "path": "ios/Runtime/Tests/MonsteraRuntimeTests/ConformanceTests.swift",
-      "sha256": "23bc4e363e50d16c6adaebc3ace128cc368655730d5c89b671c76ddba4846d68",
+      "sha256": "2f1b708f9b46e97a9009312c7bb60c0c6d97cb7167be293596e4ed024a0af5bb",
       "source": "templates/ios/Runtime/ConformanceTests.swift.tmpl"
     },
     {
@@ -235,8 +256,15 @@
       "kind": "template",
       "mode": "644",
       "path": "ios/Sources/BoundaryLab/ContentView.swift",
-      "sha256": "7c8d35d4090a39fddcda9e25fb3a85b714e6243e474408b65a7e975d45229b88",
+      "sha256": "33ac58a8bc0f7ccc97002ce9761f2e6ad6bcbcdd85709041fe6f0d37731bef26",
       "source": "templates/ios/Sources/ContentView.swift.tmpl"
+    },
+    {
+      "kind": "template",
+      "mode": "644",
+      "path": "ios/Sources/BoundaryLab/GameScene.swift",
+      "sha256": "1e30363a0b77378dcc3c81453eb40a014efd01eef1bc6db4a3bf16cb3ed903a5",
+      "source": "templates/ios/Sources/GameScene.swift.tmpl"
     },
     {
       "kind": "model",
@@ -265,13 +293,6 @@
       "path": "ios/Sources/BoundaryLab/SpecIntegrity.swift",
       "sha256": "29a96d0f775e177e31fa895e7b10ec612710cecfddb0ac52800358afd8ed8176",
       "source": "templates/ios/Sources/SpecIntegrity.swift.tmpl"
-    },
-    {
-      "kind": "template",
-      "mode": "644",
-      "path": "ios/Sources/BoundaryLab/SpecScene.swift",
-      "sha256": "e1b5853af26433e87278968e1b3a1243990e9caf71a59deaa3b8159c95839fde",
-      "source": "templates/ios/Sources/SpecScene.swift.tmpl"
     },
     {
       "kind": "template",

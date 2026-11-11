@@ -33,6 +33,8 @@ data class RuntimeConfig(
 
 data class InputEvent(val type: InputType, val dx: Long = 0L, val dy: Long = 0L, val dir: Direction = Direction.NONE)
 
+data class EntityView(val id: UInt, val kind: Int, val x: Long, val y: Long, val vx: Long, val vy: Long)
+
 class Entity(
     val id: UInt, val kind: Int, val controlled: Boolean,
     var x: Long, var y: Long, var vx: Long, var vy: Long, var age: UInt = 0u,
@@ -56,6 +58,9 @@ class World(val config: RuntimeConfig, seed: ULong) {
         private set
     private var entities: List<Entity> = emptyList()
     val entityCount: Int get() = entities.size
+
+    /** Immutable copy of the live entities in id order, for rendering. */
+    fun snapshot(): List<EntityView> = entities.map { EntityView(it.id, it.kind, it.x, it.y, it.vx, it.vy) }
 
     private val kindIndex: Map<String, Int> = config.kinds.mapIndexed { i, k -> k.id to i }.toMap()
     // Stream names are ASCII by schema pattern, so String order equals UTF-8 byte order.

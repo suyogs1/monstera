@@ -54,6 +54,82 @@ class ConformanceTest {
         assertEquals(1771058001u, bounded.nextBelow(1u shl 31))
     }
 
+    private fun clockRun(rate: Int, max: Int, frames: List<Long>): Triple<List<Int>, Long, Long> {
+        val c = FrameClock(rate, max)
+        val ticks = frames.map { c.advance(it) }
+        return Triple(ticks, c.remainder, c.alpha)
+    }
+
+    @Test
+    fun frameClockVectors() {
+        assertEquals(Triple(listOf(1, 1, 1, 1), 80L, 0L), clockRun(60, 5, List(4) { 16666667L }))
+        assertEquals(Triple(listOf(0, 1, 1, 1), 999999840L, 65535L), clockRun(60, 5, List(4) { 16666666L }))
+        assertEquals(Triple(listOf(0, 0, 1, 0, 1, 0), 999999880L, 65535L), clockRun(60, 5, List(6) { 8333333L }))
+        assertEquals(Triple(listOf(5, 1), 20L, 0L), clockRun(60, 5, listOf(500000000L, 16666667L)))
+        assertEquals(Triple(listOf(0, 0, 5), 0L, 0L), clockRun(60, 5, listOf(-5L, 0L, 2000000000L)))
+        assertEquals(Triple(listOf(0), 499999980L, 32767L), clockRun(60, 5, listOf(8333333L)))
+        assertEquals(Triple(listOf(1, 1, 1), 0L, 0L), clockRun(120, 5, listOf(8333334L, 8333333L, 8333333L)))
+        var x = 12345L
+        val frames = List(1000) {
+            x = (x * 1103515245L + 12345L) and 0x7FFFFFFFL
+            4_000_000L + (x shr 8) % 36_000_000L
+        }
+        val c = FrameClock(60, 5)
+        assertEquals(490, frames.sumOf { c.advance(it) })
+        assertEquals(103339700L, c.remainder)
+    }
+
+    private fun idleReplayHash(seed: ULong, ticks: Int): ULong =
+        replay(GeneratedRuntimeConfig.config, seed, ticks, emptyList(), listOf(ticks)).single().hash
+
+    private fun newLoop(seed: ULong, maxTicks: Int = GeneratedRuntimeConfig.MAX_TICKS_PER_FRAME) =
+        GameLoop(World(GeneratedRuntimeConfig.config, seed), GeneratedRuntimeConfig.TICK_RATE, maxTicks)
+
+    @Test
+    fun idleStateIsIndependentOfDisplayRateAndJitter() {
+        for (hz in listOf(30, 60, 90, 120, 144)) {
+            val loop = newLoop(7uL)
+            var x = hz.toLong()
+            for (i in 0 until 400) {
+                x = (x * 1103515245L + 12345L) and 0x7FFFFFFFL
+                loop.frame(1_000_000_000L / hz + (x shr 8) % 2_000_000L - 1_000_000L)
+                if (i % 40 == 0) {
+                    assertEquals("hz=$hz frame=$i", idleReplayHash(7uL, loop.world.tick.toInt()), loop.world.stateHash())
+                }
+            }
+        }
+    }
+
+    @Test
+    fun inputsApplyAtTheStartOfTheNextTickInOrder() {
+        val loop = newLoop(9uL)
+        val recorded = ArrayList<TickInput>()
+        var x = 3L
+        for (i in 0 until 600) {
+            val events = ArrayList<InputEvent>()
+            if (i % 7 == 0) events.add(InputEvent(InputType.TAP))
+            if (i % 11 == 0) events.add(InputEvent(InputType.DRAG, ((i % 13) - 6) * 65536L, 0L))
+            for (ev in events) {
+                loop.submit(ev)
+                recorded.add(TickInput(loop.world.tick.toInt(), listOf(ev)))
+            }
+            x = (x * 1103515245L + 12345L) and 0x7FFFFFFFL
+            loop.frame(10_000_000L + (x shr 8) % 25_000_000L)
+        }
+        val ticks = loop.world.tick.toInt()
+        assertTrue(ticks > 100)
+        val want = replay(GeneratedRuntimeConfig.config, 9uL, ticks, recorded, listOf(ticks)).single().hash
+        assertEquals(want, loop.world.stateHash())
+    }
+
+    @Test
+    fun hitchIsCappedAndBacklogDropped() {
+        val cap = GeneratedRuntimeConfig.MAX_TICKS_PER_FRAME
+        val loop = newLoop(1uL, cap)
+        assertEquals(cap, loop.frame(2_000_000_000L))
+        assertEquals(0, loop.frame(1_000_000L))
+    }
+
     private class Scenario(val name: String, val seed: ULong, val ticks: Int) {
         val inputs = ArrayList<TickInput>()
         val expected = ArrayList<Checkpoint>()

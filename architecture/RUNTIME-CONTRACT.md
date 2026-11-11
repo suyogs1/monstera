@@ -7,12 +7,39 @@ document is right and the code has a bug. Kiro Spec: `.kiro/specs/g2-determinist
 The core is platform-free: no Android, UIKit, SpriteKit or Compose imports, no floating-point types,
 no clock, no system randomness, no locale, no hash-ordered iteration. The shell renders and feeds input.
 
-## 1. Time
+## 1. Time and the frame loop
 
-One tick is one step of the core. `game.simulation.tickRate` ticks per second. The shell keeps an
-accumulator, runs 0..`maxTicksPerFrame` ticks per frame, and may interpolate for display only; nothing
-flows back into the core. Velocities are world units **per tick**.
+One tick is one step of the core, `game.simulation.tickRate` ticks per second. Velocities are world units **per tick**.
+The shell measures wall-clock time and nothing else; how many ticks run is decided by the core's `FrameClock`
+in exact integer arithmetic, so the number of ticks for a given sequence of frame durations is identical on every
+platform.
 
+`FrameClock(tickRate, maxTicksPerFrame)` keeps `acc`, an integer in units of `1/(10^9 * tickRate)` seconds, starting at 0.
+`advance(elapsedNanos)`:
+
+```
+e = clamp(elapsedNanos, 0, 1_000_000_000)      # negative counts as 0; a longer frame counts as one second
+acc += e * tickRate
+ticks = acc / 1_000_000_000 ; acc = acc mod 1_000_000_000
+return min(ticks, maxTicksPerFrame)             # ticks beyond the cap are DROPPED (the backlog is discarded)
+alpha = (acc << 16) / 1_000_000_000             # Q16.16 in [0, 65535], for render interpolation only
+```
+
+`GameLoop(world, ...)` queues input events (`submit`), and each frame runs `advance` ticks. The queued events are
+applied at the start of the **first** tick of the frame, in submission order; if no tick runs, they stay queued.
+Rendering may interpolate with `alpha` using floating point in the shell; nothing flows back into the core.
+A frame that runs zero ticks changes no simulation state.
+
+| Frames (ns) at tickRate 60, max 5 | Ticks per frame | Final `acc` | `alpha` |
+|---|---|---|---|
+| 16666667 x4 | 1 1 1 1 | 80 | 0 |
+| 16666666 x4 | 0 1 1 1 | 999999840 | 65535 |
+| 8333333 x6 (120 Hz) | 0 0 1 0 1 0 | 999999880 | 65535 |
+| 500000000, 16666667 | 5 1 | 20 | 0 |
+| -5, 0, 2000000000 | 0 0 5 | 0 | 0 |
+| 8333333 (single) | 0 | 499999980 | 32767 |
+| tickRate 120: 8333334, 8333333, 8333333 | 1 1 1 | 0 | 0 |
+| tickRate 60, 1000 frames, `x = x*1103515245+12345 & 0x7FFFFFFF` from 12345, `frame = 4000000 + (x >> 8) % 36000000` | 490 ticks total | 103339700 | - |
 ## 2. Fixed point (Q16.16)
 
 A quantity is a signed integer `raw`; the real value is `raw / 65536`. Storage is a 64-bit signed

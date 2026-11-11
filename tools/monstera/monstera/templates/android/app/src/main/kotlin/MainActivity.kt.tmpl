@@ -5,23 +5,8 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.unit.dp
 import @@{package}.generated.GeneratedSpec
-import @@{package}.generated.MonsteraSpec
 import java.security.MessageDigest
 
 private const val TAG = "MonsteraSpec"
@@ -33,7 +18,7 @@ class MainActivity : ComponentActivity() {
         Log.i(TAG, "spec sha256=${GeneratedSpec.SHA256} bundledMatches=$verified")
         setContent {
             MaterialTheme {
-                SpecScreen(GeneratedSpec.spec, verified)
+                GameScreen(GeneratedSpec.spec, verified)
             }
         }
     }
@@ -43,35 +28,5 @@ class MainActivity : ComponentActivity() {
         val bytes = assets.open(GeneratedSpec.SPEC_ASSET).use { it.readBytes() }
         val digest = MessageDigest.getInstance("SHA-256").digest(bytes)
         return digest.joinToString("") { "%02x".format(it) } == GeneratedSpec.SHA256
-    }
-}
-
-private fun hexColor(hex: String): Color = Color(0xFF000000 or hex.removePrefix("#").toLong(16))
-
-@Composable
-fun SpecScreen(spec: MonsteraSpec, verified: Boolean) {
-    val palette = spec.game.palette
-    val world = spec.game.world
-    Box(modifier = Modifier.fillMaxSize()) {
-        Canvas(modifier = Modifier.fillMaxSize()) {
-            drawRect(hexColor(palette.background))
-            // Fit the logical world into the screen, preserving its aspect ratio.
-            val scale = minOf(size.width / world.width.toFloat(), size.height / world.height.toFloat())
-            val worldSize = Size(world.width.toFloat() * scale, world.height.toFloat() * scale)
-            val origin = Offset((size.width - worldSize.width) / 2f, (size.height - worldSize.height) / 2f)
-            drawRect(hexColor(palette.primary), topLeft = origin, size = worldSize, style = Stroke(width = 6f))
-            drawCircle(hexColor(palette.accent), radius = minOf(worldSize.width, worldSize.height) * 0.08f, center = center)
-        }
-        Column(
-            modifier = Modifier.align(Alignment.TopCenter).padding(top = 64.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Text(spec.project.displayName, color = Color.White, style = MaterialTheme.typography.headlineMedium)
-            Text("${spec.game.genre.value} · ${spec.game.orientation.value} · ${spec.game.targetFps} fps", color = Color.White)
-            Text(
-                "spec ${GeneratedSpec.SHA256.take(12)} " + if (verified) "verified" else "MISMATCH",
-                color = Color.White,
-            )
-        }
     }
 }

@@ -2,6 +2,9 @@
 
 /// The runtime configuration of the canonical specification this app was generated from.
 public enum GeneratedRuntimeConfig {
+    public static let tickRate = 60
+    public static let maxTicksPerFrame = 5
+
     public static let config = RuntimeConfig(
         worldWidth: 26214400,
         worldHeight: 19660800,

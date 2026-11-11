@@ -5,13 +5,13 @@ import SwiftUI
 struct ContentView: View {
     private let spec = GeneratedSpec.spec
     private let integrity = SpecIntegrity.check()
-    @State private var scene = SpecScene(spec: GeneratedSpec.spec)
+    @State private var scene = GameScene(spec: GeneratedSpec.spec)
 
     var body: some View {
         ZStack(alignment: .top) {
             SpriteView(scene: scene, preferredFramesPerSecond: spec.game.targetFps)
                 .ignoresSafeArea()
-                .accessibilityLabel("Specification preview: world bounds and accent marker")
+                .accessibilityLabel("Game view")
             VStack(spacing: 6) {
                 Text(spec.project.displayName)
                     .font(.title.bold())

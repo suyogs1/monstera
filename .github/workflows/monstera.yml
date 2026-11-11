@@ -135,6 +135,8 @@ jobs:
           bash $A stop
           bash $A report
           grep -E "bundledMatches=true decodedMatches=true" device-lab/reports/runs/*/ios-simulator/logs.txt
+          # The fixed-tick GameLoop ran in the simulator: at least 60 ticks within the 5 s wait.
+          grep -E "runtime ticks=[0-9]+ hash=[0-9a-f]{16} seed=" device-lab/reports/runs/*/ios-simulator/logs.txt
       - name: Upload Device Lab run (evidence only, no .app)
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2

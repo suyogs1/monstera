@@ -3,6 +3,9 @@ package app.monstera.sample.runtime
 
 /** The runtime configuration of the canonical specification this app was generated from. */
 object GeneratedRuntimeConfig {
+    const val TICK_RATE: Int = 60
+    const val MAX_TICKS_PER_FRAME: Int = 5
+
     val config: RuntimeConfig = RuntimeConfig(
         worldWidth = 70778880L,
         worldHeight = 125829120L,
