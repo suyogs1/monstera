@@ -127,6 +127,9 @@ def scenarios_text(scenarios: list[dict[str, Any]]) -> str:
     lines = ["# GENERATED conformance scenarios - do not edit", "monstera-scenarios 1"]
     for sc in scenarios:
         lines.append(f"scenario {sc['name']} {sc['seed']} {sc['ticks']}")
+        fr = sc["frames"]
+        if fr["count"] > 0:
+            lines.append(f"frames {fr['count']} {fr['seed']} {fr['minNanos']} {fr['maxNanos']}")
         for step in sc["inputs"]:
             for ev in step["events"]:
                 lines.append(f"input {step['tick']} {ev['type']} {ev['dx']} {ev['dy']} {ev['dir']}")

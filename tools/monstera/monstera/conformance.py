@@ -20,7 +20,6 @@ from .jsonio import sha256_hex
 from .schema import SchemaStore
 
 PLATFORMS = ("oracle", "kotlin", "swift")
-DEFAULT_SWIFT_IMAGE = "swift:6.1-noble"
 ENV_OUT = "MONSTERA_CONFORMANCE_OUT"
 
 
@@ -96,7 +95,8 @@ def _swift(gen: Path, out_file: Path, image: str | None) -> tuple[str, str]:
         if not shutil.which("docker"):
             return "skipped", "docker not found"
         with tempfile.TemporaryDirectory() as tmp:
-            cmd = ["docker", "run", "--rm", "-v", f"{pkg.resolve()}:/pkg", "-v", f"{tmp}:/out",
+            # Read-only source, writable results directory only, no network for the container.
+            cmd = ["docker", "run", "--rm", "--network", "none", "-v", f"{pkg.resolve()}:/pkg:ro", "-v", f"{tmp}:/out",
                    "-e", f"{ENV_OUT}=/out/result.jsonl", "-w", "/pkg", image,
                    "swift", "test", "--scratch-path", "/tmp/build"]
             try:
@@ -123,6 +123,8 @@ def _swift(gen: Path, out_file: Path, image: str | None) -> tuple[str, str]:
 def run(gen: Path, store: SchemaStore, platforms: list[str], swift_image: str | None = None) -> dict[str, Any]:
     if not platforms or set(platforms) - set(PLATFORMS):
         raise ConformanceError(f"platforms must be a non-empty subset of {list(PLATFORMS)}")
+    if swift_image == "toolchain":  # the image pinned in toolchain.json
+        swift_image = generate.toolchain()["ios"]["swiftConformanceImage"]
     if swift_image is not None and not SWIFT_IMAGE.fullmatch(swift_image):
         raise ConformanceError("swift_image must look like swift:6.1-noble (official Swift image tags only)")
     manifest = generate.read_manifest(gen)

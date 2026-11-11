@@ -12,13 +12,15 @@ import java.security.MessageDigest
 private const val TAG = "MonsteraSpec"
 
 class MainActivity : ComponentActivity() {
+    private val session = GameSession.start()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val verified = bundledSpecMatches()
         Log.i(TAG, "spec sha256=${GeneratedSpec.SHA256} bundledMatches=$verified")
         setContent {
             MaterialTheme {
-                GameScreen(GeneratedSpec.spec, verified)
+                GameScreen(GeneratedSpec.spec, verified, session)
             }
         }
     }

@@ -1334,6 +1334,12 @@
     }
   ],
   "description": "80 taps in a single tick hit maxEntities; skipped spawns must still consume the PRNG draws, and spawning resumes once bullets expire.",
+  "frames": {
+    "count": 0,
+    "maxNanos": 0,
+    "minNanos": 0,
+    "seed": 0
+  },
   "inputs": [
     {
       "events": [

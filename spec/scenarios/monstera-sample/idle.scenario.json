@@ -1214,6 +1214,12 @@
     }
   ],
   "description": "No input for 600 ticks: two PRNG streams, spawning, ball bounce, clamped drifter at saturated velocity, enemies hitting the idle player.",
+  "frames": {
+    "count": 0,
+    "maxNanos": 0,
+    "minNanos": 0,
+    "seed": 0
+  },
   "inputs": [],
   "name": "idle",
   "scenarioVersion": 1,

@@ -15,15 +15,18 @@ public enum Fx {
     /// Saturates an exact sum to int32 (score and lives counters).
     public static func sat32(_ v: Int64) -> Int64 { sat(v) }
 
-    public static func add(_ a: Int64, _ b: Int64) -> Int64 { sat(a + b) }
-    public static func sub(_ a: Int64, _ b: Int64) -> Int64 { sat(a - b) }
-    public static func neg(_ a: Int64) -> Int64 { sat(-a) }
+    // Operands are saturated first: a shell is not trusted to supply in-range values.
+    public static func add(_ a: Int64, _ b: Int64) -> Int64 { sat(sat(a) + sat(b)) }
+    public static func sub(_ a: Int64, _ b: Int64) -> Int64 { sat(sat(a) - sat(b)) }
+    public static func neg(_ a: Int64) -> Int64 { sat(-sat(a)) }
 
     /// (a * b) >> 16 with an arithmetic shift: rounds toward negative infinity.
-    public static func mul(_ a: Int64, _ b: Int64) -> Int64 { sat((a * b) >> fracBits) }
+    public static func mul(_ a: Int64, _ b: Int64) -> Int64 { sat((sat(a) * sat(b)) >> fracBits) }
 
     /// trunc((a << 16) / b), rounding toward zero. Division by zero saturates by the sign of `a`.
-    public static func div(_ a: Int64, _ b: Int64) -> Int64 {
+    public static func div(_ a0: Int64, _ b0: Int64) -> Int64 {
+        let a = sat(a0)
+        let b = sat(b0)
         if b == 0 { return a > 0 ? rawMax : (a < 0 ? rawMin : 0) }
         return sat((a << fracBits) / b)  // Swift integer division truncates toward zero
     }

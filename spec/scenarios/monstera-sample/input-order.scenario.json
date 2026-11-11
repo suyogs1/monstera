@@ -1454,6 +1454,12 @@
     }
   ],
   "description": "Several events in one tick (drag, tap, drag, tap, swipe) are applied in listed order, so the two bullets spawn at different x; later swipes retarget velocity.",
+  "frames": {
+    "count": 0,
+    "maxNanos": 0,
+    "minNanos": 0,
+    "seed": 0
+  },
   "inputs": [
     {
       "events": [

@@ -1214,6 +1214,12 @@
     }
   ],
   "description": "3000 ticks with only press/release: the state hash must follow the PRNG streams exactly, including the pressed flag.",
+  "frames": {
+    "count": 0,
+    "maxNanos": 0,
+    "minNanos": 0,
+    "seed": 0
+  },
   "inputs": [
     {
       "events": [

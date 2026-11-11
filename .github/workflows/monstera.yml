@@ -157,9 +157,9 @@ jobs:
       - name: Golden scenarios equal a fresh oracle run
         run: bash tools/monstera/bin/monstera validate-scenario --all --oracle
       - name: Conformance, monstera-sample (oracle, Kotlin JVM, Swift in container)
-        run: bash tools/monstera/bin/monstera conformance generated/monstera-sample --swift-image swift:6.1-noble --report "$RUNNER_TEMP/conformance-sample.json"
+        run: bash tools/monstera/bin/monstera conformance generated/monstera-sample --swift-image toolchain --report "$RUNNER_TEMP/conformance-sample.json"
       - name: Conformance, boundary-lab (oracle, Kotlin JVM, Swift in container)
-        run: bash tools/monstera/bin/monstera conformance generated/boundary-lab --swift-image swift:6.1-noble --report "$RUNNER_TEMP/conformance-lab.json"
+        run: bash tools/monstera/bin/monstera conformance generated/boundary-lab --swift-image toolchain --report "$RUNNER_TEMP/conformance-lab.json"
       - name: Upload conformance reports
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2

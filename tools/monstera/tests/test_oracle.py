@@ -78,6 +78,12 @@ class FixedPoint(unittest.TestCase):
             for v in (fx.mul(a, b), fx.add(a, b), fx.sub(a, b), fx.div(a, b)):
                 self.assertTrue(fx.RAW_MIN <= v <= fx.RAW_MAX)
 
+    def test_operands_outside_the_range_are_saturated_first(self) -> None:
+        i64_max, i64_min = 2 ** 63 - 1, -(2 ** 63)
+        self.assertEqual((fx.add(i64_max, 1), fx.sub(i64_min, i64_max), fx.neg(i64_min)), (fx.RAW_MAX, fx.RAW_MIN, fx.RAW_MAX))
+        self.assertEqual((fx.mul(i64_max, i64_max), fx.mul(i64_min, fx.ONE), fx.div(i64_max, 1), fx.div(1, i64_min)),
+                         (fx.RAW_MAX, fx.RAW_MIN, fx.RAW_MAX, 0))
+
     def test_products_fit_signed_64_bit(self) -> None:
         self.assertLessEqual(abs(fx.RAW_MIN * fx.RAW_MIN), 2 ** 62)
 

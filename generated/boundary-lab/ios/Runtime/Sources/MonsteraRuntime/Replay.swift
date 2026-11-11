@@ -30,3 +30,37 @@ public func replay(config: RuntimeConfig, seed: UInt64, ticks: Int, inputs: [Tic
     }
     return out
 }
+
+/// Frame-driven scenario parameters: durations come from an LCG, see RUNTIME-CONTRACT section 7.
+public struct FrameSpec: Sendable {
+    public let count: Int
+    public let seed: Int64
+    public let minNanos: Int64
+    public let maxNanos: Int64
+    public init(count: Int, seed: Int64, minNanos: Int64, maxNanos: Int64) {
+        self.count = count; self.seed = seed; self.minNanos = minNanos; self.maxNanos = maxNanos
+    }
+}
+
+/// Drives a `GameLoop` with generated frame durations. `inputs[].tick` is a FRAME index: the events are
+/// submitted just before that frame. A checkpoint's `tick` is the number of frames completed.
+public func replayFrames(config: RuntimeConfig, seed: UInt64, tickRate: Int, maxTicksPerFrame: Int, frames: FrameSpec,
+                         inputs: [TickInput], checkpointFrames: [Int]) -> [Checkpoint] {
+    var loop = GameLoop(world: World(config: config, seed: seed), tickRate: tickRate, maxTicksPerFrame: maxTicksPerFrame)
+    var byFrame: [Int: [InputEvent]] = [:]
+    for item in inputs { byFrame[item.tick, default: []].append(contentsOf: item.events) }
+    let wanted = Set(checkpointFrames)
+    var out: [Checkpoint] = []
+    if wanted.contains(0) { out.append(Checkpoint(tick: 0, hash: loop.world.stateHash(), observe: loop.world.observe())) }
+    var x = frames.seed
+    let span = frames.maxNanos - frames.minNanos + 1
+    for i in 0..<frames.count {
+        x = (x * 1103515245 + 12345) & 0x7FFFFFFF
+        for event in byFrame[i] ?? [] { loop.submit(event) }
+        loop.frame(elapsedNanos: frames.minNanos + ((x * span) >> 31))
+        if wanted.contains(i + 1) {
+            out.append(Checkpoint(tick: i + 1, hash: loop.world.stateHash(), observe: loop.world.observe()))
+        }
+    }
+    return out
+}

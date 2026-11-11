@@ -1,0 +1,13 @@
+G2 negative proof for the fixed-tick frame loop (task 13, extended in task 14).
+A temporary copy of generated/monstera-sample (manifest + ios/) had FrameClock.advance changed to return all
+owed ticks instead of min(ticks, maxTicksPerFrame): the hitch cap removed. Nothing in the repository changed.
+
+  GameLoop.swift:  return Int(ticks > maxTicksPerFrame ? maxTicksPerFrame : ticks)   ->   return Int(ticks)
+
+Command: monstera conformance <copy> --platforms oracle,swift --swift-image toolchain --report report.json
+Observed: verdict FAIL. Only scenario loop-hitch failed (oracle and the other 10 scenarios passed), first divergence at
+frame 8 with differing observables tick, entityCount, nextId and the state hash. The Swift hand-written vector tests
+also failed (conformance-output.txt does not show them; they fail inside swift test).
+Finding that led here: the first version of this proof passed all scenarios, because the frame-duration generator
+(x >> 8) % span could not produce durations above ~8.4 ms. The generator was fixed and the scenarios re-recorded.
+Environment: Windows, Docker Desktop, swift:6.1-noble (pinned in toolchain.json), Python 3.14, 2026-11-11.

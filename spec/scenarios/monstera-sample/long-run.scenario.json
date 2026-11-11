@@ -1214,6 +1214,12 @@
     }
   ],
   "description": "10,000 ticks of pseudo-random drags and taps from a fixed LCG: long-horizon drift would show up as a hash mismatch.",
+  "frames": {
+    "count": 0,
+    "maxNanos": 0,
+    "minNanos": 0,
+    "seed": 0
+  },
   "inputs": [
     {
       "events": [

@@ -50,6 +50,12 @@
     }
   ],
   "description": "Boxes that touch exactly (edge, edge, corner) do not collide, overlap by one raw unit does, a zero-size box on a corner does not, identical boxes do.",
+  "frames": {
+    "count": 0,
+    "maxNanos": 0,
+    "minNanos": 0,
+    "seed": 0
+  },
   "inputs": [],
   "name": "touching-edges",
   "scenarioVersion": 1,

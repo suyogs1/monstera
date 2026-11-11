@@ -22,6 +22,14 @@ final class ConformanceTests: XCTestCase {
         XCTAssertEqual(Fx.neg(Fx.rawMin), Fx.rawMax)
         XCTAssertEqual(Fx.add(Fx.rawMax, 1), Fx.rawMax)
         XCTAssertEqual(Fx.sub(Fx.rawMin, 1), Fx.rawMin)
+        // Operands outside the raw range are saturated first: no wrap, no trap.
+        XCTAssertEqual(Fx.add(Int64.max, 1), Fx.rawMax)
+        XCTAssertEqual(Fx.sub(Int64.min, Int64.max), Fx.rawMin)
+        XCTAssertEqual(Fx.neg(Int64.min), Fx.rawMax)
+        XCTAssertEqual(Fx.mul(Int64.max, Int64.max), Fx.rawMax)
+        XCTAssertEqual(Fx.mul(Int64.min, 65536), Fx.rawMin)
+        XCTAssertEqual(Fx.div(Int64.max, 1), Fx.rawMax)
+        XCTAssertEqual(Fx.div(1, Int64.min), 0)
     }
 
     func testRandomnessVectors() {
@@ -63,6 +71,7 @@ final class ConformanceTests: XCTestCase {
         check(clockRun(60, 5, [500000000, 16666667]), [5, 1], 20, 0)
         check(clockRun(60, 5, [-5, 0, 2000000000]), [0, 0, 5], 0, 0)
         check(clockRun(60, 5, [8333333]), [0], 499999980, 32767)
+        check(clockRun(60, 100, [2000000000]), [60], 0, 0)
         check(clockRun(120, 5, [8333334, 8333333, 8333333]), [1, 1, 1], 0, 0)
         var x: Int64 = 12345
         var frames: [Int64] = []
@@ -134,6 +143,7 @@ final class ConformanceTests: XCTestCase {
         let name: String
         let seed: UInt64
         let ticks: Int
+        var frames: FrameSpec?
         var inputs: [TickInput] = []
         var expected: [Checkpoint] = []
     }
@@ -152,6 +162,8 @@ final class ConformanceTests: XCTestCase {
             switch p[0] {
             case "scenario":
                 current = Scenario(name: p[1], seed: UInt64(p[2])!, ticks: Int(p[3])!)
+            case "frames":
+                current!.frames = FrameSpec(count: Int(p[1])!, seed: Int64(p[2])!, minNanos: Int64(p[3])!, maxNanos: Int64(p[4])!)
             case "input":
                 let types: [String: InputType] = ["press": .press, "release": .release, "tap": .tap, "drag": .drag, "swipe": .swipe]
                 let dirs: [String: Direction] = ["none": .none, "up": .up, "down": .down, "left": .left, "right": .right]
@@ -186,8 +198,16 @@ final class ConformanceTests: XCTestCase {
         var lines: [String] = []
         var failures: [String] = []
         for sc in scenarios {
-            let got = replay(config: GeneratedRuntimeConfig.config, seed: sc.seed, ticks: sc.ticks,
-                             inputs: sc.inputs, checkpointTicks: sc.expected.map { $0.tick })
+            let checkpointTicks = sc.expected.map { $0.tick }
+            let got: [Checkpoint]
+            if let spec = sc.frames {
+                got = replayFrames(config: GeneratedRuntimeConfig.config, seed: sc.seed, tickRate: GeneratedRuntimeConfig.tickRate,
+                                   maxTicksPerFrame: GeneratedRuntimeConfig.maxTicksPerFrame, frames: spec,
+                                   inputs: sc.inputs, checkpointFrames: checkpointTicks)
+            } else {
+                got = replay(config: GeneratedRuntimeConfig.config, seed: sc.seed, ticks: sc.ticks,
+                             inputs: sc.inputs, checkpointTicks: checkpointTicks)
+            }
             for g in got {
                 lines.append("{\"platform\":\"swift\",\"scenario\":\"\(sc.name)\",\"tick\":\(g.tick),\"hash\":\"\(hex(g.hash))\","
                              + "\"observe\":[\(g.observe.map { String($0) }.joined(separator: ","))]}")

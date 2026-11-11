@@ -9,11 +9,11 @@ Status: **APPROVED 2026-11-11, in progress** (core, scenarios and conformance do
 - [x] 4. Scenario format: `scenario.schema.json`, loader and validator, `monstera validate-scenario`, `monstera scenarios record` (oracle only, explicit) [R8]
 - [x] 5. Kotlin core template + JVM conformance test template; generated `runtime/` package rule in `check-architecture` [R1–R6, R11, D3]
 - [x] 6. Swift `MonsteraRuntime` package template + `swift test` conformance tests; app package depends on it by local path [R1–R6, R11, D2]
-- [~] 7. (Linux `swift test` in swift:6.1-noble verified; app build with the local Runtime dependency on macOS/xtool NOT yet verified) **Validate D2 early:** xtool builds the app with the local runtime package; `swift test` passes on Linux `swift:6.4.2-noble` and on macOS (spike before tasks 5–6 finish)
-- [ ] 8. (open) Shells: Compose and SpriteKit frame loop with accumulator, interpolation, touch → input contract mapping [R1.2, R4.1–R4.2]
+- [x] 7. (verified: Linux `swift test`, macOS `swift test`, and the iOS app build with the local Runtime dependency in CI) **Validate D2 early:** xtool builds the app with the local runtime package; `swift test` passes on Linux `swift:6.4.2-noble` and on macOS (spike before tasks 5–6 finish)
+- [x] 8. Shells: Compose and SpriteKit frame loop with accumulator, interpolation, touch → input contract mapping [R1.2, R4.1–R4.2]
 - [x] 9. Conformance runner `monstera conformance` + `conformance.schema.json` report + provenance [R9]
 - [x] 10. Golden scenarios (≥ 6): idle, spawn determinism, collision resolution order, input ordering within a tick, saturation bounds, long run (10,000 ticks) [R8, R2, R3, R6]
-- [~] 11. (workflow written, not yet run on GitHub) CI: `conformance` job (Linux: oracle + Kotlin JVM + Swift Linux; macOS: Swift + simulator smoke) [R10.1]
+- [x] 11. CI (green on PR #4; see docs/G2-RUNTIME-REPORT.md): `conformance` job (Linux: oracle + Kotlin JVM + Swift Linux; macOS: Swift + simulator smoke) [R10.1]
 - [x] 12. Kiro: `run_conformance` MCP tool, workflow step update, `scenario-validate-on-save` hook [R10.2–R10.4]
 - [x] 13. Negative proof: inject a deliberate divergence (e.g. float in Swift core) in a test branch; conformance must fail with the right tick and field; record the evidence [R9.2]
 - [ ] 14. (open) Adversarial review (`monstera-adversarial-review`) and release verification (`monstera-release-verification`); `docs/G2-RUNTIME-REPORT.md` with labels and evidence [all]

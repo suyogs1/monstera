@@ -38,13 +38,16 @@ A frame that runs zero ticks changes no simulation state.
 | 500000000, 16666667 | 5 1 | 20 | 0 |
 | -5, 0, 2000000000 | 0 0 5 | 0 | 0 |
 | 8333333 (single) | 0 | 499999980 | 32767 |
+| tickRate 60, max 100: 2000000000 (clamped to one second) | 60 | 0 | 0 |
 | tickRate 120: 8333334, 8333333, 8333333 | 1 1 1 | 0 | 0 |
 | tickRate 60, 1000 frames, `x = x*1103515245+12345 & 0x7FFFFFFF` from 12345, `frame = 4000000 + (x >> 8) % 36000000` | 490 ticks total | 103339700 | - |
 ## 2. Fixed point (Q16.16)
 
 A quantity is a signed integer `raw`; the real value is `raw / 65536`. Storage is a 64-bit signed
 integer; every result is **saturated** to `[RAW_MIN, RAW_MAX] = [-2^31, 2^31 - 1]` (about +-32768 units),
-so any product fits in 64 bits (|a*b| <= 2^62). No operation may trap or wrap.
+so any product fits in 64 bits (|a*b| <= 2^62). No operation may trap or wrap. **Every operand is first
+saturated to the same range** (input from a shell is not trusted to be in range), so `add`, `sub`, `neg`, `mul` and
+`div` are total over all signed 64-bit inputs.
 
 | Op | Definition |
 |---|---|
@@ -103,6 +106,8 @@ Streams are the sorted (by UTF-8 bytes) distinct `stream` names of the spawners.
 | `div(5, 0)`, `div(-5, 0)`, `div(0, 0)` | `RAW_MAX`, `RAW_MIN`, `0` |
 | `div(RAW_MIN, -1)` | `RAW_MAX` |
 | `neg(RAW_MIN)`, `add(RAW_MAX, 1)`, `sub(RAW_MIN, 1)` | `RAW_MAX`, `RAW_MAX`, `RAW_MIN` |
+| `add(I64_MAX, 1)`, `sub(I64_MIN, I64_MAX)`, `neg(I64_MIN)` | `RAW_MAX`, `RAW_MIN`, `RAW_MAX` |
+| `mul(I64_MAX, I64_MAX)`, `mul(I64_MIN, 65536)`, `div(I64_MAX, 1)`, `div(1, I64_MIN)` | `RAW_MAX`, `RAW_MIN`, `RAW_MAX`, `0` |
 
 ## 4. World and tick order
 
@@ -165,7 +170,14 @@ Observables recorded with every checkpoint: `tick score lives entityCount ended 
 
 A scenario (`spec/scenarios/<project>/<name>.scenario.json`, `scenario.schema.json`) names a spec by
 path and SHA-256, a `seed`, a tick count, an input trace and **checkpoints** `{tick, hash, observe}`.
-Checkpoint `t` is the state after `t` steps (`0` = initial state). Expected checkpoints are produced
+Checkpoint `t` is the state after `t` steps (`0` = initial state).
+
+A scenario with `frames.count` above 0 is **frame-driven**: it exercises section 1 instead of stepping directly. A `GameLoop`
+is driven by `count` frame durations from an LCG (`x = x*1103515245 + 12345 & 0x7FFFFFFF` from `frames.seed`;
+`duration = minNanos + ((x * (maxNanos - minNanos + 1)) >> 31)`, which spreads the full 31-bit output over the span; the product stays below 2^63). `inputs[].tick` and `checkpoints[].tick` then count
+**frames**: events are submitted just before that frame, and a checkpoint is the state after that many frames. Its
+`observe.tick` is still the world tick, so a different number of ticks per frame shows up as a divergent `tick`
+observable at the first frame where it happens. Expected checkpoints are produced
 only by `monstera scenarios record` (the oracle) and committed; a test never regenerates them.
 
 A platform **conforms** when, for every scenario applicable to the spec, every checkpoint's hash **and**

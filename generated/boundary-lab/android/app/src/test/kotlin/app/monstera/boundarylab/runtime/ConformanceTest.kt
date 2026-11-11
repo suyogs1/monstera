@@ -28,6 +28,14 @@ class ConformanceTest {
         assertEquals(Fx.RAW_MAX, Fx.neg(Fx.RAW_MIN))
         assertEquals(Fx.RAW_MAX, Fx.add(Fx.RAW_MAX, 1L))
         assertEquals(Fx.RAW_MIN, Fx.sub(Fx.RAW_MIN, 1L))
+        // Operands outside the raw range are saturated first: no wrap, no trap.
+        assertEquals(Fx.RAW_MAX, Fx.add(Long.MAX_VALUE, 1L))
+        assertEquals(Fx.RAW_MIN, Fx.sub(Long.MIN_VALUE, Long.MAX_VALUE))
+        assertEquals(Fx.RAW_MAX, Fx.neg(Long.MIN_VALUE))
+        assertEquals(Fx.RAW_MAX, Fx.mul(Long.MAX_VALUE, Long.MAX_VALUE))
+        assertEquals(Fx.RAW_MIN, Fx.mul(Long.MIN_VALUE, 65536L))
+        assertEquals(Fx.RAW_MAX, Fx.div(Long.MAX_VALUE, 1L))
+        assertEquals(0L, Fx.div(1L, Long.MIN_VALUE))
     }
 
     @Test
@@ -68,6 +76,7 @@ class ConformanceTest {
         assertEquals(Triple(listOf(5, 1), 20L, 0L), clockRun(60, 5, listOf(500000000L, 16666667L)))
         assertEquals(Triple(listOf(0, 0, 5), 0L, 0L), clockRun(60, 5, listOf(-5L, 0L, 2000000000L)))
         assertEquals(Triple(listOf(0), 499999980L, 32767L), clockRun(60, 5, listOf(8333333L)))
+        assertEquals(Triple(listOf(60), 0L, 0L), clockRun(60, 100, listOf(2000000000L)))
         assertEquals(Triple(listOf(1, 1, 1), 0L, 0L), clockRun(120, 5, listOf(8333334L, 8333333L, 8333333L)))
         var x = 12345L
         val frames = List(1000) {
@@ -132,6 +141,7 @@ class ConformanceTest {
     }
 
     private class Scenario(val name: String, val seed: ULong, val ticks: Int) {
+        var frames: FrameSpec? = null
         val inputs = ArrayList<TickInput>()
         val expected = ArrayList<Checkpoint>()
     }
@@ -146,6 +156,7 @@ class ConformanceTest {
             val p = line.split(' ')
             when (p[0]) {
                 "scenario" -> current = Scenario(p[1], p[2].toULong(), p[3].toInt())
+                "frames" -> checkNotNull(current).frames = FrameSpec(p[1].toInt(), p[2].toLong(), p[3].toLong(), p[4].toLong())
                 "input" -> {
                     val sc = checkNotNull(current)
                     val event = InputEvent(
@@ -178,7 +189,14 @@ class ConformanceTest {
         val lines = ArrayList<String>()
         val failures = ArrayList<String>()
         for (sc in scenarios) {
-            val got = replay(GeneratedRuntimeConfig.config, sc.seed, sc.ticks, sc.inputs, sc.expected.map { it.tick })
+            val spec = sc.frames
+            val checkpointTicks = sc.expected.map { it.tick }
+            val got = if (spec == null) {
+                replay(GeneratedRuntimeConfig.config, sc.seed, sc.ticks, sc.inputs, checkpointTicks)
+            } else {
+                replayFrames(GeneratedRuntimeConfig.config, sc.seed, GeneratedRuntimeConfig.TICK_RATE,
+                    GeneratedRuntimeConfig.MAX_TICKS_PER_FRAME, spec, sc.inputs, checkpointTicks)
+            }
             for (g in got) {
                 lines.add(
                     "{\"platform\":\"kotlin\",\"scenario\":\"${sc.name}\",\"tick\":${g.tick},\"hash\":\"${hex(g.hash)}\"," +

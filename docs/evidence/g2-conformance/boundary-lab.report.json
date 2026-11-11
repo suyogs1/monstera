@@ -20,7 +20,7 @@
   "runtimeDigests": [
     {
       "path": "android/app/src/main/kotlin/app/monstera/boundarylab/runtime/Fixed.kt",
-      "sha256": "cffb9781c6695667ffa6f383426c0324ec26d422f540585319d0966ea1aa5b8a"
+      "sha256": "ddfbe678c3a46d790aa78d5dba134d0be6cb481d62ee1d7404daf67b3aa8383c"
     },
     {
       "path": "android/app/src/main/kotlin/app/monstera/boundarylab/runtime/GameLoop.kt",
@@ -36,7 +36,7 @@
     },
     {
       "path": "android/app/src/main/kotlin/app/monstera/boundarylab/runtime/Replay.kt",
-      "sha256": "6d7d4bdf7de7ccfef539595f0742f972d22e4422edefa484916dfd2fa4038c8d"
+      "sha256": "d07519eb963ba884f71e0d8d1c8a030b72c5cb55d6e10edf70d86cee86ec0659"
     },
     {
       "path": "android/app/src/main/kotlin/app/monstera/boundarylab/runtime/Simulation.kt",
@@ -44,7 +44,7 @@
     },
     {
       "path": "android/app/src/test/kotlin/app/monstera/boundarylab/runtime/ConformanceTest.kt",
-      "sha256": "a84d971f3ddf7f226884663602d7e4cf921c302d50ed25cace683ceb4dc42744"
+      "sha256": "8641f9ae8a10b629e8e3fe3d61ec3aeaa0c0a09f064bdc0b434404069c8660ab"
     },
     {
       "path": "ios/Runtime/Package.swift",
@@ -52,7 +52,7 @@
     },
     {
       "path": "ios/Runtime/Sources/MonsteraRuntime/Fixed.swift",
-      "sha256": "e21417e76f2c8b5ad51e0d514119564f704d68077b745f018c2d14783903d491"
+      "sha256": "aa8b600eecc6b9c4c19c502f70a5c8e5145e23d7d726a940f6ac0a3a66b44118"
     },
     {
       "path": "ios/Runtime/Sources/MonsteraRuntime/GameLoop.swift",
@@ -68,7 +68,7 @@
     },
     {
       "path": "ios/Runtime/Sources/MonsteraRuntime/Replay.swift",
-      "sha256": "9171ddea3f67934a54f6a304b750c86c0daba62a00c7e997dcfedc46aef6b40c"
+      "sha256": "de4de0b47a0435ea46dcba5231652d876077403d6cb7506588e4fd1b351b3039"
     },
     {
       "path": "ios/Runtime/Sources/MonsteraRuntime/Simulation.swift",
@@ -76,11 +76,11 @@
     },
     {
       "path": "ios/Runtime/Tests/MonsteraRuntimeTests/ConformanceTests.swift",
-      "sha256": "ceb12b86906bc127648203839241be3dce9d2af2a2b7967d1f0d9c7f946cbd56"
+      "sha256": "372d5e5489d3c7e1b7b73247f2aadbb3bb3f4ac54e42c1af658271093dea31cf"
     },
     {
       "path": "ios/Runtime/Tests/MonsteraRuntimeTests/Resources/monstera-scenarios.txt",
-      "sha256": "d10e36585163936d3fce7ad127a25faad444456a5f08bc52d54eba6cb10c3f9b"
+      "sha256": "5207f178d2bbd31f5ce667e1e65262297b63dc41b95f9de1d0d671ba1c66cad0"
     }
   ],
   "scenarios": [
@@ -104,7 +104,7 @@
           "status": "pass"
         }
       ],
-      "sha256": "45574122bd5f0bb63f40c7338aa39bdb86879bdc224d7c1db8ff8c35e828a5dc"
+      "sha256": "b0243b0e898c3ebd071f1bbb8aaa76a7504af9efb58c082cb06ae62bd9ff6d73"
     },
     {
       "checkpoints": 151,
@@ -126,7 +126,7 @@
           "status": "pass"
         }
       ],
-      "sha256": "0029093ba3ed29914995cf1da2f384af9cdc7e56578dd4a3948f7844e8134074"
+      "sha256": "e88fbf80306e58843fc769e08974bb650c3c2026859c4d196052dd11612e06c0"
     },
     {
       "checkpoints": 41,
@@ -148,7 +148,29 @@
           "status": "pass"
         }
       ],
-      "sha256": "86aae77f44c1cbfc7d439708d19d7875dac1b6d3eeb6587b80de9b2c1732eae2"
+      "sha256": "93570387912663187f58749553a572519e98df6d2539b9ab2408a91a824c4553"
+    },
+    {
+      "checkpoints": 101,
+      "name": "loop-lives-end",
+      "results": [
+        {
+          "divergences": [],
+          "platform": "oracle",
+          "status": "pass"
+        },
+        {
+          "divergences": [],
+          "platform": "kotlin",
+          "status": "pass"
+        },
+        {
+          "divergences": [],
+          "platform": "swift",
+          "status": "pass"
+        }
+      ],
+      "sha256": "1a3713ee0c1b2db36e8115a62dd0f1f93f78f2b0fa9ce044d67311d8b8dd8d6b"
     },
     {
       "checkpoints": 41,
@@ -170,7 +192,7 @@
           "status": "pass"
         }
       ],
-      "sha256": "5f8e22413067d50534ed00aaed4904afa032c1945dec54544fb6172a80cf440c"
+      "sha256": "5126a251935fcf8b21a7083979f4cdedf6109b93bd810efe81f325619cd7b567"
     },
     {
       "checkpoints": 4,
@@ -192,7 +214,7 @@
           "status": "pass"
         }
       ],
-      "sha256": "583330978eb8d18971a9852fc954c8734219e6eecd90b5eef991335fc416884c"
+      "sha256": "39b1df05399e86757fcb8187afa010611dc5a67207a75844db91f7c65d4c9b06"
     },
     {
       "checkpoints": 31,
@@ -214,7 +236,7 @@
           "status": "pass"
         }
       ],
-      "sha256": "54995523059955a948a95458fdf6f30f7cecf78e413014f3b413e89f599c6729"
+      "sha256": "750b9a33e0682432d48d85317e49f722e34b9bc03ddccbf909773452f8831ce1"
     }
   ],
   "specSha256": "f8507b7ea40f3b4e840352118a1f08103338e126439b0096504c3dc6d5c1efc9",

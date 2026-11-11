@@ -1,41 +1,52 @@
 # G2 report: deterministic runtime and conformance
 
-Branch `g2/deterministic-runtime` (from `main` at `2c5bb0f`, the verified merge of PR #3). Labels follow `.kiro/steering/04-generation-and-provenance.md`.
+Branch `g2/deterministic-runtime`, PR #4, from `main` at `2c5bb0f` (the verified merge of PR #3). Labels follow
+`.kiro/steering/04-generation-and-provenance.md`. "Local" means this Windows machine (Python 3.14, Gradle 9.9.1,
+Docker Desktop with `swift:6.1-noble`). "CI" means GitHub Actions on the PR. A claim is made only for evidence that exists.
 
-## Evidence kinds
+## Acceptance criteria
 
-Local evidence (this machine, Windows plus Docker) is in `docs/evidence/g2-*`. CI evidence is recorded in the PR; until a check is green there it is not claimed.
+| Criterion | Status | Evidence |
+|---|---|---|
+| Same spec, seed and inputs give matching state across Python, Kotlin and Swift | MET | 18 scenarios on 2 specs, 1,513 checkpoints, verdict PASS: `docs/evidence/g2-conformance/*.txt`, `*.report.json` (local); the CI `conformance` job re-ran it on Linux |
+| Both native app projects build with the integrated runtime | MET | CI `android-generated` (Gradle `assembleDebug`) and `ios-generated` (iOS app compiled with the local `ios/Runtime` package, installed and launched in the iOS Simulator) |
+| Frame loops use the contract's fixed-tick semantics | MET for the core and shells' structure; see limits | `FrameClock`/`GameLoop` live in the core and all three implementations pass the same vectors and 4 recorded frame-driven scenarios. Both shells only measure time, map touches and draw. CI log: `runtime ticks=60 hash=... seed=...` printed by the SpriteKit shell in the simulator |
+| Conformance failures identify the first divergent tick and fields | MET | `docs/evidence/g2-negative-proof/` (broken `mul`: scenario `negative-rounding`, tick 1) and `g2-negative-proof-loop/` (no tick cap: scenario `loop-hitch`, frame 8, fields `tick, entityCount, nextId, hash`) |
+| CI proves the required builds and tests | see "CI" below | PR #4 checks |
+| Limitations and untested device claims explicit | MET | next section |
 
-## Result
+## Evidence by capability
 
 | Capability | Label | Evidence |
 |---|---|---|
-| Runtime contract (Q16.16, PCG32, tick order, collisions, serialization, hash) | GENERATED (document) | `architecture/RUNTIME-CONTRACT.md` |
-| Python oracle matches published PCG32, SplitMix64 and FNV-1a vectors | tested | `tests/test_oracle.py` |
-| Kotlin core: 3 JVM unit tests pass on 2 specs | COMPILED + unit-tested on Windows (Gradle 9.9.1, local JDK) | `docs/evidence/g2-conformance/*.txt` |
-| Swift core: `swift test` on Linux (swift:6.1-noble, Docker) passes on 2 specs | COMPILED + unit-tested on Linux | same |
-| Oracle, Kotlin and Swift agree on every checkpoint | 14 scenarios, 1,109 checkpoints, verdict PASS for both specs | `docs/evidence/g2-conformance/*.report.json` |
-| Conformance catches a deliberate fault and localizes it | negative proof | `docs/evidence/g2-negative-proof/` |
-| 29 oracle mutants all killed by the committed scenarios | tested | `tests/test_mutations.py` |
-| Hand-computed edge expectations (touching edges, exact world exits, bounce, rounding, lives) | tested | `tests/test_boundary_lab.py` |
+| Runtime contract (`architecture/RUNTIME-CONTRACT.md`) | document | reviewed by the adversarial workflow |
+| Python oracle, Kotlin core, Swift core | COMPILED and unit-tested | local Gradle and Docker runs, plus CI on Linux and macOS |
+| Compose shell (`GameScreen.kt`) | COMPILED (local `assembleDebug`, CI `android-generated`) | no emulator or device run of this build |
+| SpriteKit shell (`GameScene.swift`) | COMPILED and SIMULATOR-TESTED for launch and loop ticking (CI iOS Simulator) | touch input is not exercised by any test; no physical device |
+| 29 simulation mutants and 7 loop mutants | killed | `tools/monstera/tests/test_mutations.py`; the 5 state-affecting loop mutants die on the recorded scenarios alone |
+| Hand-computed edge expectations | tested | `tools/monstera/tests/test_boundary_lab.py` |
 
-Test counts: engine 169, MCP 26 (with the new tests), gates 12/12.
+Test counts at the time of writing: engine 182, MCP 26, gates 12/12.
 
-## What a skeptical judge should know
+## Limitations (explicit)
 
-- Kotlin was tested on Windows only; Linux Kotlin is expected to match but has not run (the CI job exists, unrun).
-- No simulator, device or UI shell was involved. G2 task 8 (Compose and SpriteKit frame loops, accumulator, input mapping) is open.
-- The SwiftUI app package now depends on `ios/Runtime` by local path. That is NOT yet built on macOS or with xtool:
-  only `swift test` on the Runtime package ran. CI (`ios-generated`) will be the first check, so task 7 is partial.
-- The new CI jobs have not run on GitHub. No claim about them is made.
-- Saturation of `add`/`sub` is not observable through the simulation (a later clamp or despawn masks it); it is
-  covered by the known-answer vectors that the Kotlin and Swift suites run, not by scenarios.
-- A hand check found a contract error (a zero-size box inside another box does overlap). Contract, oracle and
-  comments were corrected before native code was recorded against it.
-- The oracle, Kotlin and Swift were written by the same agent in one session. They are independent in code, not in
-  authorship. Hand-computed tests and published vectors reduce, but do not remove, that common-mode risk.
+- Kotlin was run locally on Windows and in CI on Linux; there is no macOS/JVM combination and no Android emulator run of the G2 build.
+- iOS touch handling, `touchesEnded` tap detection, swipe mapping and on-screen rendering are written but not exercised by tests or a screenshot review for G2. No physical device was used for anything.
+- The three implementations were written by the same agent in one session. They are independent in code, not in authorship; published vectors, hand-computed tests and mutation tests reduce but do not remove common-mode risk.
+- Saturation of `add`/`sub` is not observable through the simulation (a clamp or despawn masks it) and operand pre-saturation is not scenario-visible; both are covered by known-answer vectors only.
+- `tick` and `nextId` are 32-bit: Kotlin wraps and Swift would trap after about 4.3 billion ticks or spawns, and the oracle would raise. This is outside any supported session length and is not tested.
+- The Swift container image is pinned to `swift:6.1-noble` in `toolchain.json` (the version verified here); the experimental xtool workflow still defaults to a different Swift. The tag is not a digest.
+- The Kotlin and Swift cores were not independently reviewed by a second model; the adversarial workflow (see "Review") is the independent check.
+- The Compose and SpriteKit shells use floating point for display and time; this is outside the deterministic core by design.
 
-## Open before G3
+## Things found by this work, and fixed
 
-1. Push the branch; get CI green (Linux conformance, macOS `swift test`, iOS simulator build with the local package).
-2. Task 8 shells; task 14 adversarial review and release verification.
+- A contract error (a zero-size box strictly inside another overlaps) found by a hand check before native code existed.
+- The macOS compiler rejected a property named `bounds` in `GameScene`; a `ticks > 100` assertion failed on `boundary-lab`, where the game legitimately ends early (an earlier evidence file honestly recorded that FAIL).
+- Primitive operands were not saturated: a shell-supplied out-of-range delta would have trapped in Swift and wrapped in Kotlin. Operands are now saturated first, with vectors at the Int64 extremes.
+- The frame-duration generator produced only 4 to 12 ms frames, so the "hitch" scenario never hitched; the negative proof exposed it, the generator was fixed and the scenarios were re-recorded.
+- Architecture review (workflow `monstera-adversarial-review`): the frame loop had no recorded scenario (added 4), the MCP security document contradicted `run_conformance` (updated; the container now has no network and a read-only source mount), duplicate `junit` pin in `toolchain.json` (removed; the loader now rejects duplicate keys), stale architecture docs, un-hoisted Compose state (hoisted into `GameSession`).
+
+## CI
+
+Recorded in the PR after the final push; see the PR checks and the section appended below.

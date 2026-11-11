@@ -1214,6 +1214,12 @@
     }
   ],
   "description": "Idle player until lives reach 0 (about tick 11900); afterwards stepping is a no-op and the tick stops advancing.",
+  "frames": {
+    "count": 0,
+    "maxNanos": 0,
+    "minNanos": 0,
+    "seed": 0
+  },
   "inputs": [],
   "name": "game-over",
   "scenarioVersion": 1,

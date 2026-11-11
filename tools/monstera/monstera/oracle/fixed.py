@@ -23,25 +23,26 @@ def sat32(v: int) -> int:
 
 
 def add(a: int, b: int) -> int:
-    return sat(a + b)
+    return sat(sat(a) + sat(b))
 
 
 def sub(a: int, b: int) -> int:
-    return sat(a - b)
+    return sat(sat(a) - sat(b))
 
 
 def neg(a: int) -> int:
-    return sat(-a)
+    return sat(-sat(a))
 
 
 def mul(a: int, b: int) -> int:
     """(a*b) >> 16 with an arithmetic shift, i.e. rounds toward negative infinity."""
-    return sat((a * b) >> FRAC_BITS)
+    return sat((sat(a) * sat(b)) >> FRAC_BITS)
 
 
 def div(a: int, b: int) -> int:
     """trunc((a << 16) / b), rounding toward zero. Division by zero never traps:
     it saturates by the sign of the dividend (0 / 0 is 0)."""
+    a, b = sat(a), sat(b)
     if b == 0:
         return RAW_MAX if a > 0 else RAW_MIN if a < 0 else 0
     n = a << FRAC_BITS

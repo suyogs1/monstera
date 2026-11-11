@@ -457,7 +457,7 @@ def build_parser() -> argparse.ArgumentParser:
     p = sub.add_parser("conformance", help="run every scenario on the oracle, Kotlin and Swift and compare")
     p.add_argument("dir", help="generated project directory (generated/<id> or apps/<id>)")
     p.add_argument("--platforms", default=",".join(conformance.PLATFORMS), help="comma-separated subset of oracle,kotlin,swift")
-    p.add_argument("--swift-image", help="run Swift in this container image (e.g. swift:6.1-noble) instead of a local toolchain")
+    p.add_argument("--swift-image", help="run Swift in this container image, or 'toolchain' for the image pinned in toolchain.json, instead of a local toolchain")
     p.add_argument("--report", help="write the machine-readable report (conformance.schema.json) here")
     p.add_argument("--json", action="store_true", help="print the report as one JSON line")
     p.set_defaults(func=cmd_conformance)

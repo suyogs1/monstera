@@ -1094,6 +1094,12 @@
     }
   ],
   "description": "Extreme drag deltas (int32 limits), negative deltas and swipes against every wall: saturation, clamping and bounce reflection with negative values.",
+  "frames": {
+    "count": 0,
+    "maxNanos": 0,
+    "minNanos": 0,
+    "seed": 0
+  },
   "inputs": [
     {
       "events": [

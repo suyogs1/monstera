@@ -46,3 +46,36 @@ class GameLoop:
             if i == 0:
                 self.pending = []
         return ticks
+
+def frame_durations(frames: dict) -> list:
+    """Frame durations of a frame-driven scenario: an LCG (x = x*1103515245+12345 & 0x7FFFFFFF) from
+    frames.seed, duration = minNanos + (x * (maxNanos - minNanos + 1)) >> 31, which spreads the full
+    31-bit output over the whole span (x * span < 2^31 * (4e9 + 1) < 2^63)."""
+    x = frames["seed"]
+    span = frames["maxNanos"] - frames["minNanos"] + 1
+    out = []
+    for _ in range(frames["count"]):
+        x = (x * 1103515245 + 12345) & 0x7FFFFFFF
+        out.append(frames["minNanos"] + ((x * span) >> 31))
+    return out
+
+
+def run_frame_scenario(cfg: sim.Config, scenario: dict, tick_rate: int, max_ticks_per_frame: int) -> list:
+    """Drive a GameLoop with the scenario's frame durations. `inputs[].tick` is a FRAME index: those events
+    are submitted just before that frame. A checkpoint `tick` is the number of frames completed; its
+    observables still report the world's own tick count."""
+    loop = GameLoop(sim.new_world(cfg, scenario["seed"]), tick_rate, max_ticks_per_frame)
+    by_frame: dict = {}
+    for item in scenario["inputs"]:
+        by_frame.setdefault(item["tick"], []).extend(item["events"])
+    wanted = {c["tick"] for c in scenario["checkpoints"]}
+    out = []
+    if 0 in wanted:
+        out.append({"tick": 0, "hash": sim.state_hash(loop.world), "observe": sim.observe(loop.world)})
+    for i, nanos in enumerate(frame_durations(scenario["frames"])):
+        for event in by_frame.get(i, []):
+            loop.submit(event)
+        loop.frame(nanos)
+        if (i + 1) in wanted:
+            out.append({"tick": i + 1, "hash": sim.state_hash(loop.world), "observe": sim.observe(loop.world)})
+    return out

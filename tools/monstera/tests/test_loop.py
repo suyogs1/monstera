@@ -32,6 +32,7 @@ class ClockVectors(unittest.TestCase):
         self.assertEqual(clock(60, 5, [500000000, 16666667]), ([5, 1], 20, 0))
         self.assertEqual(clock(60, 5, [-5, 0, 2000000000]), ([0, 0, 5], 0, 0))
         self.assertEqual(clock(60, 5, [8333333]), ([0], 499999980, 32767))
+        self.assertEqual(clock(60, 100, [2000000000]), ([60], 0, 0))
         self.assertEqual(clock(120, 5, [8333334, 8333333, 8333333]), ([1, 1, 1], 0, 0))
 
     def test_jitter_vector(self) -> None:

@@ -494,6 +494,12 @@
     }
   ],
   "description": "Three taps each spawn a bullet on the mine (one life each): the game ends on the third and later input is ignored with the tick frozen.",
+  "frames": {
+    "count": 0,
+    "maxNanos": 0,
+    "minNanos": 0,
+    "seed": 0
+  },
   "inputs": [
     {
       "events": [

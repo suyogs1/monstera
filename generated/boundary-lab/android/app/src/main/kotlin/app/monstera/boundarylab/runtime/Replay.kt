@@ -20,3 +20,31 @@ fun replay(config: RuntimeConfig, seed: ULong, ticks: Int, inputs: List<TickInpu
     }
     return out
 }
+
+/** Frame-driven scenario parameters: durations come from an LCG, see RUNTIME-CONTRACT section 7. */
+class FrameSpec(val count: Int, val seed: Long, val minNanos: Long, val maxNanos: Long)
+
+/**
+ * Drives a [GameLoop] with generated frame durations. `inputs[].tick` is a FRAME index: the events are
+ * submitted just before that frame. A checkpoint's `tick` is the number of frames completed.
+ */
+fun replayFrames(
+    config: RuntimeConfig, seed: ULong, tickRate: Int, maxTicksPerFrame: Int, frames: FrameSpec,
+    inputs: List<TickInput>, checkpointFrames: List<Int>,
+): List<Checkpoint> {
+    val loop = GameLoop(World(config, seed), tickRate, maxTicksPerFrame)
+    val byFrame = HashMap<Int, MutableList<InputEvent>>()
+    for (item in inputs) byFrame.getOrPut(item.tick) { mutableListOf() }.addAll(item.events)
+    val wanted = checkpointFrames.toSet()
+    val out = ArrayList<Checkpoint>()
+    if (0 in wanted) out.add(Checkpoint(0, loop.world.stateHash(), loop.world.observe()))
+    var x = frames.seed
+    val span = frames.maxNanos - frames.minNanos + 1L
+    for (i in 0 until frames.count) {
+        x = (x * 1103515245L + 12345L) and 0x7FFFFFFFL
+        for (event in byFrame[i] ?: emptyList()) loop.submit(event)
+        loop.frame(frames.minNanos + ((x * span) shr 31))
+        if ((i + 1) in wanted) out.add(Checkpoint(i + 1, loop.world.stateHash(), loop.world.observe()))
+    }
+    return out
+}

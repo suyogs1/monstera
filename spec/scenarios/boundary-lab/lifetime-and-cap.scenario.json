@@ -1814,6 +1814,12 @@
     }
   ],
   "description": "Lifetime 5 despawns at tick 5; a filler spawner reaches maxEntities and later spawns are skipped while their PRNG draws continue.",
+  "frames": {
+    "count": 0,
+    "maxNanos": 0,
+    "minNanos": 0,
+    "seed": 0
+  },
   "inputs": [],
   "name": "lifetime-and-cap",
   "scenarioVersion": 1,

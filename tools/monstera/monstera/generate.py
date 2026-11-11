@@ -17,7 +17,7 @@ from typing import Any
 from xml.sax.saxutils import escape as xml_escape
 
 from . import GENERATOR_NAME, GENERATOR_VERSION, emit_kotlin, emit_runtime, emit_swift
-from .jsonio import canonical_bytes, sha256_hex
+from .jsonio import canonical_bytes, loads_strict, sha256_hex
 from .naming import product_name
 from .schema import SchemaStore
 from .typemodel import build as build_types
@@ -54,7 +54,7 @@ class OutFile:
 
 
 def toolchain() -> dict[str, Any]:
-    return json.loads((PACKAGE_DIR / "toolchain.json").read_text(encoding="utf-8"))
+    return loads_strict((PACKAGE_DIR / "toolchain.json").read_text(encoding="utf-8"))  # rejects duplicate keys
 
 
 def _normalize(data: bytes, crlf: bool) -> bytes:

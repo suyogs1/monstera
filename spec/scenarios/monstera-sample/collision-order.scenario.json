@@ -1214,6 +1214,12 @@
     }
   ],
   "description": "Bullets, enemies and the player collide in the same tick (multi-kill ticks and a kill plus a life lost in one tick); resolution must not depend on pair order.",
+  "frames": {
+    "count": 0,
+    "maxNanos": 0,
+    "minNanos": 0,
+    "seed": 0
+  },
   "inputs": [
     {
       "events": [

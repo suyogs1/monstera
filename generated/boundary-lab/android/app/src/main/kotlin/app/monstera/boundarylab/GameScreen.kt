@@ -49,18 +49,29 @@ private const val TAP_SLOP_PX = 12f
 
 private fun hexColor(hex: String): Color = Color(0xFF000000 or hex.removePrefix("#").toLong(16))
 
+/** Game state owned outside the composable (state hoisting): the loop and the seed it was started with. */
+class GameSession(val seed: Long, val loop: GameLoop) {
+    companion object {
+        /** The seed is chosen outside the core and logged so a session can be replayed. */
+        fun start(): GameSession {
+            val seed = System.currentTimeMillis() and 0x1FFFFFFFFFFFFFL
+            return GameSession(seed, GameLoop(World(GeneratedRuntimeConfig.config, seed.toULong()),
+                GeneratedRuntimeConfig.TICK_RATE, GeneratedRuntimeConfig.MAX_TICKS_PER_FRAME))
+        }
+    }
+}
+
 /**
  * Shell: measures frame time, turns touches into input events, draws the world.
  * It never steps the simulation itself; every tick goes through [GameLoop] (contract section 1).
  * Floating point here is for display only.
  */
 @Composable
-fun GameScreen(spec: MonsteraSpec, verified: Boolean) {
+fun GameScreen(spec: MonsteraSpec, verified: Boolean, session: GameSession) {
     val palette = spec.game.palette
     val cfg = GeneratedRuntimeConfig.config
-    // The session seed is chosen outside the core; it is logged so a session can be replayed.
-    val seed = remember { System.currentTimeMillis() and 0x1FFFFFFFFFFFFFL }
-    val loop = remember { GameLoop(World(cfg, seed.toULong()), GeneratedRuntimeConfig.TICK_RATE, GeneratedRuntimeConfig.MAX_TICKS_PER_FRAME) }
+    val loop = session.loop
+    val seed = session.seed
     var frames by remember { mutableLongStateOf(0L) }  // read by the Canvas so it redraws every frame
     var viewSize by remember { mutableStateOf(IntSize.Zero) }
     val worldW = cfg.worldWidth / RAW_ONE

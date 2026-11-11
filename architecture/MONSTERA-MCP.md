@@ -13,7 +13,7 @@ per-tool permissions.
 2. **Only tools backed by working functionality.** A tool exists only when the function behind
    it exists and is tested.
 3. **Least privilege.** Read-only tools by default; one write path, which obeys the engine's
-   ownership rules; no shell, no network, no `--force`.
+   ownership rules; no shell, no `--force`; the single exception is `run_conformance`, which starts test builds, is never auto-approved, and runs containers without network and with read-only sources (see Security).
 
 ## Tools
 
@@ -157,8 +157,8 @@ relative paths from the workspace root under Kiro on Windows, the fallback is th
 |---|---|
 | Path traversal | Every path argument is resolved and must be inside the repository root. Specs only under `spec/` or `apps/*/monstera.spec.json`; outputs only under `generated/` or `apps/<id>/`; reports only under `device-lab/reports/runs/` or `docs/evidence/`. Symlinks are refused |
 | Destructive writes | Write only through `generate.write(force=False)`; no force anywhere in the server |
-| Command execution | None. The server never spawns processes (`build_native_app`, when added, gets its own review) |
-| Network | None |
+| Command execution | Only `run_conformance` spawns processes: `gradlew` (Kotlin unit tests) and `docker run` / `swift test` (Swift). Arguments are never shell-interpolated; `platforms` is a fixed set and `swift_image` must match an official `swift:<version>` tag (or `toolchain`). Reviewed in G2 (adversarial review, 2026-11-11). `build_native_app`, when added, gets its own review |
+| Network | The server opens none. `run_conformance` may make Docker pull the pinned Swift image if it is absent; the test container itself runs with `--network none`, the package mounted read-only (`:ro`) and only a results directory writable |
 | Resource use | Inline spec size cap (64 KiB); report results capped; JSON depth limits come from the engine loader |
 | Secrets | The server reads no environment secrets and never returns file contents outside its declared outputs |
 | Supply chain | One pinned dependency tree in `uv.lock`, reviewed with the `security-dependency-review` prompt |

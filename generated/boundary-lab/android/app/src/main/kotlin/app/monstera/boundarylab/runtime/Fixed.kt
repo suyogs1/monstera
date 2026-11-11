@@ -16,15 +16,18 @@ object Fx {
     /** Saturates an exact sum to int32 (score and lives counters). */
     fun sat32(v: Long): Long = sat(v)
 
-    fun add(a: Long, b: Long): Long = sat(a + b)
-    fun sub(a: Long, b: Long): Long = sat(a - b)
-    fun neg(a: Long): Long = sat(-a)
+    // Operands are saturated first: a shell is not trusted to supply in-range values.
+    fun add(a: Long, b: Long): Long = sat(sat(a) + sat(b))
+    fun sub(a: Long, b: Long): Long = sat(sat(a) - sat(b))
+    fun neg(a: Long): Long = sat(-sat(a))
 
     /** (a * b) >> 16 with an arithmetic shift: rounds toward negative infinity. */
-    fun mul(a: Long, b: Long): Long = sat((a * b) shr FRAC_BITS)
+    fun mul(a: Long, b: Long): Long = sat((sat(a) * sat(b)) shr FRAC_BITS)
 
     /** trunc((a << 16) / b), rounding toward zero. Division by zero saturates by the sign of `a`. */
-    fun div(a: Long, b: Long): Long {
+    fun div(a0: Long, b0: Long): Long {
+        val a = sat(a0)
+        val b = sat(b0)
         if (b == 0L) return if (a > 0L) RAW_MAX else if (a < 0L) RAW_MIN else 0L
         return sat((a shl FRAC_BITS) / b)  // Long division truncates toward zero
     }

@@ -10,7 +10,7 @@ from typing import Any
 
 from . import targets
 from .jsonio import LoadError, canonical_text, load_path
-from .oracle import sim
+from .oracle import loop, sim
 from .schema import Issue, SchemaStore
 from .validate import validate_path
 
@@ -65,6 +65,14 @@ def validate(path: Path, store: SchemaStore) -> tuple[dict[str, Any] | None, lis
     if issues:
         return None, issues
     out: list[Issue] = []
+    frames = data["frames"]
+    if frames["count"] > 0:
+        if frames["minNanos"] > frames["maxNanos"]:
+            out.append(Issue("$.frames.minNanos", "scenario.frames", "minNanos is greater than maxNanos"))
+        if data["ticks"] != frames["count"]:
+            out.append(Issue("$.ticks", "scenario.frames", "a frame-driven scenario must set ticks equal to frames.count"))
+    elif any(frames[k] for k in ("seed", "minNanos", "maxNanos")):
+        out.append(Issue("$.frames", "scenario.frames", "frames.count is 0 (tick-driven) so the other frames fields must be 0"))
     if path.name != data["name"] + SUFFIX:
         out.append(Issue("$.name", "scenario.name", f"name '{data['name']}' must match the file name {path.name}"))
     last = -1
@@ -91,9 +99,13 @@ def oracle_checkpoints(data: dict[str, Any], store: SchemaStore, ticks: list[int
     if result is None or issues:
         raise ValueError("; ".join(map(str, issues)) or "spec unavailable")
     probe = dict(data, checkpoints=[{"tick": t} for t in ticks])
-    cfg = sim.Config(result.spec["game"])
-    return [{"tick": r["tick"], "hash": format(r["hash"], "016x"), "observe": r["observe"]}
-            for r in sim.run_scenario(cfg, probe)]
+    game = result.spec["game"]
+    cfg = sim.Config(game)
+    if data["frames"]["count"] > 0:
+        rows = loop.run_frame_scenario(cfg, probe, game["simulation"]["tickRate"], game["simulation"]["maxTicksPerFrame"])
+    else:
+        rows = sim.run_scenario(cfg, probe)
+    return [{"tick": r["tick"], "hash": format(r["hash"], "016x"), "observe": r["observe"]} for r in rows]
 
 
 def record(path: Path, store: SchemaStore) -> list[Issue]:

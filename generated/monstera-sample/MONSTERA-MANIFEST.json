@@ -39,14 +39,14 @@
       "kind": "template",
       "mode": "644",
       "path": "android/app/src/main/kotlin/app/monstera/sample/GameScreen.kt",
-      "sha256": "19bbcaa162d8b3434b20c7557f04db59587fa8cc8bc959697e04d8f0a1e887bc",
+      "sha256": "937984241116ec5b2add99176b512bf8003e9dec7cc108f1cffd1fd7a2061efe",
       "source": "templates/android/app/src/main/kotlin/GameScreen.kt.tmpl"
     },
     {
       "kind": "template",
       "mode": "644",
       "path": "android/app/src/main/kotlin/app/monstera/sample/MainActivity.kt",
-      "sha256": "b29b1c41a8a84e1bb0c3dc4db2e268b603f7fd035309fe8c2fd81c926a3f2bf3",
+      "sha256": "b03b92c70dfb3501842551ce6e0b58ed150a7aa14c2b136eed43a2c1aa06b4cd",
       "source": "templates/android/app/src/main/kotlin/MainActivity.kt.tmpl"
     },
     {
@@ -67,7 +67,7 @@
       "kind": "template",
       "mode": "644",
       "path": "android/app/src/main/kotlin/app/monstera/sample/runtime/Fixed.kt",
-      "sha256": "5d7729bf02cd0c629d26a3f605bed5179dbc9f09a99d51863cffbaed97a34965",
+      "sha256": "905683603601ea2d28af5d78d62185ed6cc42f8ddd4d4c34cc22e16ea07fa373",
       "source": "templates/android/runtime/Fixed.kt.tmpl"
     },
     {
@@ -95,7 +95,7 @@
       "kind": "template",
       "mode": "644",
       "path": "android/app/src/main/kotlin/app/monstera/sample/runtime/Replay.kt",
-      "sha256": "cf884fd673bc8730ffe5bdf4a65212a4553ad2a0a0608658bd429a14573e5d37",
+      "sha256": "5085b2ab9d97d65c3b8296c18c14d018fdb48dc409f240cc82bd73a99d224b43",
       "source": "templates/android/runtime/Replay.kt.tmpl"
     },
     {
@@ -109,14 +109,14 @@
       "kind": "template",
       "mode": "644",
       "path": "android/app/src/test/kotlin/app/monstera/sample/runtime/ConformanceTest.kt",
-      "sha256": "0027be505a010b9f4eb96753f8521eb5965aa543ada6715ede3e435c73f8ca25",
+      "sha256": "5d1886e39b10db424b7a228c912068526afe3dccf42f581a176dec4917d13950",
       "source": "templates/android/runtime/ConformanceTest.kt.tmpl"
     },
     {
       "kind": "scenarios",
       "mode": "644",
       "path": "android/app/src/test/resources/monstera-scenarios.txt",
-      "sha256": "e8e2cfaf82a426ec009a343031277ee8528d5a93caab43bf356806b9848c6418",
+      "sha256": "a81dde60d65452486f59159e7ff3d822233aeef2ee9867e885f603b3ccca3aa6",
       "source": "scenarios"
     },
     {
@@ -193,7 +193,7 @@
       "kind": "template",
       "mode": "644",
       "path": "ios/Runtime/Sources/MonsteraRuntime/Fixed.swift",
-      "sha256": "50649782413e9cdb3601a609e183b2943743a3c778a82aa609c53b8a1ea62762",
+      "sha256": "2f2ed1e818c364895007b6b640de5c495c5b23e1b821697be73f29da8fa95421",
       "source": "templates/ios/Runtime/Fixed.swift.tmpl"
     },
     {
@@ -221,7 +221,7 @@
       "kind": "template",
       "mode": "644",
       "path": "ios/Runtime/Sources/MonsteraRuntime/Replay.swift",
-      "sha256": "2f780712b4d8664a585d636ffc6a78d4e098c3c4d594346c3e8d2f974ff5cfe6",
+      "sha256": "3afc350f4470f006f4a02c64ac2d6355f8a3883f672c96c22463dcae85ee7335",
       "source": "templates/ios/Runtime/Replay.swift.tmpl"
     },
     {
@@ -235,14 +235,14 @@
       "kind": "template",
       "mode": "644",
       "path": "ios/Runtime/Tests/MonsteraRuntimeTests/ConformanceTests.swift",
-      "sha256": "e063dd0011290c9d3823cb69e4145369b1f932dbf735ab5781e05b03dd309c13",
+      "sha256": "92b8e32410ad529e09a313f749d27e41c2cc72b26fa904ad1d829e651011919b",
       "source": "templates/ios/Runtime/ConformanceTests.swift.tmpl"
     },
     {
       "kind": "scenarios",
       "mode": "644",
       "path": "ios/Runtime/Tests/MonsteraRuntimeTests/Resources/monstera-scenarios.txt",
-      "sha256": "e8e2cfaf82a426ec009a343031277ee8528d5a93caab43bf356806b9848c6418",
+      "sha256": "a81dde60d65452486f59159e7ff3d822233aeef2ee9867e885f603b3ccca3aa6",
       "source": "scenarios"
     },
     {
@@ -315,7 +315,7 @@
     "game.schema.json": "1ecc1e0486c5634e34175aa183e4d7b97a9abfff921174a7314d0d24975ecb5f",
     "monstera.spec.schema.json": "1fac7656ef064223268e26e76e7557ed22a679449fe4458a3f7f41d4c9bac1d8",
     "project.schema.json": "741ca6bec8d9d9d60c1dbe92211c7bf9fcfecbf0adc3dd4d9725eed1a9b2f5d0",
-    "scenario.schema.json": "fd279e1f50ea670967a165edc6d69b46fd5e1585983280984903e842bbf4fb6f"
+    "scenario.schema.json": "317bf00bc9048ddccc4c6d70f00de4ecf02633cc93608b68556efa8815636de6"
   },
   "spec": {
     "path": "spec/samples/monstera-sample/monstera.spec.json",
@@ -334,6 +334,7 @@
       "targetSdk": 36
     },
     "ios": {
+      "swiftConformanceImage": "swift:6.1-noble",
       "swiftToolsVersion": "6.0",
       "xtool": "1.24.0"
     }

@@ -39,14 +39,14 @@
       "kind": "template",
       "mode": "644",
       "path": "android/app/src/main/kotlin/app/monstera/boundarylab/GameScreen.kt",
-      "sha256": "fa697ee81f4a0c83ffdcea298ef2087aa76d3f91646a75d80c0ed9438590ec6d",
+      "sha256": "a9af614aa9395506698b046e63a5b13a97fbbeb07e5586300fbbc44d46afdd73",
       "source": "templates/android/app/src/main/kotlin/GameScreen.kt.tmpl"
     },
     {
       "kind": "template",
       "mode": "644",
       "path": "android/app/src/main/kotlin/app/monstera/boundarylab/MainActivity.kt",
-      "sha256": "8c52ea423ad9ca174ccb2ee1cce5b9bccaa38bc99af15e42bf508eff98915f10",
+      "sha256": "f824048df827b9e31d34aee1a8c2b3ec221d27640ee115cf7e679361c1e0d55a",
       "source": "templates/android/app/src/main/kotlin/MainActivity.kt.tmpl"
     },
     {
@@ -67,7 +67,7 @@
       "kind": "template",
       "mode": "644",
       "path": "android/app/src/main/kotlin/app/monstera/boundarylab/runtime/Fixed.kt",
-      "sha256": "cffb9781c6695667ffa6f383426c0324ec26d422f540585319d0966ea1aa5b8a",
+      "sha256": "ddfbe678c3a46d790aa78d5dba134d0be6cb481d62ee1d7404daf67b3aa8383c",
       "source": "templates/android/runtime/Fixed.kt.tmpl"
     },
     {
@@ -95,7 +95,7 @@
       "kind": "template",
       "mode": "644",
       "path": "android/app/src/main/kotlin/app/monstera/boundarylab/runtime/Replay.kt",
-      "sha256": "6d7d4bdf7de7ccfef539595f0742f972d22e4422edefa484916dfd2fa4038c8d",
+      "sha256": "d07519eb963ba884f71e0d8d1c8a030b72c5cb55d6e10edf70d86cee86ec0659",
       "source": "templates/android/runtime/Replay.kt.tmpl"
     },
     {
@@ -109,14 +109,14 @@
       "kind": "template",
       "mode": "644",
       "path": "android/app/src/test/kotlin/app/monstera/boundarylab/runtime/ConformanceTest.kt",
-      "sha256": "a84d971f3ddf7f226884663602d7e4cf921c302d50ed25cace683ceb4dc42744",
+      "sha256": "8641f9ae8a10b629e8e3fe3d61ec3aeaa0c0a09f064bdc0b434404069c8660ab",
       "source": "templates/android/runtime/ConformanceTest.kt.tmpl"
     },
     {
       "kind": "scenarios",
       "mode": "644",
       "path": "android/app/src/test/resources/monstera-scenarios.txt",
-      "sha256": "d10e36585163936d3fce7ad127a25faad444456a5f08bc52d54eba6cb10c3f9b",
+      "sha256": "5207f178d2bbd31f5ce667e1e65262297b63dc41b95f9de1d0d671ba1c66cad0",
       "source": "scenarios"
     },
     {
@@ -193,7 +193,7 @@
       "kind": "template",
       "mode": "644",
       "path": "ios/Runtime/Sources/MonsteraRuntime/Fixed.swift",
-      "sha256": "e21417e76f2c8b5ad51e0d514119564f704d68077b745f018c2d14783903d491",
+      "sha256": "aa8b600eecc6b9c4c19c502f70a5c8e5145e23d7d726a940f6ac0a3a66b44118",
       "source": "templates/ios/Runtime/Fixed.swift.tmpl"
     },
     {
@@ -221,7 +221,7 @@
       "kind": "template",
       "mode": "644",
       "path": "ios/Runtime/Sources/MonsteraRuntime/Replay.swift",
-      "sha256": "9171ddea3f67934a54f6a304b750c86c0daba62a00c7e997dcfedc46aef6b40c",
+      "sha256": "de4de0b47a0435ea46dcba5231652d876077403d6cb7506588e4fd1b351b3039",
       "source": "templates/ios/Runtime/Replay.swift.tmpl"
     },
     {
@@ -235,14 +235,14 @@
       "kind": "template",
       "mode": "644",
       "path": "ios/Runtime/Tests/MonsteraRuntimeTests/ConformanceTests.swift",
-      "sha256": "ceb12b86906bc127648203839241be3dce9d2af2a2b7967d1f0d9c7f946cbd56",
+      "sha256": "372d5e5489d3c7e1b7b73247f2aadbb3bb3f4ac54e42c1af658271093dea31cf",
       "source": "templates/ios/Runtime/ConformanceTests.swift.tmpl"
     },
     {
       "kind": "scenarios",
       "mode": "644",
       "path": "ios/Runtime/Tests/MonsteraRuntimeTests/Resources/monstera-scenarios.txt",
-      "sha256": "d10e36585163936d3fce7ad127a25faad444456a5f08bc52d54eba6cb10c3f9b",
+      "sha256": "5207f178d2bbd31f5ce667e1e65262297b63dc41b95f9de1d0d671ba1c66cad0",
       "source": "scenarios"
     },
     {
@@ -315,7 +315,7 @@
     "game.schema.json": "1ecc1e0486c5634e34175aa183e4d7b97a9abfff921174a7314d0d24975ecb5f",
     "monstera.spec.schema.json": "1fac7656ef064223268e26e76e7557ed22a679449fe4458a3f7f41d4c9bac1d8",
     "project.schema.json": "741ca6bec8d9d9d60c1dbe92211c7bf9fcfecbf0adc3dd4d9725eed1a9b2f5d0",
-    "scenario.schema.json": "fd279e1f50ea670967a165edc6d69b46fd5e1585983280984903e842bbf4fb6f"
+    "scenario.schema.json": "317bf00bc9048ddccc4c6d70f00de4ecf02633cc93608b68556efa8815636de6"
   },
   "spec": {
     "path": "spec/samples/boundary-lab/monstera.spec.json",
@@ -334,6 +334,7 @@
       "targetSdk": 36
     },
     "ios": {
+      "swiftConformanceImage": "swift:6.1-noble",
       "swiftToolsVersion": "6.0",
       "xtool": "1.24.0"
     }

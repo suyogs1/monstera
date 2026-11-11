@@ -1,0 +1,1750 @@
+{
+  "checkpoints": [
+    {
+      "hash": "376b248f84cf016a",
+      "observe": {
+        "ended": 0,
+        "entityCount": 3,
+        "lives": 99,
+        "nextId": 4,
+        "score": 0,
+        "tick": 0
+      },
+      "tick": 0
+    },
+    {
+      "hash": "2e616f938b515855",
+      "observe": {
+        "ended": 0,
+        "entityCount": 10,
+        "lives": 99,
+        "nextId": 13,
+        "score": 0,
+        "tick": 38
+      },
+      "tick": 8
+    },
+    {
+      "hash": "5916987ed5be3662",
+      "observe": {
+        "ended": 0,
+        "entityCount": 13,
+        "lives": 99,
+        "nextId": 21,
+        "score": 0,
+        "tick": 78
+      },
+      "tick": 16
+    },
+    {
+      "hash": "7c61230fda4eafe8",
+      "observe": {
+        "ended": 0,
+        "entityCount": 13,
+        "lives": 99,
+        "nextId": 28,
+        "score": 0,
+        "tick": 118
+      },
+      "tick": 24
+    },
+    {
+      "hash": "5b0ba1aa00104328",
+      "observe": {
+        "ended": 0,
+        "entityCount": 15,
+        "lives": 99,
+        "nextId": 36,
+        "score": 0,
+        "tick": 158
+      },
+      "tick": 32
+    },
+    {
+      "hash": "cffb05073aec836c",
+      "observe": {
+        "ended": 0,
+        "entityCount": 16,
+        "lives": 99,
+        "nextId": 43,
+        "score": 0,
+        "tick": 192
+      },
+      "tick": 40
+    },
+    {
+      "hash": "b77458f3b5acb2ac",
+      "observe": {
+        "ended": 0,
+        "entityCount": 18,
+        "lives": 99,
+        "nextId": 49,
+        "score": 0,
+        "tick": 223
+      },
+      "tick": 48
+    },
+    {
+      "hash": "7052ce8586f12011",
+      "observe": {
+        "ended": 0,
+        "entityCount": 20,
+        "lives": 99,
+        "nextId": 56,
+        "score": 0,
+        "tick": 256
+      },
+      "tick": 56
+    },
+    {
+      "hash": "235a1876a4022478",
+      "observe": {
+        "ended": 0,
+        "entityCount": 21,
+        "lives": 99,
+        "nextId": 64,
+        "score": 0,
+        "tick": 296
+      },
+      "tick": 64
+    },
+    {
+      "hash": "c8dd82e58fc30b98",
+      "observe": {
+        "ended": 0,
+        "entityCount": 23,
+        "lives": 99,
+        "nextId": 70,
+        "score": 0,
+        "tick": 327
+      },
+      "tick": 72
+    },
+    {
+      "hash": "ea02a5bf853cc17c",
+      "observe": {
+        "ended": 0,
+        "entityCount": 24,
+        "lives": 99,
+        "nextId": 77,
+        "score": 0,
+        "tick": 363
+      },
+      "tick": 80
+    },
+    {
+      "hash": "9248b01bae90faf3",
+      "observe": {
+        "ended": 0,
+        "entityCount": 25,
+        "lives": 98,
+        "nextId": 85,
+        "score": 0,
+        "tick": 403
+      },
+      "tick": 88
+    },
+    {
+      "hash": "c1004eed44c20fbc",
+      "observe": {
+        "ended": 0,
+        "entityCount": 25,
+        "lives": 98,
+        "nextId": 93,
+        "score": 0,
+        "tick": 443
+      },
+      "tick": 96
+    },
+    {
+      "hash": "1a139a85416ed813",
+      "observe": {
+        "ended": 0,
+        "entityCount": 27,
+        "lives": 98,
+        "nextId": 100,
+        "score": 9,
+        "tick": 483
+      },
+      "tick": 104
+    },
+    {
+      "hash": "580a0947c4ad04e1",
+      "observe": {
+        "ended": 0,
+        "entityCount": 26,
+        "lives": 98,
+        "nextId": 107,
+        "score": 9,
+        "tick": 518
+      },
+      "tick": 112
+    },
+    {
+      "hash": "bb71ffb3c20bf0c6",
+      "observe": {
+        "ended": 0,
+        "entityCount": 27,
+        "lives": 98,
+        "nextId": 115,
+        "score": 9,
+        "tick": 558
+      },
+      "tick": 120
+    },
+    {
+      "hash": "f5bd9781830f0259",
+      "observe": {
+        "ended": 0,
+        "entityCount": 26,
+        "lives": 98,
+        "nextId": 123,
+        "score": 9,
+        "tick": 598
+      },
+      "tick": 128
+    },
+    {
+      "hash": "71c3e6ed442ba2ae",
+      "observe": {
+        "ended": 0,
+        "entityCount": 26,
+        "lives": 98,
+        "nextId": 130,
+        "score": 9,
+        "tick": 635
+      },
+      "tick": 136
+    },
+    {
+      "hash": "5946ae767e03dfa0",
+      "observe": {
+        "ended": 0,
+        "entityCount": 27,
+        "lives": 98,
+        "nextId": 139,
+        "score": 9,
+        "tick": 675
+      },
+      "tick": 144
+    },
+    {
+      "hash": "e3ee2a2cc31ac3ba",
+      "observe": {
+        "ended": 0,
+        "entityCount": 26,
+        "lives": 98,
+        "nextId": 145,
+        "score": 9,
+        "tick": 710
+      },
+      "tick": 152
+    },
+    {
+      "hash": "92e21e033c453c5a",
+      "observe": {
+        "ended": 0,
+        "entityCount": 28,
+        "lives": 98,
+        "nextId": 154,
+        "score": 9,
+        "tick": 750
+      },
+      "tick": 160
+    },
+    {
+      "hash": "4d16e0168d994095",
+      "observe": {
+        "ended": 0,
+        "entityCount": 26,
+        "lives": 98,
+        "nextId": 160,
+        "score": 9,
+        "tick": 790
+      },
+      "tick": 168
+    },
+    {
+      "hash": "f6a686c50822e99e",
+      "observe": {
+        "ended": 0,
+        "entityCount": 26,
+        "lives": 98,
+        "nextId": 169,
+        "score": 9,
+        "tick": 830
+      },
+      "tick": 176
+    },
+    {
+      "hash": "a7a13bd0affaeff0",
+      "observe": {
+        "ended": 0,
+        "entityCount": 27,
+        "lives": 98,
+        "nextId": 177,
+        "score": 9,
+        "tick": 870
+      },
+      "tick": 184
+    },
+    {
+      "hash": "cd595750e1ebcb02",
+      "observe": {
+        "ended": 0,
+        "entityCount": 26,
+        "lives": 98,
+        "nextId": 184,
+        "score": 9,
+        "tick": 910
+      },
+      "tick": 192
+    },
+    {
+      "hash": "5e4d0a0e45f5781a",
+      "observe": {
+        "ended": 0,
+        "entityCount": 27,
+        "lives": 98,
+        "nextId": 192,
+        "score": 9,
+        "tick": 946
+      },
+      "tick": 200
+    },
+    {
+      "hash": "fcf640e5800e0ca9",
+      "observe": {
+        "ended": 0,
+        "entityCount": 27,
+        "lives": 98,
+        "nextId": 199,
+        "score": 9,
+        "tick": 983
+      },
+      "tick": 208
+    },
+    {
+      "hash": "67fbbc02ecd55372",
+      "observe": {
+        "ended": 0,
+        "entityCount": 27,
+        "lives": 98,
+        "nextId": 207,
+        "score": 9,
+        "tick": 1023
+      },
+      "tick": 216
+    },
+    {
+      "hash": "9516e58ed47d25b6",
+      "observe": {
+        "ended": 0,
+        "entityCount": 28,
+        "lives": 98,
+        "nextId": 215,
+        "score": 9,
+        "tick": 1063
+      },
+      "tick": 224
+    },
+    {
+      "hash": "dc87bea767f936f9",
+      "observe": {
+        "ended": 0,
+        "entityCount": 26,
+        "lives": 98,
+        "nextId": 222,
+        "score": 9,
+        "tick": 1101
+      },
+      "tick": 232
+    },
+    {
+      "hash": "5d9e4688abb8f08d",
+      "observe": {
+        "ended": 0,
+        "entityCount": 26,
+        "lives": 98,
+        "nextId": 229,
+        "score": 9,
+        "tick": 1141
+      },
+      "tick": 240
+    },
+    {
+      "hash": "96e435f1c80f0434",
+      "observe": {
+        "ended": 0,
+        "entityCount": 26,
+        "lives": 98,
+        "nextId": 238,
+        "score": 25,
+        "tick": 1181
+      },
+      "tick": 248
+    },
+    {
+      "hash": "e8430c66aeb295bd",
+      "observe": {
+        "ended": 0,
+        "entityCount": 25,
+        "lives": 98,
+        "nextId": 244,
+        "score": 25,
+        "tick": 1216
+      },
+      "tick": 256
+    },
+    {
+      "hash": "4329e27ef8915306",
+      "observe": {
+        "ended": 0,
+        "entityCount": 25,
+        "lives": 97,
+        "nextId": 253,
+        "score": 25,
+        "tick": 1255
+      },
+      "tick": 264
+    },
+    {
+      "hash": "8199f6a47ab6ee53",
+      "observe": {
+        "ended": 0,
+        "entityCount": 24,
+        "lives": 97,
+        "nextId": 259,
+        "score": 25,
+        "tick": 1295
+      },
+      "tick": 272
+    },
+    {
+      "hash": "9f2d63d9212ed7b3",
+      "observe": {
+        "ended": 0,
+        "entityCount": 24,
+        "lives": 97,
+        "nextId": 268,
+        "score": 35,
+        "tick": 1335
+      },
+      "tick": 280
+    },
+    {
+      "hash": "e1ce47e63031f6b3",
+      "observe": {
+        "ended": 0,
+        "entityCount": 25,
+        "lives": 97,
+        "nextId": 275,
+        "score": 35,
+        "tick": 1372
+      },
+      "tick": 288
+    },
+    {
+      "hash": "04b2c1ecabed1c14",
+      "observe": {
+        "ended": 0,
+        "entityCount": 24,
+        "lives": 97,
+        "nextId": 282,
+        "score": 35,
+        "tick": 1406
+      },
+      "tick": 296
+    },
+    {
+      "hash": "0989705965a2389c",
+      "observe": {
+        "ended": 0,
+        "entityCount": 25,
+        "lives": 97,
+        "nextId": 290,
+        "score": 35,
+        "tick": 1446
+      },
+      "tick": 304
+    },
+    {
+      "hash": "11b2d4ef8b29edf8",
+      "observe": {
+        "ended": 0,
+        "entityCount": 24,
+        "lives": 97,
+        "nextId": 297,
+        "score": 35,
+        "tick": 1483
+      },
+      "tick": 312
+    },
+    {
+      "hash": "862c5ab0d5f69c98",
+      "observe": {
+        "ended": 0,
+        "entityCount": 24,
+        "lives": 97,
+        "nextId": 305,
+        "score": 35,
+        "tick": 1521
+      },
+      "tick": 320
+    },
+    {
+      "hash": "03cc1899e4dbc0ea",
+      "observe": {
+        "ended": 0,
+        "entityCount": 25,
+        "lives": 97,
+        "nextId": 313,
+        "score": 45,
+        "tick": 1561
+      },
+      "tick": 328
+    },
+    {
+      "hash": "d28c895833ab2ac2",
+      "observe": {
+        "ended": 0,
+        "entityCount": 24,
+        "lives": 97,
+        "nextId": 320,
+        "score": 45,
+        "tick": 1601
+      },
+      "tick": 336
+    },
+    {
+      "hash": "37c8e0b4ab4f9a38",
+      "observe": {
+        "ended": 0,
+        "entityCount": 25,
+        "lives": 97,
+        "nextId": 329,
+        "score": 45,
+        "tick": 1641
+      },
+      "tick": 344
+    },
+    {
+      "hash": "6800464844af6fa3",
+      "observe": {
+        "ended": 0,
+        "entityCount": 26,
+        "lives": 97,
+        "nextId": 337,
+        "score": 45,
+        "tick": 1681
+      },
+      "tick": 352
+    },
+    {
+      "hash": "f610851231194abb",
+      "observe": {
+        "ended": 0,
+        "entityCount": 24,
+        "lives": 97,
+        "nextId": 344,
+        "score": 55,
+        "tick": 1721
+      },
+      "tick": 360
+    },
+    {
+      "hash": "71cf14cdf4b2d7fc",
+      "observe": {
+        "ended": 0,
+        "entityCount": 26,
+        "lives": 97,
+        "nextId": 352,
+        "score": 55,
+        "tick": 1758
+      },
+      "tick": 368
+    },
+    {
+      "hash": "fce5cae7905dbc95",
+      "observe": {
+        "ended": 0,
+        "entityCount": 22,
+        "lives": 97,
+        "nextId": 358,
+        "score": 65,
+        "tick": 1796
+      },
+      "tick": 376
+    },
+    {
+      "hash": "72fd2613ed94cde8",
+      "observe": {
+        "ended": 0,
+        "entityCount": 23,
+        "lives": 97,
+        "nextId": 367,
+        "score": 65,
+        "tick": 1836
+      },
+      "tick": 384
+    },
+    {
+      "hash": "6e97a4a668624836",
+      "observe": {
+        "ended": 0,
+        "entityCount": 24,
+        "lives": 97,
+        "nextId": 374,
+        "score": 65,
+        "tick": 1876
+      },
+      "tick": 392
+    },
+    {
+      "hash": "eef6c20d7d101054",
+      "observe": {
+        "ended": 0,
+        "entityCount": 23,
+        "lives": 97,
+        "nextId": 382,
+        "score": 75,
+        "tick": 1912
+      },
+      "tick": 400
+    },
+    {
+      "hash": "b36bbee42b8b1dcd",
+      "observe": {
+        "ended": 0,
+        "entityCount": 24,
+        "lives": 97,
+        "nextId": 389,
+        "score": 75,
+        "tick": 1950
+      },
+      "tick": 408
+    },
+    {
+      "hash": "3840c4dd3f95d493",
+      "observe": {
+        "ended": 0,
+        "entityCount": 23,
+        "lives": 97,
+        "nextId": 396,
+        "score": 75,
+        "tick": 1987
+      },
+      "tick": 416
+    },
+    {
+      "hash": "c33cd86b4f020aa9",
+      "observe": {
+        "ended": 0,
+        "entityCount": 23,
+        "lives": 97,
+        "nextId": 404,
+        "score": 75,
+        "tick": 2027
+      },
+      "tick": 424
+    },
+    {
+      "hash": "ed566a350a56d730",
+      "observe": {
+        "ended": 0,
+        "entityCount": 23,
+        "lives": 97,
+        "nextId": 413,
+        "score": 85,
+        "tick": 2067
+      },
+      "tick": 432
+    },
+    {
+      "hash": "b038bd26b2ae8621",
+      "observe": {
+        "ended": 0,
+        "entityCount": 22,
+        "lives": 97,
+        "nextId": 419,
+        "score": 85,
+        "tick": 2106
+      },
+      "tick": 440
+    },
+    {
+      "hash": "576a0b89f448b047",
+      "observe": {
+        "ended": 0,
+        "entityCount": 24,
+        "lives": 97,
+        "nextId": 428,
+        "score": 86,
+        "tick": 2146
+      },
+      "tick": 448
+    },
+    {
+      "hash": "32d591e739957a4b",
+      "observe": {
+        "ended": 0,
+        "entityCount": 25,
+        "lives": 97,
+        "nextId": 436,
+        "score": 86,
+        "tick": 2186
+      },
+      "tick": 456
+    },
+    {
+      "hash": "8a7e408c07414c07",
+      "observe": {
+        "ended": 0,
+        "entityCount": 24,
+        "lives": 97,
+        "nextId": 443,
+        "score": 86,
+        "tick": 2224
+      },
+      "tick": 464
+    },
+    {
+      "hash": "3c54a761bad984a2",
+      "observe": {
+        "ended": 0,
+        "entityCount": 24,
+        "lives": 97,
+        "nextId": 451,
+        "score": 86,
+        "tick": 2264
+      },
+      "tick": 472
+    },
+    {
+      "hash": "94fae5b74d66aedc",
+      "observe": {
+        "ended": 0,
+        "entityCount": 25,
+        "lives": 96,
+        "nextId": 459,
+        "score": 86,
+        "tick": 2304
+      },
+      "tick": 480
+    },
+    {
+      "hash": "2b3f78f20b86bcbd",
+      "observe": {
+        "ended": 0,
+        "entityCount": 25,
+        "lives": 96,
+        "nextId": 466,
+        "score": 86,
+        "tick": 2344
+      },
+      "tick": 488
+    },
+    {
+      "hash": "b74d92550626ae22",
+      "observe": {
+        "ended": 0,
+        "entityCount": 26,
+        "lives": 96,
+        "nextId": 475,
+        "score": 86,
+        "tick": 2384
+      },
+      "tick": 496
+    },
+    {
+      "hash": "4bcfd2c2392e3743",
+      "observe": {
+        "ended": 0,
+        "entityCount": 25,
+        "lives": 96,
+        "nextId": 481,
+        "score": 86,
+        "tick": 2421
+      },
+      "tick": 504
+    },
+    {
+      "hash": "db2bf8d626b29314",
+      "observe": {
+        "ended": 0,
+        "entityCount": 25,
+        "lives": 95,
+        "nextId": 489,
+        "score": 86,
+        "tick": 2461
+      },
+      "tick": 512
+    },
+    {
+      "hash": "2279808a4f83ccce",
+      "observe": {
+        "ended": 0,
+        "entityCount": 25,
+        "lives": 95,
+        "nextId": 496,
+        "score": 86,
+        "tick": 2496
+      },
+      "tick": 520
+    },
+    {
+      "hash": "9ba154a272d3a01a",
+      "observe": {
+        "ended": 0,
+        "entityCount": 25,
+        "lives": 94,
+        "nextId": 504,
+        "score": 86,
+        "tick": 2536
+      },
+      "tick": 528
+    },
+    {
+      "hash": "2ad809e0e2fc9db8",
+      "observe": {
+        "ended": 0,
+        "entityCount": 25,
+        "lives": 94,
+        "nextId": 512,
+        "score": 86,
+        "tick": 2576
+      },
+      "tick": 536
+    },
+    {
+      "hash": "0143249ecad131a8",
+      "observe": {
+        "ended": 0,
+        "entityCount": 26,
+        "lives": 94,
+        "nextId": 519,
+        "score": 86,
+        "tick": 2616
+      },
+      "tick": 544
+    },
+    {
+      "hash": "7c9e960894ed54f7",
+      "observe": {
+        "ended": 0,
+        "entityCount": 25,
+        "lives": 94,
+        "nextId": 528,
+        "score": 96,
+        "tick": 2656
+      },
+      "tick": 552
+    },
+    {
+      "hash": "4233e6fe77175bd0",
+      "observe": {
+        "ended": 0,
+        "entityCount": 26,
+        "lives": 94,
+        "nextId": 536,
+        "score": 96,
+        "tick": 2696
+      },
+      "tick": 560
+    },
+    {
+      "hash": "88168151439206a6",
+      "observe": {
+        "ended": 0,
+        "entityCount": 25,
+        "lives": 94,
+        "nextId": 543,
+        "score": 96,
+        "tick": 2732
+      },
+      "tick": 568
+    },
+    {
+      "hash": "d8cf41d59d0cc1de",
+      "observe": {
+        "ended": 0,
+        "entityCount": 25,
+        "lives": 94,
+        "nextId": 550,
+        "score": 96,
+        "tick": 2769
+      },
+      "tick": 576
+    },
+    {
+      "hash": "4c7486363b7c51bf",
+      "observe": {
+        "ended": 0,
+        "entityCount": 25,
+        "lives": 94,
+        "nextId": 557,
+        "score": 96,
+        "tick": 2807
+      },
+      "tick": 584
+    },
+    {
+      "hash": "e4d1cfa89c4a4f13",
+      "observe": {
+        "ended": 0,
+        "entityCount": 25,
+        "lives": 94,
+        "nextId": 565,
+        "score": 100,
+        "tick": 2844
+      },
+      "tick": 592
+    },
+    {
+      "hash": "16bed1be5063688d",
+      "observe": {
+        "ended": 0,
+        "entityCount": 25,
+        "lives": 94,
+        "nextId": 573,
+        "score": 110,
+        "tick": 2884
+      },
+      "tick": 600
+    },
+    {
+      "hash": "662e2b424575ce58",
+      "observe": {
+        "ended": 0,
+        "entityCount": 24,
+        "lives": 94,
+        "nextId": 580,
+        "score": 110,
+        "tick": 2921
+      },
+      "tick": 608
+    },
+    {
+      "hash": "dc6269a0598e3c0b",
+      "observe": {
+        "ended": 0,
+        "entityCount": 24,
+        "lives": 94,
+        "nextId": 588,
+        "score": 120,
+        "tick": 2959
+      },
+      "tick": 616
+    },
+    {
+      "hash": "b419b0195c723f7c",
+      "observe": {
+        "ended": 0,
+        "entityCount": 23,
+        "lives": 94,
+        "nextId": 594,
+        "score": 120,
+        "tick": 2996
+      },
+      "tick": 624
+    },
+    {
+      "hash": "a13ccf2fdee42174",
+      "observe": {
+        "ended": 0,
+        "entityCount": 23,
+        "lives": 94,
+        "nextId": 603,
+        "score": 130,
+        "tick": 3035
+      },
+      "tick": 632
+    },
+    {
+      "hash": "4ff0f9876d1ca9d8",
+      "observe": {
+        "ended": 0,
+        "entityCount": 23,
+        "lives": 94,
+        "nextId": 609,
+        "score": 130,
+        "tick": 3071
+      },
+      "tick": 640
+    },
+    {
+      "hash": "ead028212541ee32",
+      "observe": {
+        "ended": 0,
+        "entityCount": 23,
+        "lives": 94,
+        "nextId": 617,
+        "score": 130,
+        "tick": 3111
+      },
+      "tick": 648
+    },
+    {
+      "hash": "ebcb609ea21ac90a",
+      "observe": {
+        "ended": 0,
+        "entityCount": 25,
+        "lives": 94,
+        "nextId": 626,
+        "score": 130,
+        "tick": 3151
+      },
+      "tick": 656
+    },
+    {
+      "hash": "e3ecda0cb6fa4f62",
+      "observe": {
+        "ended": 0,
+        "entityCount": 23,
+        "lives": 94,
+        "nextId": 632,
+        "score": 130,
+        "tick": 3191
+      },
+      "tick": 664
+    },
+    {
+      "hash": "bcb1047229fa86cb",
+      "observe": {
+        "ended": 0,
+        "entityCount": 23,
+        "lives": 94,
+        "nextId": 641,
+        "score": 130,
+        "tick": 3231
+      },
+      "tick": 672
+    },
+    {
+      "hash": "7f351e54a0e9d781",
+      "observe": {
+        "ended": 0,
+        "entityCount": 24,
+        "lives": 94,
+        "nextId": 649,
+        "score": 130,
+        "tick": 3271
+      },
+      "tick": 680
+    },
+    {
+      "hash": "06aaea0e62fe0f8c",
+      "observe": {
+        "ended": 0,
+        "entityCount": 25,
+        "lives": 94,
+        "nextId": 656,
+        "score": 130,
+        "tick": 3307
+      },
+      "tick": 688
+    },
+    {
+      "hash": "96b71dbd36a44ab7",
+      "observe": {
+        "ended": 0,
+        "entityCount": 26,
+        "lives": 94,
+        "nextId": 664,
+        "score": 130,
+        "tick": 3347
+      },
+      "tick": 696
+    },
+    {
+      "hash": "6f6a488b49b5ca87",
+      "observe": {
+        "ended": 0,
+        "entityCount": 27,
+        "lives": 94,
+        "nextId": 672,
+        "score": 130,
+        "tick": 3387
+      },
+      "tick": 704
+    },
+    {
+      "hash": "ea3e0f51e1911fe3",
+      "observe": {
+        "ended": 0,
+        "entityCount": 25,
+        "lives": 93,
+        "nextId": 679,
+        "score": 130,
+        "tick": 3426
+      },
+      "tick": 712
+    },
+    {
+      "hash": "63e6228f4ad1fa7f",
+      "observe": {
+        "ended": 0,
+        "entityCount": 25,
+        "lives": 92,
+        "nextId": 688,
+        "score": 140,
+        "tick": 3466
+      },
+      "tick": 720
+    },
+    {
+      "hash": "14e1c2f31d7c56eb",
+      "observe": {
+        "ended": 0,
+        "entityCount": 24,
+        "lives": 91,
+        "nextId": 695,
+        "score": 140,
+        "tick": 3506
+      },
+      "tick": 728
+    },
+    {
+      "hash": "ad65e52730e6a81b",
+      "observe": {
+        "ended": 0,
+        "entityCount": 25,
+        "lives": 91,
+        "nextId": 703,
+        "score": 146,
+        "tick": 3546
+      },
+      "tick": 736
+    },
+    {
+      "hash": "70937fb34f865365",
+      "observe": {
+        "ended": 0,
+        "entityCount": 26,
+        "lives": 91,
+        "nextId": 709,
+        "score": 146,
+        "tick": 3577
+      },
+      "tick": 744
+    },
+    {
+      "hash": "51bf60594846d0cf",
+      "observe": {
+        "ended": 0,
+        "entityCount": 26,
+        "lives": 91,
+        "nextId": 717,
+        "score": 146,
+        "tick": 3617
+      },
+      "tick": 752
+    },
+    {
+      "hash": "7d887676b2166ed0",
+      "observe": {
+        "ended": 0,
+        "entityCount": 25,
+        "lives": 91,
+        "nextId": 725,
+        "score": 146,
+        "tick": 3657
+      },
+      "tick": 760
+    },
+    {
+      "hash": "0059adbc66e73f88",
+      "observe": {
+        "ended": 0,
+        "entityCount": 28,
+        "lives": 91,
+        "nextId": 734,
+        "score": 146,
+        "tick": 3697
+      },
+      "tick": 768
+    },
+    {
+      "hash": "372296490375254d",
+      "observe": {
+        "ended": 0,
+        "entityCount": 25,
+        "lives": 91,
+        "nextId": 740,
+        "score": 146,
+        "tick": 3737
+      },
+      "tick": 776
+    },
+    {
+      "hash": "6756498895488783",
+      "observe": {
+        "ended": 0,
+        "entityCount": 25,
+        "lives": 91,
+        "nextId": 748,
+        "score": 146,
+        "tick": 3777
+      },
+      "tick": 784
+    },
+    {
+      "hash": "bff8689edd5457e8",
+      "observe": {
+        "ended": 0,
+        "entityCount": 24,
+        "lives": 91,
+        "nextId": 755,
+        "score": 156,
+        "tick": 3814
+      },
+      "tick": 792
+    },
+    {
+      "hash": "3f53b6a3c96d67b3",
+      "observe": {
+        "ended": 0,
+        "entityCount": 24,
+        "lives": 90,
+        "nextId": 763,
+        "score": 156,
+        "tick": 3854
+      },
+      "tick": 800
+    }
+  ],
+  "description": "Frame-driven: frame times from 1 ms to 1.5 s, so long hitches are clamped to one second and capped at maxTicksPerFrame with the backlog dropped.",
+  "frames": {
+    "count": 800,
+    "maxNanos": 1500000000,
+    "minNanos": 1000000,
+    "seed": 4242
+  },
+  "inputs": [
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 2
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 19
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 36
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 53
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 70
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 87
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 104
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 121
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 138
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 155
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 172
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 189
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 206
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 223
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 240
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 257
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 274
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 291
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 308
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 325
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 342
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 359
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 376
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 393
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 410
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 427
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 444
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 461
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 478
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 495
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 512
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 529
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 546
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 563
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 580
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 597
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 614
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 631
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 648
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 665
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 682
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 699
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 716
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 733
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 750
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 767
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 784
+    }
+  ],
+  "name": "loop-hitch",
+  "scenarioVersion": 1,
+  "seed": 33,
+  "spec": {
+    "path": "spec/samples/monstera-sample/monstera.spec.json",
+    "sha256": "ad0a2ac3f804979632b4aff24ccd999931c66b61cc8ecb69d87461ea91397dec"
+  },
+  "ticks": 800
+}

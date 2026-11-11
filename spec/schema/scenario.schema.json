@@ -4,7 +4,7 @@
   "description": "Golden conformance scenario: a spec reference, a seed, an input trace and expected checkpoints recorded by the oracle (architecture/RUNTIME-CONTRACT.md section 7).",
   "type": "object",
   "additionalProperties": false,
-  "required": ["scenarioVersion", "name", "description", "spec", "seed", "ticks", "inputs", "checkpoints"],
+  "required": ["scenarioVersion", "name", "description", "spec", "seed", "ticks", "frames", "inputs", "checkpoints"],
   "properties": {
     "scenarioVersion": { "type": "integer", "const": 1 },
     "name": {
@@ -24,7 +24,20 @@
       }
     },
     "seed": { "description": "PRNG seed, 0..2^53-1 so it is exact in JSON.", "type": "integer", "minimum": 0, "maximum": 9007199254740991 },
-    "ticks": { "type": "integer", "minimum": 1, "maximum": 100000 },
+    "ticks": { "description": "Tick-driven scenarios: steps to run. Frame-driven scenarios: must equal frames.count.", "type": "integer", "minimum": 1, "maximum": 100000 },
+    "frames": {
+      "title": "ScenarioFrames",
+      "description": "count 0: tick-driven (inputs[].tick and checkpoints[].tick count ticks). count above 0: the shell-free GameLoop is driven by count generated frame durations (RUNTIME-CONTRACT section 1) and those fields count FRAMES; the durations come from an LCG seeded with `seed`, uniformly in [minNanos, maxNanos]. All four are 0 for tick-driven scenarios.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["count", "seed", "minNanos", "maxNanos"],
+      "properties": {
+        "count": { "type": "integer", "minimum": 0, "maximum": 100000 },
+        "seed": { "type": "integer", "minimum": 0, "maximum": 2147483647 },
+        "minNanos": { "type": "integer", "minimum": 0, "maximum": 4000000000 },
+        "maxNanos": { "type": "integer", "minimum": 0, "maximum": 4000000000 }
+      }
+    },
     "inputs": {
       "description": "Events by tick, ascending. Events for tick t are applied at the start of the step that begins at tick t.",
       "type": "array",

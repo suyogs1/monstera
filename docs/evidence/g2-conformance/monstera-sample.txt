@@ -8,5 +8,8 @@ spec ad0a2ac3f804  verdict: PASS
   idle                  101 checkpoints  oracle=pass kotlin=pass swift=pass
   input-order           121 checkpoints  oracle=pass kotlin=pass swift=pass
   long-run              101 checkpoints  oracle=pass kotlin=pass swift=pass
+  loop-120hz            101 checkpoints  oracle=pass kotlin=pass swift=pass
+  loop-hitch            101 checkpoints  oracle=pass kotlin=pass swift=pass
+  loop-jitter           101 checkpoints  oracle=pass kotlin=pass swift=pass
   saturation             91 checkpoints  oracle=pass kotlin=pass swift=pass
   spawn-determinism     101 checkpoints  oracle=pass kotlin=pass swift=pass

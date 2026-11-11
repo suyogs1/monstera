@@ -36,11 +36,12 @@ def steps(by_tick: dict[int, list[dict]]) -> list[dict]:
 
 
 def scenario(name: str, description: str, seed: int, ticks: int, by_tick: dict[int, list[dict]],
-             spec: str = SPEC) -> dict:
+             spec: str = SPEC, frames: dict | None = None) -> dict:
     return {
         "scenarioVersion": 1, "name": name, "description": description,
         "spec": {"path": spec, "sha256": PLACEHOLDER_SHA},
-        "seed": seed, "ticks": ticks, "inputs": steps(by_tick), "checkpoints": [],
+        "seed": seed, "ticks": ticks, "frames": frames or {"count": 0, "seed": 0, "minNanos": 0, "maxNanos": 0},
+        "inputs": steps(by_tick), "checkpoints": [],
     }
 
 
@@ -101,6 +102,15 @@ def build() -> list[dict]:
                  5, 220, {10: [ev("tap")] * 80}),
         scenario("long-run", "10,000 ticks of pseudo-random drags and taps from a fixed LCG: long-horizon drift would show up as a hash mismatch.",
                  5, 10000, long_run_inputs(10000)),
+        scenario("loop-jitter", "Frame-driven: 1500 frames of 4-40 ms jitter drive the fixed-tick GameLoop; taps and drags are submitted per frame and land on whatever tick comes next. A different tick count or input placement diverges.",
+                 31, 1500, {f: [ev("tap")] for f in range(5, 1500, 37)} | {f: [ev("drag", units((f % 9) - 4))] for f in range(11, 1500, 53)},
+                 frames={"count": 1500, "seed": 12345, "minNanos": 4000000, "maxNanos": 40000000}),
+        scenario("loop-120hz", "Frame-driven: 120 Hz display (about 8.3 ms frames, +-0.1 ms jitter) against a 60 tick/s simulation: zero- and one-tick frames alternate with exact integer accumulation.",
+                 32, 1200, {f: [ev("tap")] for f in range(3, 1200, 29)},
+                 frames={"count": 1200, "seed": 777, "minNanos": 8233333, "maxNanos": 8433333}),
+        scenario("loop-hitch", "Frame-driven: frame times from 1 ms to 1.5 s, so long hitches are clamped to one second and capped at maxTicksPerFrame with the backlog dropped.",
+                 33, 800, {f: [ev("tap")] for f in range(2, 800, 17)},
+                 frames={"count": 800, "seed": 4242, "minNanos": 1000000, "maxNanos": 1500000000}),
         scenario("game-over", "Idle player until lives reach 0 (about tick 11900); afterwards stepping is a no-op and the tick stops advancing.",
                  3, 20000, {}),
     ]
@@ -131,6 +141,9 @@ def build_lab() -> list[dict]:
                 15: [ev("swipe", direction="none"), ev("drag", -1, -1)],
                 20: [ev("swipe", direction="down")],
             }),
+        scenario("loop-lives-end", "Frame-driven: taps on the mine through a jittery 30 Hz display end the game; later frames change nothing.",
+                 34, 300, {f: [ev("tap")] for f in range(10, 300, 20)},
+                 spec=LAB_SPEC, frames={"count": 300, "seed": 99, "minNanos": 25000000, "maxNanos": 45000000}),
         lab("lives-end", "Three taps each spawn a bullet on the mine (one life each): the game ends on the third and later input is ignored with the tick frozen.",
             6, 40, {10: [ev("tap")], 11: [ev("tap")], 12: [ev("tap")], 20: [ev("tap")], 25: [ev("drag", 65536, 65536)]}),
     ]

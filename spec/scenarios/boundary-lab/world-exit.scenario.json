@@ -374,6 +374,12 @@
     }
   ],
   "description": "Entities leave the world exactly when their box is entirely outside (x + w <= 0 or x >= W): ticks 5, 5 and 15.",
+  "frames": {
+    "count": 0,
+    "maxNanos": 0,
+    "minNanos": 0,
+    "seed": 0
+  },
   "inputs": [],
   "name": "world-exit",
   "scenarioVersion": 1,

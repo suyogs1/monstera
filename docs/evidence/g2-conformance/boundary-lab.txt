@@ -5,6 +5,7 @@ spec f8507b7ea40f  verdict: PASS
   bounce-clamp           13 checkpoints  oracle=pass kotlin=pass swift=pass
   lifetime-and-cap      151 checkpoints  oracle=pass kotlin=pass swift=pass
   lives-end              41 checkpoints  oracle=pass kotlin=pass swift=pass
+  loop-lives-end        101 checkpoints  oracle=pass kotlin=pass swift=pass
   negative-rounding      41 checkpoints  oracle=pass kotlin=pass swift=pass
   touching-edges          4 checkpoints  oracle=pass kotlin=pass swift=pass
   world-exit             31 checkpoints  oracle=pass kotlin=pass swift=pass

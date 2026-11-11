@@ -158,6 +158,12 @@
     }
   ],
   "description": "Bounce reflects position and velocity at the exact wall (right, left, bottom), clamp pins at the wall, saturated velocity ends clamped.",
+  "frames": {
+    "count": 0,
+    "maxNanos": 0,
+    "minNanos": 0,
+    "seed": 0
+  },
   "inputs": [],
   "name": "bounce-clamp",
   "scenarioVersion": 1,

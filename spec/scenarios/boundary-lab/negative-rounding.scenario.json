@@ -494,6 +494,12 @@
     }
   ],
   "description": "Odd negative and positive drag deltas through a 1.5 gain: mul rounds toward negative infinity (-4.5 -> -5); int32 extremes clamp at the walls.",
+  "frames": {
+    "count": 0,
+    "maxNanos": 0,
+    "minNanos": 0,
+    "seed": 0
+  },
   "inputs": [
     {
       "events": [
