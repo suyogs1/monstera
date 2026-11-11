@@ -3,6 +3,7 @@
 # Usage: device-lab/android/adapter.sh <build|install|launch|stop|screenshot|logs|test|report> [args]
 # Env: ANDROID_SERIAL (adb target), DL_TARGET_KIND=android-emulator|android-device (default emulator)
 set -euo pipefail
+# shellcheck source-path=SCRIPTDIR source=../lib.sh
 source "$(dirname "$0")/../lib.sh"
 dl_init "${DL_TARGET_KIND:-android-emulator}"
 

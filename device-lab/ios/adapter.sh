@@ -6,6 +6,7 @@
 #   SIM_DEVICE     = simulator UDID or "booted" (default "booted")
 #   XTOOL          = xtool executable (default "xtool")
 set -euo pipefail
+# shellcheck source-path=SCRIPTDIR source=../lib.sh
 source "$(dirname "$0")/../lib.sh"
 dl_init "${DL_TARGET_KIND:-ios-simulator}"
 
@@ -64,7 +65,7 @@ case "$op" in
       --predicate "subsystem == \"$BUNDLE_ID\" OR process == \"MonsteraHello\"" > "$f" 2>&1 || true
     dl_result logs ok "$f" ;;
   test)
-    dl_unsupported test "no automated tests in Phase 0 hello world" ;;
+    dl_unsupported test "unsupported: no automated iOS tests exist (no XCUITest target)" ;;
   report)
     dl_report ;;
   *) echo "unknown op: $op" >&2; exit 2 ;;

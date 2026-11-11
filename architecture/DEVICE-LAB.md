@@ -11,10 +11,10 @@ scheduler, device pool, daemon, or web UI.
 
 | Target | Host | Underlying tools | Phase 0 status |
 |---|---|---|---|
-| `android-emulator` | Linux, Windows, macOS | Gradle, `emulator`, `adb` | All ops proven on a Windows host; Linux runs in CI (`android.yml`) |
-| `android-device` | Any host with USB/adb | Gradle, `adb` | Same adapter (`DL_TARGET_KIND=android-device`, `ANDROID_SERIAL`); not yet run on hardware |
-| `ios-simulator` | macOS only | xtool (build), `xcrun simctl` | Runs in CI (`ios-simulator.yml`) |
-| `ios-device` | Linux/WSL/macOS + USB (usbmuxd) | xtool (`dev build --sign`, `install`, `launch`) | Interface only; needs an Apple ID and an iPhone |
+| `android-emulator` | Linux, Windows, macOS | Gradle, `emulator`, `adb` | Verified on a Windows host and on Linux CI (`android.yml`); `test` unsupported |
+| `android-device` | Any host with USB/adb | Gradle, `adb` | Same adapter (`DL_TARGET_KIND=android-device`, `ANDROID_SERIAL`); never run on hardware |
+| `ios-simulator` | macOS only | xtool (build), `xcrun simctl` | Verified in CI (`ios-simulator.yml`); `test` unsupported |
+| `ios-device` | Linux/WSL/macOS + USB (usbmuxd) | xtool (`dev build --sign`, `install`, `launch`) | Implemented, never run; needs an Apple ID and an iPhone |
 
 ## Operation contract
 
@@ -32,11 +32,31 @@ adapter <op> [args]   ->  one JSON line on stdout, tool chatter on stderr, exit 
 | stop | `am force-stop` | `simctl terminate` | unsupported (xtool 1.24.0) |
 | screenshot | `adb exec-out screencap -p` | `simctl io screenshot` | unsupported (candidate: libimobiledevice `idevicescreenshot`) |
 | logs | `logcat -d` filtered | `log show` filtered by subsystem | unsupported (candidate: `idevicesyslog`) |
-| test | unsupported in Phase 0 | unsupported in Phase 0 | unsupported in Phase 0 |
+| test | unsupported (no automated tests) | **unsupported (no automated iOS tests)** | unsupported |
 | report | aggregate `results.jsonl` into `report.json` | same | same |
 
 `unsupported` is a valid result (exit 3), not a failure. It keeps gaps visible in reports
 instead of hiding them.
+
+## Implementation and verification matrix (G0)
+
+Key: **V** = implemented and verified by a recorded run. **I** = implemented, never executed.
+**U** = returns `unsupported` by design (verified to do so where marked V/U).
+
+| Op | android-emulator | android-device | ios-simulator | ios-device |
+|---|---|---|---|---|
+| build | V (local Windows + Linux CI) | V (same APK as emulator) | V (CI, `xtool dev build --triple arm64-apple-ios-simulator`) | I (`xtool dev build --sign`; needs Apple ID) |
+| install | V | I | V | I |
+| launch | V | I | V | I |
+| stop | V | I | V | U |
+| screenshot | V | I | V | U |
+| logs | V (lifecycle in logcat) | I | V (`scenePhase: active` after the `--info` fix, run 42972339058) | U |
+| test | V/U (no automated tests) | U | **V/U: unsupported. No automated iOS tests exist.** | U |
+| report | V | I | V | I |
+
+Evidence: `docs/evidence/android-emulator/`, `docs/evidence/android-emulator-linux-ci/`,
+`docs/evidence/ios-simulator-ci/`. UI interaction (taps) is verified on Android only, through
+`tools/scripts/android-emulator-smoke.sh`, outside the contract. No interaction is verified on iOS.
 
 ## Run layout
 
