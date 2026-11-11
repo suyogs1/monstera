@@ -7,6 +7,8 @@ gradlew text eol=lf
 generated/** text eol=lf
 spec/** text eol=lf
 tools/monstera/** text eol=lf
+tools/monstera-mcp/** text eol=lf
+.kiro/** text eol=lf
 
 *.bat text eol=crlf
 *.png binary

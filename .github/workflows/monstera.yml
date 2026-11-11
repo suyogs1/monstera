@@ -4,9 +4,9 @@ name: monstera
 
 on:
   push:
-    paths: ["spec/**", "tools/monstera/**", "generated/**", "device-lab/**", ".github/workflows/monstera.yml"]
+    paths: ["spec/**", "tools/monstera/**", "tools/monstera-mcp/**", "generated/**", "apps/**", "device-lab/**", ".kiro/**", ".github/workflows/**"]
   pull_request:
-    paths: ["spec/**", "tools/monstera/**", "generated/**", "device-lab/**", ".github/workflows/monstera.yml"]
+    paths: ["spec/**", "tools/monstera/**", "tools/monstera-mcp/**", "generated/**", "apps/**", "device-lab/**", ".kiro/**", ".github/workflows/**"]
   workflow_dispatch:
 
 permissions:
@@ -54,10 +54,21 @@ jobs:
           diff -r "$RUNNER_TEMP/a" "$OUT"
           # The manifest hashes every file: equal manifest hashes on Windows and Linux = identical trees.
           echo "fresh manifest sha256 (Linux):"; sha256sum "$RUNNER_TEMP/a/MONSTERA-MANIFEST.json"
+      - name: All quality gates (specs, generation, ownership, architecture/CI safety, Kiro config)
+        run: bash tools/monstera/bin/monstera gates --skip-tests
       - name: Same canonical spec on both platforms
         run: |
           cmp "$OUT/android/app/src/main/assets/monstera.spec.json" "$OUT/ios/Sources/MonsteraSample/Resources/monstera.spec.json"
           sha256sum "$OUT/android/app/src/main/assets/monstera.spec.json"
+
+  mcp:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+      - name: MCP server tests (parity, security, stdio protocol session)
+        run: uv run --frozen --project tools/monstera-mcp python -m unittest discover -s tools/monstera-mcp/tests -t tools/monstera-mcp -v
 
   android-generated:
     needs: spec

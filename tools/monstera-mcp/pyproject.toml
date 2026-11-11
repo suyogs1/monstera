@@ -1,0 +1,12 @@
+[project]
+name = "monstera-mcp"
+version = "0.1.0"
+description = "MCP server exposing the MONSTERA engine (tools/monstera) to Kiro. Adapter only."
+requires-python = ">=3.10"
+# Exact pin; the full transitive tree is locked in uv.lock. Reviewed with the
+# security-dependency-review prompt before any upgrade.
+dependencies = ["mcp==2.3.0"]
+
+[tool.uv]
+# Not an installable package: run with `uv run --frozen --project tools/monstera-mcp python tools/monstera-mcp/server.py`.
+package = false

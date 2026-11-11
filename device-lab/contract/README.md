@@ -28,3 +28,6 @@ Rules:
 - Ops are independent and idempotent where the platform allows; no hidden state other than
   the run directory.
 - Target selection is per adapter via environment (`ANDROID_SERIAL`, `SIM_DEVICE`, `IOS_UDID`).
+- App selection is explicit (since G1.5 there is no default app): Android `DL_APP_DIR`,
+  `DL_APP_PACKAGE`, `DL_APP_LOG_TAG`; iOS `DL_APP_DIR`, `DL_APP_PRODUCT`, `DL_APP_BUNDLE_ID`. An op
+  whose variables are missing prints a `failed` result line naming them and exits 2.
