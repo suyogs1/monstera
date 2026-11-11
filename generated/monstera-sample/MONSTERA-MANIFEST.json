@@ -180,6 +180,7 @@
   },
   "spec": {
     "path": "spec/samples/monstera-sample/monstera.spec.json",
+    "projectId": "monstera-sample",
     "sha256": "88ddd663d84e52761fa0834f814e1b737e75f6a62d7dddceee8af37912a977e1"
   },
   "toolchain": {

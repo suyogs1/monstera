@@ -100,12 +100,29 @@ def cmd_generate(args: argparse.Namespace, store: SchemaStore) -> int:
                 print(f"  {label}: {item}")
         return 1
     try:
-        generate.write(files, out)
+        generate.write(files, out, force=args.force)
     except generate.OutputError as exc:
         print(f"generate: {exc}", file=sys.stderr)
         return 2
     print(f"{_label(out)}: generated {len(files)} files from spec sha256 {result.sha256}")
     return 0
+
+
+def cmd_verify(args: argparse.Namespace, store: SchemaStore) -> int:
+    out = Path(args.dir)
+    try:
+        drift = generate.verify(out)
+    except generate.OutputError as exc:
+        print(f"verify: {exc}", file=sys.stderr)
+        return 1
+    if drift.clean:
+        print(f"{_label(out)}: matches its manifest")
+        return 0
+    print(f"{_label(out)}: DIFFERS from its manifest")
+    for label, items in (("changed", drift.changed), ("missing", drift.missing), ("unexpected", drift.unexpected)):
+        for item in items:
+            print(f"  {label}: {item}")
+    return 1
 
 
 def cmd_check_architecture(args: argparse.Namespace, store: SchemaStore) -> int:
@@ -173,7 +190,13 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("spec")
     p.add_argument("--out", help="output directory (default: generated/<project.id>)")
     p.add_argument("--check", action="store_true", help="compare with a fresh generation; write nothing")
+    p.add_argument("--force", action="store_true",
+                   help="discard hand edits and unmanaged files in the output directory (never follows symlinks)")
     p.set_defaults(func=cmd_generate)
+
+    p = sub.add_parser("verify", help="check a generated directory against its own manifest")
+    p.add_argument("dir")
+    p.set_defaults(func=cmd_verify)
 
     p = sub.add_parser("check-architecture", help="reject forbidden cross-platform frameworks")
     p.add_argument("--root", help="directory to scan (default: repository root)")
@@ -185,6 +208,10 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def main(argv: list[str] | None = None) -> int:
+    # Never crash on a console/pipe encoding (e.g. cp1252 on Windows); output is ASCII-safe anyway.
+    for stream in (sys.stdout, sys.stderr):
+        if hasattr(stream, "reconfigure"):
+            stream.reconfigure(encoding="utf-8", errors="backslashreplace")
     args = build_parser().parse_args(argv)
     try:
         store = SchemaStore.load(Path(args.schemas))

@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import math
 import re
 from dataclasses import dataclass
 from pathlib import Path
@@ -45,6 +46,13 @@ def _reject_constant(name: str) -> Any:
     raise ValueError(f"non-finite number {name} is not allowed")
 
 
+def _finite_float(text: str) -> float:
+    value = float(text)
+    if not math.isfinite(value):  # e.g. 1e400 overflows to infinity
+        raise ValueError(f"number {text} is out of range (not a finite double)")
+    return value
+
+
 def _line_col(text: str, offset: int) -> tuple[int, int]:
     line = text.count("\n", 0, offset) + 1
     col = offset - (text.rfind("\n", 0, offset) + 1) + 1
@@ -56,7 +64,10 @@ def loads_strict(text: str) -> Any:
     if text.startswith("\ufeff"):
         raise LoadError("json.bom", "file starts with a UTF-8 byte order mark; save without BOM", 1, 1)
     try:
-        return json.loads(text, object_pairs_hook=_no_duplicates, parse_constant=_reject_constant)
+        return json.loads(text, object_pairs_hook=_no_duplicates, parse_constant=_reject_constant,
+                          parse_float=_finite_float)
+    except RecursionError:
+        raise LoadError("json.depth", "nesting is too deep") from None
     except json.JSONDecodeError as exc:
         raise LoadError("json.parse", exc.msg, exc.lineno, exc.colno) from None
     except _DuplicateKey as exc:
@@ -80,8 +91,23 @@ def load_path(path: Path) -> Any:
     return loads_strict(text)
 
 
+_MAX_EXACT = 2 ** 53
+
+
+def _normalize_numbers(value: Any) -> Any:
+    """1080.0 and 1080 are the same JSON number; give them one canonical spelling."""
+    if isinstance(value, float) and value.is_integer() and abs(value) < _MAX_EXACT:
+        return int(value)
+    if isinstance(value, dict):
+        return {k: _normalize_numbers(v) for k, v in value.items()}
+    if isinstance(value, list):
+        return [_normalize_numbers(v) for v in value]
+    return value
+
+
 def canonical_text(value: Any) -> str:
-    return json.dumps(value, sort_keys=True, indent=2, ensure_ascii=False, allow_nan=False) + "\n"
+    return json.dumps(_normalize_numbers(value), sort_keys=True, indent=2, ensure_ascii=False,
+                      allow_nan=False) + "\n"
 
 
 def canonical_bytes(value: Any) -> bytes:

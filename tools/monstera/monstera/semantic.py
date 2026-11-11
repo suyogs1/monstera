@@ -38,7 +38,7 @@ def contrast_ratio(a: str, b: str) -> float:
     return (la + 0.05) / (lb + 0.05)
 
 
-def validate(spec: dict[str, Any]) -> list[Issue]:
+def validate(spec: dict[str, Any], type_names: frozenset[str] = frozenset()) -> list[Issue]:
     issues: list[Issue] = []
     project, game = spec["project"], spec["game"]
 
@@ -51,6 +51,10 @@ def validate(spec: dict[str, Any]) -> list[Issue]:
     if product in _RESERVED_MODULES:
         issues.append(Issue("$.project.id", "semantic.product-name",
                             f"derived iOS product name '{product}' shadows a system module; choose another id"))
+    elif product in type_names or f"{product}App" in type_names:
+        issues.append(Issue("$.project.id", "semantic.product-name",
+                            f"derived iOS product name '{product}' collides with a generated model type; "
+                            "choose another id"))
 
     width, height = game["world"]["width"], game["world"]["height"]
     if game["orientation"] == "portrait" and width > height:

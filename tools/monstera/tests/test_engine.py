@@ -164,7 +164,9 @@ class GenerationTests(Base):
             drift = generate.check(files, root)
             self.assertEqual(drift.changed, ("README.md",))
             self.assertEqual(drift.unexpected, ("android/extra.txt",))
-            generate.write(files, root)  # regeneration repairs drift and keeps build output
+            with self.assertRaises(generate.OutputError):  # hand edits are never silently discarded
+                generate.write(files, root)
+            generate.write(files, root, force=True)  # explicit --force repairs drift, keeps build output
             self.assertTrue(generate.check(files, root).clean)
             self.assertTrue((root / "android" / "build" / "ignored.bin").exists())
 

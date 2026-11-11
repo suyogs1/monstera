@@ -32,7 +32,7 @@ class Result:
 def validate_value(value: Any, store: SchemaStore) -> Result:
     issues = store.validate(value)
     if not issues:
-        issues = semantic.validate(value)
+        issues = semantic.validate(value, frozenset(store.titles()))
     return Result(value, tuple(issues))
 
 

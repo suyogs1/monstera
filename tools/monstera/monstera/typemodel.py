@@ -13,6 +13,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any, Union
 
+from .naming import kotlin_enum_case, swift_enum_case
 from .schema import ROOT_SCHEMA, SchemaError, SchemaStore
 
 
@@ -96,7 +97,15 @@ def build(store: SchemaStore) -> TypeModel:
         if kind == "array":
             return ListOf(ref(node["items"], base))
         if kind == "string" and "enum" in node and "title" in node:
-            register(node["title"], node, Enum(node["title"], node.get("description", ""), list(node["enum"])))
+            values = list(node["enum"])
+            for case_name in (kotlin_enum_case, swift_enum_case):
+                try:
+                    cases = [case_name(v) for v in values]
+                except ValueError as exc:
+                    raise SchemaError(f"{node['title']}: {exc}") from None
+                if len(set(cases)) != len(cases):
+                    raise SchemaError(f"{node['title']}: enum values {values} map to duplicate case names {cases}")
+            register(node["title"], node, Enum(node["title"], node.get("description", ""), values))
             return Named(node["title"])
         if kind in _SCALARS:
             return Scalar(_SCALARS[kind])

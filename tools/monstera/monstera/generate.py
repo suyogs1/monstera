@@ -27,9 +27,14 @@ MANIFEST = "MONSTERA-MANIFEST.json"
 SPEC_FILE = "monstera.spec.json"
 BINARY_SUFFIXES = {".jar"}
 EXECUTABLE = {"android/gradlew"}
-# Build output that may live inside a generated tree; ignored by --check and never deleted.
-BUILD_DIRS = {"build", ".gradle", ".kotlin", ".build", ".swiftpm", "xtool", ".bsp"}
-BUILD_FILES = {"local.properties"}
+# Build output the platform tools create at FIXED locations inside a generated tree. Only these
+# exact paths are ignored by --check/verify and never deleted. A directory named "build" anywhere
+# else (e.g. under Sources/, which SwiftPM compiles) is NOT build output and is reported.
+BUILD_OUTPUT_DIRS = (
+    "android/.gradle", "android/.kotlin", "android/build", "android/app/build",
+    "ios/.build", "ios/.swiftpm", "ios/xtool", "ios/.bsp",
+)
+BUILD_OUTPUT_FILES = ("android/local.properties",)
 
 
 class _AtTemplate(string.Template):
@@ -163,7 +168,7 @@ def plan(spec: dict[str, Any], spec_path_label: str, store: SchemaStore) -> list
     files.sort(key=lambda f: f.path)
     manifest = {
         "generator": {"name": GENERATOR_NAME, "version": GENERATOR_VERSION},
-        "spec": {"path": spec_path_label, "sha256": sha},
+        "spec": {"path": spec_path_label, "projectId": project["id"], "sha256": sha},
         "schemas": store.digests(),
         "toolchain": tc,
         "files": [{"path": f.path, "sha256": sha256_hex(f.data), "source": f.source,
@@ -173,16 +178,38 @@ def plan(spec: dict[str, Any], spec_path_label: str, store: SchemaStore) -> list
     return files
 
 
+
 # --------------------------------------------------------------------------- disk operations
 
-def _existing(root: Path) -> set[str]:
-    found: set[str] = set()
-    for dirpath, dirnames, filenames in os.walk(root):
-        dirnames[:] = sorted(d for d in dirnames if d not in BUILD_DIRS)
+class OutputError(Exception):
+    pass
+
+
+def _is_build_output(rel: str) -> bool:
+    return rel in BUILD_OUTPUT_FILES or any(rel == d or rel.startswith(d + "/") for d in BUILD_OUTPUT_DIRS)
+
+
+def _scan(root: Path) -> tuple[set[str], list[str]]:
+    """Files under root that are not build output, plus any symlinks (never followed)."""
+    files: set[str] = set()
+    links: list[str] = []
+    for dirpath, dirnames, filenames in os.walk(root, followlinks=False):
+        base = Path(dirpath)
+        kept = []
+        for d in sorted(dirnames):
+            rel = (base / d).relative_to(root).as_posix()
+            if (base / d).is_symlink():
+                links.append(rel)
+            elif not _is_build_output(rel):
+                kept.append(d)
+        dirnames[:] = kept
         for name in filenames:
-            if name not in BUILD_FILES:
-                found.add(Path(dirpath, name).relative_to(root).as_posix())
-    return found
+            rel = (base / name).relative_to(root).as_posix()
+            if (base / name).is_symlink():
+                links.append(rel)
+            elif not _is_build_output(rel):
+                files.add(rel)
+    return files, sorted(links)
 
 
 @dataclass(frozen=True)
@@ -197,32 +224,94 @@ class Drift:
 
 
 def check(files: list[OutFile], root: Path) -> Drift:
-    present = _existing(root) if root.exists() else set()
+    """Compare a directory with a fresh plan (used by `generate --check`)."""
+    present, links = _scan(root) if root.exists() else (set(), [])
     wanted = {f.path: f for f in files}
     changed = sorted(p for p, f in wanted.items() if p in present and (root / p).read_bytes() != f.data)
     missing = sorted(p for p in wanted if p not in present)
-    unexpected = sorted(present - set(wanted))
+    unexpected = sorted((present - set(wanted)) | set(links))
     return Drift(tuple(changed), tuple(missing), tuple(unexpected))
 
 
-class OutputError(Exception):
-    pass
+def read_manifest(root: Path) -> dict[str, Any] | None:
+    path = root / MANIFEST
+    if not path.is_file() or path.is_symlink():
+        return None
+    try:
+        manifest = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return None
+    if not (isinstance(manifest, dict) and isinstance(manifest.get("files"), list)
+            and manifest.get("generator", {}).get("name") == GENERATOR_NAME):
+        return None
+    return manifest
 
 
-def write(files: list[OutFile], root: Path) -> None:
-    if root.exists() and any(root.iterdir()) and not (root / MANIFEST).exists():
-        raise OutputError(f"{root} is not empty and has no {MANIFEST}; refusing to overwrite it")
-    # Remove every non-build file (previous output), then write the new plan.
+def verify(root: Path) -> Drift:
+    """Compare a directory with ITS OWN manifest (no regeneration). Detects hand edits,
+    deleted files and added files even when the generator or spec has since changed."""
+    manifest = read_manifest(root)
+    if manifest is None:
+        raise OutputError(f"{root} has no valid {MANIFEST}")
+    present, links = _scan(root)
+    recorded = {e["path"]: e["sha256"] for e in manifest["files"]}
+    changed = sorted(p for p, h in recorded.items() if p in present and sha256_hex((root / p).read_bytes()) != h)
+    missing = sorted(p for p in recorded if p not in present)
+    unexpected = sorted((present - set(recorded) - {MANIFEST}) | set(links))
+    return Drift(tuple(changed), tuple(missing), tuple(unexpected))
+
+
+def write(files: list[OutFile], root: Path, force: bool = False) -> None:
+    """Write a plan without ever silently destroying data.
+
+    Always refused (even with force): a non-empty directory without a valid manifest, and symlinks.
+    Refused unless force: the directory belongs to another project, contains a file the previous
+    manifest doesn't list (user file), or a generator-owned file modified since the last run.
+    Build-output locations are never touched.
+    The manifest is written last, so an interrupted run is detected and can be re-run.
+    """
+    if root.exists() and not root.is_dir():
+        raise OutputError(f"{root} exists and is not a directory")
+    if root.is_symlink():
+        raise OutputError(f"{root} is a symlink; refusing to write through it")
+    planned = {f.path: f.data for f in files}
+    new_manifest = json.loads(planned[MANIFEST])
+    present, links = _scan(root) if root.exists() else (set(), [])
+    if links:
+        raise OutputError(f"{root} contains symlinks ({', '.join(links)}); refusing to write through them")
+
+    previous = read_manifest(root) if root.exists() else None
+    if present and previous is None:
+        # Not overridable: --force must never wipe an arbitrary directory (e.g. `--out .`).
+        raise OutputError(f"{root} is not empty and has no valid {MANIFEST} (not generator-owned); "
+                          "choose an empty or generator-owned directory")
+    problems: list[str] = []
+    if previous is not None and previous.get("spec", {}).get("projectId") not in (None, new_manifest["spec"]["projectId"]):
+        problems.append(f"{root} belongs to project '{previous['spec']['projectId']}', "
+                        f"not '{new_manifest['spec']['projectId']}'")
+    recorded = {e["path"]: e["sha256"] for e in (previous or {}).get("files", [])}
+    for rel in sorted(present - {MANIFEST}):
+        data_hash = sha256_hex((root / rel).read_bytes())
+        if rel in planned and planned[rel] == (root / rel).read_bytes():
+            continue  # already the new content (e.g. after an interrupted run)
+        if rel in recorded and recorded[rel] == data_hash:
+            continue  # unmodified previous output
+        problems.append(f"{'modified since last generation' if rel in recorded else 'not generator-owned'}: {rel}")
+    if problems and not force:
+        raise OutputError("refusing to overwrite:\n  " + "\n  ".join(problems)
+                          + "\nMove your changes into the spec or templates, or re-run with --force to discard them.")
+
+    for rel in sorted(present - set(planned)):
+        (root / rel).unlink()
     if root.exists():
-        for rel in sorted(_existing(root), reverse=True):
-            (root / rel).unlink()
-        for dirpath, _, _ in os.walk(root, topdown=False):  # deepest first
+        for dirpath, _, _ in os.walk(root, topdown=False):  # deepest first; prune empty dirs
             d = Path(dirpath)
-            inside_build = any(part in BUILD_DIRS for part in d.relative_to(root).parts)
-            if d != root and not inside_build and not any(d.iterdir()):
+            rel = d.relative_to(root).as_posix()
+            if d != root and not _is_build_output(rel) and not any(d.iterdir()):
                 d.rmdir()
-    for f in files:
+    for f in sorted(files, key=lambda f: f.path == MANIFEST):  # manifest last
         target = root / f.path
         target.parent.mkdir(parents=True, exist_ok=True)
-        target.write_bytes(f.data)
+        if not (target.exists() and target.read_bytes() == f.data):
+            target.write_bytes(f.data)
         os.chmod(target, f.mode)

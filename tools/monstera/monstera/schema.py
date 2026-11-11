@@ -29,6 +29,25 @@ SUPPORTED_KEYWORDS = frozenset({
 })
 ROOT_SCHEMA = "monstera.spec.schema.json"
 
+_TYPE_NAME = re.compile(r"[A-Z][A-Za-z0-9]*")
+_FIELD_NAME = re.compile(r"[a-z][A-Za-z0-9]*")
+# Names a schema title may not take: platform built-ins and the generator's own helper types.
+RESERVED_TYPE_NAMES = frozenset({
+    "Any", "AnyObject", "App", "Array", "Bool", "Boolean", "Bundle", "Char", "Character", "Codable",
+    "Color", "ContentView", "Data", "Date", "Dictionary", "Double", "Equatable", "Error", "Float",
+    "GeneratedSpec", "Int", "List", "Logger", "Long", "MainActivity", "Map", "Never", "Nothing",
+    "Object", "Optional", "Package", "Protocol", "Result", "Scene", "Self", "Sendable", "Set",
+    "SpecIntegrity", "SpecScene", "SpecScreen", "String", "Target", "Type", "Unit", "View", "Void",
+})
+# Kotlin hard keywords plus Swift keywords: illegal (or needing escapes) as property names.
+FIELD_KEYWORDS = frozenset("""
+as break class continue do else false for fun if in interface is null object package return super
+this throw true try typealias typeof val var when while associatedtype deinit enum extension
+fileprivate func import init inout internal let open operator private precedencegroup protocol
+public rethrows static struct subscript case catch default defer fallthrough guard nil repeat
+switch where throws self
+""".split())
+
 
 @dataclass(frozen=True, order=True)
 class Issue:
@@ -54,7 +73,8 @@ def describe(value: Any) -> str:
     if isinstance(value, float):
         return f"number {json.dumps(value)}"
     if isinstance(value, str):
-        return f"string {json.dumps(value, ensure_ascii=False)}"
+        # ASCII-escaped so messages are identical on every OS and console encoding.
+        return f"string {json.dumps(value)}"
     if isinstance(value, list):
         return "array"
     return "object"
@@ -90,28 +110,121 @@ class SchemaStore:
     def load(cls, directory: Path) -> "SchemaStore":
         store = cls(directory)
         for path in sorted(directory.glob("*.schema.json")):
-            doc = load_path(path)
+            try:
+                doc = load_path(path)
+            except Exception as exc:  # LoadError: report as a schema problem
+                raise SchemaError(f"{path.name}: {exc}") from None
             store._check_keywords(doc, path.name, "#")
             store.documents[path.name] = doc
         if ROOT_SCHEMA not in store.documents:
             raise SchemaError(f"{ROOT_SCHEMA} not found in {directory}")
+        store._check_refs()
         return store
 
     def digests(self) -> dict[str, str]:
         return {name: sha256_hex((self.directory / name).read_bytes()) for name in sorted(self.documents)}
 
     def _check_keywords(self, node: Any, doc: str, where: str) -> None:
+        """Structural meta-validation. Every rule here exists because violating it would make
+        validation lie or the generated Kotlin/Swift wrong. See architecture/SPECIFICATION-ENGINE.md."""
+        def fail(msg: str) -> None:
+            raise SchemaError(f"{doc}{where}: {msg}")
+
         if not isinstance(node, dict):
-            raise SchemaError(f"{doc}{where}: schema node must be an object")
+            fail("schema node must be an object")
         unknown = sorted(set(node) - SUPPORTED_KEYWORDS)
         if unknown:
-            raise SchemaError(f"{doc}{where}: unsupported keyword(s) {unknown}")
-        for name, sub in node.get("properties", {}).items():
-            self._check_keywords(sub, doc, f"{where}/properties/{name}")
+            fail(f"unsupported keyword(s) {unknown}")
+        if "$ref" in node:
+            if not isinstance(node["$ref"], str) or set(node) - {"$ref", "description"}:
+                fail("$ref must be a string and may only be combined with 'description'")
+            return
+        kind = node.get("type")
+        if kind not in _TYPE_CHECKS:
+            fail(f"'type' must be one of {sorted(_TYPE_CHECKS)}, got {kind!r}")
+        for key in ("title", "description", "pattern", "$schema"):
+            if key in node and not isinstance(node[key], str):
+                fail(f"'{key}' must be a string")
+        if "title" in node and not _TYPE_NAME.fullmatch(node["title"]):
+            fail(f"title {node['title']!r} must be PascalCase ASCII")
+        if node.get("title") in RESERVED_TYPE_NAMES:
+            fail(f"title {node['title']!r} collides with a Kotlin/Swift built-in or generated helper type")
+        if "pattern" in node:
+            try:
+                _anchored(node["pattern"])
+            except re.error as exc:
+                fail(f"pattern does not compile: {exc}")
+        for key in ("minLength", "maxLength", "minItems"):
+            if key in node and not (_TYPE_CHECKS["integer"](node[key]) and node[key] >= 0):
+                fail(f"'{key}' must be a non-negative integer")
+        for key in ("minimum", "maximum", "exclusiveMinimum"):
+            if key in node and not _TYPE_CHECKS["number"](node[key]):
+                fail(f"'{key}' must be a number")
+        if "uniqueItems" in node and not isinstance(node["uniqueItems"], bool):
+            fail("'uniqueItems' must be a boolean")
+        if "enum" in node:
+            values = node["enum"]
+            if not isinstance(values, list) or not values:
+                fail("'enum' must be a non-empty array")
+            if len({json.dumps(v) for v in values}) != len(values):
+                fail("'enum' values must be unique")
+            if not all(_TYPE_CHECKS[kind](v) for v in values):
+                fail(f"every 'enum' value must be of type {kind}")
+        if kind == "object":
+            props = node.get("properties")
+            if not isinstance(props, dict) or not props:
+                fail("object schemas need a non-empty 'properties' object")
+            if node.get("additionalProperties") is not False:
+                # Extra data would be hashed into the canonical spec but dropped by the models.
+                fail("object schemas must set \"additionalProperties\": false")
+            required = node.get("required")
+            if not isinstance(required, list) or not all(isinstance(r, str) for r in required):
+                fail("'required' must be an array of strings")
+            if len(set(required)) != len(required) or set(required) != set(props):
+                fail("'required' must list every property exactly once (no optional properties in G1)")
+            for name, sub in props.items():
+                if not _FIELD_NAME.fullmatch(name) or name in FIELD_KEYWORDS:
+                    fail(f"property name {name!r} must be lowerCamelCase and not a Kotlin/Swift keyword")
+                self._check_keywords(sub, doc, f"{where}/properties/{name}")
+        elif "properties" in node or "required" in node or "additionalProperties" in node:
+            fail("'properties', 'required' and 'additionalProperties' apply to objects only")
+        if kind == "array":
+            if not isinstance(node.get("items"), dict):
+                fail("array schemas need an 'items' schema")
+            self._check_keywords(node["items"], doc, f"{where}/items")
+        elif "items" in node:
+            fail("'items' applies to arrays only")
         for name, sub in node.get("$defs", {}).items():
             self._check_keywords(sub, doc, f"{where}/$defs/{name}")
-        if "items" in node:
-            self._check_keywords(node["items"], doc, f"{where}/items")
+
+    def _check_refs(self) -> None:
+        def walk(node: Any, doc: str) -> None:
+            if not isinstance(node, dict):
+                return
+            if "$ref" in node:
+                self.resolve(node["$ref"], doc)
+            for sub in node.get("properties", {}).values():
+                walk(sub, doc)
+            for sub in node.get("$defs", {}).values():
+                walk(sub, doc)
+            if "items" in node:
+                walk(node["items"], doc)
+        for doc, root in self.documents.items():
+            walk(root, doc)
+
+    def titles(self) -> set[str]:
+        found: set[str] = set()
+        def walk(node: Any) -> None:
+            if isinstance(node, dict):
+                if isinstance(node.get("title"), str):
+                    found.add(node["title"])
+                for sub in [*node.get("properties", {}).values(), *node.get("$defs", {}).values()]:
+                    walk(sub)
+                if "items" in node:
+                    walk(node["items"])
+        for root in self.documents.values():
+            walk(root)
+        return found
 
     def resolve(self, ref: str, base: str) -> tuple[str, dict[str, Any]]:
         file_part, _, pointer = ref.partition("#")
@@ -204,7 +317,7 @@ class SchemaStore:
             for name in sorted(value):
                 if name not in props:
                     out.append(Issue(path, "additionalProperties",
-                                     f"unknown property '{name}'{_suggest(name, list(props))}"))
+                                     f"unknown property {json.dumps(name)}{_suggest(name, list(props))}"))
         for name, sub in props.items():
             if name in value:
                 self._validate(sub, value[name], f"{path}.{name}", base, out)
