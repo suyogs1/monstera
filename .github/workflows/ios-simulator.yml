@@ -73,5 +73,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ios-simulator-${{ github.run_id }}
-          path: device-lab/reports/runs/
+          # Evidence only: screenshots, logs, reports. No .app bundles or SDK material.
+          path: |
+            device-lab/reports/runs/
+            !device-lab/reports/runs/**/*.app/
           if-no-files-found: warn

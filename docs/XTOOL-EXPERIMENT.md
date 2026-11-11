@@ -25,9 +25,10 @@ at `main`, as of 2026-11-11. Release used: **xtool 1.24.0**.
 | Free-account limits (Apple, not xtool) | Not verified here. Commonly cited: 7-day profiles, small device/App ID limits. **To be confirmed during the device test.** | - |
 | macOS CLI | Use `xtool.app/Contents/Resources/bin/xtool` (sets `XTL_CLI=1`). Running `Contents/MacOS/xtool` directly starts the GUI app and **hangs in CI**. | release zip, CI run 42967516221 |
 
-## Experiment: unsigned Linux build in CI
+## Experiment: unsigned Linux build in CI (historical; SDK transfer now disabled)
 
-Workflow: `.github/workflows/xtool-linux.yml`. Script: `tools/xtool/linux-build.sh`.
+The experiment ran from commit `a51320b` to `6cd7fb8` of `.github/workflows/xtool-linux.yml`;
+see the licensing section below for why it's disabled. Script: `tools/xtool/linux-build.sh`.
 
 No Linux machine was available locally (WSL has only the `docker-desktop` distro and Docker
 Desktop wasn't running), and no Apple ID was used. So:
@@ -67,7 +68,7 @@ MonsteraHello: cf fa ed fe 0c 00 00 01   (Mach-O 64-bit, CPU arm64)
 
 `Info.plist`: `CFBundleIdentifier=app.monstera.hello`, `MinimumOSVersion=17.0`. The binary
 references SpriteKit. Evidence: `docs/evidence/xtool-linux/attempt-2-compiled.txt`,
-`MonsteraHello.app-Info.plist`. The unsigned `.app` is the CI artifact `xtool-linux-build`.
+`MonsteraHello.app-Info.plist`.
 
 Toolchain skew: Linux Swift 6.4.2 against an SDK from Xcode 26.6 (Swift 6.3.3). This worked
 here, but xtool documents Swift 6.4 with Xcode 27.1. Expect to align versions when Xcode 27
@@ -81,7 +82,9 @@ On a Linux x86_64 host with Swift 6.4 and your own Xcode download:
 tools/xtool/linux-build.sh ~/Downloads/Xcode_27.1.xip     # or a darwin.xtoolsdk.tar.gz
 ```
 
-In CI: run the `xtool-linux` workflow (`workflow_dispatch`, optional `swift_image` input).
+In CI: `xtool-linux (experimental)` is manual-trigger only. On hosted runners it does the
+toolchain check and skips the build. Pass a self-hosted `runner` label whose user installed a
+Darwin SDK from their own Xcode download to build.
 
 ## Not tested (needs the user)
 
@@ -94,10 +97,36 @@ Physical-device deployment needs:
 Nothing above was attempted, so iOS stays at **COMPILED** for Linux. It is not
 PHYSICAL-DEVICE-TESTED.
 
-## Licensing note (decision for the project owner)
+## Documented setup vs. our CI experiment
 
-The CI passes an SDK generated from the runner's Xcode to a Linux job as a 1-day artifact
-between jobs of the same run. This is the same thing xtool users do locally from a downloaded
-`Xcode.xip`. Apple's Xcode license terms around non-Apple hosts are the owner's call to
-evaluate. If that's unacceptable, keep only the macOS simulator workflow and do Linux builds
-on developer machines with their own Xcode download.
+| | xtool's documented Linux setup | Our CI SDK transfer experiment (disabled) |
+|---|---|---|
+| Who downloads Xcode | The developer, with their own Apple ID, from developer.apple.com | Nobody. The SDK came from the Xcode preinstalled on a GitHub-hosted macOS runner |
+| Where the SDK is generated | On the developer's Linux machine (`xtool setup` / `xtool sdk install Xcode.xip`) | On a hosted macOS runner (`xtool sdk build Xcode.app`) |
+| Where the SDK goes | Stays on that machine (`~/.swiftpm/swift-sdks/`) | Uploaded as a workflow artifact and downloaded by a hosted Linux runner |
+| Who can access it | The developer | Anyone with artifact access during retention; this repository is public |
+| Apple ID | Required to download Xcode | Not used |
+
+## Licensing status: UNRESOLVED, transfer disabled
+
+Whether Apple's Xcode and SDK license terms allow building with Xcode-derived SDK files on a
+non-Apple host is **not established here and is not legal advice**. The transfer experiment adds
+two more questions: the SDK was derived from an Xcode copy we didn't download under our own
+agreement, and it was made available as an artifact of a public repository.
+
+Actions taken at the G0 review:
+
+- `xtool-linux.yml` no longer generates or transfers a Darwin SDK. It's manual-trigger only and
+  marked experimental. By default it checks the Linux toolchain only (Swift, xtool AppImage,
+  `swift package describe`), and it builds only on a runner whose owner already installed a
+  Darwin SDK from their own Xcode download.
+- The two `darwin-xtoolsdk` artifacts from runs 42969821746 and 42972339280 were deleted from
+  GitHub Actions on 2026-11-11. No SDK material is committed to this repository; the committed
+  evidence is build logs, an `Info.plist` of our own app, and text excerpts.
+- The iOS Simulator workflow runs entirely on macOS with its own Xcode and uploads only
+  screenshots, logs and reports.
+
+The attempt-1/attempt-2 results above remain valid as **historical evidence** that the toolchain
+can compile this app on Linux. Reproducing them requires the documented setup: your own Xcode
+download on your own machine. Re-enabling any CI hand-off of Apple SDK material requires an
+explicit licensing decision by the project owner.

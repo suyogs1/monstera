@@ -1,88 +1,49 @@
-# xtool experiment: build the iOS app on Linux with xtool.
+# EXPERIMENTAL, OPT-IN: xtool on Linux.
 #
-# xtool needs a Darwin Swift SDK generated from Xcode. Normally that comes from an Xcode.xip
-# downloaded with an Apple ID. Here a macOS job generates it from the runner's preinstalled
-# Xcode.app (`xtool sdk build` accepts Xcode.app), and the Linux job installs it. No Apple ID or
-# signing is used, so the result is an UNSIGNED device build: proof of compilation only.
-# The SDK artifact is kept for 1 day and only passed between these two jobs.
-name: xtool-linux
+# This workflow never generates, transfers, or uploads an Apple (Darwin) SDK.
+# By default it checks the Linux side of the toolchain only: Swift, xtool AppImage, and the
+# SwiftPM manifest. It builds the iOS app only if the selected runner ALREADY has a Darwin SDK
+# that the runner's owner installed from their own Xcode download (e.g. a self-hosted runner).
+#
+# History: an earlier version generated the SDK on a hosted macOS runner and passed it to a
+# Linux job. That was disabled pending a licensing review. See docs/XTOOL-EXPERIMENT.md.
+name: xtool-linux (experimental)
 
 on:
   workflow_dispatch:
     inputs:
+      runner:
+        description: "Runner label. Use a self-hosted label whose user has a Darwin SDK installed to build."
+        default: "ubuntu-24.04"
       swift_image:
-        description: "Swift Docker image for the Linux build"
+        description: "Swift container image"
         default: "swift:6.4.2-noble"
-  push:
-    paths: ["apps/ios/**", "tools/xtool/**", ".github/workflows/xtool-linux.yml"]
 
 permissions:
   contents: read
 
 env:
   XTOOL_VERSION: "1.24.0"
-  DARWIN_TOOLS_VERSION: "1.1.0"
 
 defaults:
   run:
-    shell: bash # explicit bash => -eo pipefail, so `| tee` does not hide failures
+    shell: bash
 
 jobs:
-  darwin-sdk:
-    runs-on: macos-26
-    timeout-minutes: 40
-    steps:
-      - name: Toolchain versions
-        run: xcodebuild -version && swift --version
-      - name: Install xtool ${{ env.XTOOL_VERSION }}
-        timeout-minutes: 5
-        run: |
-          curl -fsSL "https://github.com/xtool-org/xtool/releases/download/${XTOOL_VERSION}/xtool.app.zip" -o "$RUNNER_TEMP/xtool.zip"
-          ditto -x -k "$RUNNER_TEMP/xtool.zip" "$RUNNER_TEMP"
-      - name: Build Darwin SDK from preinstalled Xcode.app
-        timeout-minutes: 30
-        run: |
-          XCODE="$(xcode-select -p | sed 's#/Contents/Developer##')"
-          echo "Using $XCODE"
-          mkdir -p "$RUNNER_TEMP/sdk"
-          # The SDK bundles Linux linker tools (darwin-tools-linux-llvm) for the arch of the host
-          # running `sdk build`. This runner is arm64, the Linux build runner is x86_64, so
-          # provide the x86_64 toolset explicitly (xtool's XTL_TOOLSET_TARBALL override).
-          # Version must match SDKBuilder.darwinToolsVersion in xtool 1.24.0.
-          curl -fsSL "https://github.com/xtool-org/darwin-tools-linux-llvm/releases/download/v${DARWIN_TOOLS_VERSION}/toolset-x86_64.tar.gz" \
-            -o "$RUNNER_TEMP/toolset-x86_64.tar.gz"
-          export XTL_TOOLSET_TARBALL="$RUNNER_TEMP/toolset-x86_64.tar.gz"
-          "$RUNNER_TEMP/xtool.app/Contents/Resources/bin/xtool" sdk build "$XCODE" "$RUNNER_TEMP/sdk" 2>&1 | tee sdk-build.log
-          tar -C "$RUNNER_TEMP/sdk" -czf darwin.xtoolsdk.tar.gz darwin.xtoolsdk
-          ls -lh darwin.xtoolsdk.tar.gz
-      - uses: actions/upload-artifact@v4
-        with:
-          name: darwin-xtoolsdk
-          path: darwin.xtoolsdk.tar.gz
-          retention-days: 1
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: xtool-sdk-build-log
-          path: sdk-build.log
-
-  linux-build:
-    needs: darwin-sdk
-    runs-on: ubuntu-24.04
-    timeout-minutes: 40
-    container: ${{ inputs.swift_image || 'swift:6.4.2-noble' }}
+  linux:
+    runs-on: ${{ inputs.runner }}
+    timeout-minutes: 30
+    container: ${{ inputs.swift_image }}
     steps:
       - uses: actions/checkout@v5
-      - uses: actions/download-artifact@v4
-        with:
-          name: darwin-xtoolsdk
-      - name: Build on Linux with xtool
-        run: bash tools/xtool/linux-build.sh darwin.xtoolsdk.tar.gz 2>&1 | tee xtool-linux-build.log
-      - uses: actions/upload-artifact@v4
+      - name: xtool on Linux (builds only if a developer-installed Darwin SDK is present)
+        env:
+          XTOOL_ALLOW_NO_SDK: "1"
+        run: bash tools/xtool/linux-build.sh 2>&1 | tee xtool-linux.log
+      - name: Upload log only (no SDK, no app binary)
         if: always()
+        uses: actions/upload-artifact@v4
         with:
-          name: xtool-linux-build
-          path: |
-            xtool-linux-build.log
-            MonsteraHello-unsigned.app.tar.gz
-          if-no-files-found: warn
+          name: xtool-linux-log-${{ github.run_id }}
+          path: xtool-linux.log
+          retention-days: 7
