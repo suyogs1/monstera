@@ -1,0 +1,11 @@
+[
+{"op":"build","target":"android-emulator","status":"ok","run_id":"ci-42969821785","timestamp":"2026-11-11T06:05:44Z","artifact":"device-lab/reports/runs/ci-42969821785/android-emulator/app-debug.apk"},
+{"op":"install","target":"android-emulator","status":"ok","run_id":"ci-42969821785","timestamp":"2026-11-11T06:07:16Z"},
+{"op":"launch","target":"android-emulator","status":"ok","run_id":"ci-42969821785","timestamp":"2026-11-11T06:07:20Z"},
+{"op":"screenshot","target":"android-emulator","status":"ok","run_id":"ci-42969821785","timestamp":"2026-11-11T06:07:25Z","artifact":"device-lab/reports/runs/ci-42969821785/android-emulator/01-launched.png"},
+{"op":"screenshot","target":"android-emulator","status":"ok","run_id":"ci-42969821785","timestamp":"2026-11-11T06:07:31Z","artifact":"device-lab/reports/runs/ci-42969821785/android-emulator/02-after-two-taps.png"},
+{"op":"screenshot","target":"android-emulator","status":"ok","run_id":"ci-42969821785","timestamp":"2026-11-11T06:07:36Z","artifact":"device-lab/reports/runs/ci-42969821785/android-emulator/03-resumed.png"},
+{"op":"logs","target":"android-emulator","status":"ok","run_id":"ci-42969821785","timestamp":"2026-11-11T06:07:36Z","artifact":"device-lab/reports/runs/ci-42969821785/android-emulator/logs.txt"},
+{"op":"stop","target":"android-emulator","status":"ok","run_id":"ci-42969821785","timestamp":"2026-11-11T06:07:36Z"},
+{"op":"test","target":"android-emulator","status":"unsupported","run_id":"ci-42969821785","timestamp":"2026-11-11T06:07:36Z","detail":"no automated tests in Phase 0 hello world"}
+]

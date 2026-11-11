@@ -1,0 +1,1 @@
+Source: GitHub Actions run 42969821752 (macos-26, Xcode 26.6, iPhone 17 Pro simulator). Excerpt = first 40 MonsteraHello process lines of logs.txt.

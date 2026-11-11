@@ -21,6 +21,7 @@ permissions:
 
 env:
   XTOOL_VERSION: "1.24.0"
+  DARWIN_TOOLS_VERSION: "1.1.0"
 
 defaults:
   run:
@@ -44,6 +45,13 @@ jobs:
           XCODE="$(xcode-select -p | sed 's#/Contents/Developer##')"
           echo "Using $XCODE"
           mkdir -p "$RUNNER_TEMP/sdk"
+          # The SDK bundles Linux linker tools (darwin-tools-linux-llvm) for the arch of the host
+          # running `sdk build`. This runner is arm64, the Linux build runner is x86_64, so
+          # provide the x86_64 toolset explicitly (xtool's XTL_TOOLSET_TARBALL override).
+          # Version must match SDKBuilder.darwinToolsVersion in xtool 1.24.0.
+          curl -fsSL "https://github.com/xtool-org/darwin-tools-linux-llvm/releases/download/v${DARWIN_TOOLS_VERSION}/toolset-x86_64.tar.gz" \
+            -o "$RUNNER_TEMP/toolset-x86_64.tar.gz"
+          export XTL_TOOLSET_TARBALL="$RUNNER_TEMP/toolset-x86_64.tar.gz"
           "$RUNNER_TEMP/xtool.app/Contents/Resources/bin/xtool" sdk build "$XCODE" "$RUNNER_TEMP/sdk" 2>&1 | tee sdk-build.log
           tar -C "$RUNNER_TEMP/sdk" -czf darwin.xtoolsdk.tar.gz darwin.xtoolsdk
           ls -lh darwin.xtoolsdk.tar.gz

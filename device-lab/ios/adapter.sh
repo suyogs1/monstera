@@ -59,7 +59,8 @@ case "$op" in
     else dl_result screenshot failed "" "simctl screenshot failed"; exit 1; fi ;;
   logs)
     f="$DL_OUT/logs.txt"
-    sim spawn "$SIM" log show --last 10m --style compact \
+    # --info: the app logs lifecycle at info level, which `log show` omits by default.
+    sim spawn "$SIM" log show --last 10m --style compact --info \
       --predicate "subsystem == \"$BUNDLE_ID\" OR process == \"MonsteraHello\"" > "$f" 2>&1 || true
     dl_result logs ok "$f" ;;
   test)
