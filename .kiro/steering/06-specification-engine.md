@@ -7,7 +7,9 @@ Design: `architecture/SPECIFICATION-ENGINE.md`. CLI: `tools/monstera/bin/monster
 - Change order: schema contract -> emitters/generator -> platform templates -> regenerate.
   Platform work must not start against an unmerged contract change.
 - Never edit `generated/` by hand (a PreToolUse hook blocks it). Run
-  `monstera generate <spec>` and commit the result; CI runs `generate --check`.
+  `monstera generate <spec>` and commit the result; CI runs `generate --check` and `verify`.
+- `generate` refuses to discard hand edits or unmanaged files. Use `--force` only to deliberately
+  throw them away; it never touches non-generator-owned directories or symlinks.
 - Every schema property is required and `additionalProperties` is false: no hidden defaults.
 - Schema object/enum `title` = generated Kotlin/Swift type name. New schema keywords need
   validator support first; unsupported keywords fail at load.
