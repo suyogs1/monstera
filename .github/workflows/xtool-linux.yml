@@ -34,15 +34,17 @@ jobs:
       - name: Toolchain versions
         run: xcodebuild -version && swift --version
       - name: Install xtool ${{ env.XTOOL_VERSION }}
+        timeout-minutes: 5
         run: |
           curl -fsSL "https://github.com/xtool-org/xtool/releases/download/${XTOOL_VERSION}/xtool.app.zip" -o "$RUNNER_TEMP/xtool.zip"
           ditto -x -k "$RUNNER_TEMP/xtool.zip" "$RUNNER_TEMP"
       - name: Build Darwin SDK from preinstalled Xcode.app
+        timeout-minutes: 30
         run: |
           XCODE="$(xcode-select -p | sed 's#/Contents/Developer##')"
           echo "Using $XCODE"
           mkdir -p "$RUNNER_TEMP/sdk"
-          "$RUNNER_TEMP/xtool.app/Contents/MacOS/xtool" sdk build "$XCODE" "$RUNNER_TEMP/sdk" 2>&1 | tee sdk-build.log
+          "$RUNNER_TEMP/xtool.app/Contents/Resources/bin/xtool" sdk build "$XCODE" "$RUNNER_TEMP/sdk" 2>&1 | tee sdk-build.log
           tar -C "$RUNNER_TEMP/sdk" -czf darwin.xtoolsdk.tar.gz darwin.xtoolsdk
           ls -lh darwin.xtoolsdk.tar.gz
       - uses: actions/upload-artifact@v4

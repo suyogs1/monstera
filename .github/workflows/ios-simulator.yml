@@ -36,13 +36,15 @@ jobs:
           xcrun -sdk iphonesimulator --show-sdk-path
 
       - name: Install xtool ${{ env.XTOOL_VERSION }}
+        timeout-minutes: 5
         run: |
           curl -fsSL "https://github.com/xtool-org/xtool/releases/download/${XTOOL_VERSION}/xtool.app.zip" -o "$RUNNER_TEMP/xtool.zip"
           ditto -x -k "$RUNNER_TEMP/xtool.zip" "$RUNNER_TEMP"
-          echo "XTOOL=$RUNNER_TEMP/xtool.app/Contents/MacOS/xtool" >> "$GITHUB_ENV"
-          "$RUNNER_TEMP/xtool.app/Contents/MacOS/xtool" --help | head -3
+          echo "XTOOL=$RUNNER_TEMP/xtool.app/Contents/Resources/bin/xtool" >> "$GITHUB_ENV"
+          "$RUNNER_TEMP/xtool.app/Contents/Resources/bin/xtool" --help | head -3
 
       - name: Build for iOS Simulator (Device Lab build op)
+        timeout-minutes: 20
         run: bash device-lab/ios/adapter.sh build
 
       - name: Boot an available iPhone simulator
