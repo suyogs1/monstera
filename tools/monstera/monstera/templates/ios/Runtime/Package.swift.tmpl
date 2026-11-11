@@ -1,0 +1,22 @@
+// swift-tools-version: @@{swift_tools}
+@@{header_slash}
+// The deterministic runtime core: pure Swift, no UIKit/SwiftUI/SpriteKit, so `swift test` runs
+// on Linux and macOS without a simulator.
+import PackageDescription
+let package = Package(
+    name: "MonsteraRuntime",
+    platforms: [
+        .iOS("@@{ios_target}"),
+    ],
+    products: [
+        .library(name: "MonsteraRuntime", targets: ["MonsteraRuntime"]),
+    ],
+    targets: [
+        .target(name: "MonsteraRuntime"),
+        .testTarget(
+            name: "MonsteraRuntimeTests",
+            dependencies: ["MonsteraRuntime"],
+            resources: [.copy("Resources/monstera-scenarios.txt")]
+        ),
+    ]
+)

@@ -1,0 +1,62 @@
+{
+  "checkpoints": [
+    {
+      "hash": "c6412f2a1983e4b9",
+      "observe": {
+        "ended": 0,
+        "entityCount": 31,
+        "lives": 3,
+        "nextId": 32,
+        "score": 0,
+        "tick": 0
+      },
+      "tick": 0
+    },
+    {
+      "hash": "86cb5d0a1bf53bfa",
+      "observe": {
+        "ended": 0,
+        "entityCount": 26,
+        "lives": 3,
+        "nextId": 34,
+        "score": 8,
+        "tick": 1
+      },
+      "tick": 1
+    },
+    {
+      "hash": "5e8be82325899a1a",
+      "observe": {
+        "ended": 0,
+        "entityCount": 27,
+        "lives": 3,
+        "nextId": 35,
+        "score": 8,
+        "tick": 2
+      },
+      "tick": 2
+    },
+    {
+      "hash": "6bf52f4296f4045a",
+      "observe": {
+        "ended": 0,
+        "entityCount": 28,
+        "lives": 3,
+        "nextId": 37,
+        "score": 8,
+        "tick": 3
+      },
+      "tick": 3
+    }
+  ],
+  "description": "Boxes that touch exactly (edge, edge, corner) do not collide, overlap by one raw unit does, a zero-size box on a corner does not, identical boxes do.",
+  "inputs": [],
+  "name": "touching-edges",
+  "scenarioVersion": 1,
+  "seed": 1,
+  "spec": {
+    "path": "spec/samples/boundary-lab/monstera.spec.json",
+    "sha256": "f8507b7ea40f3b4e840352118a1f08103338e126439b0096504c3dc6d5c1efc9"
+  },
+  "ticks": 3
+}

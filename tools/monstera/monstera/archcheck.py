@@ -145,6 +145,30 @@ def _check_ci_file(rel: str, text: str, is_workflow: bool) -> list[Violation]:
     return found
 
 
+# The deterministic runtime core (architecture/RUNTIME-CONTRACT.md): platform-free, float-free, clock-free.
+_CORE_PATH = re.compile(
+    r"^(?:apps|generated|reference)/[^/]+/(?:android/app/src/main/kotlin/(?:[^/]+/)*runtime/[^/]+\.kt"
+    r"|ios/Runtime/Sources/[^/]+/[^/]+\.swift)$")
+_COMMENTS = re.compile(r"//[^\n]*|/\*.*?\*/", re.S)
+_CORE_RULES: list[tuple[str, re.Pattern[str]]] = [
+    ("platform import (android/androidx/Compose/SwiftUI/UIKit/SpriteKit/Foundation/CoreGraphics)",
+     re.compile(r"^\s*import\s+(?:android\.|androidx\.|SwiftUI|UIKit|SpriteKit|Foundation|CoreGraphics|Dispatch)", re.M)),
+    ("floating point type", re.compile(r"\b(?:Double|Float|CGFloat|Float32|Float64|Float80)\b")),
+    ("floating point literal", re.compile(r"(?<![\w.])\d+\.\d+(?:[eE][+-]?\d+)?[fF]?\b")),
+    ("floating point math", re.compile(r"\b(?:kotlin\.math|java\.lang\.Math|StrictMath|sqrt|sin|cos|atan2|pow)\s*\(")),
+    ("wall-clock time", re.compile(r"System\.(?:currentTimeMillis|nanoTime)|SystemClock|\bDate\s*\(|ProcessInfo|DispatchTime|\bClock\b|\bInstant\b")),
+    ("system randomness", re.compile(r"kotlin\.random|java\.util\.Random|SecureRandom|\bRandom\s*\.|arc4random|SystemRandomNumberGenerator|\.random\s*\(")),
+    ("locale", re.compile(r"\bLocale\b")),
+    ("logical shift on signed values (use arithmetic shifts only)", re.compile(r"\bushr\b")),
+]
+
+
+def check_runtime_core(rel: str, text: str) -> list[Violation]:
+    """Purity rules for one runtime core source (comments ignored)."""
+    code = _COMMENTS.sub("", text)
+    return [Violation(rel, f"runtime core: {rule}") for rule, pattern in _CORE_RULES if pattern.search(code)]
+
+
 def check(root: Path) -> list[Violation]:
     found: list[Violation] = []
     for dirpath, dirnames, filenames in os.walk(root):
@@ -168,6 +192,9 @@ def check(root: Path) -> list[Violation]:
                 continue
             if in_native and name in WEB_FILES:
                 found.append(Violation(rel, "web/JS dependency inside a native app tree"))
+                continue
+            if _CORE_PATH.match(rel):
+                found += check_runtime_core(rel, path.read_text(encoding="utf-8", errors="replace"))
                 continue
             if name not in MANIFEST_NAMES:
                 continue

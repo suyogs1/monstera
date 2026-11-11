@@ -174,9 +174,9 @@ def _check(root: Path) -> list[str]:
             for name, server in servers.items():
                 if not isinstance(server, dict) or not server.get("command"):
                     problems.append(f".kiro/settings/mcp.json: server {name!r} needs a 'command'")
-                elif {"generate_project", "*"} & set(server.get("autoApprove", [])):
+                elif {"generate_project", "run_conformance", "*"} & set(server.get("autoApprove", [])):
                     problems.append(f".kiro/settings/mcp.json: server {name!r} must not auto-approve "
-                                    "generate_project (it writes)")
+                                    "generate_project (it writes) or run_conformance (it starts builds)")
 
     for path in sorted((kiro / "workflows").glob("*.workflow.json")):
         data = _load(path, problems)

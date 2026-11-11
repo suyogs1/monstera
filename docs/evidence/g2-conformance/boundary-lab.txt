@@ -1,0 +1,10 @@
+spec f8507b7ea40f  verdict: PASS
+  oracle  pass     monstera.oracle in-process
+  kotlin  pass     cmd /c gradlew.bat --no-daemon --console=plain cleanTestDebugUnitTest testDebugUnitTest (cwd android) exit 0
+  swift   pass     docker run swift:6.1-noble swift test (package ios/Runtime) exit 0
+  bounce-clamp           13 checkpoints  oracle=pass kotlin=pass swift=pass
+  lifetime-and-cap      151 checkpoints  oracle=pass kotlin=pass swift=pass
+  lives-end              41 checkpoints  oracle=pass kotlin=pass swift=pass
+  negative-rounding      41 checkpoints  oracle=pass kotlin=pass swift=pass
+  touching-edges          4 checkpoints  oracle=pass kotlin=pass swift=pass
+  world-exit             31 checkpoints  oracle=pass kotlin=pass swift=pass

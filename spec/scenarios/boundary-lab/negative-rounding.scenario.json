@@ -1,0 +1,601 @@
+{
+  "checkpoints": [
+    {
+      "hash": "1e3fff80172cded8",
+      "observe": {
+        "ended": 0,
+        "entityCount": 31,
+        "lives": 3,
+        "nextId": 32,
+        "score": 0,
+        "tick": 0
+      },
+      "tick": 0
+    },
+    {
+      "hash": "1a4d17b34afc3839",
+      "observe": {
+        "ended": 0,
+        "entityCount": 26,
+        "lives": 3,
+        "nextId": 34,
+        "score": 8,
+        "tick": 1
+      },
+      "tick": 1
+    },
+    {
+      "hash": "47423800376860f7",
+      "observe": {
+        "ended": 0,
+        "entityCount": 27,
+        "lives": 3,
+        "nextId": 35,
+        "score": 8,
+        "tick": 2
+      },
+      "tick": 2
+    },
+    {
+      "hash": "632254b92ee5fbe3",
+      "observe": {
+        "ended": 0,
+        "entityCount": 28,
+        "lives": 3,
+        "nextId": 37,
+        "score": 8,
+        "tick": 3
+      },
+      "tick": 3
+    },
+    {
+      "hash": "1a55ca3708bea0cb",
+      "observe": {
+        "ended": 0,
+        "entityCount": 28,
+        "lives": 3,
+        "nextId": 38,
+        "score": 8,
+        "tick": 4
+      },
+      "tick": 4
+    },
+    {
+      "hash": "d9b281ed64e9daf5",
+      "observe": {
+        "ended": 0,
+        "entityCount": 26,
+        "lives": 3,
+        "nextId": 40,
+        "score": 8,
+        "tick": 5
+      },
+      "tick": 5
+    },
+    {
+      "hash": "0aaf19e674435343",
+      "observe": {
+        "ended": 0,
+        "entityCount": 26,
+        "lives": 3,
+        "nextId": 41,
+        "score": 8,
+        "tick": 6
+      },
+      "tick": 6
+    },
+    {
+      "hash": "81bc36f3d7036029",
+      "observe": {
+        "ended": 0,
+        "entityCount": 27,
+        "lives": 3,
+        "nextId": 43,
+        "score": 8,
+        "tick": 7
+      },
+      "tick": 7
+    },
+    {
+      "hash": "cfd69510528b79c8",
+      "observe": {
+        "ended": 0,
+        "entityCount": 27,
+        "lives": 3,
+        "nextId": 44,
+        "score": 8,
+        "tick": 8
+      },
+      "tick": 8
+    },
+    {
+      "hash": "3fd29e8a9faca2f6",
+      "observe": {
+        "ended": 0,
+        "entityCount": 28,
+        "lives": 3,
+        "nextId": 46,
+        "score": 8,
+        "tick": 9
+      },
+      "tick": 9
+    },
+    {
+      "hash": "426670063a058f1d",
+      "observe": {
+        "ended": 0,
+        "entityCount": 28,
+        "lives": 3,
+        "nextId": 47,
+        "score": 8,
+        "tick": 10
+      },
+      "tick": 10
+    },
+    {
+      "hash": "0f8fbac48118d931",
+      "observe": {
+        "ended": 0,
+        "entityCount": 29,
+        "lives": 3,
+        "nextId": 49,
+        "score": 8,
+        "tick": 11
+      },
+      "tick": 11
+    },
+    {
+      "hash": "8469ce0e93753f55",
+      "observe": {
+        "ended": 0,
+        "entityCount": 29,
+        "lives": 3,
+        "nextId": 50,
+        "score": 8,
+        "tick": 12
+      },
+      "tick": 12
+    },
+    {
+      "hash": "33c1b391553e5e8b",
+      "observe": {
+        "ended": 0,
+        "entityCount": 30,
+        "lives": 3,
+        "nextId": 52,
+        "score": 8,
+        "tick": 13
+      },
+      "tick": 13
+    },
+    {
+      "hash": "04c5760ce84eb9fd",
+      "observe": {
+        "ended": 0,
+        "entityCount": 30,
+        "lives": 3,
+        "nextId": 53,
+        "score": 8,
+        "tick": 14
+      },
+      "tick": 14
+    },
+    {
+      "hash": "4eb76075abe863cf",
+      "observe": {
+        "ended": 0,
+        "entityCount": 30,
+        "lives": 3,
+        "nextId": 55,
+        "score": 8,
+        "tick": 15
+      },
+      "tick": 15
+    },
+    {
+      "hash": "b2ada822a589cc8e",
+      "observe": {
+        "ended": 0,
+        "entityCount": 30,
+        "lives": 3,
+        "nextId": 56,
+        "score": 8,
+        "tick": 16
+      },
+      "tick": 16
+    },
+    {
+      "hash": "7bf8bc62fc2db864",
+      "observe": {
+        "ended": 0,
+        "entityCount": 31,
+        "lives": 3,
+        "nextId": 58,
+        "score": 8,
+        "tick": 17
+      },
+      "tick": 17
+    },
+    {
+      "hash": "47df8b0e05a96661",
+      "observe": {
+        "ended": 0,
+        "entityCount": 31,
+        "lives": 3,
+        "nextId": 59,
+        "score": 8,
+        "tick": 18
+      },
+      "tick": 18
+    },
+    {
+      "hash": "ede3905862525271",
+      "observe": {
+        "ended": 0,
+        "entityCount": 32,
+        "lives": 3,
+        "nextId": 61,
+        "score": 8,
+        "tick": 19
+      },
+      "tick": 19
+    },
+    {
+      "hash": "512ff323ee99e215",
+      "observe": {
+        "ended": 0,
+        "entityCount": 32,
+        "lives": 3,
+        "nextId": 62,
+        "score": 8,
+        "tick": 20
+      },
+      "tick": 20
+    },
+    {
+      "hash": "09a6ed6019c7e2a3",
+      "observe": {
+        "ended": 0,
+        "entityCount": 33,
+        "lives": 3,
+        "nextId": 64,
+        "score": 8,
+        "tick": 21
+      },
+      "tick": 21
+    },
+    {
+      "hash": "23879d24b5ca3434",
+      "observe": {
+        "ended": 0,
+        "entityCount": 33,
+        "lives": 3,
+        "nextId": 65,
+        "score": 8,
+        "tick": 22
+      },
+      "tick": 22
+    },
+    {
+      "hash": "b2eb53510dd6def2",
+      "observe": {
+        "ended": 0,
+        "entityCount": 34,
+        "lives": 3,
+        "nextId": 67,
+        "score": 8,
+        "tick": 23
+      },
+      "tick": 23
+    },
+    {
+      "hash": "20e4ecba641e0dc7",
+      "observe": {
+        "ended": 0,
+        "entityCount": 34,
+        "lives": 3,
+        "nextId": 68,
+        "score": 8,
+        "tick": 24
+      },
+      "tick": 24
+    },
+    {
+      "hash": "1d447eee40b6edbe",
+      "observe": {
+        "ended": 0,
+        "entityCount": 35,
+        "lives": 3,
+        "nextId": 70,
+        "score": 8,
+        "tick": 25
+      },
+      "tick": 25
+    },
+    {
+      "hash": "d74e6695f0fff81c",
+      "observe": {
+        "ended": 0,
+        "entityCount": 35,
+        "lives": 3,
+        "nextId": 71,
+        "score": 8,
+        "tick": 26
+      },
+      "tick": 26
+    },
+    {
+      "hash": "9f43e65878b3a98e",
+      "observe": {
+        "ended": 0,
+        "entityCount": 36,
+        "lives": 3,
+        "nextId": 73,
+        "score": 8,
+        "tick": 27
+      },
+      "tick": 27
+    },
+    {
+      "hash": "3ea271d47dbff63c",
+      "observe": {
+        "ended": 0,
+        "entityCount": 36,
+        "lives": 3,
+        "nextId": 74,
+        "score": 8,
+        "tick": 28
+      },
+      "tick": 28
+    },
+    {
+      "hash": "3d9b6dcb75723076",
+      "observe": {
+        "ended": 0,
+        "entityCount": 37,
+        "lives": 3,
+        "nextId": 76,
+        "score": 8,
+        "tick": 29
+      },
+      "tick": 29
+    },
+    {
+      "hash": "fa1110dbfd543cf3",
+      "observe": {
+        "ended": 0,
+        "entityCount": 37,
+        "lives": 3,
+        "nextId": 77,
+        "score": 8,
+        "tick": 30
+      },
+      "tick": 30
+    },
+    {
+      "hash": "296e1b7bad863fea",
+      "observe": {
+        "ended": 0,
+        "entityCount": 38,
+        "lives": 3,
+        "nextId": 79,
+        "score": 8,
+        "tick": 31
+      },
+      "tick": 31
+    },
+    {
+      "hash": "6d752c56d3b97d36",
+      "observe": {
+        "ended": 0,
+        "entityCount": 38,
+        "lives": 3,
+        "nextId": 80,
+        "score": 8,
+        "tick": 32
+      },
+      "tick": 32
+    },
+    {
+      "hash": "ee4bde3bcbee148b",
+      "observe": {
+        "ended": 0,
+        "entityCount": 39,
+        "lives": 3,
+        "nextId": 82,
+        "score": 8,
+        "tick": 33
+      },
+      "tick": 33
+    },
+    {
+      "hash": "446e75bff19ad6b5",
+      "observe": {
+        "ended": 0,
+        "entityCount": 39,
+        "lives": 3,
+        "nextId": 83,
+        "score": 8,
+        "tick": 34
+      },
+      "tick": 34
+    },
+    {
+      "hash": "39bdf55a077e6bc0",
+      "observe": {
+        "ended": 0,
+        "entityCount": 39,
+        "lives": 3,
+        "nextId": 84,
+        "score": 8,
+        "tick": 35
+      },
+      "tick": 35
+    },
+    {
+      "hash": "8ddb76e4d7db3bf9",
+      "observe": {
+        "ended": 0,
+        "entityCount": 39,
+        "lives": 3,
+        "nextId": 85,
+        "score": 8,
+        "tick": 36
+      },
+      "tick": 36
+    },
+    {
+      "hash": "c146a68126c9e0e2",
+      "observe": {
+        "ended": 0,
+        "entityCount": 39,
+        "lives": 3,
+        "nextId": 86,
+        "score": 8,
+        "tick": 37
+      },
+      "tick": 37
+    },
+    {
+      "hash": "60f40fb2238f4acf",
+      "observe": {
+        "ended": 0,
+        "entityCount": 39,
+        "lives": 3,
+        "nextId": 87,
+        "score": 8,
+        "tick": 38
+      },
+      "tick": 38
+    },
+    {
+      "hash": "a180c42c0a8a3685",
+      "observe": {
+        "ended": 0,
+        "entityCount": 39,
+        "lives": 3,
+        "nextId": 88,
+        "score": 8,
+        "tick": 39
+      },
+      "tick": 39
+    },
+    {
+      "hash": "94be8cdcf5018155",
+      "observe": {
+        "ended": 0,
+        "entityCount": 39,
+        "lives": 3,
+        "nextId": 89,
+        "score": 8,
+        "tick": 40
+      },
+      "tick": 40
+    }
+  ],
+  "description": "Odd negative and positive drag deltas through a 1.5 gain: mul rounds toward negative infinity (-4.5 -> -5); int32 extremes clamp at the walls.",
+  "inputs": [
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": -3,
+          "dy": -1,
+          "type": "drag"
+        }
+      ],
+      "tick": 0
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 1,
+          "dy": 3,
+          "type": "drag"
+        }
+      ],
+      "tick": 1
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": -2147483648,
+          "dy": -2147483648,
+          "type": "drag"
+        }
+      ],
+      "tick": 2
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 2147483647,
+          "dy": 2147483647,
+          "type": "drag"
+        }
+      ],
+      "tick": 3
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": -7,
+          "dy": 5,
+          "type": "drag"
+        }
+      ],
+      "tick": 4
+    },
+    {
+      "events": [
+        {
+          "dir": "left",
+          "dx": 0,
+          "dy": 0,
+          "type": "swipe"
+        }
+      ],
+      "tick": 5
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "swipe"
+        },
+        {
+          "dir": "none",
+          "dx": -1,
+          "dy": -1,
+          "type": "drag"
+        }
+      ],
+      "tick": 15
+    },
+    {
+      "events": [
+        {
+          "dir": "down",
+          "dx": 0,
+          "dy": 0,
+          "type": "swipe"
+        }
+      ],
+      "tick": 20
+    }
+  ],
+  "name": "negative-rounding",
+  "scenarioVersion": 1,
+  "seed": 5,
+  "spec": {
+    "path": "spec/samples/boundary-lab/monstera.spec.json",
+    "sha256": "f8507b7ea40f3b4e840352118a1f08103338e126439b0096504c3dc6d5c1efc9"
+  },
+  "ticks": 40
+}

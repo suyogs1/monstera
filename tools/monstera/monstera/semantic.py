@@ -38,6 +38,64 @@ def contrast_ratio(a: str, b: str) -> float:
     return (la + 0.05) / (lb + 0.05)
 
 
+MAX_WORLD_UNITS = 32767
+RAW_MAX = (1 << 31) - 1
+MAX_SPAWN_SPAN = 1 << 31  # nextBelow takes a uint32 bound: span + 1 must stay below 2^32
+
+
+def _runtime_issues(game: dict[str, Any]) -> list[Issue]:
+    """Rules the runtime contract (architecture/RUNTIME-CONTRACT.md) depends on."""
+    out: list[Issue] = []
+    rt, world = game["runtime"], game["world"]
+
+    def bad(path: str, code: str, msg: str) -> None:
+        out.append(Issue(path, f"semantic.{code}", msg))
+
+    dims = {}
+    for axis in ("width", "height"):
+        value = world[axis]
+        if value != int(value) or value > MAX_WORLD_UNITS:
+            bad(f"$.game.world.{axis}", "world-units",
+                f"the runtime needs whole units no larger than {MAX_WORLD_UNITS}, got {value}")
+        else:
+            dims[axis] = int(value) << 16
+    kinds: dict[str, dict[str, Any]] = {}
+    for i, kind in enumerate(rt["kinds"]):
+        path = f"$.game.runtime.kinds[{i}]"
+        if kind["id"] in kinds:
+            bad(f"{path}.id", "duplicate-kind", f"kind id '{kind['id']}' is used twice")
+        kinds[kind["id"]] = kind
+        if "width" in dims and kind["width"] > dims["width"]:
+            bad(f"{path}.width", "kind-size", "kind is wider than the world")
+        if "height" in dims and kind["height"] > dims["height"]:
+            bad(f"{path}.height", "kind-size", "kind is taller than the world")
+
+    def ref(path: str, name: str) -> None:
+        if name not in kinds:
+            bad(path, "unknown-kind", f"'{name}' is not a kind id; defined: {', '.join(sorted(kinds)) or 'none'}")
+
+    tap = game["input"]["tapKind"]
+    if tap:
+        ref("$.game.input.tapKind", tap)
+    if len(rt["initialEntities"]) > rt["maxEntities"]:
+        bad("$.game.runtime.initialEntities", "entity-cap",
+            f"{len(rt['initialEntities'])} initial entities exceed maxEntities {rt['maxEntities']}")
+    for i, e in enumerate(rt["initialEntities"]):
+        ref(f"$.game.runtime.initialEntities[{i}].kind", e["kind"])
+    for i, s in enumerate(rt["spawners"]):
+        path = f"$.game.runtime.spawners[{i}]"
+        ref(f"{path}.kind", s["kind"])
+        for lo, hi in (("xMin", "xMax"), ("yMin", "yMax")):
+            if s[lo] > s[hi]:
+                bad(f"{path}.{lo}", "spawn-range", f"{lo} {s[lo]} is greater than {hi} {s[hi]}")
+            elif s[hi] - s[lo] + 1 > MAX_SPAWN_SPAN:
+                bad(f"{path}.{hi}", "spawn-range", f"{lo}..{hi} spans more than 2^31 raw units")
+    for i, c in enumerate(rt["collisions"]):
+        ref(f"$.game.runtime.collisions[{i}].a", c["a"])
+        ref(f"$.game.runtime.collisions[{i}].b", c["b"])
+    return out
+
+
 def validate(spec: dict[str, Any], type_names: frozenset[str] = frozenset()) -> list[Issue]:
     issues: list[Issue] = []
     project, game = spec["project"], spec["game"]
@@ -70,6 +128,7 @@ def validate(spec: dict[str, Any], type_names: frozenset[str] = frozenset()) -> 
         issues.append(Issue("$.game.world", "semantic.world-aspect",
                             f"aspect ratio {aspect:.2f}:1 exceeds {MAX_ASPECT:.0f}:1"))
 
+    issues += _runtime_issues(game)
     palette = game["palette"]
     for role in ("primary", "accent"):
         ratio = contrast_ratio(palette[role], palette["background"])

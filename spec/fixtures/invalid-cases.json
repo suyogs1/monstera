@@ -39,8 +39,8 @@
     },
     {
       "name": "unsupported spec version",
-      "set": {"/specVersion": 2},
-      "expect": [{"path": "$.specVersion", "code": "const", "contains": "must be 1"}]
+      "set": {"/specVersion": 1},
+      "expect": [{"path": "$.specVersion", "code": "const", "contains": "must be 2"}]
     },
     {
       "name": "duplicate target",

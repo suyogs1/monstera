@@ -1,0 +1,18 @@
+G2 negative proof (task 13): conformance must catch a deliberate divergence and localize it.
+Label: SIMULATOR-TESTED does not apply; this is a behavioural test, run on Linux (Swift) with the oracle.
+
+What was done
+  A temporary copy of generated/boundary-lab (manifest + ios/) had Fx.mul changed from an arithmetic
+  shift (rounds toward negative infinity) to integer division (rounds toward zero). See mutation.diff.
+  Nothing in the repository was modified.
+
+Command
+  py tools/monstera/monstera.py conformance <copy> --platforms oracle,swift --swift-image swift:6.1-noble --report report.json
+
+Observed (conformance-output.txt, report.json)
+  verdict FAIL. Only scenario negative-rounding failed, first divergence at tick 1: the first drag
+  (dx=-3 through a 1.5 gain: -4.5 floors to -5, truncation gives -4). The six other scenarios and the
+  oracle passed. The differing field is the state hash only (no observable counter changed).
+
+Environment: Windows 11, Docker Desktop 28.3.2, image swift:6.1-noble (Swift 6.1.x on Linux x86_64),
+  Python 3.14.1, 2026-11-11. The unmutated generated/boundary-lab passes on oracle, Kotlin and Swift.

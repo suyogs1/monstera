@@ -23,7 +23,7 @@ per-tool permissions.
 | `generate_project` | `generate.plan` + `generate.check` / `generate.write(force=False)` | writes **only** when `write=true` | ask |
 | `inspect_manifest` | `generate.read_manifest` + `generate.verify` | none | auto-approve |
 | `get_device_report` | reads Device Lab `report.json` (contract: `device-lab/contract/result.schema.json`) | none | auto-approve |
-| `run_conformance` | G2 conformance runner | none (runs tests) | **added in G2**, when the runner exists |
+| `run_conformance` | `conformance.run` (`monstera conformance`) | none to the repository; starts Gradle / a Swift container; `platforms` defaults to `oracle`; `swift_image` must be an official `swift:<version>` tag | ask (added in G2) |
 | `build_native_app` | Studio build dispatch / Device Lab `build` op | builds; may dispatch CI | **added in G4**, when dispatch exists |
 
 ### `validate_spec`
@@ -168,7 +168,7 @@ relative paths from the workspace root under Kiro on Windows, the fallback is th
 1. **Unit tests**: each tool handler called directly against fixtures. Results must equal the CLI
    for the same input (identical issues, SHA-256, drift lists).
 2. **Protocol smoke test**: start the server over stdio with the SDK's client, then `initialize`,
-   `tools/list` (exactly the four tools, with their schemas) and one `tools/call` per tool.
+   `tools/list` (exactly the five tools, with their schemas) and one `tools/call` per tool.
 3. **Security tests**: a path outside the repo, `../` traversal, a symlink, an oversized inline
    spec, and `write=true` against a hand-edited tree must all be refused.
 4. **Live Kiro check**: Kiro lists the server's tools and an agent calls `validate_spec`. Recorded

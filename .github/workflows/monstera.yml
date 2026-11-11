@@ -114,6 +114,9 @@ jobs:
       - name: Compile generated iOS project for the simulator (Device Lab build op)
         timeout-minutes: 20
         run: bash device-lab/ios/adapter.sh build
+      - name: Swift runtime conformance on macOS (swift test, no simulator)
+        timeout-minutes: 10
+        run: swift test --package-path generated/monstera-sample/ios/Runtime
       - name: Boot an available iPhone simulator
         run: |
           UDID="$(xcrun simctl list devices available | grep -m1 -E '^[[:space:]]+iPhone' | grep -oE '[0-9A-F-]{36}')"
@@ -140,4 +143,27 @@ jobs:
           path: |
             device-lab/reports/runs/
             !device-lab/reports/runs/**/*.app/
+          if-no-files-found: warn
+  conformance:
+    needs: spec
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+      - name: Use preinstalled JDK 21
+        run: echo "JAVA_HOME=$JAVA_HOME_21_X64" >> "$GITHUB_ENV"
+      - name: Golden scenarios equal a fresh oracle run
+        run: bash tools/monstera/bin/monstera validate-scenario --all --oracle
+      - name: Conformance, monstera-sample (oracle, Kotlin JVM, Swift in container)
+        run: bash tools/monstera/bin/monstera conformance generated/monstera-sample --swift-image swift:6.1-noble --report "$RUNNER_TEMP/conformance-sample.json"
+      - name: Conformance, boundary-lab (oracle, Kotlin JVM, Swift in container)
+        run: bash tools/monstera/bin/monstera conformance generated/boundary-lab --swift-image swift:6.1-noble --report "$RUNNER_TEMP/conformance-lab.json"
+      - name: Upload conformance reports
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: g2-conformance-${{ github.run_id }}
+          path: |
+            ${{ runner.temp }}/conformance-sample.json
+            ${{ runner.temp }}/conformance-lab.json
           if-no-files-found: warn

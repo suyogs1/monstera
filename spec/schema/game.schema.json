@@ -1,10 +1,10 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Game",
-  "description": "Game-level presentation contract shared by all platforms. G1 defines presentation only: no gameplay, entities or rules.",
+  "description": "Game contract shared by all platforms: presentation (genre, orientation, palette, world) and the deterministic runtime (simulation, input, entity kinds, spawners, collisions). Runtime semantics: architecture/RUNTIME-CONTRACT.md.",
   "type": "object",
   "additionalProperties": false,
-  "required": ["genre", "orientation", "targetFps", "world", "palette", "input"],
+  "required": ["genre", "orientation", "targetFps", "world", "palette", "input", "simulation", "runtime"],
   "properties": {
     "genre": {
       "title": "Genre",
@@ -18,13 +18,13 @@
       "enum": ["landscape", "portrait"]
     },
     "targetFps": {
-      "description": "Target frame rate for the render loop.",
+      "description": "Target frame rate for the render loop. The simulation tick rate is independent (simulation.tickRate).",
       "type": "integer",
       "enum": [30, 60, 120]
     },
     "world": {
       "title": "World",
-      "description": "Logical world size in world units. Platforms scale it to fit the screen.",
+      "description": "Logical world size in world units. Platforms scale it to fit the screen. The runtime requires whole units no larger than 32767.",
       "type": "object",
       "additionalProperties": false,
       "required": ["width", "height"],
@@ -46,14 +46,121 @@
     },
     "input": {
       "title": "InputConfig",
+      "description": "Which input events the game uses and how they act. Quantities are Q16.16 raw integers (1 unit = 65536).",
       "type": "object",
       "additionalProperties": false,
-      "required": ["scheme"],
+      "required": ["scheme", "dragGain", "swipeSpeed", "tapKind", "tapVx", "tapVy"],
       "properties": {
         "scheme": {
           "title": "InputScheme",
           "type": "string",
           "enum": ["drag", "swipe", "tap"]
+        },
+        "dragGain": { "$ref": "#/$defs/fixed", "description": "Multiplier applied to a drag delta (65536 = 1.0)." },
+        "swipeSpeed": { "$ref": "#/$defs/fixed", "description": "Speed per tick given to controlled entities by a swipe." },
+        "tapKind": { "$ref": "#/$defs/kindRef", "description": "Entity kind spawned by a tap at the first controlled entity, or the empty string for none." },
+        "tapVx": { "$ref": "#/$defs/fixed", "description": "Horizontal velocity of a tap-spawned entity." },
+        "tapVy": { "$ref": "#/$defs/fixed", "description": "Vertical velocity of a tap-spawned entity." }
+      }
+    },
+    "simulation": {
+      "title": "SimulationConfig",
+      "description": "Fixed-timestep simulation settings.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tickRate", "maxTicksPerFrame"],
+      "properties": {
+        "tickRate": { "description": "Simulation ticks per second.", "type": "integer", "enum": [30, 60, 120] },
+        "maxTicksPerFrame": { "description": "Upper bound on ticks run for one rendered frame.", "type": "integer", "minimum": 1, "maximum": 10 }
+      }
+    },
+    "runtime": {
+      "title": "GameRuntime",
+      "description": "Entity kinds, initial entities, spawners and collision rules. Every position and velocity is a Q16.16 raw integer; velocities are per tick.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["maxEntities", "lives", "winScore", "kinds", "initialEntities", "spawners", "collisions"],
+      "properties": {
+        "maxEntities": { "description": "Upper bound on live entities; spawns beyond it are skipped.", "type": "integer", "minimum": 1, "maximum": 1024 },
+        "lives": { "description": "Starting lives; the game ends when lives reach 0.", "type": "integer", "minimum": 1, "maximum": 99 },
+        "winScore": { "description": "The game ends when the score reaches this value; 0 disables it.", "type": "integer", "minimum": 0, "maximum": 1000000 },
+        "kinds": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "title": "EntityKind",
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "width", "height", "lifetimeTicks", "exitPolicy"],
+            "properties": {
+              "id": { "$ref": "#/$defs/kindId" },
+              "width": { "$ref": "#/$defs/size" },
+              "height": { "$ref": "#/$defs/size" },
+              "lifetimeTicks": { "description": "Despawn after this many ticks; 0 means unlimited.", "type": "integer", "minimum": 0, "maximum": 1000000 },
+              "exitPolicy": {
+                "title": "ExitRule",
+                "description": "What happens at the world edge: despawn when fully outside, clamp inside, or bounce.",
+                "type": "string",
+                "enum": ["despawn", "clamp", "bounce"]
+              }
+            }
+          }
+        },
+        "initialEntities": {
+          "type": "array",
+          "items": {
+            "title": "EntityInstance",
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["kind", "x", "y", "vx", "vy", "controlled"],
+            "properties": {
+              "kind": { "$ref": "#/$defs/kindId" },
+              "x": { "$ref": "#/$defs/fixed" },
+              "y": { "$ref": "#/$defs/fixed" },
+              "vx": { "$ref": "#/$defs/fixed" },
+              "vy": { "$ref": "#/$defs/fixed" },
+              "controlled": { "description": "Receives drag and swipe input.", "type": "boolean" }
+            }
+          }
+        },
+        "spawners": {
+          "type": "array",
+          "items": {
+            "title": "Spawner",
+            "description": "Spawns one entity every intervalTicks ticks (tick 0 included) at a PRNG-chosen position in [xMin,xMax] x [yMin,yMax].",
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["stream", "kind", "intervalTicks", "xMin", "xMax", "yMin", "yMax", "vx", "vy"],
+            "properties": {
+              "stream": { "description": "Name of the independent PRNG stream this spawner draws from.", "$ref": "#/$defs/kindId" },
+              "kind": { "$ref": "#/$defs/kindId" },
+              "intervalTicks": { "type": "integer", "minimum": 1, "maximum": 1000000 },
+              "xMin": { "$ref": "#/$defs/fixed" },
+              "xMax": { "$ref": "#/$defs/fixed" },
+              "yMin": { "$ref": "#/$defs/fixed" },
+              "yMax": { "$ref": "#/$defs/fixed" },
+              "vx": { "$ref": "#/$defs/fixed" },
+              "vy": { "$ref": "#/$defs/fixed" }
+            }
+          }
+        },
+        "collisions": {
+          "type": "array",
+          "items": {
+            "title": "CollisionEffect",
+            "description": "Applies to every overlapping pair (a, b); effects are summed per tick, so pair order never matters.",
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["a", "b", "despawnA", "despawnB", "score", "lives"],
+            "properties": {
+              "a": { "$ref": "#/$defs/kindId" },
+              "b": { "$ref": "#/$defs/kindId" },
+              "despawnA": { "type": "boolean" },
+              "despawnB": { "type": "boolean" },
+              "score": { "description": "Added to the score for each overlapping pair.", "type": "integer", "minimum": -1000000, "maximum": 1000000 },
+              "lives": { "description": "Added to the lives for each overlapping pair.", "type": "integer", "minimum": -1000, "maximum": 1000 }
+            }
+          }
         }
       }
     }
@@ -63,6 +170,28 @@
       "description": "Opaque sRGB color, #RRGGBB, uppercase hex.",
       "type": "string",
       "pattern": "^#[0-9A-F]{6}$"
+    },
+    "fixed": {
+      "description": "Q16.16 fixed-point raw integer (1.0 = 65536), saturating int32 range.",
+      "type": "integer",
+      "minimum": -2147483648,
+      "maximum": 2147483647
+    },
+    "size": {
+      "description": "Non-negative Q16.16 raw integer.",
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 2147483647
+    },
+    "kindId": {
+      "description": "Lowercase ASCII identifier: a letter, then letters, digits or hyphens (at most 32 characters).",
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]{0,31}$"
+    },
+    "kindRef": {
+      "description": "An entity kind id, or the empty string for none.",
+      "type": "string",
+      "pattern": "^([a-z][a-z0-9-]{0,31})?$"
     }
   }
 }

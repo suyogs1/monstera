@@ -1,6 +1,6 @@
 # G2 design: deterministic native runtime
 
-Status: **PROPOSED, not approved. Do not execute.** (Kiro Spec; not a `monstera.spec.json`.)
+Status: **APPROVED 2026-11-11, in progress** (core, scenarios and conformance done; shells and CI evidence open, see tasks). (Kiro Spec; not a `monstera.spec.json`.)
 
 ## Architecture
 

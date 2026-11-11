@@ -1,0 +1,2540 @@
+# GENERATED conformance scenarios - do not edit
+monstera-scenarios 1
+scenario collision-order 17 900
+input 0 tap 0 0 none
+input 0 drag -19660800 0 none
+input 6 tap 0 0 none
+input 12 tap 0 0 none
+input 18 tap 0 0 none
+input 20 drag -10682368 0 none
+input 24 tap 0 0 none
+input 30 tap 0 0 none
+input 36 tap 0 0 none
+input 40 drag -1703936 0 none
+input 42 tap 0 0 none
+input 48 tap 0 0 none
+input 54 tap 0 0 none
+input 60 tap 0 0 none
+input 60 drag 7274496 0 none
+input 66 tap 0 0 none
+input 72 tap 0 0 none
+input 78 tap 0 0 none
+input 80 drag 16252928 0 none
+input 84 tap 0 0 none
+input 90 tap 0 0 none
+input 96 tap 0 0 none
+input 100 drag -14090240 0 none
+input 102 tap 0 0 none
+input 108 tap 0 0 none
+input 114 tap 0 0 none
+input 120 tap 0 0 none
+input 120 drag -5111808 0 none
+input 126 tap 0 0 none
+input 132 tap 0 0 none
+input 138 tap 0 0 none
+input 140 drag 3866624 0 none
+input 144 tap 0 0 none
+input 150 tap 0 0 none
+input 156 tap 0 0 none
+input 160 drag 12845056 0 none
+input 162 tap 0 0 none
+input 168 tap 0 0 none
+input 174 tap 0 0 none
+input 180 tap 0 0 none
+input 180 drag -17498112 0 none
+input 186 tap 0 0 none
+input 192 tap 0 0 none
+input 198 tap 0 0 none
+input 200 drag -8519680 0 none
+input 204 tap 0 0 none
+input 210 tap 0 0 none
+input 216 tap 0 0 none
+input 220 drag 458752 0 none
+input 222 tap 0 0 none
+input 228 tap 0 0 none
+input 234 tap 0 0 none
+input 240 tap 0 0 none
+input 240 drag 9437184 0 none
+input 246 tap 0 0 none
+input 252 tap 0 0 none
+input 258 tap 0 0 none
+input 260 drag 18415616 0 none
+input 264 tap 0 0 none
+input 270 tap 0 0 none
+input 276 tap 0 0 none
+input 280 drag -11927552 0 none
+input 282 tap 0 0 none
+input 288 tap 0 0 none
+input 294 tap 0 0 none
+input 300 tap 0 0 none
+input 300 drag -2949120 0 none
+input 306 tap 0 0 none
+input 312 tap 0 0 none
+input 318 tap 0 0 none
+input 320 drag 6029312 0 none
+input 324 tap 0 0 none
+input 330 tap 0 0 none
+input 336 tap 0 0 none
+input 340 drag 15007744 0 none
+input 342 tap 0 0 none
+input 348 tap 0 0 none
+input 354 tap 0 0 none
+input 360 tap 0 0 none
+input 360 drag -15335424 0 none
+input 366 tap 0 0 none
+input 372 tap 0 0 none
+input 378 tap 0 0 none
+input 380 drag -6356992 0 none
+input 384 tap 0 0 none
+input 390 tap 0 0 none
+input 396 tap 0 0 none
+input 400 drag 2621440 0 none
+input 402 tap 0 0 none
+input 408 tap 0 0 none
+input 414 tap 0 0 none
+input 420 tap 0 0 none
+input 420 drag 11599872 0 none
+input 426 tap 0 0 none
+input 432 tap 0 0 none
+input 438 tap 0 0 none
+input 440 drag -18743296 0 none
+input 444 tap 0 0 none
+input 450 tap 0 0 none
+input 456 tap 0 0 none
+input 460 drag -9764864 0 none
+input 462 tap 0 0 none
+input 468 tap 0 0 none
+input 474 tap 0 0 none
+input 480 tap 0 0 none
+input 480 drag -786432 0 none
+input 486 tap 0 0 none
+input 492 tap 0 0 none
+input 498 tap 0 0 none
+input 500 drag 8192000 0 none
+input 504 tap 0 0 none
+input 510 tap 0 0 none
+input 516 tap 0 0 none
+input 520 drag 17170432 0 none
+input 522 tap 0 0 none
+input 528 tap 0 0 none
+input 534 tap 0 0 none
+input 540 tap 0 0 none
+input 540 drag -13172736 0 none
+input 546 tap 0 0 none
+input 552 tap 0 0 none
+input 558 tap 0 0 none
+input 560 drag -4194304 0 none
+input 564 tap 0 0 none
+input 570 tap 0 0 none
+input 576 tap 0 0 none
+input 580 drag 4784128 0 none
+input 582 tap 0 0 none
+input 588 tap 0 0 none
+input 594 tap 0 0 none
+input 600 tap 0 0 none
+input 600 drag 13762560 0 none
+input 606 tap 0 0 none
+input 612 tap 0 0 none
+input 618 tap 0 0 none
+input 620 drag -16580608 0 none
+input 624 tap 0 0 none
+input 630 tap 0 0 none
+input 636 tap 0 0 none
+input 640 drag -7602176 0 none
+input 642 tap 0 0 none
+input 648 tap 0 0 none
+input 654 tap 0 0 none
+input 660 tap 0 0 none
+input 660 drag 1376256 0 none
+input 666 tap 0 0 none
+input 672 tap 0 0 none
+input 678 tap 0 0 none
+input 680 drag 10354688 0 none
+input 684 tap 0 0 none
+input 690 tap 0 0 none
+input 696 tap 0 0 none
+input 700 drag 19333120 0 none
+input 702 tap 0 0 none
+input 708 tap 0 0 none
+input 714 tap 0 0 none
+input 720 tap 0 0 none
+input 720 drag -11010048 0 none
+input 726 tap 0 0 none
+input 732 tap 0 0 none
+input 738 tap 0 0 none
+input 740 drag -2031616 0 none
+input 744 tap 0 0 none
+input 750 tap 0 0 none
+input 756 tap 0 0 none
+input 760 drag 6946816 0 none
+input 762 tap 0 0 none
+input 768 tap 0 0 none
+input 774 tap 0 0 none
+input 780 tap 0 0 none
+input 780 drag 15925248 0 none
+input 786 tap 0 0 none
+input 792 tap 0 0 none
+input 798 tap 0 0 none
+input 800 drag -14417920 0 none
+input 804 tap 0 0 none
+input 810 tap 0 0 none
+input 816 tap 0 0 none
+input 820 drag -5439488 0 none
+input 822 tap 0 0 none
+input 828 tap 0 0 none
+input 834 tap 0 0 none
+input 840 tap 0 0 none
+input 840 drag 3538944 0 none
+input 846 tap 0 0 none
+input 852 tap 0 0 none
+input 858 tap 0 0 none
+input 860 drag 12517376 0 none
+input 864 tap 0 0 none
+input 870 tap 0 0 none
+input 876 tap 0 0 none
+input 880 drag -17825792 0 none
+input 882 tap 0 0 none
+input 888 tap 0 0 none
+input 894 tap 0 0 none
+checkpoint 0 952dc5f6914c6787 0 0 99 3 0 4
+checkpoint 9 539e2f90f24fefc1 9 0 99 8 0 9
+checkpoint 18 bc7daa8f15176e96 18 0 99 10 0 11
+checkpoint 27 1b19c7ba75f7c1b0 27 0 99 14 0 15
+checkpoint 36 684dd493e381f8f4 36 0 99 16 0 18
+checkpoint 45 725ee236c1c8ac9e 45 0 99 17 0 21
+checkpoint 54 3ea15ab632a2d7bd 54 0 99 19 0 24
+checkpoint 63 f2960514e729c40b 63 0 99 21 0 27
+checkpoint 72 3ae39c95346b0d87 72 0 99 22 0 30
+checkpoint 81 b9d0e0a61dc33662 81 10 99 23 0 34
+checkpoint 90 b0515f2d762950b4 90 10 99 24 0 36
+checkpoint 99 4183f2e81581c3c4 99 10 99 28 0 41
+checkpoint 108 aba180635d595463 108 10 99 27 0 43
+checkpoint 117 f6b4c8d71fdeb950 117 10 99 27 0 46
+checkpoint 126 3a83062a967e7f45 126 10 99 28 0 49
+checkpoint 135 6b5569ae4a75400d 135 10 99 28 0 53
+checkpoint 144 0d0d8432e5ec45f7 144 10 99 28 0 55
+checkpoint 153 cafdc3e69e3c0a8d 153 20 99 27 0 59
+checkpoint 162 d9bfe2b73e38fbcc 162 20 99 28 0 62
+checkpoint 171 4999ca0197778514 171 20 99 29 0 66
+checkpoint 180 7a926548935dabe4 180 30 99 27 0 68
+checkpoint 189 a90fa448baf12451 189 30 99 28 0 71
+checkpoint 198 a926fcd9a23b2fbb 198 30 99 29 0 75
+checkpoint 207 b8d98dd99e6dff7f 207 30 99 29 0 78
+checkpoint 216 b518859798937f2e 216 30 99 29 0 80
+checkpoint 225 e7321d50b3ea5994 225 30 99 31 0 85
+checkpoint 234 7dd82d2f5d9d469b 234 30 99 30 0 87
+checkpoint 243 c0a10d57f8ad0286 243 30 99 31 0 91
+checkpoint 252 993f7515914337cb 252 30 99 31 0 93
+checkpoint 261 14a3b7c8e0de9ba5 261 40 99 30 0 97
+checkpoint 270 9c85d9e3158789d5 270 40 99 31 0 100
+checkpoint 279 9da46174a9483aac 279 40 99 31 0 103
+checkpoint 288 a928a9b17d049550 288 40 99 32 0 106
+checkpoint 297 491e240319b967f9 297 40 99 32 0 110
+checkpoint 306 c32116e440d97210 306 50 99 30 0 112
+checkpoint 315 8aaae1ab623a140e 315 50 99 31 0 116
+checkpoint 324 ec5d3e62c36f5381 324 50 99 31 0 119
+checkpoint 333 4cf92debdab6a39c 333 70 99 27 0 122
+checkpoint 342 376ccde14ae319fc 342 70 99 28 0 125
+checkpoint 351 85655c3239df5f05 351 80 99 28 0 129
+checkpoint 360 0c5b23086e7a2f47 360 80 99 27 0 131
+checkpoint 369 20b213f2e39426f9 369 80 99 29 0 135
+checkpoint 378 7801a8ef458f6869 378 80 99 29 0 137
+checkpoint 387 5845a62d694406a5 387 80 99 32 0 142
+checkpoint 396 dac1baa22b49d904 396 80 99 32 0 144
+checkpoint 405 a495336b4c3fdd57 405 80 99 32 0 147
+checkpoint 414 f01824d0f7d7bc41 414 80 99 34 0 151
+checkpoint 423 d8bcc4cf1945cb91 423 80 99 33 0 154
+checkpoint 432 ca9a1cb4bb3d4a8f 432 80 99 33 0 156
+checkpoint 441 ee3985e7a855bd8e 441 80 99 34 0 160
+checkpoint 450 1adcbd9a14b43e47 450 80 99 34 0 163
+checkpoint 459 6b7e2bd71c07de7b 459 80 99 35 0 167
+checkpoint 468 030a267586549673 468 80 99 35 0 169
+checkpoint 477 7ec96d6940b02f57 477 80 99 36 0 173
+checkpoint 486 6d99a2b63aae2d79 486 80 99 36 0 176
+checkpoint 495 4ef3a536f4afc747 495 100 99 31 0 179
+checkpoint 504 dfece90faf1e6930 504 110 99 30 0 181
+checkpoint 513 ba9e9ecbea9d541d 513 110 99 30 0 186
+checkpoint 522 7e758b68c04e5513 522 110 99 30 0 188
+checkpoint 531 9ba631fb127964cc 531 110 99 32 0 192
+checkpoint 540 4a267c95f3f2193f 540 110 99 32 0 195
+checkpoint 549 3916100f7bce8721 549 110 99 32 0 198
+checkpoint 558 d4eeaac57ef6721d 558 110 99 33 0 201
+checkpoint 567 00b844c7a422f254 567 110 99 33 0 204
+checkpoint 576 11cfc83c269b4034 576 110 99 33 0 207
+checkpoint 585 c89dc7fe0a9ee909 585 110 99 33 0 211
+checkpoint 594 de5b97414280761f 594 110 99 33 0 213
+checkpoint 603 543cd7de40ea1c12 603 110 99 35 0 218
+checkpoint 612 265c723237cec8da 612 110 99 34 0 220
+checkpoint 621 ea1df5d7884977fc 621 120 99 32 0 223
+checkpoint 630 2a9a9b413d4a0d8f 630 120 99 33 0 226
+checkpoint 639 6ca14688d85ba403 639 120 99 33 0 230
+checkpoint 648 a5f5ebc94775ef1e 648 120 99 34 0 232
+checkpoint 657 747acc765d09053f 657 120 99 35 0 236
+checkpoint 666 01b0b2e75c36b56d 666 120 99 36 0 239
+checkpoint 675 e5187667aa2007ae 675 120 99 36 0 243
+checkpoint 684 e4c008aaa93545bd 684 120 99 36 0 245
+checkpoint 693 39829c9167203025 693 120 99 36 0 248
+checkpoint 702 011c460e2bb84a36 702 120 99 37 0 252
+checkpoint 711 074dea717cc059b0 711 120 99 36 0 255
+checkpoint 720 79d6fd211e209b99 720 120 99 36 0 257
+checkpoint 729 ecd076f1cb853454 729 130 99 36 0 262
+checkpoint 738 40c6e6546e301a03 738 130 99 35 0 264
+checkpoint 747 107697afe61effdd 747 130 99 37 0 268
+checkpoint 756 7bf07923cd6839e0 756 130 99 37 0 270
+checkpoint 765 a6719017818c79b6 765 140 99 35 0 274
+checkpoint 774 f6ecefae7ff64856 774 150 99 34 0 277
+checkpoint 783 27c6f891b6a4de15 783 160 98 30 0 280
+checkpoint 792 0c659db50c1e53a9 792 160 98 31 0 283
+checkpoint 801 a555413a6b63f1c2 801 170 98 29 0 287
+checkpoint 810 32ba7a7ca9cd87da 810 170 98 30 0 289
+checkpoint 819 f5619c1c15b212f9 819 180 98 30 0 293
+checkpoint 828 584a8d2827cd7ccb 828 180 98 31 0 296
+checkpoint 837 18a8b305877c0e6f 837 180 98 31 0 299
+checkpoint 846 19597f4b0ffab3a1 846 180 98 32 0 302
+checkpoint 855 0776df3cd60560a5 855 180 98 33 0 306
+checkpoint 864 e6fbaef30dbf1a47 864 180 98 32 0 308
+checkpoint 873 2e869755ee1ea179 873 180 98 32 0 312
+checkpoint 882 ffb1aff0896fcc40 882 180 98 32 0 314
+checkpoint 891 b46603bc54791dc5 891 180 98 34 0 319
+checkpoint 900 d649fae3917a5983 900 180 98 34 0 321
+end
+scenario entity-cap 5 220
+input 10 tap 0 0 none
+input 10 tap 0 0 none
+input 10 tap 0 0 none
+input 10 tap 0 0 none
+input 10 tap 0 0 none
+input 10 tap 0 0 none
+input 10 tap 0 0 none
+input 10 tap 0 0 none
+input 10 tap 0 0 none
+input 10 tap 0 0 none
+input 10 tap 0 0 none
+input 10 tap 0 0 none
+input 10 tap 0 0 none
+input 10 tap 0 0 none
+input 10 tap 0 0 none
+input 10 tap 0 0 none
+input 10 tap 0 0 none
+input 10 tap 0 0 none
+input 10 tap 0 0 none
+input 10 tap 0 0 none
+input 10 tap 0 0 none
+input 10 tap 0 0 none
+input 10 tap 0 0 none
+input 10 tap 0 0 none
+input 10 tap 0 0 none
+input 10 tap 0 0 none
+input 10 tap 0 0 none
+input 10 tap 0 0 none
+input 10 tap 0 0 none
+input 10 tap 0 0 none
+input 10 tap 0 0 none
+input 10 tap 0 0 none
+input 10 tap 0 0 none
+input 10 tap 0 0 none
+input 10 tap 0 0 none
+input 10 tap 0 0 none
+input 10 tap 0 0 none
+input 10 tap 0 0 none
+input 10 tap 0 0 none
+input 10 tap 0 0 none
+input 10 tap 0 0 none
+input 10 tap 0 0 none
+input 10 tap 0 0 none
+input 10 tap 0 0 none
+input 10 tap 0 0 none
+input 10 tap 0 0 none
+input 10 tap 0 0 none
+input 10 tap 0 0 none
+input 10 tap 0 0 none
+input 10 tap 0 0 none
+input 10 tap 0 0 none
+input 10 tap 0 0 none
+input 10 tap 0 0 none
+input 10 tap 0 0 none
+input 10 tap 0 0 none
+input 10 tap 0 0 none
+input 10 tap 0 0 none
+input 10 tap 0 0 none
+input 10 tap 0 0 none
+input 10 tap 0 0 none
+input 10 tap 0 0 none
+input 10 tap 0 0 none
+input 10 tap 0 0 none
+input 10 tap 0 0 none
+input 10 tap 0 0 none
+input 10 tap 0 0 none
+input 10 tap 0 0 none
+input 10 tap 0 0 none
+input 10 tap 0 0 none
+input 10 tap 0 0 none
+input 10 tap 0 0 none
+input 10 tap 0 0 none
+input 10 tap 0 0 none
+input 10 tap 0 0 none
+input 10 tap 0 0 none
+input 10 tap 0 0 none
+input 10 tap 0 0 none
+input 10 tap 0 0 none
+input 10 tap 0 0 none
+input 10 tap 0 0 none
+checkpoint 0 d615f382ac8e3167 0 0 99 3 0 4
+checkpoint 2 c856b2d252799c16 2 0 99 5 0 6
+checkpoint 4 5fa67fc431ce53c5 4 0 99 5 0 6
+checkpoint 6 a72ca63fb9cac495 6 0 99 5 0 6
+checkpoint 8 7547edecf76c671e 8 0 99 6 0 7
+checkpoint 10 9db052bf5d5e5224 10 0 99 6 0 7
+checkpoint 12 f8f67a61bc6bc9a2 12 0 99 64 0 65
+checkpoint 14 28efc69a04d39afe 14 0 99 64 0 65
+checkpoint 16 2bcc3e509eb8f57a 16 0 99 64 0 65
+checkpoint 18 030bfcc3ca3c6430 18 0 99 64 0 65
+checkpoint 20 c524d08e140ba8ad 20 0 99 64 0 65
+checkpoint 22 ed9e568e1ddd0f01 22 0 99 64 0 65
+checkpoint 24 0ae4e6957c9ef6b0 24 0 99 64 0 65
+checkpoint 26 72e628a496718de4 26 0 99 64 0 65
+checkpoint 28 5d0ed5a34b0c23e3 28 0 99 64 0 65
+checkpoint 30 9303b16630d50c0f 30 0 99 63 0 65
+checkpoint 32 2e867d8586348492 32 0 99 63 0 65
+checkpoint 34 b561b1e49f6385b4 34 0 99 63 0 65
+checkpoint 36 a9cc928631716d3a 36 0 99 64 0 66
+checkpoint 38 0a751a12847697d9 38 0 99 63 0 66
+checkpoint 40 5586c68346d7e814 40 0 99 63 0 66
+checkpoint 42 ceeb52caf46ee80c 42 0 99 63 0 66
+checkpoint 44 7adb0d050c9b50b2 44 0 99 64 0 67
+checkpoint 46 eaeb45ebe7ecd714 46 0 99 64 0 67
+checkpoint 48 75cb1c27c687ea2f 48 0 99 64 0 67
+checkpoint 50 e514ac0a32a739ab 50 0 99 64 0 67
+checkpoint 52 443f006f45f752f4 52 0 99 64 0 67
+checkpoint 54 5d0e0c4f26433362 54 0 99 64 0 67
+checkpoint 56 69d9e5c62948e11a 56 0 99 64 0 67
+checkpoint 58 aa36989b6eb22689 58 0 99 64 0 67
+checkpoint 60 fbbc884105d54441 60 0 99 64 0 67
+checkpoint 62 df7d5edbd2a5ee81 62 0 99 64 0 67
+checkpoint 64 a1a0831526a1b304 64 0 99 64 0 67
+checkpoint 66 6a5434fbca3543b3 66 0 99 63 0 67
+checkpoint 68 de2804d81aa61cf8 68 0 99 63 0 67
+checkpoint 70 3f0f59e96cb7b7d0 70 0 99 63 0 67
+checkpoint 72 fe86355779bd17f6 72 0 99 63 0 68
+checkpoint 74 bda21e5ae1c00e50 74 0 99 64 0 69
+checkpoint 76 5e0427a3c637a8c8 76 0 99 64 0 69
+checkpoint 78 7e923b08817931e1 78 0 99 64 0 69
+checkpoint 80 63b0ef8561c1737f 80 0 99 64 0 69
+checkpoint 82 75d39fd3865dbbb4 82 0 99 64 0 69
+checkpoint 84 3132e54e79ed14a5 84 0 99 64 0 69
+checkpoint 86 acd1617928a11519 86 0 99 64 0 69
+checkpoint 88 89df276bb564937b 88 0 99 64 0 69
+checkpoint 90 989bd90e56d2b0cb 90 0 99 64 0 69
+checkpoint 92 8e48922b149e6678 92 0 99 64 0 69
+checkpoint 94 2a0f5be930b4f9fb 94 0 99 64 0 69
+checkpoint 96 2479e163630e68a5 96 0 99 64 0 69
+checkpoint 98 e14233189983c6ba 98 0 99 64 0 69
+checkpoint 100 32317c5f1e2b4b29 100 0 99 63 0 69
+checkpoint 102 f4fc133b4bb70b4c 102 0 99 63 0 69
+checkpoint 104 cc2682202652b6a6 104 0 99 63 0 69
+checkpoint 106 1cca422bc8e4db12 106 0 99 64 0 70
+checkpoint 108 0d2fa24e6078373d 108 0 99 6 0 70
+checkpoint 110 2104997ed69098b8 110 0 99 6 0 70
+checkpoint 112 08f6bd97664c6fc0 112 0 99 6 0 70
+checkpoint 114 a4eeb1a6982ff900 114 0 99 7 0 71
+checkpoint 116 9979291798aa2e58 116 0 99 7 0 71
+checkpoint 118 52a9a51427c1e7f1 118 0 99 7 0 71
+checkpoint 120 265e2fdc89a31e98 120 0 99 8 0 72
+checkpoint 122 83b77bbd8933dd05 122 0 99 9 0 73
+checkpoint 124 d9f536283ba1d329 124 0 99 9 0 73
+checkpoint 126 9449c2c01a5cdff5 126 0 99 9 0 73
+checkpoint 128 c644525606c7efac 128 0 99 10 0 74
+checkpoint 130 df502cfbafb9d7b4 130 0 99 10 0 74
+checkpoint 132 36d4f2a7608ab0dd 132 0 99 10 0 74
+checkpoint 134 557c179ae93ee2b0 134 0 99 11 0 75
+checkpoint 136 418b3ce54ad1e854 136 0 99 10 0 75
+checkpoint 138 2bd54520d545b88e 138 0 99 10 0 75
+checkpoint 140 43f49190f867eb15 140 0 99 10 0 75
+checkpoint 142 47f3defac97817fb 142 0 99 10 0 76
+checkpoint 144 30f444704facbd85 144 0 99 10 0 76
+checkpoint 146 97409c92ab5033e0 146 0 99 11 0 77
+checkpoint 148 9165420270cce72a 148 0 99 12 0 78
+checkpoint 150 e017d1740f04a88d 150 0 99 11 0 78
+checkpoint 152 def4628112fe46b4 152 0 99 11 0 78
+checkpoint 154 c82accec3e76a597 154 0 99 11 0 78
+checkpoint 156 0e5b46cff41d5e22 156 0 99 11 0 79
+checkpoint 158 d4f830963af1447e 158 0 99 11 0 79
+checkpoint 160 6d066b8579c08532 160 0 99 11 0 79
+checkpoint 162 c768f7a7ea889807 162 0 99 12 0 80
+checkpoint 164 91d65707edf1ac52 164 0 99 11 0 80
+checkpoint 166 8718af3fde2a58c2 166 0 99 11 0 80
+checkpoint 168 c4f722f69cb98c8e 168 0 99 11 0 80
+checkpoint 170 cb9b872d77a550cd 170 0 99 12 0 82
+checkpoint 172 43f38f472eb67a27 172 0 99 12 0 82
+checkpoint 174 d0366bd1a3bf0838 174 0 99 12 0 82
+checkpoint 176 5c23dd6205ab61e3 176 0 99 13 0 83
+checkpoint 178 c878cbb2789bbb76 178 0 99 12 0 83
+checkpoint 180 7b8a02fbe327f20a 180 0 99 12 0 83
+checkpoint 182 39dcd2de6d86c462 182 0 99 12 0 83
+checkpoint 184 12b01452cdb1c781 184 0 99 12 0 84
+checkpoint 186 50ba491d2c2c133c 186 0 99 12 0 84
+checkpoint 188 98cc89cbe6c51ee2 188 0 99 12 0 84
+checkpoint 190 c5b09e825fef69bc 190 0 99 13 0 85
+checkpoint 192 c8d2d580a3e7d974 192 0 99 12 0 85
+checkpoint 194 35285c43e45b1004 194 0 99 13 0 86
+checkpoint 196 371d28615f78892a 196 0 99 13 0 86
+checkpoint 198 5ae593483e370c42 198 0 99 13 0 87
+checkpoint 200 6411e47f42da16b8 200 0 99 13 0 87
+checkpoint 202 ab05172d4ce4e084 202 0 99 13 0 87
+checkpoint 204 6ff8196bd57c8c8a 204 0 99 14 0 88
+checkpoint 206 08dbfef7594d864e 206 0 99 13 0 88
+checkpoint 208 73edb4c40ae6fc3f 208 0 99 13 0 88
+checkpoint 210 b9aadd7a275d0615 210 0 99 13 0 88
+checkpoint 212 d8f7d76eb4619887 212 0 99 13 0 89
+checkpoint 214 9a9ac1e754c60f75 214 0 99 13 0 89
+checkpoint 216 40d702d8ff2a1605 216 0 99 13 0 89
+checkpoint 218 2b09708cf16df229 218 0 99 15 0 91
+checkpoint 220 87759a20036b90e1 220 0 99 14 0 91
+end
+scenario game-over 3 20000
+checkpoint 0 45fdf7c9627b88f8 0 0 99 3 0 4
+checkpoint 200 01e9b66afd85b9ee 200 0 99 16 0 42
+checkpoint 400 1c9ec6fbab72ddd0 400 0 99 25 0 79
+checkpoint 600 9b17d860ac3555c1 600 9 98 24 0 115
+checkpoint 800 acf42a068114f1fa 800 9 98 25 0 153
+checkpoint 1000 14c33d3f2a335b77 1000 9 97 25 0 189
+checkpoint 1200 3d1ad09ca8d81330 1200 15 96 24 0 226
+checkpoint 1400 02a13e3fdcdfffd7 1400 15 93 23 0 263
+checkpoint 1600 888d4bff6281f0a2 1600 15 92 24 0 300
+checkpoint 1800 17a8300beced5b9b 1800 15 89 26 0 337
+checkpoint 2000 99fcb35384b03c71 2000 15 88 25 0 374
+checkpoint 2200 42ea718a11babc70 2200 16 88 25 0 411
+checkpoint 2400 4d5047757dea4b3a 2400 16 87 24 0 447
+checkpoint 2600 cfb52e437ac6875d 2600 16 84 24 0 485
+checkpoint 2800 2fa2f1e48ccd46a5 2800 16 82 24 0 521
+checkpoint 3000 1e9209f768f0d543 3000 20 80 25 0 558
+checkpoint 3200 4404b6888abccaf6 3200 20 77 26 0 596
+checkpoint 3400 035f0bd8b75935e6 3400 20 75 23 0 632
+checkpoint 3600 634f4a0ecd5f98d8 3600 26 74 24 0 669
+checkpoint 3800 6c3c5137581b2e16 3800 26 74 25 0 706
+checkpoint 4000 ace12234be1dde52 4000 26 74 25 0 743
+checkpoint 4200 b96b41f74e2049c6 4200 26 73 24 0 779
+checkpoint 4400 7972c660507efd28 4400 26 72 25 0 817
+checkpoint 4600 a922d2227d410a63 4600 37 71 25 0 854
+checkpoint 4800 c5ad2486049840ca 4800 37 69 25 0 890
+checkpoint 5000 c932ee16723c32c5 5000 37 68 25 0 928
+checkpoint 5200 cd52bca39e1619b0 5200 49 66 24 0 964
+checkpoint 5400 4db361eab9767bb0 5400 49 63 23 0 1001
+checkpoint 5600 f8d4c6f49f583fdd 5600 49 61 24 0 1038
+checkpoint 5800 e89cf8a8d7493987 5800 49 59 24 0 1075
+checkpoint 6000 17ab338486b15fc1 6000 49 58 26 0 1112
+checkpoint 6200 af5a279324e92742 6200 61 57 24 0 1149
+checkpoint 6400 1c8b67764967bc67 6400 61 55 23 0 1186
+checkpoint 6600 6e555cf54b8f25ae 6600 61 54 24 0 1222
+checkpoint 6800 206d5cbc25bcad0a 6800 61 54 25 0 1260
+checkpoint 7000 eac9c35823ec55a1 7000 70 52 25 0 1296
+checkpoint 7200 31e9fa153e57d4d0 7200 70 49 25 0 1333
+checkpoint 7400 ca4ee6ca9e95a2dc 7400 70 48 26 0 1371
+checkpoint 7600 64aebd8dae951236 7600 70 44 24 0 1407
+checkpoint 7800 06808727a7b68a70 7800 70 40 23 0 1444
+checkpoint 8000 1551f81a227c39bb 8000 75 35 23 0 1481
+checkpoint 8200 971dfeeecfc907a5 8200 75 33 24 0 1518
+checkpoint 8400 830bd470e78b2bad 8400 75 31 24 0 1554
+checkpoint 8600 3c11287dc6f475cb 8600 78 31 25 0 1592
+checkpoint 8800 e8a4b5c47af65595 8800 78 30 26 0 1629
+checkpoint 9000 f33f3c48f2d332cc 9000 78 28 23 0 1665
+checkpoint 9200 d5d0cc4cf11e00ec 9200 80 27 25 0 1703
+checkpoint 9400 3c344742f03caa0d 9400 81 25 24 0 1739
+checkpoint 9600 759fe3b9f07accc2 9600 81 23 24 0 1776
+checkpoint 9800 19fbf921435c468e 9800 81 21 24 0 1813
+checkpoint 10000 64a992d654493507 10000 81 18 24 0 1850
+checkpoint 10200 00769bd271e69c40 10200 89 18 26 0 1887
+checkpoint 10400 8e4383653fd452cf 10400 89 14 24 0 1924
+checkpoint 10600 1a01ce57ecbf1984 10600 89 11 25 0 1961
+checkpoint 10800 e743f73855651b62 10800 89 11 25 0 1997
+checkpoint 11000 f01c4c95baa646a6 11000 99 9 25 0 2035
+checkpoint 11200 8fde7610a58fa236 11200 99 7 24 0 2071
+checkpoint 11400 4d28ec27858cbe09 11400 99 5 25 0 2108
+checkpoint 11600 7aa9a5b7e7465efb 11600 99 3 26 0 2146
+checkpoint 11800 3219bc5993ba87d1 11800 99 1 24 0 2182
+checkpoint 12000 feb00c3496c8e24f 11894 111 0 25 1 2200
+checkpoint 12200 feb00c3496c8e24f 11894 111 0 25 1 2200
+checkpoint 12400 feb00c3496c8e24f 11894 111 0 25 1 2200
+checkpoint 12600 feb00c3496c8e24f 11894 111 0 25 1 2200
+checkpoint 12800 feb00c3496c8e24f 11894 111 0 25 1 2200
+checkpoint 13000 feb00c3496c8e24f 11894 111 0 25 1 2200
+checkpoint 13200 feb00c3496c8e24f 11894 111 0 25 1 2200
+checkpoint 13400 feb00c3496c8e24f 11894 111 0 25 1 2200
+checkpoint 13600 feb00c3496c8e24f 11894 111 0 25 1 2200
+checkpoint 13800 feb00c3496c8e24f 11894 111 0 25 1 2200
+checkpoint 14000 feb00c3496c8e24f 11894 111 0 25 1 2200
+checkpoint 14200 feb00c3496c8e24f 11894 111 0 25 1 2200
+checkpoint 14400 feb00c3496c8e24f 11894 111 0 25 1 2200
+checkpoint 14600 feb00c3496c8e24f 11894 111 0 25 1 2200
+checkpoint 14800 feb00c3496c8e24f 11894 111 0 25 1 2200
+checkpoint 15000 feb00c3496c8e24f 11894 111 0 25 1 2200
+checkpoint 15200 feb00c3496c8e24f 11894 111 0 25 1 2200
+checkpoint 15400 feb00c3496c8e24f 11894 111 0 25 1 2200
+checkpoint 15600 feb00c3496c8e24f 11894 111 0 25 1 2200
+checkpoint 15800 feb00c3496c8e24f 11894 111 0 25 1 2200
+checkpoint 16000 feb00c3496c8e24f 11894 111 0 25 1 2200
+checkpoint 16200 feb00c3496c8e24f 11894 111 0 25 1 2200
+checkpoint 16400 feb00c3496c8e24f 11894 111 0 25 1 2200
+checkpoint 16600 feb00c3496c8e24f 11894 111 0 25 1 2200
+checkpoint 16800 feb00c3496c8e24f 11894 111 0 25 1 2200
+checkpoint 17000 feb00c3496c8e24f 11894 111 0 25 1 2200
+checkpoint 17200 feb00c3496c8e24f 11894 111 0 25 1 2200
+checkpoint 17400 feb00c3496c8e24f 11894 111 0 25 1 2200
+checkpoint 17600 feb00c3496c8e24f 11894 111 0 25 1 2200
+checkpoint 17800 feb00c3496c8e24f 11894 111 0 25 1 2200
+checkpoint 18000 feb00c3496c8e24f 11894 111 0 25 1 2200
+checkpoint 18200 feb00c3496c8e24f 11894 111 0 25 1 2200
+checkpoint 18400 feb00c3496c8e24f 11894 111 0 25 1 2200
+checkpoint 18600 feb00c3496c8e24f 11894 111 0 25 1 2200
+checkpoint 18800 feb00c3496c8e24f 11894 111 0 25 1 2200
+checkpoint 19000 feb00c3496c8e24f 11894 111 0 25 1 2200
+checkpoint 19200 feb00c3496c8e24f 11894 111 0 25 1 2200
+checkpoint 19400 feb00c3496c8e24f 11894 111 0 25 1 2200
+checkpoint 19600 feb00c3496c8e24f 11894 111 0 25 1 2200
+checkpoint 19800 feb00c3496c8e24f 11894 111 0 25 1 2200
+checkpoint 20000 feb00c3496c8e24f 11894 111 0 25 1 2200
+end
+scenario idle 1 600
+checkpoint 0 5cf583ecfc3f74aa 0 0 99 3 0 4
+checkpoint 6 af08b5578daabafa 6 0 99 5 0 6
+checkpoint 12 2695d3fdc517ae03 12 0 99 6 0 7
+checkpoint 18 3138c0d70715fd55 18 0 99 7 0 8
+checkpoint 24 083c151d922c478c 24 0 99 8 0 9
+checkpoint 30 29c524e3619678a5 30 0 99 9 0 11
+checkpoint 36 b0b23148b8826766 36 0 99 10 0 12
+checkpoint 42 508595284b60abdf 42 0 99 9 0 12
+checkpoint 48 abd15ba9a1a5b88c 48 0 99 9 0 13
+checkpoint 54 70845ed45d3f19c9 54 0 99 10 0 15
+checkpoint 60 6397aa43913366be 60 0 99 10 0 16
+checkpoint 66 2439ac8d540f1770 66 0 99 10 0 17
+checkpoint 72 81d2171f8d925d45 72 0 99 10 0 18
+checkpoint 78 faa63eb42e161358 78 0 99 12 0 20
+checkpoint 84 84808b07b6055508 84 0 99 11 0 20
+checkpoint 90 d305e3f493b7b464 90 0 99 11 0 21
+checkpoint 96 21705844a9c3e1a9 96 0 99 11 0 22
+checkpoint 102 98664a1a1e115387 102 0 99 12 0 24
+checkpoint 108 6e8c3bc01a739854 108 0 99 12 0 25
+checkpoint 114 50804fa87b5d86ac 114 0 99 12 0 26
+checkpoint 120 a6f3cb1337a7ba12 120 0 99 13 0 27
+checkpoint 126 26272f25fcdfd2f9 126 0 99 13 0 28
+checkpoint 132 9ff240987e0917ef 132 0 99 13 0 29
+checkpoint 138 8fd6e9688531b100 138 0 99 13 0 30
+checkpoint 144 1f629198c4a4f7a9 144 0 99 13 0 31
+checkpoint 150 07934e3e015376ce 150 0 99 14 0 33
+checkpoint 156 04318fb353c763f7 156 0 99 14 0 34
+checkpoint 162 52d27daaa0ea7e57 162 0 99 15 0 35
+checkpoint 168 1a87f5ec16a8c5fb 168 0 99 14 0 35
+checkpoint 174 f00d409a479de7aa 174 0 99 15 0 37
+checkpoint 180 f5e654b80c743845 180 0 99 15 0 38
+checkpoint 186 3feb58f984c69da3 186 0 99 15 0 39
+checkpoint 192 12b6b9b88f4efa36 192 0 99 15 0 40
+checkpoint 198 e3b9975403bf0feb 198 0 99 16 0 42
+checkpoint 204 c9cfa66d8e3f1c20 204 0 99 17 0 43
+checkpoint 210 bc17bd595cf04773 210 0 99 16 0 43
+checkpoint 216 3aa70d1deac98164 216 0 99 16 0 44
+checkpoint 222 11bd7bd3c6926c8d 222 0 99 17 0 46
+checkpoint 228 e3fe72409bfa4f4b 228 0 99 17 0 47
+checkpoint 234 2add23b2e64abe0d 234 0 99 17 0 48
+checkpoint 240 419ffca52e749d89 240 0 99 17 0 49
+checkpoint 246 0dd53c810199f1fa 246 0 99 19 0 51
+checkpoint 252 ec07af4a8e652b06 252 0 99 18 0 51
+checkpoint 258 5f033ef2e4353045 258 0 99 18 0 52
+checkpoint 264 9a375e5b09de0ae3 264 0 99 18 0 53
+checkpoint 270 082a4962d7e2bcb8 270 0 99 19 0 55
+checkpoint 276 c17f11e1aebb7fd2 276 0 99 19 0 56
+checkpoint 282 fe948d596e13f7dc 282 0 99 19 0 57
+checkpoint 288 7099090492d07259 288 0 99 20 0 58
+checkpoint 294 64dbc48edcbc6822 294 0 99 20 0 59
+checkpoint 300 ccb229665f35d21a 300 0 99 20 0 60
+checkpoint 306 5028bca1de51ec1a 306 0 99 20 0 61
+checkpoint 312 9bd4618ca31fcb82 312 0 99 20 0 62
+checkpoint 318 a330529c8b0ae92b 318 0 99 21 0 64
+checkpoint 324 1b5893ffb73ea1f8 324 0 99 21 0 65
+checkpoint 330 77b3888d4f45e4a3 330 0 99 22 0 66
+checkpoint 336 219bbcfefff707e9 336 0 99 21 0 66
+checkpoint 342 75e200b32de0e4fd 342 0 99 22 0 68
+checkpoint 348 f5c453ab317dfd53 348 0 99 22 0 69
+checkpoint 354 ebe44f66e5c8648e 354 0 99 22 0 70
+checkpoint 360 772f5ea7c80326a3 360 0 99 22 0 71
+checkpoint 366 21a4f604769f5ef9 366 0 99 23 0 73
+checkpoint 372 b47af0bdda1521d8 372 0 99 24 0 74
+checkpoint 378 7fa72c731a5055d8 378 0 99 23 0 74
+checkpoint 384 983da6c5940eed3c 384 0 99 23 0 75
+checkpoint 390 27b2d3f2c6134b5b 390 0 99 24 0 77
+checkpoint 396 dc0cd1c1c8c8a808 396 0 99 24 0 78
+checkpoint 402 47aea83ccf1074d0 402 0 99 24 0 79
+checkpoint 408 7599dc564bf4ca11 408 0 99 24 0 80
+checkpoint 414 04f46b77e26e20dd 414 0 99 26 0 82
+checkpoint 420 8b9c099e63ddc1a8 420 0 99 25 0 82
+checkpoint 426 7ec686d46884aad6 426 0 99 25 0 83
+checkpoint 432 305bd4ef9fddf39c 432 0 99 25 0 84
+checkpoint 438 be0ade0bd1dce169 438 0 99 26 0 86
+checkpoint 444 308ff43c9d97ac08 444 0 99 25 0 87
+checkpoint 450 87b7c14606408621 450 0 99 25 0 88
+checkpoint 456 48c35ef4b68cf9e1 456 0 99 26 0 89
+checkpoint 462 7e3e04fa56cf76dd 462 0 99 26 0 90
+checkpoint 468 f1115353afa097dc 468 0 99 25 0 91
+checkpoint 474 e434456b01877e67 474 2 99 25 0 92
+checkpoint 480 36d7910476db61df 480 8 99 25 0 93
+checkpoint 486 69bd5c8070a78f5d 486 9 99 26 0 95
+checkpoint 492 988406fbf08396ae 492 9 99 25 0 96
+checkpoint 498 fac2148714c4005e 498 9 99 26 0 97
+checkpoint 504 c32c3933fc293feb 504 9 99 25 0 97
+checkpoint 510 c459bbc89e715769 510 9 99 26 0 99
+checkpoint 516 abb84c12f2fb8f51 516 9 99 25 0 100
+checkpoint 522 458047f7c22945ae 522 9 98 24 0 101
+checkpoint 528 b14d00e2faf3ef1e 528 9 98 24 0 102
+checkpoint 534 8665bbaea1061f09 534 9 98 25 0 104
+checkpoint 540 20b649f5638a7040 540 9 98 25 0 105
+checkpoint 546 372c9b9a5c90a9d6 546 9 97 23 0 105
+checkpoint 552 30b5fadfb28b9f43 552 9 97 23 0 106
+checkpoint 558 16840b189c56e4b7 558 9 97 24 0 108
+checkpoint 564 00ca00a3399b1f9b 564 9 97 23 0 109
+checkpoint 570 19a75710f9664186 570 9 96 22 0 110
+checkpoint 576 3d7cb68cb2753275 576 9 96 22 0 111
+checkpoint 582 2d1a87c31cdb59bd 582 9 96 24 0 113
+checkpoint 588 5852e502d3798139 588 9 96 23 0 113
+checkpoint 594 392051b0f7569c97 594 9 96 23 0 114
+checkpoint 600 cd632d709f157c61 600 9 96 23 0 115
+end
+scenario input-order 99 120
+input 3 drag 6553600 0 none
+input 3 tap 0 0 none
+input 3 drag -3276800 0 none
+input 3 tap 0 0 none
+input 3 swipe 0 0 left
+input 4 tap 0 0 none
+input 40 swipe 0 0 up
+input 80 swipe 0 0 none
+input 80 drag -229376 147456 none
+checkpoint 0 93233d6f3e7532db 0 0 99 3 0 4
+checkpoint 1 f59b3cd8c8a4f356 1 0 99 5 0 6
+checkpoint 2 dd3ee03c2eb8519c 2 0 99 5 0 6
+checkpoint 3 14fe8f0cde9c07f4 3 0 99 5 0 6
+checkpoint 4 507d2e22e7fdfd5e 4 0 99 7 0 8
+checkpoint 5 190e681197147eef 5 0 99 8 0 9
+checkpoint 6 7f0faa16e5e1fd3a 6 0 99 8 0 9
+checkpoint 7 14d9a89797bb4923 7 0 99 8 0 9
+checkpoint 8 2e443746da7f5cec 8 0 99 9 0 10
+checkpoint 9 37e3bc00e1fea2ed 9 0 99 9 0 10
+checkpoint 10 0f3c42f98567075d 10 0 99 9 0 10
+checkpoint 11 d99bf897fc2e0e37 11 0 99 9 0 10
+checkpoint 12 ffbf44784b40779e 12 0 99 9 0 10
+checkpoint 13 535209960619130a 13 0 99 9 0 10
+checkpoint 14 6fd12fad26e74ed5 14 0 99 9 0 10
+checkpoint 15 61103d2592f63994 15 0 99 10 0 11
+checkpoint 16 deb02fa5ade9ea34 16 0 99 10 0 11
+checkpoint 17 2e74ccd3eea460c5 17 0 99 10 0 11
+checkpoint 18 385f43e481de6c7e 18 0 99 10 0 11
+checkpoint 19 4c7e5ed57a9052dd 19 0 99 10 0 11
+checkpoint 20 f8e1e939b01f6039 20 0 99 10 0 11
+checkpoint 21 a347c31772094ed1 21 0 99 10 0 11
+checkpoint 22 955170a066e7bf0a 22 0 99 11 0 12
+checkpoint 23 aff1f983f2a2ba1a 23 0 99 11 0 12
+checkpoint 24 42b89052d43bbf63 24 0 99 11 0 12
+checkpoint 25 de62484a331d82a6 25 0 99 12 0 13
+checkpoint 26 8b2760e3f516df70 26 0 99 12 0 13
+checkpoint 27 0158739eb75bba89 27 0 99 12 0 13
+checkpoint 28 d49648bcb3d99161 28 0 99 12 0 13
+checkpoint 29 25319f4a5c1d0ec6 29 0 99 13 0 14
+checkpoint 30 d87d57d241e40cbc 30 0 99 12 0 14
+checkpoint 31 d2736786026e55b1 31 0 99 12 0 14
+checkpoint 32 45d6f32d1e1feefc 32 0 99 12 0 14
+checkpoint 33 05865c173cf818c1 33 0 99 12 0 14
+checkpoint 34 897c39847f5ce495 34 0 99 12 0 14
+checkpoint 35 67981fc1a04fa80a 35 0 99 12 0 14
+checkpoint 36 3fbb4415aec4bf8f 36 0 99 13 0 15
+checkpoint 37 9282e66e753ac0b4 37 0 99 12 0 15
+checkpoint 38 c34da15a168c6e09 38 0 99 12 0 15
+checkpoint 39 9d58001bcc059dac 39 0 99 12 0 15
+checkpoint 40 1b954660e2083fcb 40 0 99 12 0 15
+checkpoint 41 d5a2fadd59ee8904 41 0 99 12 0 15
+checkpoint 42 43e21280b3dc00a1 42 0 99 12 0 15
+checkpoint 43 dd5507dfe849dc71 43 0 99 13 0 16
+checkpoint 44 ef438d078f48bd44 44 0 99 12 0 16
+checkpoint 45 081a37362acdd647 45 0 99 12 0 16
+checkpoint 46 34e9fffe0f5da62d 46 0 99 12 0 16
+checkpoint 47 0f735100a1d45608 47 0 99 12 0 16
+checkpoint 48 9407adf4cd6409f1 48 0 99 12 0 16
+checkpoint 49 003b4b31623b421e 49 0 99 13 0 17
+checkpoint 50 8c0ad2bdcab20362 50 0 99 14 0 18
+checkpoint 51 68f0fbe1c60a18e6 51 0 99 13 0 18
+checkpoint 52 c6a0b5184380ec31 52 0 99 13 0 18
+checkpoint 53 88a476fa7476bf3d 53 0 99 13 0 18
+checkpoint 54 9f33bd3765d51d81 54 0 99 13 0 18
+checkpoint 55 8bebef8993601f92 55 0 99 13 0 18
+checkpoint 56 88b1c351ae913fce 56 0 99 13 0 18
+checkpoint 57 a84d62dcd78eb4b4 57 0 99 14 0 19
+checkpoint 58 729eb9eadf7cd7c3 58 0 99 13 0 19
+checkpoint 59 e8cbf9cc287caf03 59 0 99 13 0 19
+checkpoint 60 4c3a4959fbf1f0e3 60 0 99 13 0 19
+checkpoint 61 ea29127a24a197a7 61 0 99 13 0 19
+checkpoint 62 742c2dcc41a2a61c 62 0 99 13 0 19
+checkpoint 63 700d6a6e5ce50766 63 0 99 13 0 19
+checkpoint 64 eac5db8e424151fd 64 0 99 14 0 20
+checkpoint 65 a54ee5bddbcfa5cd 65 0 99 13 0 20
+checkpoint 66 a962ae153a580c1f 66 0 99 13 0 20
+checkpoint 67 89b40ae2412eef07 67 0 99 13 0 20
+checkpoint 68 4008a21624e30249 68 0 99 13 0 20
+checkpoint 69 eabe9412291f9515 69 0 99 13 0 20
+checkpoint 70 ca0a12fa1f25e6bf 70 0 99 13 0 20
+checkpoint 71 3d3fee99f3f014da 71 0 99 14 0 21
+checkpoint 72 542f27d3390979c2 72 0 99 13 0 21
+checkpoint 73 9cff0908589df384 73 0 99 14 0 22
+checkpoint 74 7b789778e8adcb8a 74 0 99 14 0 22
+checkpoint 75 e4d634e942860177 75 0 99 14 0 22
+checkpoint 76 5c3028a1409affa0 76 0 99 14 0 22
+checkpoint 77 e1fd349bd38bd439 77 0 99 14 0 22
+checkpoint 78 5532603447230188 78 0 99 15 0 23
+checkpoint 79 f9b4dc49654262e4 79 0 99 14 0 23
+checkpoint 80 7d672032eb8ffdf1 80 0 99 14 0 23
+checkpoint 81 57753d151c6bfceb 81 0 99 14 0 23
+checkpoint 82 9ddae91914c3195d 82 0 99 14 0 23
+checkpoint 83 cf78cff227d7a543 83 0 99 14 0 23
+checkpoint 84 75f3679e988e5762 84 0 99 14 0 23
+checkpoint 85 48c763b9d5432ea1 85 0 99 15 0 24
+checkpoint 86 d347a5a1038050e7 86 0 99 14 0 24
+checkpoint 87 767957385881f386 87 10 99 12 0 24
+checkpoint 88 bef5562a3fb57e26 88 10 99 12 0 24
+checkpoint 89 8dc7aea051d9ab21 89 10 99 12 0 24
+checkpoint 90 b16f92ef3a4ab4a1 90 10 99 12 0 24
+checkpoint 91 f653a377afa21fd8 91 10 99 12 0 24
+checkpoint 92 8bee161de3e52e15 92 10 99 13 0 25
+checkpoint 93 9cd78d53220114b3 93 10 99 12 0 25
+checkpoint 94 0aa299748749a274 94 10 99 12 0 25
+checkpoint 95 19dac1b4babbb93e 95 10 99 12 0 25
+checkpoint 96 f97cf509fb28e860 96 10 99 12 0 25
+checkpoint 97 2e0278eb351c3a15 97 10 99 13 0 26
+checkpoint 98 ecd044d41001de09 98 10 99 13 0 26
+checkpoint 99 7730c7c16e4028bf 99 10 99 14 0 27
+checkpoint 100 0203c038b8c05d13 100 10 99 13 0 27
+checkpoint 101 18e74374cf6c334f 101 10 99 12 0 27
+checkpoint 102 0d1a4cb80ecc9e6f 102 10 99 11 0 27
+checkpoint 103 94ce54a834cf1457 103 10 99 11 0 27
+checkpoint 104 90c2fcfcc789af6d 104 10 99 11 0 27
+checkpoint 105 2a37e0d401008bb4 105 10 99 11 0 27
+checkpoint 106 4e331727435bd85d 106 10 99 12 0 28
+checkpoint 107 0741f52559ba3613 107 10 99 11 0 28
+checkpoint 108 4db5c2a5ee923313 108 10 99 11 0 28
+checkpoint 109 b07da079abcc6d15 109 10 99 11 0 28
+checkpoint 110 fcb950cd40942a5d 110 10 99 11 0 28
+checkpoint 111 05dfb5efae5f4559 111 10 99 11 0 28
+checkpoint 112 f6ce04d16f1c14c5 112 10 99 11 0 28
+checkpoint 113 ccbc8cd04c158056 113 10 99 12 0 29
+checkpoint 114 f71bb5a50365a46a 114 10 99 11 0 29
+checkpoint 115 2bd370f9b30c1e14 115 10 99 11 0 29
+checkpoint 116 9fa9cc23f1cfc32a 116 10 99 11 0 29
+checkpoint 117 d49002e92a527f1c 117 10 99 11 0 29
+checkpoint 118 6810e9c71f1120ff 118 10 99 11 0 29
+checkpoint 119 e319afd5c2875ee3 119 10 99 11 0 29
+checkpoint 120 b229b4ac542f3598 120 10 99 12 0 30
+end
+scenario long-run 5 10000
+input 0 tap 0 0 none
+input 0 drag 1966080 0 none
+input 10 tap 0 0 none
+input 20 tap 0 0 none
+input 25 drag 11010048 0 none
+input 30 tap 0 0 none
+input 40 tap 0 0 none
+input 50 tap 0 0 none
+input 50 drag -11796480 0 none
+input 60 tap 0 0 none
+input 70 tap 0 0 none
+input 75 drag -458752 0 none
+input 80 tap 0 0 none
+input 90 tap 0 0 none
+input 100 tap 0 0 none
+input 100 drag 393216 0 none
+input 110 tap 0 0 none
+input 120 tap 0 0 none
+input 125 drag -11665408 0 none
+input 130 tap 0 0 none
+input 140 tap 0 0 none
+input 150 tap 0 0 none
+input 150 drag 3080192 0 none
+input 160 tap 0 0 none
+input 170 tap 0 0 none
+input 175 drag -10223616 0 none
+input 180 tap 0 0 none
+input 190 tap 0 0 none
+input 200 tap 0 0 none
+input 200 drag -5832704 0 none
+input 210 tap 0 0 none
+input 220 tap 0 0 none
+input 225 drag -4980736 0 none
+input 230 tap 0 0 none
+input 240 tap 0 0 none
+input 250 tap 0 0 none
+input 250 drag -5701632 0 none
+input 260 tap 0 0 none
+input 270 tap 0 0 none
+input 275 drag -7995392 0 none
+input 280 tap 0 0 none
+input 290 tap 0 0 none
+input 300 tap 0 0 none
+input 300 drag -6488064 0 none
+input 310 tap 0 0 none
+input 320 tap 0 0 none
+input 325 drag -3604480 0 none
+input 330 tap 0 0 none
+input 340 tap 0 0 none
+input 350 tap 0 0 none
+input 350 drag 1441792 0 none
+input 360 tap 0 0 none
+input 370 tap 0 0 none
+input 375 drag 11272192 0 none
+input 380 tap 0 0 none
+input 390 tap 0 0 none
+input 400 tap 0 0 none
+input 400 drag 7536640 0 none
+input 410 tap 0 0 none
+input 420 tap 0 0 none
+input 425 drag 524288 0 none
+input 430 tap 0 0 none
+input 440 tap 0 0 none
+input 450 tap 0 0 none
+input 450 drag 10551296 0 none
+input 460 tap 0 0 none
+input 470 tap 0 0 none
+input 475 drag 10616832 0 none
+input 480 tap 0 0 none
+input 490 tap 0 0 none
+input 500 tap 0 0 none
+input 500 drag -10092544 0 none
+input 510 tap 0 0 none
+input 520 tap 0 0 none
+input 525 drag 786432 0 none
+input 530 tap 0 0 none
+input 540 tap 0 0 none
+input 550 tap 0 0 none
+input 550 drag 7798784 0 none
+input 560 tap 0 0 none
+input 570 tap 0 0 none
+input 575 drag 9633792 0 none
+input 580 tap 0 0 none
+input 590 tap 0 0 none
+input 600 tap 0 0 none
+input 600 drag -1966080 0 none
+input 610 tap 0 0 none
+input 620 tap 0 0 none
+input 625 drag 7471104 0 none
+input 630 tap 0 0 none
+input 640 tap 0 0 none
+input 650 tap 0 0 none
+input 650 drag -10223616 0 none
+input 660 tap 0 0 none
+input 670 tap 0 0 none
+input 675 drag -2293760 0 none
+input 680 tap 0 0 none
+input 690 tap 0 0 none
+input 700 tap 0 0 none
+input 700 drag -10289152 0 none
+input 710 tap 0 0 none
+input 720 tap 0 0 none
+input 725 drag -3801088 0 none
+input 730 tap 0 0 none
+input 740 tap 0 0 none
+input 750 tap 0 0 none
+input 750 drag -11337728 0 none
+input 760 tap 0 0 none
+input 770 tap 0 0 none
+input 775 drag 2752512 0 none
+input 780 tap 0 0 none
+input 790 tap 0 0 none
+input 800 tap 0 0 none
+input 800 drag 11796480 0 none
+input 810 tap 0 0 none
+input 820 tap 0 0 none
+input 825 drag -9240576 0 none
+input 830 tap 0 0 none
+input 840 tap 0 0 none
+input 850 tap 0 0 none
+input 850 drag 131072 0 none
+input 860 tap 0 0 none
+input 870 tap 0 0 none
+input 875 drag -4784128 0 none
+input 880 tap 0 0 none
+input 890 tap 0 0 none
+input 900 tap 0 0 none
+input 900 drag -6094848 0 none
+input 910 tap 0 0 none
+input 920 tap 0 0 none
+input 925 drag -4849664 0 none
+input 930 tap 0 0 none
+input 940 tap 0 0 none
+input 950 tap 0 0 none
+input 950 drag 3866624 0 none
+input 960 tap 0 0 none
+input 970 tap 0 0 none
+input 975 drag 7274496 0 none
+input 980 tap 0 0 none
+input 990 tap 0 0 none
+input 1000 tap 0 0 none
+input 1000 drag 8978432 0 none
+input 1010 tap 0 0 none
+input 1020 tap 0 0 none
+input 1025 drag -9764864 0 none
+input 1030 tap 0 0 none
+input 1040 tap 0 0 none
+input 1050 tap 0 0 none
+input 1050 drag 2752512 0 none
+input 1060 tap 0 0 none
+input 1070 tap 0 0 none
+input 1075 drag -12582912 0 none
+input 1080 tap 0 0 none
+input 1090 tap 0 0 none
+input 1100 tap 0 0 none
+input 1100 drag -3866624 0 none
+input 1110 tap 0 0 none
+input 1120 tap 0 0 none
+input 1125 drag -11665408 0 none
+input 1130 tap 0 0 none
+input 1140 tap 0 0 none
+input 1150 tap 0 0 none
+input 1150 drag 6094848 0 none
+input 1160 tap 0 0 none
+input 1170 tap 0 0 none
+input 1175 drag 10747904 0 none
+input 1180 tap 0 0 none
+input 1190 tap 0 0 none
+input 1200 tap 0 0 none
+input 1200 drag 11665408 0 none
+input 1210 tap 0 0 none
+input 1220 tap 0 0 none
+input 1225 drag -9764864 0 none
+input 1230 tap 0 0 none
+input 1240 tap 0 0 none
+input 1250 tap 0 0 none
+input 1250 drag -11665408 0 none
+input 1260 tap 0 0 none
+input 1270 tap 0 0 none
+input 1275 drag 524288 0 none
+input 1280 tap 0 0 none
+input 1290 tap 0 0 none
+input 1300 tap 0 0 none
+input 1300 drag -327680 0 none
+input 1310 tap 0 0 none
+input 1320 tap 0 0 none
+input 1325 drag -9633792 0 none
+input 1330 tap 0 0 none
+input 1340 tap 0 0 none
+input 1350 tap 0 0 none
+input 1350 drag 3801088 0 none
+input 1360 tap 0 0 none
+input 1370 tap 0 0 none
+input 1375 drag -1638400 0 none
+input 1380 tap 0 0 none
+input 1390 tap 0 0 none
+input 1400 tap 0 0 none
+input 1400 drag 9240576 0 none
+input 1410 tap 0 0 none
+input 1420 tap 0 0 none
+input 1425 drag 11599872 0 none
+input 1430 tap 0 0 none
+input 1440 tap 0 0 none
+input 1450 tap 0 0 none
+input 1450 drag -4390912 0 none
+input 1460 tap 0 0 none
+input 1470 tap 0 0 none
+input 1475 drag -11599872 0 none
+input 1480 tap 0 0 none
+input 1490 tap 0 0 none
+input 1500 tap 0 0 none
+input 1500 drag -3997696 0 none
+input 1510 tap 0 0 none
+input 1520 tap 0 0 none
+input 1525 drag 3342336 0 none
+input 1530 tap 0 0 none
+input 1540 tap 0 0 none
+input 1550 tap 0 0 none
+input 1550 drag 8585216 0 none
+input 1560 tap 0 0 none
+input 1570 tap 0 0 none
+input 1575 drag -9830400 0 none
+input 1580 tap 0 0 none
+input 1590 tap 0 0 none
+input 1600 tap 0 0 none
+input 1600 drag 8060928 0 none
+input 1610 tap 0 0 none
+input 1620 tap 0 0 none
+input 1625 drag 5111808 0 none
+input 1630 tap 0 0 none
+input 1640 tap 0 0 none
+input 1650 tap 0 0 none
+input 1650 drag 458752 0 none
+input 1660 tap 0 0 none
+input 1670 tap 0 0 none
+input 1675 drag -8060928 0 none
+input 1680 tap 0 0 none
+input 1690 tap 0 0 none
+input 1700 tap 0 0 none
+input 1700 drag -12648448 0 none
+input 1710 tap 0 0 none
+input 1720 tap 0 0 none
+input 1725 drag 2031616 0 none
+input 1730 tap 0 0 none
+input 1740 tap 0 0 none
+input 1750 tap 0 0 none
+input 1750 drag 3538944 0 none
+input 1760 tap 0 0 none
+input 1770 tap 0 0 none
+input 1775 drag -3473408 0 none
+input 1780 tap 0 0 none
+input 1790 tap 0 0 none
+input 1800 tap 0 0 none
+input 1800 drag -10747904 0 none
+input 1810 tap 0 0 none
+input 1820 tap 0 0 none
+input 1825 drag -1966080 0 none
+input 1830 tap 0 0 none
+input 1840 tap 0 0 none
+input 1850 tap 0 0 none
+input 1850 drag 2883584 0 none
+input 1860 tap 0 0 none
+input 1870 tap 0 0 none
+input 1875 drag 9043968 0 none
+input 1880 tap 0 0 none
+input 1890 tap 0 0 none
+input 1900 tap 0 0 none
+input 1900 drag 7208960 0 none
+input 1910 tap 0 0 none
+input 1920 tap 0 0 none
+input 1925 drag 4390912 0 none
+input 1930 tap 0 0 none
+input 1940 tap 0 0 none
+input 1950 tap 0 0 none
+input 1950 drag 11796480 0 none
+input 1960 tap 0 0 none
+input 1970 tap 0 0 none
+input 1975 drag 6029312 0 none
+input 1980 tap 0 0 none
+input 1990 tap 0 0 none
+input 2000 tap 0 0 none
+input 2000 drag -10485760 0 none
+input 2010 tap 0 0 none
+input 2020 tap 0 0 none
+input 2025 drag -7536640 0 none
+input 2030 tap 0 0 none
+input 2040 tap 0 0 none
+input 2050 tap 0 0 none
+input 2050 drag 11272192 0 none
+input 2060 tap 0 0 none
+input 2070 tap 0 0 none
+input 2075 drag -10616832 0 none
+input 2080 tap 0 0 none
+input 2090 tap 0 0 none
+input 2100 tap 0 0 none
+input 2100 drag 983040 0 none
+input 2110 tap 0 0 none
+input 2120 tap 0 0 none
+input 2125 drag 6160384 0 none
+input 2130 tap 0 0 none
+input 2140 tap 0 0 none
+input 2150 tap 0 0 none
+input 2150 drag -9568256 0 none
+input 2160 tap 0 0 none
+input 2170 tap 0 0 none
+input 2175 drag -8716288 0 none
+input 2180 tap 0 0 none
+input 2190 tap 0 0 none
+input 2200 tap 0 0 none
+input 2200 drag -2686976 0 none
+input 2210 tap 0 0 none
+input 2220 tap 0 0 none
+input 2225 drag -3145728 0 none
+input 2230 tap 0 0 none
+input 2240 tap 0 0 none
+input 2250 tap 0 0 none
+input 2250 drag 4653056 0 none
+input 2260 tap 0 0 none
+input 2270 tap 0 0 none
+input 2275 drag 10551296 0 none
+input 2280 tap 0 0 none
+input 2290 tap 0 0 none
+input 2300 tap 0 0 none
+input 2300 drag -2883584 0 none
+input 2310 tap 0 0 none
+input 2320 tap 0 0 none
+input 2325 drag 6225920 0 none
+input 2330 tap 0 0 none
+input 2340 tap 0 0 none
+input 2350 tap 0 0 none
+input 2350 drag 6422528 0 none
+input 2360 tap 0 0 none
+input 2370 tap 0 0 none
+input 2375 drag 12189696 0 none
+input 2380 tap 0 0 none
+input 2390 tap 0 0 none
+input 2400 tap 0 0 none
+input 2400 drag 7405568 0 none
+input 2410 tap 0 0 none
+input 2420 tap 0 0 none
+input 2425 drag 5832704 0 none
+input 2430 tap 0 0 none
+input 2440 tap 0 0 none
+input 2450 tap 0 0 none
+input 2450 drag 7077888 0 none
+input 2460 tap 0 0 none
+input 2470 tap 0 0 none
+input 2475 drag -851968 0 none
+input 2480 tap 0 0 none
+input 2490 tap 0 0 none
+input 2500 tap 0 0 none
+input 2500 drag -11862016 0 none
+input 2510 tap 0 0 none
+input 2520 tap 0 0 none
+input 2525 drag 5767168 0 none
+input 2530 tap 0 0 none
+input 2540 tap 0 0 none
+input 2550 tap 0 0 none
+input 2550 drag -9371648 0 none
+input 2560 tap 0 0 none
+input 2570 tap 0 0 none
+input 2575 drag 10944512 0 none
+input 2580 tap 0 0 none
+input 2590 tap 0 0 none
+input 2600 tap 0 0 none
+input 2600 drag -10616832 0 none
+input 2610 tap 0 0 none
+input 2620 tap 0 0 none
+input 2625 drag 7929856 0 none
+input 2630 tap 0 0 none
+input 2640 tap 0 0 none
+input 2650 tap 0 0 none
+input 2650 drag -9633792 0 none
+input 2660 tap 0 0 none
+input 2670 tap 0 0 none
+input 2675 drag -10223616 0 none
+input 2680 tap 0 0 none
+input 2690 tap 0 0 none
+input 2700 tap 0 0 none
+input 2700 drag -655360 0 none
+input 2710 tap 0 0 none
+input 2720 tap 0 0 none
+input 2725 drag -13107200 0 none
+input 2730 tap 0 0 none
+input 2740 tap 0 0 none
+input 2750 tap 0 0 none
+input 2750 drag 7077888 0 none
+input 2760 tap 0 0 none
+input 2770 tap 0 0 none
+input 2775 drag 11796480 0 none
+input 2780 tap 0 0 none
+input 2790 tap 0 0 none
+input 2800 tap 0 0 none
+input 2800 drag 9306112 0 none
+input 2810 tap 0 0 none
+input 2820 tap 0 0 none
+input 2825 drag 10485760 0 none
+input 2830 tap 0 0 none
+input 2840 tap 0 0 none
+input 2850 tap 0 0 none
+input 2850 drag 4784128 0 none
+input 2860 tap 0 0 none
+input 2870 tap 0 0 none
+input 2875 drag 5439488 0 none
+input 2880 tap 0 0 none
+input 2890 tap 0 0 none
+input 2900 tap 0 0 none
+input 2900 drag -10289152 0 none
+input 2910 tap 0 0 none
+input 2920 tap 0 0 none
+input 2925 drag -6356992 0 none
+input 2930 tap 0 0 none
+input 2940 tap 0 0 none
+input 2950 tap 0 0 none
+input 2950 drag 11599872 0 none
+input 2960 tap 0 0 none
+input 2970 tap 0 0 none
+input 2975 drag -2162688 0 none
+input 2980 tap 0 0 none
+input 2990 tap 0 0 none
+input 3000 tap 0 0 none
+input 3000 drag 7405568 0 none
+input 3010 tap 0 0 none
+input 3020 tap 0 0 none
+input 3025 drag -3211264 0 none
+input 3030 tap 0 0 none
+input 3040 tap 0 0 none
+input 3050 tap 0 0 none
+input 3050 drag 5242880 0 none
+input 3060 tap 0 0 none
+input 3070 tap 0 0 none
+input 3075 drag -6160384 0 none
+input 3080 tap 0 0 none
+input 3090 tap 0 0 none
+input 3100 tap 0 0 none
+input 3100 drag -12320768 0 none
+input 3110 tap 0 0 none
+input 3120 tap 0 0 none
+input 3125 drag -6553600 0 none
+input 3130 tap 0 0 none
+input 3140 tap 0 0 none
+input 3150 tap 0 0 none
+input 3150 drag -6225920 0 none
+input 3160 tap 0 0 none
+input 3170 tap 0 0 none
+input 3175 drag -6684672 0 none
+input 3180 tap 0 0 none
+input 3190 tap 0 0 none
+input 3200 tap 0 0 none
+input 3200 drag 9895936 0 none
+input 3210 tap 0 0 none
+input 3220 tap 0 0 none
+input 3225 drag -7077888 0 none
+input 3230 tap 0 0 none
+input 3240 tap 0 0 none
+input 3250 tap 0 0 none
+input 3250 drag 10616832 0 none
+input 3260 tap 0 0 none
+input 3270 tap 0 0 none
+input 3275 drag 10485760 0 none
+input 3280 tap 0 0 none
+input 3290 tap 0 0 none
+input 3300 tap 0 0 none
+input 3300 drag 5767168 0 none
+input 3310 tap 0 0 none
+input 3320 tap 0 0 none
+input 3325 drag 4259840 0 none
+input 3330 tap 0 0 none
+input 3340 tap 0 0 none
+input 3350 tap 0 0 none
+input 3350 drag 11337728 0 none
+input 3360 tap 0 0 none
+input 3370 tap 0 0 none
+input 3375 drag -11337728 0 none
+input 3380 tap 0 0 none
+input 3390 tap 0 0 none
+input 3400 tap 0 0 none
+input 3400 drag 5308416 0 none
+input 3410 tap 0 0 none
+input 3420 tap 0 0 none
+input 3425 drag 3145728 0 none
+input 3430 tap 0 0 none
+input 3440 tap 0 0 none
+input 3450 tap 0 0 none
+input 3450 drag -65536 0 none
+input 3460 tap 0 0 none
+input 3470 tap 0 0 none
+input 3475 drag 2949120 0 none
+input 3480 tap 0 0 none
+input 3490 tap 0 0 none
+input 3500 tap 0 0 none
+input 3500 drag 1966080 0 none
+input 3510 tap 0 0 none
+input 3520 tap 0 0 none
+input 3525 drag -2293760 0 none
+input 3530 tap 0 0 none
+input 3540 tap 0 0 none
+input 3550 tap 0 0 none
+input 3550 drag 11730944 0 none
+input 3560 tap 0 0 none
+input 3570 tap 0 0 none
+input 3575 drag 9175040 0 none
+input 3580 tap 0 0 none
+input 3590 tap 0 0 none
+input 3600 tap 0 0 none
+input 3600 drag -9633792 0 none
+input 3610 tap 0 0 none
+input 3620 tap 0 0 none
+input 3625 drag 196608 0 none
+input 3630 tap 0 0 none
+input 3640 tap 0 0 none
+input 3650 tap 0 0 none
+input 3650 drag -1703936 0 none
+input 3660 tap 0 0 none
+input 3670 tap 0 0 none
+input 3675 drag -3604480 0 none
+input 3680 tap 0 0 none
+input 3690 tap 0 0 none
+input 3700 tap 0 0 none
+input 3700 drag 2621440 0 none
+input 3710 tap 0 0 none
+input 3720 tap 0 0 none
+input 3725 drag -11599872 0 none
+input 3730 tap 0 0 none
+input 3740 tap 0 0 none
+input 3750 tap 0 0 none
+input 3750 drag -1835008 0 none
+input 3760 tap 0 0 none
+input 3770 tap 0 0 none
+input 3775 drag 3342336 0 none
+input 3780 tap 0 0 none
+input 3790 tap 0 0 none
+input 3800 tap 0 0 none
+input 3800 drag -11796480 0 none
+input 3810 tap 0 0 none
+input 3820 tap 0 0 none
+input 3825 drag -3342336 0 none
+input 3830 tap 0 0 none
+input 3840 tap 0 0 none
+input 3850 tap 0 0 none
+input 3850 drag 11075584 0 none
+input 3860 tap 0 0 none
+input 3870 tap 0 0 none
+input 3875 drag -1835008 0 none
+input 3880 tap 0 0 none
+input 3890 tap 0 0 none
+input 3900 tap 0 0 none
+input 3900 drag 2359296 0 none
+input 3910 tap 0 0 none
+input 3920 tap 0 0 none
+input 3925 drag -6750208 0 none
+input 3930 tap 0 0 none
+input 3940 tap 0 0 none
+input 3950 tap 0 0 none
+input 3950 drag 11599872 0 none
+input 3960 tap 0 0 none
+input 3970 tap 0 0 none
+input 3975 drag -4653056 0 none
+input 3980 tap 0 0 none
+input 3990 tap 0 0 none
+input 4000 tap 0 0 none
+input 4000 drag 11403264 0 none
+input 4010 tap 0 0 none
+input 4020 tap 0 0 none
+input 4025 drag 11468800 0 none
+input 4030 tap 0 0 none
+input 4040 tap 0 0 none
+input 4050 tap 0 0 none
+input 4050 drag -589824 0 none
+input 4060 tap 0 0 none
+input 4070 tap 0 0 none
+input 4075 drag 5111808 0 none
+input 4080 tap 0 0 none
+input 4090 tap 0 0 none
+input 4100 tap 0 0 none
+input 4100 drag 12845056 0 none
+input 4110 tap 0 0 none
+input 4120 tap 0 0 none
+input 4125 drag -5636096 0 none
+input 4130 tap 0 0 none
+input 4140 tap 0 0 none
+input 4150 tap 0 0 none
+input 4150 drag -524288 0 none
+input 4160 tap 0 0 none
+input 4170 tap 0 0 none
+input 4175 drag 3080192 0 none
+input 4180 tap 0 0 none
+input 4190 tap 0 0 none
+input 4200 tap 0 0 none
+input 4200 drag -8192000 0 none
+input 4210 tap 0 0 none
+input 4220 tap 0 0 none
+input 4225 drag -589824 0 none
+input 4230 tap 0 0 none
+input 4240 tap 0 0 none
+input 4250 tap 0 0 none
+input 4250 drag -1048576 0 none
+input 4260 tap 0 0 none
+input 4270 tap 0 0 none
+input 4275 drag 1507328 0 none
+input 4280 tap 0 0 none
+input 4290 tap 0 0 none
+input 4300 tap 0 0 none
+input 4300 drag -7929856 0 none
+input 4310 tap 0 0 none
+input 4320 tap 0 0 none
+input 4325 drag -6160384 0 none
+input 4330 tap 0 0 none
+input 4340 tap 0 0 none
+input 4350 tap 0 0 none
+input 4350 drag -1376256 0 none
+input 4360 tap 0 0 none
+input 4370 tap 0 0 none
+input 4375 drag 8585216 0 none
+input 4380 tap 0 0 none
+input 4390 tap 0 0 none
+input 4400 tap 0 0 none
+input 4400 drag 2818048 0 none
+input 4410 tap 0 0 none
+input 4420 tap 0 0 none
+input 4425 drag 4587520 0 none
+input 4430 tap 0 0 none
+input 4440 tap 0 0 none
+input 4450 tap 0 0 none
+input 4450 drag 5505024 0 none
+input 4460 tap 0 0 none
+input 4470 tap 0 0 none
+input 4475 drag -3211264 0 none
+input 4480 tap 0 0 none
+input 4490 tap 0 0 none
+input 4500 tap 0 0 none
+input 4500 drag -12845056 0 none
+input 4510 tap 0 0 none
+input 4520 tap 0 0 none
+input 4525 drag 2097152 0 none
+input 4530 tap 0 0 none
+input 4540 tap 0 0 none
+input 4550 tap 0 0 none
+input 4550 drag 4718592 0 none
+input 4560 tap 0 0 none
+input 4570 tap 0 0 none
+input 4575 drag -1638400 0 none
+input 4580 tap 0 0 none
+input 4590 tap 0 0 none
+input 4600 tap 0 0 none
+input 4600 drag -11141120 0 none
+input 4610 tap 0 0 none
+input 4620 tap 0 0 none
+input 4625 drag 3932160 0 none
+input 4630 tap 0 0 none
+input 4640 tap 0 0 none
+input 4650 tap 0 0 none
+input 4650 drag 9633792 0 none
+input 4660 tap 0 0 none
+input 4670 tap 0 0 none
+input 4675 drag 393216 0 none
+input 4680 tap 0 0 none
+input 4690 tap 0 0 none
+input 4700 tap 0 0 none
+input 4700 drag -12255232 0 none
+input 4710 tap 0 0 none
+input 4720 tap 0 0 none
+input 4725 drag -3801088 0 none
+input 4730 tap 0 0 none
+input 4740 tap 0 0 none
+input 4750 tap 0 0 none
+input 4750 drag -10485760 0 none
+input 4760 tap 0 0 none
+input 4770 tap 0 0 none
+input 4775 drag -8847360 0 none
+input 4780 tap 0 0 none
+input 4790 tap 0 0 none
+input 4800 tap 0 0 none
+input 4800 drag -10223616 0 none
+input 4810 tap 0 0 none
+input 4820 tap 0 0 none
+input 4825 drag -3538944 0 none
+input 4830 tap 0 0 none
+input 4840 tap 0 0 none
+input 4850 tap 0 0 none
+input 4850 drag -11796480 0 none
+input 4860 tap 0 0 none
+input 4870 tap 0 0 none
+input 4875 drag -3407872 0 none
+input 4880 tap 0 0 none
+input 4890 tap 0 0 none
+input 4900 tap 0 0 none
+input 4900 drag -3145728 0 none
+input 4910 tap 0 0 none
+input 4920 tap 0 0 none
+input 4925 drag 1245184 0 none
+input 4930 tap 0 0 none
+input 4940 tap 0 0 none
+input 4950 tap 0 0 none
+input 4950 drag 11796480 0 none
+input 4960 tap 0 0 none
+input 4970 tap 0 0 none
+input 4975 drag 12255232 0 none
+input 4980 tap 0 0 none
+input 4990 tap 0 0 none
+input 5000 tap 0 0 none
+input 5000 drag 1376256 0 none
+input 5010 tap 0 0 none
+input 5020 tap 0 0 none
+input 5025 drag -6422528 0 none
+input 5030 tap 0 0 none
+input 5040 tap 0 0 none
+input 5050 tap 0 0 none
+input 5050 drag 5308416 0 none
+input 5060 tap 0 0 none
+input 5070 tap 0 0 none
+input 5075 drag 1114112 0 none
+input 5080 tap 0 0 none
+input 5090 tap 0 0 none
+input 5100 tap 0 0 none
+input 5100 drag -11599872 0 none
+input 5110 tap 0 0 none
+input 5120 tap 0 0 none
+input 5125 drag 9830400 0 none
+input 5130 tap 0 0 none
+input 5140 tap 0 0 none
+input 5150 tap 0 0 none
+input 5150 drag -3014656 0 none
+input 5160 tap 0 0 none
+input 5170 tap 0 0 none
+input 5175 drag -3473408 0 none
+input 5180 tap 0 0 none
+input 5190 tap 0 0 none
+input 5200 tap 0 0 none
+input 5200 drag -2555904 0 none
+input 5210 tap 0 0 none
+input 5220 tap 0 0 none
+input 5225 drag -5701632 0 none
+input 5230 tap 0 0 none
+input 5240 tap 0 0 none
+input 5250 tap 0 0 none
+input 5250 drag 1114112 0 none
+input 5260 tap 0 0 none
+input 5270 tap 0 0 none
+input 5275 drag 1376256 0 none
+input 5280 tap 0 0 none
+input 5290 tap 0 0 none
+input 5300 tap 0 0 none
+input 5300 drag 9502720 0 none
+input 5310 tap 0 0 none
+input 5320 tap 0 0 none
+input 5325 drag -6225920 0 none
+input 5330 tap 0 0 none
+input 5340 tap 0 0 none
+input 5350 tap 0 0 none
+input 5350 drag -1376256 0 none
+input 5360 tap 0 0 none
+input 5370 tap 0 0 none
+input 5375 drag -10813440 0 none
+input 5380 tap 0 0 none
+input 5390 tap 0 0 none
+input 5400 tap 0 0 none
+input 5400 drag 2162688 0 none
+input 5410 tap 0 0 none
+input 5420 tap 0 0 none
+input 5425 drag 4915200 0 none
+input 5430 tap 0 0 none
+input 5440 tap 0 0 none
+input 5450 tap 0 0 none
+input 5450 drag -1310720 0 none
+input 5460 tap 0 0 none
+input 5470 tap 0 0 none
+input 5475 drag 2621440 0 none
+input 5480 tap 0 0 none
+input 5490 tap 0 0 none
+input 5500 tap 0 0 none
+input 5500 drag 9764864 0 none
+input 5510 tap 0 0 none
+input 5520 tap 0 0 none
+input 5525 drag -8192000 0 none
+input 5530 tap 0 0 none
+input 5540 tap 0 0 none
+input 5550 tap 0 0 none
+input 5550 drag 7340032 0 none
+input 5560 tap 0 0 none
+input 5570 tap 0 0 none
+input 5575 drag -4653056 0 none
+input 5580 tap 0 0 none
+input 5590 tap 0 0 none
+input 5600 tap 0 0 none
+input 5600 drag 9109504 0 none
+input 5610 tap 0 0 none
+input 5620 tap 0 0 none
+input 5625 drag -6029312 0 none
+input 5630 tap 0 0 none
+input 5640 tap 0 0 none
+input 5650 tap 0 0 none
+input 5650 drag -10354688 0 none
+input 5660 tap 0 0 none
+input 5670 tap 0 0 none
+input 5675 drag 10092544 0 none
+input 5680 tap 0 0 none
+input 5690 tap 0 0 none
+input 5700 tap 0 0 none
+input 5700 drag 12386304 0 none
+input 5710 tap 0 0 none
+input 5720 tap 0 0 none
+input 5725 drag 9175040 0 none
+input 5730 tap 0 0 none
+input 5740 tap 0 0 none
+input 5750 tap 0 0 none
+input 5750 drag -7405568 0 none
+input 5760 tap 0 0 none
+input 5770 tap 0 0 none
+input 5775 drag 5701632 0 none
+input 5780 tap 0 0 none
+input 5790 tap 0 0 none
+input 5800 tap 0 0 none
+input 5800 drag 4718592 0 none
+input 5810 tap 0 0 none
+input 5820 tap 0 0 none
+input 5825 drag 2424832 0 none
+input 5830 tap 0 0 none
+input 5840 tap 0 0 none
+input 5850 tap 0 0 none
+input 5850 drag -1900544 0 none
+input 5860 tap 0 0 none
+input 5870 tap 0 0 none
+input 5875 drag 720896 0 none
+input 5880 tap 0 0 none
+input 5890 tap 0 0 none
+input 5900 tap 0 0 none
+input 5900 drag 13041664 0 none
+input 5910 tap 0 0 none
+input 5920 tap 0 0 none
+input 5925 drag 4915200 0 none
+input 5930 tap 0 0 none
+input 5940 tap 0 0 none
+input 5950 tap 0 0 none
+input 5950 drag -8847360 0 none
+input 5960 tap 0 0 none
+input 5970 tap 0 0 none
+input 5975 drag -8192000 0 none
+input 5980 tap 0 0 none
+input 5990 tap 0 0 none
+input 6000 tap 0 0 none
+input 6000 drag -2621440 0 none
+input 6010 tap 0 0 none
+input 6020 tap 0 0 none
+input 6025 drag 12320768 0 none
+input 6030 tap 0 0 none
+input 6040 tap 0 0 none
+input 6050 tap 0 0 none
+input 6050 drag -3211264 0 none
+input 6060 tap 0 0 none
+input 6070 tap 0 0 none
+input 6075 drag 12255232 0 none
+input 6080 tap 0 0 none
+input 6090 tap 0 0 none
+input 6100 tap 0 0 none
+input 6100 drag 8716288 0 none
+input 6110 tap 0 0 none
+input 6120 tap 0 0 none
+input 6125 drag -12451840 0 none
+input 6130 tap 0 0 none
+input 6140 tap 0 0 none
+input 6150 tap 0 0 none
+input 6150 drag 5177344 0 none
+input 6160 tap 0 0 none
+input 6170 tap 0 0 none
+input 6175 drag -1114112 0 none
+input 6180 tap 0 0 none
+input 6190 tap 0 0 none
+input 6200 tap 0 0 none
+input 6200 drag 2818048 0 none
+input 6210 tap 0 0 none
+input 6220 tap 0 0 none
+input 6225 drag 7995392 0 none
+input 6230 tap 0 0 none
+input 6240 tap 0 0 none
+input 6250 tap 0 0 none
+input 6250 drag -11206656 0 none
+input 6260 tap 0 0 none
+input 6270 tap 0 0 none
+input 6275 drag 1703936 0 none
+input 6280 tap 0 0 none
+input 6290 tap 0 0 none
+input 6300 tap 0 0 none
+input 6300 drag 5636096 0 none
+input 6310 tap 0 0 none
+input 6320 tap 0 0 none
+input 6325 drag 10485760 0 none
+input 6330 tap 0 0 none
+input 6340 tap 0 0 none
+input 6350 tap 0 0 none
+input 6350 drag -9502720 0 none
+input 6360 tap 0 0 none
+input 6370 tap 0 0 none
+input 6375 drag -10944512 0 none
+input 6380 tap 0 0 none
+input 6390 tap 0 0 none
+input 6400 tap 0 0 none
+input 6400 drag 12648448 0 none
+input 6410 tap 0 0 none
+input 6420 tap 0 0 none
+input 6425 drag 5177344 0 none
+input 6430 tap 0 0 none
+input 6440 tap 0 0 none
+input 6450 tap 0 0 none
+input 6450 drag 1507328 0 none
+input 6460 tap 0 0 none
+input 6470 tap 0 0 none
+input 6475 drag 1572864 0 none
+input 6480 tap 0 0 none
+input 6490 tap 0 0 none
+input 6500 tap 0 0 none
+input 6500 drag -1507328 0 none
+input 6510 tap 0 0 none
+input 6520 tap 0 0 none
+input 6525 drag 4521984 0 none
+input 6530 tap 0 0 none
+input 6540 tap 0 0 none
+input 6550 tap 0 0 none
+input 6550 drag 9043968 0 none
+input 6560 tap 0 0 none
+input 6570 tap 0 0 none
+input 6575 drag -11337728 0 none
+input 6580 tap 0 0 none
+input 6590 tap 0 0 none
+input 6600 tap 0 0 none
+input 6600 drag -5636096 0 none
+input 6610 tap 0 0 none
+input 6620 tap 0 0 none
+input 6625 drag 11206656 0 none
+input 6630 tap 0 0 none
+input 6640 tap 0 0 none
+input 6650 tap 0 0 none
+input 6650 drag 6553600 0 none
+input 6660 tap 0 0 none
+input 6670 tap 0 0 none
+input 6675 drag -2818048 0 none
+input 6680 tap 0 0 none
+input 6690 tap 0 0 none
+input 6700 tap 0 0 none
+input 6700 drag 9437184 0 none
+input 6710 tap 0 0 none
+input 6720 tap 0 0 none
+input 6725 drag -11534336 0 none
+input 6730 tap 0 0 none
+input 6740 tap 0 0 none
+input 6750 tap 0 0 none
+input 6750 drag 8454144 0 none
+input 6760 tap 0 0 none
+input 6770 tap 0 0 none
+input 6775 drag 1769472 0 none
+input 6780 tap 0 0 none
+input 6790 tap 0 0 none
+input 6800 tap 0 0 none
+input 6800 drag 7733248 0 none
+input 6810 tap 0 0 none
+input 6820 tap 0 0 none
+input 6825 drag 4128768 0 none
+input 6830 tap 0 0 none
+input 6840 tap 0 0 none
+input 6850 tap 0 0 none
+input 6850 drag 3932160 0 none
+input 6860 tap 0 0 none
+input 6870 tap 0 0 none
+input 6875 drag -8323072 0 none
+input 6880 tap 0 0 none
+input 6890 tap 0 0 none
+input 6900 tap 0 0 none
+input 6900 drag 2686976 0 none
+input 6910 tap 0 0 none
+input 6920 tap 0 0 none
+input 6925 drag 9633792 0 none
+input 6930 tap 0 0 none
+input 6940 tap 0 0 none
+input 6950 tap 0 0 none
+input 6950 drag 3276800 0 none
+input 6960 tap 0 0 none
+input 6970 tap 0 0 none
+input 6975 drag 2228224 0 none
+input 6980 tap 0 0 none
+input 6990 tap 0 0 none
+input 7000 tap 0 0 none
+input 7000 drag 327680 0 none
+input 7010 tap 0 0 none
+input 7020 tap 0 0 none
+input 7025 drag -13041664 0 none
+input 7030 tap 0 0 none
+input 7040 tap 0 0 none
+input 7050 tap 0 0 none
+input 7050 drag -11599872 0 none
+input 7060 tap 0 0 none
+input 7070 tap 0 0 none
+input 7075 drag 6029312 0 none
+input 7080 tap 0 0 none
+input 7090 tap 0 0 none
+input 7100 tap 0 0 none
+input 7100 drag -7995392 0 none
+input 7110 tap 0 0 none
+input 7120 tap 0 0 none
+input 7125 drag -9633792 0 none
+input 7130 tap 0 0 none
+input 7140 tap 0 0 none
+input 7150 tap 0 0 none
+input 7150 drag -9568256 0 none
+input 7160 tap 0 0 none
+input 7170 tap 0 0 none
+input 7175 drag 7929856 0 none
+input 7180 tap 0 0 none
+input 7190 tap 0 0 none
+input 7200 tap 0 0 none
+input 7200 drag 3604480 0 none
+input 7210 tap 0 0 none
+input 7220 tap 0 0 none
+input 7225 drag 11141120 0 none
+input 7230 tap 0 0 none
+input 7240 tap 0 0 none
+input 7250 tap 0 0 none
+input 7250 drag -4390912 0 none
+input 7260 tap 0 0 none
+input 7270 tap 0 0 none
+input 7275 drag -9043968 0 none
+input 7280 tap 0 0 none
+input 7290 tap 0 0 none
+input 7300 tap 0 0 none
+input 7300 drag -11141120 0 none
+input 7310 tap 0 0 none
+input 7320 tap 0 0 none
+input 7325 drag -196608 0 none
+input 7330 tap 0 0 none
+input 7340 tap 0 0 none
+input 7350 tap 0 0 none
+input 7350 drag 3538944 0 none
+input 7360 tap 0 0 none
+input 7370 tap 0 0 none
+input 7375 drag -3276800 0 none
+input 7380 tap 0 0 none
+input 7390 tap 0 0 none
+input 7400 tap 0 0 none
+input 7400 drag -3407872 0 none
+input 7410 tap 0 0 none
+input 7420 tap 0 0 none
+input 7425 drag 11665408 0 none
+input 7430 tap 0 0 none
+input 7440 tap 0 0 none
+input 7450 tap 0 0 none
+input 7450 drag 5570560 0 none
+input 7460 tap 0 0 none
+input 7470 tap 0 0 none
+input 7475 drag 10420224 0 none
+input 7480 tap 0 0 none
+input 7490 tap 0 0 none
+input 7500 tap 0 0 none
+input 7500 drag 3670016 0 none
+input 7510 tap 0 0 none
+input 7520 tap 0 0 none
+input 7525 drag 10813440 0 none
+input 7530 tap 0 0 none
+input 7540 tap 0 0 none
+input 7550 tap 0 0 none
+input 7550 drag 3670016 0 none
+input 7560 tap 0 0 none
+input 7570 tap 0 0 none
+input 7575 drag -851968 0 none
+input 7580 tap 0 0 none
+input 7590 tap 0 0 none
+input 7600 tap 0 0 none
+input 7600 drag -9109504 0 none
+input 7610 tap 0 0 none
+input 7620 tap 0 0 none
+input 7625 drag 1179648 0 none
+input 7630 tap 0 0 none
+input 7640 tap 0 0 none
+input 7650 tap 0 0 none
+input 7650 drag -6750208 0 none
+input 7660 tap 0 0 none
+input 7670 tap 0 0 none
+input 7675 drag 3604480 0 none
+input 7680 tap 0 0 none
+input 7690 tap 0 0 none
+input 7700 tap 0 0 none
+input 7700 drag -131072 0 none
+input 7710 tap 0 0 none
+input 7720 tap 0 0 none
+input 7725 drag 6553600 0 none
+input 7730 tap 0 0 none
+input 7740 tap 0 0 none
+input 7750 tap 0 0 none
+input 7750 drag 2424832 0 none
+input 7760 tap 0 0 none
+input 7770 tap 0 0 none
+input 7775 drag -9043968 0 none
+input 7780 tap 0 0 none
+input 7790 tap 0 0 none
+input 7800 tap 0 0 none
+input 7800 drag 0 0 none
+input 7810 tap 0 0 none
+input 7820 tap 0 0 none
+input 7825 drag -9961472 0 none
+input 7830 tap 0 0 none
+input 7840 tap 0 0 none
+input 7850 tap 0 0 none
+input 7850 drag 5767168 0 none
+input 7860 tap 0 0 none
+input 7870 tap 0 0 none
+input 7875 drag 8257536 0 none
+input 7880 tap 0 0 none
+input 7890 tap 0 0 none
+input 7900 tap 0 0 none
+input 7900 drag -10092544 0 none
+input 7910 tap 0 0 none
+input 7920 tap 0 0 none
+input 7925 drag 1703936 0 none
+input 7930 tap 0 0 none
+input 7940 tap 0 0 none
+input 7950 tap 0 0 none
+input 7950 drag -3276800 0 none
+input 7960 tap 0 0 none
+input 7970 tap 0 0 none
+input 7975 drag -13041664 0 none
+input 7980 tap 0 0 none
+input 7990 tap 0 0 none
+input 8000 tap 0 0 none
+input 8000 drag 7208960 0 none
+input 8010 tap 0 0 none
+input 8020 tap 0 0 none
+input 8025 drag -12255232 0 none
+input 8030 tap 0 0 none
+input 8040 tap 0 0 none
+input 8050 tap 0 0 none
+input 8050 drag 7471104 0 none
+input 8060 tap 0 0 none
+input 8070 tap 0 0 none
+input 8075 drag 6553600 0 none
+input 8080 tap 0 0 none
+input 8090 tap 0 0 none
+input 8100 tap 0 0 none
+input 8100 drag 4325376 0 none
+input 8110 tap 0 0 none
+input 8120 tap 0 0 none
+input 8125 drag 7733248 0 none
+input 8130 tap 0 0 none
+input 8140 tap 0 0 none
+input 8150 tap 0 0 none
+input 8150 drag 1114112 0 none
+input 8160 tap 0 0 none
+input 8170 tap 0 0 none
+input 8175 drag -9830400 0 none
+input 8180 tap 0 0 none
+input 8190 tap 0 0 none
+input 8200 tap 0 0 none
+input 8200 drag -4259840 0 none
+input 8210 tap 0 0 none
+input 8220 tap 0 0 none
+input 8225 drag -11993088 0 none
+input 8230 tap 0 0 none
+input 8240 tap 0 0 none
+input 8250 tap 0 0 none
+input 8250 drag 8847360 0 none
+input 8260 tap 0 0 none
+input 8270 tap 0 0 none
+input 8275 drag 4784128 0 none
+input 8280 tap 0 0 none
+input 8290 tap 0 0 none
+input 8300 tap 0 0 none
+input 8300 drag 9502720 0 none
+input 8310 tap 0 0 none
+input 8320 tap 0 0 none
+input 8325 drag 4849664 0 none
+input 8330 tap 0 0 none
+input 8340 tap 0 0 none
+input 8350 tap 0 0 none
+input 8350 drag -10551296 0 none
+input 8360 tap 0 0 none
+input 8370 tap 0 0 none
+input 8375 drag -327680 0 none
+input 8380 tap 0 0 none
+input 8390 tap 0 0 none
+input 8400 tap 0 0 none
+input 8400 drag 9633792 0 none
+input 8410 tap 0 0 none
+input 8420 tap 0 0 none
+input 8425 drag 1310720 0 none
+input 8430 tap 0 0 none
+input 8440 tap 0 0 none
+input 8450 tap 0 0 none
+input 8450 drag 11993088 0 none
+input 8460 tap 0 0 none
+input 8470 tap 0 0 none
+input 8475 drag 2949120 0 none
+input 8480 tap 0 0 none
+input 8490 tap 0 0 none
+input 8500 tap 0 0 none
+input 8500 drag -4063232 0 none
+input 8510 tap 0 0 none
+input 8520 tap 0 0 none
+input 8525 drag -8060928 0 none
+input 8530 tap 0 0 none
+input 8540 tap 0 0 none
+input 8550 tap 0 0 none
+input 8550 drag -7798784 0 none
+input 8560 tap 0 0 none
+input 8570 tap 0 0 none
+input 8575 drag -393216 0 none
+input 8580 tap 0 0 none
+input 8590 tap 0 0 none
+input 8600 tap 0 0 none
+input 8600 drag 1703936 0 none
+input 8610 tap 0 0 none
+input 8620 tap 0 0 none
+input 8625 drag -6881280 0 none
+input 8630 tap 0 0 none
+input 8640 tap 0 0 none
+input 8650 tap 0 0 none
+input 8650 drag -5111808 0 none
+input 8660 tap 0 0 none
+input 8670 tap 0 0 none
+input 8675 drag 11534336 0 none
+input 8680 tap 0 0 none
+input 8690 tap 0 0 none
+input 8700 tap 0 0 none
+input 8700 drag 6750208 0 none
+input 8710 tap 0 0 none
+input 8720 tap 0 0 none
+input 8725 drag 9830400 0 none
+input 8730 tap 0 0 none
+input 8740 tap 0 0 none
+input 8750 tap 0 0 none
+input 8750 drag -8585216 0 none
+input 8760 tap 0 0 none
+input 8770 tap 0 0 none
+input 8775 drag 8978432 0 none
+input 8780 tap 0 0 none
+input 8790 tap 0 0 none
+input 8800 tap 0 0 none
+input 8800 drag -8126464 0 none
+input 8810 tap 0 0 none
+input 8820 tap 0 0 none
+input 8825 drag -4194304 0 none
+input 8830 tap 0 0 none
+input 8840 tap 0 0 none
+input 8850 tap 0 0 none
+input 8850 drag 4653056 0 none
+input 8860 tap 0 0 none
+input 8870 tap 0 0 none
+input 8875 drag 9568256 0 none
+input 8880 tap 0 0 none
+input 8890 tap 0 0 none
+input 8900 tap 0 0 none
+input 8900 drag -9568256 0 none
+input 8910 tap 0 0 none
+input 8920 tap 0 0 none
+input 8925 drag 2031616 0 none
+input 8930 tap 0 0 none
+input 8940 tap 0 0 none
+input 8950 tap 0 0 none
+input 8950 drag 7077888 0 none
+input 8960 tap 0 0 none
+input 8970 tap 0 0 none
+input 8975 drag -655360 0 none
+input 8980 tap 0 0 none
+input 8990 tap 0 0 none
+input 9000 tap 0 0 none
+input 9000 drag -4128768 0 none
+input 9010 tap 0 0 none
+input 9020 tap 0 0 none
+input 9025 drag -1048576 0 none
+input 9030 tap 0 0 none
+input 9040 tap 0 0 none
+input 9050 tap 0 0 none
+input 9050 drag 3670016 0 none
+input 9060 tap 0 0 none
+input 9070 tap 0 0 none
+input 9075 drag 8585216 0 none
+input 9080 tap 0 0 none
+input 9090 tap 0 0 none
+input 9100 tap 0 0 none
+input 9100 drag 3735552 0 none
+input 9110 tap 0 0 none
+input 9120 tap 0 0 none
+input 9125 drag 8323072 0 none
+input 9130 tap 0 0 none
+input 9140 tap 0 0 none
+input 9150 tap 0 0 none
+input 9150 drag 8847360 0 none
+input 9160 tap 0 0 none
+input 9170 tap 0 0 none
+input 9175 drag 8585216 0 none
+input 9180 tap 0 0 none
+input 9190 tap 0 0 none
+input 9200 tap 0 0 none
+input 9200 drag 3211264 0 none
+input 9210 tap 0 0 none
+input 9220 tap 0 0 none
+input 9225 drag -2686976 0 none
+input 9230 tap 0 0 none
+input 9240 tap 0 0 none
+input 9250 tap 0 0 none
+input 9250 drag -11272192 0 none
+input 9260 tap 0 0 none
+input 9270 tap 0 0 none
+input 9275 drag -5111808 0 none
+input 9280 tap 0 0 none
+input 9290 tap 0 0 none
+input 9300 tap 0 0 none
+input 9300 drag -9043968 0 none
+input 9310 tap 0 0 none
+input 9320 tap 0 0 none
+input 9325 drag 4587520 0 none
+input 9330 tap 0 0 none
+input 9340 tap 0 0 none
+input 9350 tap 0 0 none
+input 9350 drag -6553600 0 none
+input 9360 tap 0 0 none
+input 9370 tap 0 0 none
+input 9375 drag -131072 0 none
+input 9380 tap 0 0 none
+input 9390 tap 0 0 none
+input 9400 tap 0 0 none
+input 9400 drag 2359296 0 none
+input 9410 tap 0 0 none
+input 9420 tap 0 0 none
+input 9425 drag 4587520 0 none
+input 9430 tap 0 0 none
+input 9440 tap 0 0 none
+input 9450 tap 0 0 none
+input 9450 drag -12910592 0 none
+input 9460 tap 0 0 none
+input 9470 tap 0 0 none
+input 9475 drag 1114112 0 none
+input 9480 tap 0 0 none
+input 9490 tap 0 0 none
+input 9500 tap 0 0 none
+input 9500 drag 1507328 0 none
+input 9510 tap 0 0 none
+input 9520 tap 0 0 none
+input 9525 drag 7536640 0 none
+input 9530 tap 0 0 none
+input 9540 tap 0 0 none
+input 9550 tap 0 0 none
+input 9550 drag -11796480 0 none
+input 9560 tap 0 0 none
+input 9570 tap 0 0 none
+input 9575 drag 3735552 0 none
+input 9580 tap 0 0 none
+input 9590 tap 0 0 none
+input 9600 tap 0 0 none
+input 9600 drag -12976128 0 none
+input 9610 tap 0 0 none
+input 9620 tap 0 0 none
+input 9625 drag 12255232 0 none
+input 9630 tap 0 0 none
+input 9640 tap 0 0 none
+input 9650 tap 0 0 none
+input 9650 drag 7143424 0 none
+input 9660 tap 0 0 none
+input 9670 tap 0 0 none
+input 9675 drag 10420224 0 none
+input 9680 tap 0 0 none
+input 9690 tap 0 0 none
+input 9700 tap 0 0 none
+input 9700 drag 12255232 0 none
+input 9710 tap 0 0 none
+input 9720 tap 0 0 none
+input 9725 drag -3670016 0 none
+input 9730 tap 0 0 none
+input 9740 tap 0 0 none
+input 9750 tap 0 0 none
+input 9750 drag 5767168 0 none
+input 9760 tap 0 0 none
+input 9770 tap 0 0 none
+input 9775 drag 4325376 0 none
+input 9780 tap 0 0 none
+input 9790 tap 0 0 none
+input 9800 tap 0 0 none
+input 9800 drag -2883584 0 none
+input 9810 tap 0 0 none
+input 9820 tap 0 0 none
+input 9825 drag 4653056 0 none
+input 9830 tap 0 0 none
+input 9840 tap 0 0 none
+input 9850 tap 0 0 none
+input 9850 drag -12976128 0 none
+input 9860 tap 0 0 none
+input 9870 tap 0 0 none
+input 9875 drag -7602176 0 none
+input 9880 tap 0 0 none
+input 9890 tap 0 0 none
+input 9900 tap 0 0 none
+input 9900 drag 4259840 0 none
+input 9910 tap 0 0 none
+input 9920 tap 0 0 none
+input 9925 drag 7602176 0 none
+input 9930 tap 0 0 none
+input 9940 tap 0 0 none
+input 9950 tap 0 0 none
+input 9950 drag -6422528 0 none
+input 9960 tap 0 0 none
+input 9970 tap 0 0 none
+input 9975 drag -2424832 0 none
+input 9980 tap 0 0 none
+input 9990 tap 0 0 none
+checkpoint 0 d615f382ac8e3167 0 0 99 3 0 4
+checkpoint 100 15893e9a5bb5fd39 100 0 99 21 0 34
+checkpoint 200 bcc5ba8c374a134f 200 20 99 22 0 62
+checkpoint 300 29c402e6f857170c 300 50 99 23 0 90
+checkpoint 400 e1178e33b36d519e 400 50 99 29 0 119
+checkpoint 500 e557581b011d780c 500 113 99 19 0 147
+checkpoint 600 d5e4c8142abd53fa 600 153 99 21 0 175
+checkpoint 700 5fb2abec12491d4c 700 183 99 23 0 204
+checkpoint 800 7fbe4f3cf48c2a72 800 193 99 27 0 233
+checkpoint 900 9f44197d431a7525 900 233 99 25 0 261
+checkpoint 1000 a1cfb535e52ec572 1000 253 97 24 0 289
+checkpoint 1100 a2ec86a3dcf95813 1100 263 97 27 0 318
+checkpoint 1200 a24343db4ad71996 1200 273 97 27 0 346
+checkpoint 1300 c8db809c8364801b 1300 283 97 30 0 375
+checkpoint 1400 1b181b2c7c398f7b 1400 293 97 30 0 403
+checkpoint 1500 3198ab204ba47f13 1500 313 97 28 0 432
+checkpoint 1600 26cae560dc17f268 1600 343 97 28 0 460
+checkpoint 1700 a079e877ace4fd9b 1700 353 97 29 0 488
+checkpoint 1800 a709107170668327 1800 373 97 29 0 517
+checkpoint 1900 e71f5fcfcb14a0e0 1900 373 97 30 0 546
+checkpoint 2000 0df4fb5f62b995de 2000 413 94 22 0 574
+checkpoint 2100 5b5f89a7b6f7210c 2100 443 94 26 0 602
+checkpoint 2200 8ca6a7339b1504c8 2200 460 94 28 0 631
+checkpoint 2300 a9a83fa3af892474 2300 490 94 27 0 659
+checkpoint 2400 227f41d13f1b2f65 2400 490 93 29 0 687
+checkpoint 2500 96441623a4297019 2500 600 91 17 0 717
+checkpoint 2600 773c3ef0a0652cc9 2600 630 91 19 0 745
+checkpoint 2700 62dd090a28be0a0b 2700 670 91 20 0 773
+checkpoint 2800 949602b182e5445e 2800 690 91 23 0 801
+checkpoint 2900 bcf1d8a08d637cfb 2900 750 91 19 0 830
+checkpoint 3000 8426fea3e848cb1b 3000 760 91 24 0 858
+checkpoint 3100 65f43c32ec6433f0 3100 770 91 28 0 887
+checkpoint 3200 8472123c469b3b89 3200 800 91 25 0 916
+checkpoint 3300 790265ce750298bd 3300 850 91 23 0 944
+checkpoint 3400 459df0695c23dfd6 3400 890 91 21 0 972
+checkpoint 3500 b05fa30f0b02c550 3500 920 91 23 0 1000
+checkpoint 3600 26234c538933dc2c 3600 920 91 27 0 1029
+checkpoint 3700 a84a591eee6581fd 3700 950 91 26 0 1058
+checkpoint 3800 9e8edc97b25e8bea 3800 1000 91 22 0 1086
+checkpoint 3900 d95227c8596ff1a9 3900 1050 91 22 0 1115
+checkpoint 4000 6c49642056994533 4000 1070 91 23 0 1143
+checkpoint 4100 d822a591d4f33fb9 4100 1100 91 21 0 1171
+checkpoint 4200 a77e793d8b5135e6 4200 1150 91 21 0 1199
+checkpoint 4300 70ddcd336f551b77 4300 1180 91 22 0 1229
+checkpoint 4400 f80978b640cdcf09 4400 1200 91 22 0 1257
+checkpoint 4500 d4095352289d428d 4500 1210 91 26 0 1285
+checkpoint 4600 44eb8eefd18c7ee7 4600 1232 91 29 0 1314
+checkpoint 4700 a3420adeffe2d962 4700 1252 91 29 0 1342
+checkpoint 4800 fc22607b5e238a56 4800 1292 90 23 0 1370
+checkpoint 4900 6e8045ba6bb393bc 4900 1322 89 26 0 1399
+checkpoint 5000 698e2a69115ae9d1 5000 1332 88 28 0 1428
+checkpoint 5100 d440f2c9e96bd0c6 5100 1372 88 23 0 1456
+checkpoint 5200 5780785d95f20f36 5200 1382 88 28 0 1484
+checkpoint 5300 8fe2bf699ee737d6 5300 1382 88 30 0 1513
+checkpoint 5400 28d32e5fafa6c94a 5400 1402 88 28 0 1541
+checkpoint 5500 1d0a3055562995bc 5500 1435 88 28 0 1570
+checkpoint 5600 eef21ba19f8bb246 5600 1465 88 27 0 1598
+checkpoint 5700 90645046344624e8 5700 1485 88 28 0 1627
+checkpoint 5800 0ce1e0ce18ac10da 5800 1515 87 23 0 1655
+checkpoint 5900 d3eefd8ef5233c8f 5900 1555 87 23 0 1683
+checkpoint 6000 9a32aef7457dc3ce 6000 1595 87 22 0 1712
+checkpoint 6100 fff9c62fc0a72ac2 6100 1595 87 29 0 1741
+checkpoint 6200 a75ee44c1f88d81f 6200 1625 87 28 0 1769
+checkpoint 6300 af746c97f0668902 6300 1665 87 24 0 1797
+checkpoint 6400 7e229c32907d7959 6400 1685 87 23 0 1826
+checkpoint 6500 4b6af4e9f321fd36 6500 1714 87 24 0 1854
+checkpoint 6600 3c1f21da14b25f34 6600 1718 87 27 0 1882
+checkpoint 6700 1681b3090bde685a 6700 1738 87 28 0 1912
+checkpoint 6800 24f41d9d599309a5 6800 1738 87 31 0 1940
+checkpoint 6900 54821cabc4d6c894 6900 1738 87 32 0 1968
+checkpoint 7000 1b74a654398442bb 7000 1748 87 32 0 1996
+checkpoint 7100 fcc35ff5e84cf9ec 7100 1758 87 31 0 2025
+checkpoint 7200 4bb92cbb99dc2ffd 7200 1815 85 24 0 2053
+checkpoint 7300 85d281743658d85d 7300 1865 85 22 0 2082
+checkpoint 7400 a5bd11f265d49701 7400 1885 85 25 0 2111
+checkpoint 7500 58ee975591ea0355 7500 1905 85 26 0 2139
+checkpoint 7600 a832bf84a8e9c96d 7600 1965 84 20 0 2167
+checkpoint 7700 108b8de287696915 7700 2005 84 20 0 2195
+checkpoint 7800 8b619669fe1557cc 7800 2025 84 22 0 2224
+checkpoint 7900 1c102aab3fc0de6a 7900 2057 84 24 0 2253
+checkpoint 8000 e0d74d4fdc1f63ee 8000 2067 84 28 0 2281
+checkpoint 8100 a2cc4898f5b470fb 8100 2147 84 20 0 2310
+checkpoint 8200 498fdf2d64077b32 8200 2177 84 25 0 2338
+checkpoint 8300 371e582fa1d7bed0 8300 2187 84 26 0 2366
+checkpoint 8400 550ce39a900eae73 8400 2207 84 26 0 2394
+checkpoint 8500 78a72bd4aab310a3 8500 2237 84 24 0 2424
+checkpoint 8600 b7f1536e89abb6bd 8600 2277 84 24 0 2452
+checkpoint 8700 e57724395aaec1f3 8700 2307 84 24 0 2480
+checkpoint 8800 72993d25f44fe5c0 8800 2317 84 27 0 2509
+checkpoint 8900 8668016db4b53d41 8900 2367 84 22 0 2537
+checkpoint 9000 3828211db7ae0b6d 9000 2387 84 24 0 2565
+checkpoint 9100 aa6b219b24ee51e2 9100 2397 84 27 0 2594
+checkpoint 9200 36a8d20bd52a7425 9200 2407 84 27 0 2623
+checkpoint 9300 320046498b3d0869 9300 2407 84 30 0 2651
+checkpoint 9400 d1abf7ef66d86ddc 9400 2457 84 24 0 2679
+checkpoint 9500 212c48c85c0f9344 9500 2497 84 26 0 2708
+checkpoint 9600 37efe612b1a92f29 9600 2507 84 26 0 2736
+checkpoint 9700 6aba959a18ffe0dc 9700 2547 84 23 0 2765
+checkpoint 9800 81b6b6aed946c12f 9800 2597 84 22 0 2793
+checkpoint 9900 f8cb6f778e7aa420 9900 2651 84 24 0 2822
+checkpoint 10000 67dda277ff993417 10000 2671 84 24 0 2850
+end
+scenario saturation 7 90
+input 0 drag 2147483647 -2147483648 none
+input 5 drag -2147483648 2147483647 none
+input 10 swipe 0 0 right
+input 25 swipe 0 0 down
+input 45 swipe 0 0 left
+input 60 drag -2147483648 -2147483648 none
+input 60 tap 0 0 none
+input 70 swipe 0 0 up
+checkpoint 0 4c0ffdbd217e5f44 0 0 99 3 0 4
+checkpoint 1 d959d65931cecb36 1 0 99 5 0 6
+checkpoint 2 b35614c5a17fd090 2 0 99 5 0 6
+checkpoint 3 73f96338d2b986d8 3 0 99 5 0 6
+checkpoint 4 63363f93929478db 4 0 99 5 0 6
+checkpoint 5 a53830a17b09a86f 5 0 99 5 0 6
+checkpoint 6 c58f47a1a8d409b3 6 0 99 5 0 6
+checkpoint 7 6e55ebac124c1a85 7 0 99 5 0 6
+checkpoint 8 a03098f2a9584ce1 8 0 99 6 0 7
+checkpoint 9 4158501f78ad9810 9 0 99 6 0 7
+checkpoint 10 ae9d88d225bce33f 10 0 99 6 0 7
+checkpoint 11 da869e1cfc2ae12c 11 0 99 6 0 7
+checkpoint 12 605d13f0e0dc2582 12 0 99 6 0 7
+checkpoint 13 736e57a55e81cbf3 13 0 99 6 0 7
+checkpoint 14 00f889bba726cff6 14 0 99 6 0 7
+checkpoint 15 2ee335cc51dc4905 15 0 99 7 0 8
+checkpoint 16 0411510879126c50 16 0 99 7 0 8
+checkpoint 17 99923730572ec2c0 17 0 99 7 0 8
+checkpoint 18 03ef70cecb83b4b8 18 0 99 7 0 8
+checkpoint 19 9f539db8c13de5be 19 0 99 7 0 8
+checkpoint 20 ee43b60eb43ce83f 20 0 99 7 0 8
+checkpoint 21 bcc95c92ac901cdc 21 0 99 7 0 8
+checkpoint 22 d2ffed82c067c067 22 0 99 8 0 9
+checkpoint 23 c16490d7f0fa806c 23 0 99 8 0 9
+checkpoint 24 98ff5039920b4baa 24 0 99 8 0 9
+checkpoint 25 adc6fc999f88def0 25 0 99 9 0 10
+checkpoint 26 c0132fa56e64177b 26 0 99 9 0 10
+checkpoint 27 cbbc637beba69c07 27 0 99 9 0 10
+checkpoint 28 c964aaacd0406f1f 28 0 99 9 0 10
+checkpoint 29 9d2059b6c9339d2f 29 0 99 10 0 11
+checkpoint 30 644c93594c699b3b 30 0 99 9 0 11
+checkpoint 31 04c4d2e05f033bd1 31 0 99 9 0 11
+checkpoint 32 0b8f8b686402c2e7 32 0 99 9 0 11
+checkpoint 33 2557462375663dcd 33 0 99 9 0 11
+checkpoint 34 2b9ad3e6d2e4ffb4 34 0 99 9 0 11
+checkpoint 35 4fe0ed2da8ac3518 35 0 99 9 0 11
+checkpoint 36 d2b353ea3f71eced 36 0 99 10 0 12
+checkpoint 37 0cbe0a485944e702 37 0 99 9 0 12
+checkpoint 38 ae5e8e5c22734ae2 38 0 99 9 0 12
+checkpoint 39 ac4f3ba30643b56c 39 0 99 9 0 12
+checkpoint 40 10e443be806e6850 40 0 99 9 0 12
+checkpoint 41 cf0b5936fa0ffa8a 41 0 99 9 0 12
+checkpoint 42 372140e398315809 42 0 99 9 0 12
+checkpoint 43 9ef565efe0734bcb 43 0 99 10 0 13
+checkpoint 44 59e1f96ee3d5ba14 44 0 99 9 0 13
+checkpoint 45 c001bbcdf727e09c 45 0 99 9 0 13
+checkpoint 46 e7819b391581f224 46 0 99 9 0 13
+checkpoint 47 b8bcb58a1fa69b7c 47 0 99 9 0 13
+checkpoint 48 e037da46f0b35780 48 0 99 9 0 13
+checkpoint 49 9d911c3bd4e91f8f 49 0 99 10 0 14
+checkpoint 50 045708df4c4ed8c6 50 0 99 11 0 15
+checkpoint 51 2e199a627fe80ace 51 0 99 10 0 15
+checkpoint 52 e2f970fc8fca2832 52 0 99 10 0 15
+checkpoint 53 8569c593071d438d 53 0 99 10 0 15
+checkpoint 54 2e4056b3805a4060 54 0 99 10 0 15
+checkpoint 55 207c463822b57574 55 0 99 10 0 15
+checkpoint 56 b7195e7919992340 56 0 99 10 0 15
+checkpoint 57 3a77ff024982bddc 57 0 99 11 0 16
+checkpoint 58 620595e14d885247 58 0 99 10 0 16
+checkpoint 59 3972a9d10c673210 59 0 99 10 0 16
+checkpoint 60 f8fc4338a3faa309 60 0 99 10 0 16
+checkpoint 61 05676edc2134c18f 61 0 99 11 0 17
+checkpoint 62 75fe0fc015cdf04e 62 0 99 11 0 17
+checkpoint 63 49ebf25de9b9ee85 63 0 99 10 0 17
+checkpoint 64 f19dc9a4b254c872 64 0 99 11 0 18
+checkpoint 65 432e283c4269843a 65 0 99 10 0 18
+checkpoint 66 e9193c45ae691ba7 66 0 99 10 0 18
+checkpoint 67 a9c49aebf3382fba 67 0 99 10 0 18
+checkpoint 68 89ec0bd01d4289b0 68 0 99 10 0 18
+checkpoint 69 3d6828337e51ad01 69 0 99 10 0 18
+checkpoint 70 9ed9cf37670b1c3e 70 0 99 10 0 18
+checkpoint 71 a70caba122b4cd85 71 0 99 11 0 19
+checkpoint 72 c95e1470465ff75f 72 0 99 10 0 19
+checkpoint 73 621d682f2e375cf7 73 0 99 11 0 20
+checkpoint 74 c4a0829c018af110 74 0 99 11 0 20
+checkpoint 75 0d529e3bc11b7aa2 75 0 99 11 0 20
+checkpoint 76 50359f23b6abdf5a 76 0 99 11 0 20
+checkpoint 77 efca7fdbfee48140 77 0 99 11 0 20
+checkpoint 78 657acfe02860268b 78 0 99 12 0 21
+checkpoint 79 8cb50e4acc5b12a9 79 0 99 11 0 21
+checkpoint 80 7046b0130e90837f 80 0 99 11 0 21
+checkpoint 81 bb51465a0491bdbb 81 0 99 11 0 21
+checkpoint 82 b6eb6757343502c6 82 0 99 11 0 21
+checkpoint 83 f7ec77a656bd5bbb 83 0 99 11 0 21
+checkpoint 84 6b21c9e82d5733a9 84 0 99 11 0 21
+checkpoint 85 6ec7a625d6b7a7a7 85 0 99 12 0 22
+checkpoint 86 8594deb392b25d81 86 0 99 11 0 22
+checkpoint 87 6942c9cc0e3ca71d 87 0 99 11 0 22
+checkpoint 88 9d645beabba8fd2d 88 0 99 11 0 22
+checkpoint 89 90a0bad8e8eedad5 89 0 99 11 0 22
+checkpoint 90 e10fa8d8e79a261b 90 0 99 11 0 22
+end
+scenario spawn-determinism 424242 3000
+input 10 press 0 0 none
+input 2000 release 0 0 none
+checkpoint 0 60fe63fbd429d1ea 0 0 99 3 0 4
+checkpoint 30 13c4e3b110679249 30 0 99 9 0 11
+checkpoint 60 020e9688f08eb6ed 60 0 99 10 0 16
+checkpoint 90 43153b3dcd17c4c0 90 0 99 11 0 21
+checkpoint 120 53ed58a48a987ae8 120 0 99 13 0 27
+checkpoint 150 1ef2916f6e5561b7 150 0 99 14 0 33
+checkpoint 180 f09f417dbb63514c 180 0 99 15 0 38
+checkpoint 210 d7f8ddb280f2976b 210 0 99 16 0 43
+checkpoint 240 010ea4031d22ff27 240 0 99 17 0 49
+checkpoint 270 9897e0042b4e5776 270 0 99 19 0 55
+checkpoint 300 94187295920ac401 300 0 99 20 0 60
+checkpoint 330 3faafe28e05ebb16 330 0 99 22 0 66
+checkpoint 360 9f11208310cf7ea0 360 0 99 22 0 71
+checkpoint 390 653790692f5f5d9c 390 0 99 24 0 77
+checkpoint 420 0b1602c0dedb4d29 420 0 99 25 0 82
+checkpoint 450 fe0dcea6cb9dd369 450 0 98 24 0 88
+checkpoint 480 d5b12a5f945eda1f 480 8 98 24 0 93
+checkpoint 510 89f4c5aaab0be593 510 9 97 25 0 99
+checkpoint 540 07406b69d43b7214 540 9 97 25 0 105
+checkpoint 570 476debf30b5303a6 570 9 97 25 0 110
+checkpoint 600 cee036208a62ea04 600 9 97 25 0 115
+checkpoint 630 c5a7270f7f152951 630 9 97 26 0 121
+checkpoint 660 0dbe8f34064520ca 660 9 97 25 0 127
+checkpoint 690 c09c3d9eb86a71f6 690 9 97 25 0 132
+checkpoint 720 cb70863be7b30cf0 720 9 97 25 0 137
+checkpoint 750 ef9e4001d510ca5e 750 9 97 27 0 144
+checkpoint 780 f95c91d978032c74 780 9 97 25 0 149
+checkpoint 810 036a2ef267739bd9 810 9 97 25 0 154
+checkpoint 840 2aa0e0cf6ab55454 840 9 97 25 0 159
+checkpoint 870 d2baa0c359e2ae4e 870 9 97 26 0 166
+checkpoint 900 4e20e37846ba60e6 900 9 97 25 0 171
+checkpoint 930 d5ed04ea9c467f13 930 9 96 24 0 176
+checkpoint 960 8e07f83d24dfd952 960 9 96 25 0 182
+checkpoint 990 a39ea5eebad3d4e8 990 9 96 25 0 188
+checkpoint 1020 1cf0af7de08f58f6 1020 9 96 25 0 193
+checkpoint 1050 d77fa440c9f490e7 1050 9 95 24 0 198
+checkpoint 1080 70d5453ddafe0a32 1080 9 94 23 0 204
+checkpoint 1110 c2601600dd01afdc 1110 9 94 25 0 210
+checkpoint 1140 94ab889afddc8255 1140 9 94 25 0 215
+checkpoint 1170 9ab0ecb2f0fb4881 1170 11 93 25 0 221
+checkpoint 1200 41ce88d4f2c4307f 1200 15 93 24 0 226
+checkpoint 1230 2c8553ab0d67a788 1230 15 92 25 0 232
+checkpoint 1260 3096068435f96d66 1260 15 92 24 0 237
+checkpoint 1290 5a5fb670af112bf9 1290 15 91 24 0 243
+checkpoint 1320 8aed1ace59e9d7f3 1320 15 90 23 0 248
+checkpoint 1350 99c47cea013ac081 1350 15 89 23 0 254
+checkpoint 1380 cdbec1709aa4f1e5 1380 15 89 25 0 260
+checkpoint 1410 a3e00bb2c5b484e4 1410 15 89 25 0 265
+checkpoint 1440 6610a94050940a3d 1440 15 89 25 0 270
+checkpoint 1470 236355e4a8aefd28 1470 15 89 26 0 276
+checkpoint 1500 add23bcd03a735be 1500 15 89 25 0 282
+checkpoint 1530 75a9a2ba72c963ec 1530 15 89 25 0 287
+checkpoint 1560 7f9884c329cfe97c 1560 15 89 25 0 292
+checkpoint 1590 354b0271cea4e8eb 1590 15 89 27 0 299
+checkpoint 1620 094359118f64ddc2 1620 15 89 25 0 304
+checkpoint 1650 83f66b2d439071a7 1650 15 88 24 0 309
+checkpoint 1680 d5cf9bc18e5a1eb0 1680 15 88 24 0 314
+checkpoint 1710 b90b2e98417b6f16 1710 15 88 26 0 321
+checkpoint 1740 2e45e506505d092d 1740 15 88 25 0 326
+checkpoint 1770 943226471a8f2175 1770 15 87 24 0 331
+checkpoint 1800 602ccfc004c17dff 1800 15 87 25 0 337
+checkpoint 1830 9f30229529fd9836 1830 15 87 25 0 343
+checkpoint 1860 10151511b5af1715 1860 15 86 24 0 348
+checkpoint 1890 28c6c76427c630dc 1890 15 86 24 0 353
+checkpoint 1920 1ddc300271486b91 1920 15 86 25 0 359
+checkpoint 1950 95acdf2387b6d179 1950 15 86 26 0 365
+checkpoint 1980 378e3f3d7b019c86 1980 15 86 25 0 370
+checkpoint 2010 1d8b54e75d84d8ea 2010 15 86 26 0 376
+checkpoint 2040 ce412da25c198e1a 2040 15 86 25 0 381
+checkpoint 2070 d2a53176a06f0023 2070 15 86 26 0 387
+checkpoint 2100 a844376b583a2a9e 2100 15 86 25 0 392
+checkpoint 2130 e5e4788af21d84a7 2130 15 86 25 0 398
+checkpoint 2160 dee04f1f2c15940a 2160 16 86 25 0 403
+checkpoint 2190 fea81a185c8b1bc1 2190 16 86 26 0 409
+checkpoint 2220 6c9f429e15ad29f1 2220 16 86 26 0 415
+checkpoint 2250 f57c1cd12f93a133 2250 16 86 25 0 420
+checkpoint 2280 e1900c2a8c305707 2280 16 86 25 0 425
+checkpoint 2310 5cbc859076558b77 2310 16 86 26 0 431
+checkpoint 2340 d17f05596c8ab166 2340 16 86 25 0 437
+checkpoint 2370 8234563b14c4d134 2370 16 86 25 0 442
+checkpoint 2400 5fc3ba1d0cc04bb3 2400 16 85 24 0 447
+checkpoint 2430 d4df441e8748913d 2430 16 85 26 0 454
+checkpoint 2460 96e42ef21ff687ab 2460 16 85 25 0 459
+checkpoint 2490 b7949b4bc15bc155 2490 16 85 25 0 464
+checkpoint 2520 e929cee6c5ad5c5e 2520 16 85 25 0 469
+checkpoint 2550 7c8cb605ca186e86 2550 16 85 26 0 476
+checkpoint 2580 2964d21092f0883d 2580 16 84 24 0 481
+checkpoint 2610 1441f055cb42133e 2610 16 83 23 0 486
+checkpoint 2640 28279c6e199ae289 2640 16 83 25 0 492
+checkpoint 2670 7cc2f38eea2dc38a 2670 16 83 26 0 498
+checkpoint 2700 bf21f46fa1f0fb17 2700 16 83 25 0 503
+checkpoint 2730 c297db9dc0e3ea58 2730 16 83 25 0 508
+checkpoint 2760 e0e19db420238436 2760 16 83 25 0 514
+checkpoint 2790 16b6669864f17e80 2790 16 83 26 0 520
+checkpoint 2820 78f579e53fb5b930 2820 16 83 25 0 525
+checkpoint 2850 a969f35292264383 2850 20 82 25 0 531
+checkpoint 2880 2661a91d0511c227 2880 20 82 24 0 536
+checkpoint 2910 450d649eaca8b67c 2910 20 81 24 0 542
+checkpoint 2940 b285b9a57ea96580 2940 20 81 24 0 547
+checkpoint 2970 aeabf9f6d0ae185e 2970 20 81 25 0 553
+checkpoint 3000 b1b7011716a2e036 3000 20 81 25 0 558
+end

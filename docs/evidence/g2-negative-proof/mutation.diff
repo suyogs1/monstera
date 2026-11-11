@@ -1,0 +1,4 @@
+--- generated/boundary-lab/ios/Runtime/Sources/MonsteraRuntime/Fixed.swift  (temporary copy, not committed)
++++ mutated copy
+-    public static func mul(_ a: Int64, _ b: Int64) -> Int64 { sat((a * b) >> fracBits) }
++    public static func mul(_ a: Int64, _ b: Int64) -> Int64 { sat((a * b) / 65536) }

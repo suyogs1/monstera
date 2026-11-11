@@ -2,13 +2,147 @@
   "game": {
     "genre": "prototype",
     "input": {
-      "scheme": "tap"
+      "dragGain": 65536,
+      "scheme": "tap",
+      "swipeSpeed": 393216,
+      "tapKind": "bullet",
+      "tapVx": 0,
+      "tapVy": -1179648
     },
     "orientation": "portrait",
     "palette": {
       "accent": "#FFB000",
       "background": "#1A1230",
       "primary": "#FF7A00"
+    },
+    "runtime": {
+      "collisions": [
+        {
+          "a": "bullet",
+          "b": "enemy",
+          "despawnA": true,
+          "despawnB": true,
+          "lives": 0,
+          "score": 10
+        },
+        {
+          "a": "enemy",
+          "b": "player",
+          "despawnA": true,
+          "despawnB": false,
+          "lives": -1,
+          "score": 0
+        },
+        {
+          "a": "ball",
+          "b": "player",
+          "despawnA": false,
+          "despawnB": false,
+          "lives": 0,
+          "score": 1
+        }
+      ],
+      "initialEntities": [
+        {
+          "controlled": true,
+          "kind": "player",
+          "vx": 0,
+          "vy": 0,
+          "x": 32243712,
+          "y": 111411200
+        },
+        {
+          "controlled": false,
+          "kind": "ball",
+          "vx": 491520,
+          "vy": 737280,
+          "x": 6553600,
+          "y": 6553600
+        },
+        {
+          "controlled": false,
+          "kind": "drifter",
+          "vx": 2147483647,
+          "vy": -2147483648,
+          "x": 32768000,
+          "y": 32768000
+        }
+      ],
+      "kinds": [
+        {
+          "exitPolicy": "clamp",
+          "height": 6291456,
+          "id": "player",
+          "lifetimeTicks": 0,
+          "width": 6291456
+        },
+        {
+          "exitPolicy": "despawn",
+          "height": 3145728,
+          "id": "bullet",
+          "lifetimeTicks": 120,
+          "width": 1048576
+        },
+        {
+          "exitPolicy": "despawn",
+          "height": 5242880,
+          "id": "enemy",
+          "lifetimeTicks": 0,
+          "width": 5242880
+        },
+        {
+          "exitPolicy": "bounce",
+          "height": 2621440,
+          "id": "ball",
+          "lifetimeTicks": 0,
+          "width": 2621440
+        },
+        {
+          "exitPolicy": "clamp",
+          "height": 2097152,
+          "id": "drifter",
+          "lifetimeTicks": 0,
+          "width": 2097152
+        },
+        {
+          "exitPolicy": "despawn",
+          "height": 524288,
+          "id": "spark",
+          "lifetimeTicks": 30,
+          "width": 524288
+        }
+      ],
+      "lives": 99,
+      "maxEntities": 64,
+      "spawners": [
+        {
+          "intervalTicks": 24,
+          "kind": "enemy",
+          "stream": "spawn",
+          "vx": 0,
+          "vy": 294912,
+          "xMax": 65536000,
+          "xMin": 0,
+          "yMax": -3932160,
+          "yMin": -3932160
+        },
+        {
+          "intervalTicks": 7,
+          "kind": "spark",
+          "stream": "fx",
+          "vx": 0,
+          "vy": 0,
+          "xMax": 70254592,
+          "xMin": 0,
+          "yMax": 124518400,
+          "yMin": 0
+        }
+      ],
+      "winScore": 0
+    },
+    "simulation": {
+      "maxTicksPerFrame": 5,
+      "tickRate": 60
     },
     "targetFps": 60,
     "world": {
@@ -37,5 +171,5 @@
       "name": "0.1.0"
     }
   },
-  "specVersion": 1
+  "specVersion": 2
 }

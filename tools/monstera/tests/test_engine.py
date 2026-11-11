@@ -12,7 +12,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from monstera import archcheck, generate
+from monstera import archcheck, generate, scenario
 from monstera.jsonio import LoadError, canonical_bytes, loads_strict, sha256_hex
 from monstera.schema import SchemaError, SchemaStore
 from monstera.typemodel import Enum, build
@@ -24,6 +24,10 @@ SAMPLE = REPO / "spec" / "samples" / "monstera-sample" / "monstera.spec.json"
 CASES = json.loads((REPO / "spec" / "fixtures" / "invalid-cases.json").read_text(encoding="utf-8"))
 RAW = REPO / "spec" / "fixtures" / "raw"
 COMMITTED = REPO / "generated" / "monstera-sample"
+
+
+def _sha(spec: dict) -> str:
+    return sha256_hex(canonical_bytes(spec))
 
 
 def _sample() -> dict:
@@ -124,7 +128,10 @@ class SchemaGuardTests(unittest.TestCase):
 
 class GenerationTests(Base):
     def _plan(self, spec: dict | None = None) -> list[generate.OutFile]:
-        return generate.plan(spec or _sample(), "spec/samples/monstera-sample/monstera.spec.json", self.store)
+        spec = spec or _sample()
+        return generate.plan(spec, "spec/samples/monstera-sample/monstera.spec.json", self.store,
+                             scenarios=scenario.load_for_project("monstera-sample", _sha(spec), self.store)
+                             if spec == _sample() else None)
 
     def test_plan_is_reproducible(self) -> None:
         self.assertEqual(self._plan(), self._plan())
@@ -149,7 +156,7 @@ class GenerationTests(Base):
         listed = {e["path"]: e["sha256"] for e in manifest["files"]}
         actual = {f.path: sha256_hex(f.data) for f in files if f.path != generate.MANIFEST}
         self.assertEqual(listed, actual)
-        self.assertNotIn("time", json.dumps(manifest).lower())
+        self.assertNotRegex(json.dumps(manifest).lower(), r"timestamp|\"time\"|generatedat|\bdate\b|\bnow\b")
 
     def test_drift_detection(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

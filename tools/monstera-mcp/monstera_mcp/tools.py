@@ -14,7 +14,7 @@ from typing import Any
 REPO_ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(REPO_ROOT / "tools" / "monstera"))
 
-from monstera import generate, targets  # noqa: E402
+from monstera import conformance, generate, scenario, targets  # noqa: E402
 from monstera.jsonio import canonical_bytes  # noqa: E402
 from monstera.schema import SchemaStore  # noqa: E402
 from monstera.validate import validate_path, validate_value  # noqa: E402
@@ -134,7 +134,12 @@ def generate_project(spec_path: str, out: str | None = None, write: bool = False
         if not _safe_generated_child(rel):
             raise ToolError("out: must be a direct child of generated/ (generated/<name>)")
     _confined(_label(root), ("generated/", "apps/"), "out")
-    files = generate.plan(result.spec, _label(file), store(), layout=layout)
+    try:
+        embedded = scenario.load_for_project(result.spec["project"]["id"], result.sha256, store())
+    except ValueError as exc:
+        return {"spec_sha256": result.sha256, "files": 0, "mode": "write" if write else "check", "issues": [],
+                "drift": None, "written": False, "refused": f"scenarios: {exc}"}
+    files = generate.plan(result.spec, _label(file), store(), layout=layout, scenarios=embedded)
     drift = generate.check(files, root)
     response: dict[str, Any] = {
         "spec_sha256": result.sha256, "files": len(files), "mode": "write" if write else "check",
@@ -172,6 +177,22 @@ def inspect_manifest(dir: str) -> dict[str, Any]:  # noqa: A002 - matches the to
         "verify": {"clean": drift.clean, "changed": list(drift.changed), "missing": list(drift.missing),
                    "unexpected": list(drift.unexpected)},
     }
+
+
+def run_conformance(dir: str, platforms: list[str] | None = None,  # noqa: A002 - matches the tool contract
+                    swift_image: str | None = None) -> dict[str, Any]:
+    """Run the golden scenarios on the requested platforms and compare (monstera conformance).
+    Defaults to the in-process oracle only; kotlin runs Gradle unit tests, swift runs `swift test`
+    in the given swift:<version> container image (or a local toolchain when none is given)."""
+    root = _confined(dir, ("generated/", "apps/"), "dir")
+    try:
+        report = conformance.run(root, store(), platforms if platforms is not None else ["oracle"], swift_image)
+    except (conformance.ConformanceError, generate.OutputError, ValueError) as exc:
+        raise ToolError(str(exc)) from None
+    problems = store().validate(report, "conformance.schema.json")
+    if problems:
+        raise ToolError("internal error: report violates conformance.schema.json: " + "; ".join(map(str, problems)))
+    return {"report": report, "summary": conformance.summarize(report)}
 
 
 def _valid_result(line: Any) -> bool:
@@ -218,5 +239,5 @@ def get_device_report(run_id: str | None = None, evidence: str | None = None,
             "invalid_lines": len(lines) - sum(1 for ln in lines if _valid_result(ln))}
 
 
-__all__ = ["ToolError", "validate_spec", "generate_project", "inspect_manifest", "get_device_report",
+__all__ = ["ToolError", "validate_spec", "generate_project", "inspect_manifest", "get_device_report", "run_conformance",
            "canonical_bytes"]

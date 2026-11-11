@@ -240,9 +240,9 @@ class SchemaStore:
 
     # ---------------------------------------------------------------- validation
 
-    def validate(self, instance: Any) -> list[Issue]:
+    def validate(self, instance: Any, root: str = ROOT_SCHEMA) -> list[Issue]:
         issues: list[Issue] = []
-        self._validate(self.documents[ROOT_SCHEMA], instance, "$", ROOT_SCHEMA, issues)
+        self._validate(self.documents[root], instance, "$", root, issues)
         return sorted(set(issues))
 
     def _validate(self, node: dict[str, Any], value: Any, path: str, base: str, out: list[Issue]) -> None:

@@ -1,0 +1,16 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "Validate golden scenarios on save",
+      "trigger": "PostFileSave",
+      "description": "Validates every golden scenario and checks that its checkpoints still equal a fresh oracle run whenever a scenario file is saved. It never rewrites checkpoints; use `monstera scenarios record` for that.",
+      "matcher": "\\.scenario\\.json$",
+      "action": {
+        "type": "command",
+        "command": "git -c alias.monstera=!tools/monstera/bin/monstera monstera validate-scenario --all --oracle",
+        "timeout": 120
+      }
+    }
+  ]
+}

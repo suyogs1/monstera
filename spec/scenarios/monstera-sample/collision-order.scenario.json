@@ -1,0 +1,3297 @@
+{
+  "checkpoints": [
+    {
+      "hash": "952dc5f6914c6787",
+      "observe": {
+        "ended": 0,
+        "entityCount": 3,
+        "lives": 99,
+        "nextId": 4,
+        "score": 0,
+        "tick": 0
+      },
+      "tick": 0
+    },
+    {
+      "hash": "539e2f90f24fefc1",
+      "observe": {
+        "ended": 0,
+        "entityCount": 8,
+        "lives": 99,
+        "nextId": 9,
+        "score": 0,
+        "tick": 9
+      },
+      "tick": 9
+    },
+    {
+      "hash": "bc7daa8f15176e96",
+      "observe": {
+        "ended": 0,
+        "entityCount": 10,
+        "lives": 99,
+        "nextId": 11,
+        "score": 0,
+        "tick": 18
+      },
+      "tick": 18
+    },
+    {
+      "hash": "1b19c7ba75f7c1b0",
+      "observe": {
+        "ended": 0,
+        "entityCount": 14,
+        "lives": 99,
+        "nextId": 15,
+        "score": 0,
+        "tick": 27
+      },
+      "tick": 27
+    },
+    {
+      "hash": "684dd493e381f8f4",
+      "observe": {
+        "ended": 0,
+        "entityCount": 16,
+        "lives": 99,
+        "nextId": 18,
+        "score": 0,
+        "tick": 36
+      },
+      "tick": 36
+    },
+    {
+      "hash": "725ee236c1c8ac9e",
+      "observe": {
+        "ended": 0,
+        "entityCount": 17,
+        "lives": 99,
+        "nextId": 21,
+        "score": 0,
+        "tick": 45
+      },
+      "tick": 45
+    },
+    {
+      "hash": "3ea15ab632a2d7bd",
+      "observe": {
+        "ended": 0,
+        "entityCount": 19,
+        "lives": 99,
+        "nextId": 24,
+        "score": 0,
+        "tick": 54
+      },
+      "tick": 54
+    },
+    {
+      "hash": "f2960514e729c40b",
+      "observe": {
+        "ended": 0,
+        "entityCount": 21,
+        "lives": 99,
+        "nextId": 27,
+        "score": 0,
+        "tick": 63
+      },
+      "tick": 63
+    },
+    {
+      "hash": "3ae39c95346b0d87",
+      "observe": {
+        "ended": 0,
+        "entityCount": 22,
+        "lives": 99,
+        "nextId": 30,
+        "score": 0,
+        "tick": 72
+      },
+      "tick": 72
+    },
+    {
+      "hash": "b9d0e0a61dc33662",
+      "observe": {
+        "ended": 0,
+        "entityCount": 23,
+        "lives": 99,
+        "nextId": 34,
+        "score": 10,
+        "tick": 81
+      },
+      "tick": 81
+    },
+    {
+      "hash": "b0515f2d762950b4",
+      "observe": {
+        "ended": 0,
+        "entityCount": 24,
+        "lives": 99,
+        "nextId": 36,
+        "score": 10,
+        "tick": 90
+      },
+      "tick": 90
+    },
+    {
+      "hash": "4183f2e81581c3c4",
+      "observe": {
+        "ended": 0,
+        "entityCount": 28,
+        "lives": 99,
+        "nextId": 41,
+        "score": 10,
+        "tick": 99
+      },
+      "tick": 99
+    },
+    {
+      "hash": "aba180635d595463",
+      "observe": {
+        "ended": 0,
+        "entityCount": 27,
+        "lives": 99,
+        "nextId": 43,
+        "score": 10,
+        "tick": 108
+      },
+      "tick": 108
+    },
+    {
+      "hash": "f6b4c8d71fdeb950",
+      "observe": {
+        "ended": 0,
+        "entityCount": 27,
+        "lives": 99,
+        "nextId": 46,
+        "score": 10,
+        "tick": 117
+      },
+      "tick": 117
+    },
+    {
+      "hash": "3a83062a967e7f45",
+      "observe": {
+        "ended": 0,
+        "entityCount": 28,
+        "lives": 99,
+        "nextId": 49,
+        "score": 10,
+        "tick": 126
+      },
+      "tick": 126
+    },
+    {
+      "hash": "6b5569ae4a75400d",
+      "observe": {
+        "ended": 0,
+        "entityCount": 28,
+        "lives": 99,
+        "nextId": 53,
+        "score": 10,
+        "tick": 135
+      },
+      "tick": 135
+    },
+    {
+      "hash": "0d0d8432e5ec45f7",
+      "observe": {
+        "ended": 0,
+        "entityCount": 28,
+        "lives": 99,
+        "nextId": 55,
+        "score": 10,
+        "tick": 144
+      },
+      "tick": 144
+    },
+    {
+      "hash": "cafdc3e69e3c0a8d",
+      "observe": {
+        "ended": 0,
+        "entityCount": 27,
+        "lives": 99,
+        "nextId": 59,
+        "score": 20,
+        "tick": 153
+      },
+      "tick": 153
+    },
+    {
+      "hash": "d9bfe2b73e38fbcc",
+      "observe": {
+        "ended": 0,
+        "entityCount": 28,
+        "lives": 99,
+        "nextId": 62,
+        "score": 20,
+        "tick": 162
+      },
+      "tick": 162
+    },
+    {
+      "hash": "4999ca0197778514",
+      "observe": {
+        "ended": 0,
+        "entityCount": 29,
+        "lives": 99,
+        "nextId": 66,
+        "score": 20,
+        "tick": 171
+      },
+      "tick": 171
+    },
+    {
+      "hash": "7a926548935dabe4",
+      "observe": {
+        "ended": 0,
+        "entityCount": 27,
+        "lives": 99,
+        "nextId": 68,
+        "score": 30,
+        "tick": 180
+      },
+      "tick": 180
+    },
+    {
+      "hash": "a90fa448baf12451",
+      "observe": {
+        "ended": 0,
+        "entityCount": 28,
+        "lives": 99,
+        "nextId": 71,
+        "score": 30,
+        "tick": 189
+      },
+      "tick": 189
+    },
+    {
+      "hash": "a926fcd9a23b2fbb",
+      "observe": {
+        "ended": 0,
+        "entityCount": 29,
+        "lives": 99,
+        "nextId": 75,
+        "score": 30,
+        "tick": 198
+      },
+      "tick": 198
+    },
+    {
+      "hash": "b8d98dd99e6dff7f",
+      "observe": {
+        "ended": 0,
+        "entityCount": 29,
+        "lives": 99,
+        "nextId": 78,
+        "score": 30,
+        "tick": 207
+      },
+      "tick": 207
+    },
+    {
+      "hash": "b518859798937f2e",
+      "observe": {
+        "ended": 0,
+        "entityCount": 29,
+        "lives": 99,
+        "nextId": 80,
+        "score": 30,
+        "tick": 216
+      },
+      "tick": 216
+    },
+    {
+      "hash": "e7321d50b3ea5994",
+      "observe": {
+        "ended": 0,
+        "entityCount": 31,
+        "lives": 99,
+        "nextId": 85,
+        "score": 30,
+        "tick": 225
+      },
+      "tick": 225
+    },
+    {
+      "hash": "7dd82d2f5d9d469b",
+      "observe": {
+        "ended": 0,
+        "entityCount": 30,
+        "lives": 99,
+        "nextId": 87,
+        "score": 30,
+        "tick": 234
+      },
+      "tick": 234
+    },
+    {
+      "hash": "c0a10d57f8ad0286",
+      "observe": {
+        "ended": 0,
+        "entityCount": 31,
+        "lives": 99,
+        "nextId": 91,
+        "score": 30,
+        "tick": 243
+      },
+      "tick": 243
+    },
+    {
+      "hash": "993f7515914337cb",
+      "observe": {
+        "ended": 0,
+        "entityCount": 31,
+        "lives": 99,
+        "nextId": 93,
+        "score": 30,
+        "tick": 252
+      },
+      "tick": 252
+    },
+    {
+      "hash": "14a3b7c8e0de9ba5",
+      "observe": {
+        "ended": 0,
+        "entityCount": 30,
+        "lives": 99,
+        "nextId": 97,
+        "score": 40,
+        "tick": 261
+      },
+      "tick": 261
+    },
+    {
+      "hash": "9c85d9e3158789d5",
+      "observe": {
+        "ended": 0,
+        "entityCount": 31,
+        "lives": 99,
+        "nextId": 100,
+        "score": 40,
+        "tick": 270
+      },
+      "tick": 270
+    },
+    {
+      "hash": "9da46174a9483aac",
+      "observe": {
+        "ended": 0,
+        "entityCount": 31,
+        "lives": 99,
+        "nextId": 103,
+        "score": 40,
+        "tick": 279
+      },
+      "tick": 279
+    },
+    {
+      "hash": "a928a9b17d049550",
+      "observe": {
+        "ended": 0,
+        "entityCount": 32,
+        "lives": 99,
+        "nextId": 106,
+        "score": 40,
+        "tick": 288
+      },
+      "tick": 288
+    },
+    {
+      "hash": "491e240319b967f9",
+      "observe": {
+        "ended": 0,
+        "entityCount": 32,
+        "lives": 99,
+        "nextId": 110,
+        "score": 40,
+        "tick": 297
+      },
+      "tick": 297
+    },
+    {
+      "hash": "c32116e440d97210",
+      "observe": {
+        "ended": 0,
+        "entityCount": 30,
+        "lives": 99,
+        "nextId": 112,
+        "score": 50,
+        "tick": 306
+      },
+      "tick": 306
+    },
+    {
+      "hash": "8aaae1ab623a140e",
+      "observe": {
+        "ended": 0,
+        "entityCount": 31,
+        "lives": 99,
+        "nextId": 116,
+        "score": 50,
+        "tick": 315
+      },
+      "tick": 315
+    },
+    {
+      "hash": "ec5d3e62c36f5381",
+      "observe": {
+        "ended": 0,
+        "entityCount": 31,
+        "lives": 99,
+        "nextId": 119,
+        "score": 50,
+        "tick": 324
+      },
+      "tick": 324
+    },
+    {
+      "hash": "4cf92debdab6a39c",
+      "observe": {
+        "ended": 0,
+        "entityCount": 27,
+        "lives": 99,
+        "nextId": 122,
+        "score": 70,
+        "tick": 333
+      },
+      "tick": 333
+    },
+    {
+      "hash": "376ccde14ae319fc",
+      "observe": {
+        "ended": 0,
+        "entityCount": 28,
+        "lives": 99,
+        "nextId": 125,
+        "score": 70,
+        "tick": 342
+      },
+      "tick": 342
+    },
+    {
+      "hash": "85655c3239df5f05",
+      "observe": {
+        "ended": 0,
+        "entityCount": 28,
+        "lives": 99,
+        "nextId": 129,
+        "score": 80,
+        "tick": 351
+      },
+      "tick": 351
+    },
+    {
+      "hash": "0c5b23086e7a2f47",
+      "observe": {
+        "ended": 0,
+        "entityCount": 27,
+        "lives": 99,
+        "nextId": 131,
+        "score": 80,
+        "tick": 360
+      },
+      "tick": 360
+    },
+    {
+      "hash": "20b213f2e39426f9",
+      "observe": {
+        "ended": 0,
+        "entityCount": 29,
+        "lives": 99,
+        "nextId": 135,
+        "score": 80,
+        "tick": 369
+      },
+      "tick": 369
+    },
+    {
+      "hash": "7801a8ef458f6869",
+      "observe": {
+        "ended": 0,
+        "entityCount": 29,
+        "lives": 99,
+        "nextId": 137,
+        "score": 80,
+        "tick": 378
+      },
+      "tick": 378
+    },
+    {
+      "hash": "5845a62d694406a5",
+      "observe": {
+        "ended": 0,
+        "entityCount": 32,
+        "lives": 99,
+        "nextId": 142,
+        "score": 80,
+        "tick": 387
+      },
+      "tick": 387
+    },
+    {
+      "hash": "dac1baa22b49d904",
+      "observe": {
+        "ended": 0,
+        "entityCount": 32,
+        "lives": 99,
+        "nextId": 144,
+        "score": 80,
+        "tick": 396
+      },
+      "tick": 396
+    },
+    {
+      "hash": "a495336b4c3fdd57",
+      "observe": {
+        "ended": 0,
+        "entityCount": 32,
+        "lives": 99,
+        "nextId": 147,
+        "score": 80,
+        "tick": 405
+      },
+      "tick": 405
+    },
+    {
+      "hash": "f01824d0f7d7bc41",
+      "observe": {
+        "ended": 0,
+        "entityCount": 34,
+        "lives": 99,
+        "nextId": 151,
+        "score": 80,
+        "tick": 414
+      },
+      "tick": 414
+    },
+    {
+      "hash": "d8bcc4cf1945cb91",
+      "observe": {
+        "ended": 0,
+        "entityCount": 33,
+        "lives": 99,
+        "nextId": 154,
+        "score": 80,
+        "tick": 423
+      },
+      "tick": 423
+    },
+    {
+      "hash": "ca9a1cb4bb3d4a8f",
+      "observe": {
+        "ended": 0,
+        "entityCount": 33,
+        "lives": 99,
+        "nextId": 156,
+        "score": 80,
+        "tick": 432
+      },
+      "tick": 432
+    },
+    {
+      "hash": "ee3985e7a855bd8e",
+      "observe": {
+        "ended": 0,
+        "entityCount": 34,
+        "lives": 99,
+        "nextId": 160,
+        "score": 80,
+        "tick": 441
+      },
+      "tick": 441
+    },
+    {
+      "hash": "1adcbd9a14b43e47",
+      "observe": {
+        "ended": 0,
+        "entityCount": 34,
+        "lives": 99,
+        "nextId": 163,
+        "score": 80,
+        "tick": 450
+      },
+      "tick": 450
+    },
+    {
+      "hash": "6b7e2bd71c07de7b",
+      "observe": {
+        "ended": 0,
+        "entityCount": 35,
+        "lives": 99,
+        "nextId": 167,
+        "score": 80,
+        "tick": 459
+      },
+      "tick": 459
+    },
+    {
+      "hash": "030a267586549673",
+      "observe": {
+        "ended": 0,
+        "entityCount": 35,
+        "lives": 99,
+        "nextId": 169,
+        "score": 80,
+        "tick": 468
+      },
+      "tick": 468
+    },
+    {
+      "hash": "7ec96d6940b02f57",
+      "observe": {
+        "ended": 0,
+        "entityCount": 36,
+        "lives": 99,
+        "nextId": 173,
+        "score": 80,
+        "tick": 477
+      },
+      "tick": 477
+    },
+    {
+      "hash": "6d99a2b63aae2d79",
+      "observe": {
+        "ended": 0,
+        "entityCount": 36,
+        "lives": 99,
+        "nextId": 176,
+        "score": 80,
+        "tick": 486
+      },
+      "tick": 486
+    },
+    {
+      "hash": "4ef3a536f4afc747",
+      "observe": {
+        "ended": 0,
+        "entityCount": 31,
+        "lives": 99,
+        "nextId": 179,
+        "score": 100,
+        "tick": 495
+      },
+      "tick": 495
+    },
+    {
+      "hash": "dfece90faf1e6930",
+      "observe": {
+        "ended": 0,
+        "entityCount": 30,
+        "lives": 99,
+        "nextId": 181,
+        "score": 110,
+        "tick": 504
+      },
+      "tick": 504
+    },
+    {
+      "hash": "ba9e9ecbea9d541d",
+      "observe": {
+        "ended": 0,
+        "entityCount": 30,
+        "lives": 99,
+        "nextId": 186,
+        "score": 110,
+        "tick": 513
+      },
+      "tick": 513
+    },
+    {
+      "hash": "7e758b68c04e5513",
+      "observe": {
+        "ended": 0,
+        "entityCount": 30,
+        "lives": 99,
+        "nextId": 188,
+        "score": 110,
+        "tick": 522
+      },
+      "tick": 522
+    },
+    {
+      "hash": "9ba631fb127964cc",
+      "observe": {
+        "ended": 0,
+        "entityCount": 32,
+        "lives": 99,
+        "nextId": 192,
+        "score": 110,
+        "tick": 531
+      },
+      "tick": 531
+    },
+    {
+      "hash": "4a267c95f3f2193f",
+      "observe": {
+        "ended": 0,
+        "entityCount": 32,
+        "lives": 99,
+        "nextId": 195,
+        "score": 110,
+        "tick": 540
+      },
+      "tick": 540
+    },
+    {
+      "hash": "3916100f7bce8721",
+      "observe": {
+        "ended": 0,
+        "entityCount": 32,
+        "lives": 99,
+        "nextId": 198,
+        "score": 110,
+        "tick": 549
+      },
+      "tick": 549
+    },
+    {
+      "hash": "d4eeaac57ef6721d",
+      "observe": {
+        "ended": 0,
+        "entityCount": 33,
+        "lives": 99,
+        "nextId": 201,
+        "score": 110,
+        "tick": 558
+      },
+      "tick": 558
+    },
+    {
+      "hash": "00b844c7a422f254",
+      "observe": {
+        "ended": 0,
+        "entityCount": 33,
+        "lives": 99,
+        "nextId": 204,
+        "score": 110,
+        "tick": 567
+      },
+      "tick": 567
+    },
+    {
+      "hash": "11cfc83c269b4034",
+      "observe": {
+        "ended": 0,
+        "entityCount": 33,
+        "lives": 99,
+        "nextId": 207,
+        "score": 110,
+        "tick": 576
+      },
+      "tick": 576
+    },
+    {
+      "hash": "c89dc7fe0a9ee909",
+      "observe": {
+        "ended": 0,
+        "entityCount": 33,
+        "lives": 99,
+        "nextId": 211,
+        "score": 110,
+        "tick": 585
+      },
+      "tick": 585
+    },
+    {
+      "hash": "de5b97414280761f",
+      "observe": {
+        "ended": 0,
+        "entityCount": 33,
+        "lives": 99,
+        "nextId": 213,
+        "score": 110,
+        "tick": 594
+      },
+      "tick": 594
+    },
+    {
+      "hash": "543cd7de40ea1c12",
+      "observe": {
+        "ended": 0,
+        "entityCount": 35,
+        "lives": 99,
+        "nextId": 218,
+        "score": 110,
+        "tick": 603
+      },
+      "tick": 603
+    },
+    {
+      "hash": "265c723237cec8da",
+      "observe": {
+        "ended": 0,
+        "entityCount": 34,
+        "lives": 99,
+        "nextId": 220,
+        "score": 110,
+        "tick": 612
+      },
+      "tick": 612
+    },
+    {
+      "hash": "ea1df5d7884977fc",
+      "observe": {
+        "ended": 0,
+        "entityCount": 32,
+        "lives": 99,
+        "nextId": 223,
+        "score": 120,
+        "tick": 621
+      },
+      "tick": 621
+    },
+    {
+      "hash": "2a9a9b413d4a0d8f",
+      "observe": {
+        "ended": 0,
+        "entityCount": 33,
+        "lives": 99,
+        "nextId": 226,
+        "score": 120,
+        "tick": 630
+      },
+      "tick": 630
+    },
+    {
+      "hash": "6ca14688d85ba403",
+      "observe": {
+        "ended": 0,
+        "entityCount": 33,
+        "lives": 99,
+        "nextId": 230,
+        "score": 120,
+        "tick": 639
+      },
+      "tick": 639
+    },
+    {
+      "hash": "a5f5ebc94775ef1e",
+      "observe": {
+        "ended": 0,
+        "entityCount": 34,
+        "lives": 99,
+        "nextId": 232,
+        "score": 120,
+        "tick": 648
+      },
+      "tick": 648
+    },
+    {
+      "hash": "747acc765d09053f",
+      "observe": {
+        "ended": 0,
+        "entityCount": 35,
+        "lives": 99,
+        "nextId": 236,
+        "score": 120,
+        "tick": 657
+      },
+      "tick": 657
+    },
+    {
+      "hash": "01b0b2e75c36b56d",
+      "observe": {
+        "ended": 0,
+        "entityCount": 36,
+        "lives": 99,
+        "nextId": 239,
+        "score": 120,
+        "tick": 666
+      },
+      "tick": 666
+    },
+    {
+      "hash": "e5187667aa2007ae",
+      "observe": {
+        "ended": 0,
+        "entityCount": 36,
+        "lives": 99,
+        "nextId": 243,
+        "score": 120,
+        "tick": 675
+      },
+      "tick": 675
+    },
+    {
+      "hash": "e4c008aaa93545bd",
+      "observe": {
+        "ended": 0,
+        "entityCount": 36,
+        "lives": 99,
+        "nextId": 245,
+        "score": 120,
+        "tick": 684
+      },
+      "tick": 684
+    },
+    {
+      "hash": "39829c9167203025",
+      "observe": {
+        "ended": 0,
+        "entityCount": 36,
+        "lives": 99,
+        "nextId": 248,
+        "score": 120,
+        "tick": 693
+      },
+      "tick": 693
+    },
+    {
+      "hash": "011c460e2bb84a36",
+      "observe": {
+        "ended": 0,
+        "entityCount": 37,
+        "lives": 99,
+        "nextId": 252,
+        "score": 120,
+        "tick": 702
+      },
+      "tick": 702
+    },
+    {
+      "hash": "074dea717cc059b0",
+      "observe": {
+        "ended": 0,
+        "entityCount": 36,
+        "lives": 99,
+        "nextId": 255,
+        "score": 120,
+        "tick": 711
+      },
+      "tick": 711
+    },
+    {
+      "hash": "79d6fd211e209b99",
+      "observe": {
+        "ended": 0,
+        "entityCount": 36,
+        "lives": 99,
+        "nextId": 257,
+        "score": 120,
+        "tick": 720
+      },
+      "tick": 720
+    },
+    {
+      "hash": "ecd076f1cb853454",
+      "observe": {
+        "ended": 0,
+        "entityCount": 36,
+        "lives": 99,
+        "nextId": 262,
+        "score": 130,
+        "tick": 729
+      },
+      "tick": 729
+    },
+    {
+      "hash": "40c6e6546e301a03",
+      "observe": {
+        "ended": 0,
+        "entityCount": 35,
+        "lives": 99,
+        "nextId": 264,
+        "score": 130,
+        "tick": 738
+      },
+      "tick": 738
+    },
+    {
+      "hash": "107697afe61effdd",
+      "observe": {
+        "ended": 0,
+        "entityCount": 37,
+        "lives": 99,
+        "nextId": 268,
+        "score": 130,
+        "tick": 747
+      },
+      "tick": 747
+    },
+    {
+      "hash": "7bf07923cd6839e0",
+      "observe": {
+        "ended": 0,
+        "entityCount": 37,
+        "lives": 99,
+        "nextId": 270,
+        "score": 130,
+        "tick": 756
+      },
+      "tick": 756
+    },
+    {
+      "hash": "a6719017818c79b6",
+      "observe": {
+        "ended": 0,
+        "entityCount": 35,
+        "lives": 99,
+        "nextId": 274,
+        "score": 140,
+        "tick": 765
+      },
+      "tick": 765
+    },
+    {
+      "hash": "f6ecefae7ff64856",
+      "observe": {
+        "ended": 0,
+        "entityCount": 34,
+        "lives": 99,
+        "nextId": 277,
+        "score": 150,
+        "tick": 774
+      },
+      "tick": 774
+    },
+    {
+      "hash": "27c6f891b6a4de15",
+      "observe": {
+        "ended": 0,
+        "entityCount": 30,
+        "lives": 98,
+        "nextId": 280,
+        "score": 160,
+        "tick": 783
+      },
+      "tick": 783
+    },
+    {
+      "hash": "0c659db50c1e53a9",
+      "observe": {
+        "ended": 0,
+        "entityCount": 31,
+        "lives": 98,
+        "nextId": 283,
+        "score": 160,
+        "tick": 792
+      },
+      "tick": 792
+    },
+    {
+      "hash": "a555413a6b63f1c2",
+      "observe": {
+        "ended": 0,
+        "entityCount": 29,
+        "lives": 98,
+        "nextId": 287,
+        "score": 170,
+        "tick": 801
+      },
+      "tick": 801
+    },
+    {
+      "hash": "32ba7a7ca9cd87da",
+      "observe": {
+        "ended": 0,
+        "entityCount": 30,
+        "lives": 98,
+        "nextId": 289,
+        "score": 170,
+        "tick": 810
+      },
+      "tick": 810
+    },
+    {
+      "hash": "f5619c1c15b212f9",
+      "observe": {
+        "ended": 0,
+        "entityCount": 30,
+        "lives": 98,
+        "nextId": 293,
+        "score": 180,
+        "tick": 819
+      },
+      "tick": 819
+    },
+    {
+      "hash": "584a8d2827cd7ccb",
+      "observe": {
+        "ended": 0,
+        "entityCount": 31,
+        "lives": 98,
+        "nextId": 296,
+        "score": 180,
+        "tick": 828
+      },
+      "tick": 828
+    },
+    {
+      "hash": "18a8b305877c0e6f",
+      "observe": {
+        "ended": 0,
+        "entityCount": 31,
+        "lives": 98,
+        "nextId": 299,
+        "score": 180,
+        "tick": 837
+      },
+      "tick": 837
+    },
+    {
+      "hash": "19597f4b0ffab3a1",
+      "observe": {
+        "ended": 0,
+        "entityCount": 32,
+        "lives": 98,
+        "nextId": 302,
+        "score": 180,
+        "tick": 846
+      },
+      "tick": 846
+    },
+    {
+      "hash": "0776df3cd60560a5",
+      "observe": {
+        "ended": 0,
+        "entityCount": 33,
+        "lives": 98,
+        "nextId": 306,
+        "score": 180,
+        "tick": 855
+      },
+      "tick": 855
+    },
+    {
+      "hash": "e6fbaef30dbf1a47",
+      "observe": {
+        "ended": 0,
+        "entityCount": 32,
+        "lives": 98,
+        "nextId": 308,
+        "score": 180,
+        "tick": 864
+      },
+      "tick": 864
+    },
+    {
+      "hash": "2e869755ee1ea179",
+      "observe": {
+        "ended": 0,
+        "entityCount": 32,
+        "lives": 98,
+        "nextId": 312,
+        "score": 180,
+        "tick": 873
+      },
+      "tick": 873
+    },
+    {
+      "hash": "ffb1aff0896fcc40",
+      "observe": {
+        "ended": 0,
+        "entityCount": 32,
+        "lives": 98,
+        "nextId": 314,
+        "score": 180,
+        "tick": 882
+      },
+      "tick": 882
+    },
+    {
+      "hash": "b46603bc54791dc5",
+      "observe": {
+        "ended": 0,
+        "entityCount": 34,
+        "lives": 98,
+        "nextId": 319,
+        "score": 180,
+        "tick": 891
+      },
+      "tick": 891
+    },
+    {
+      "hash": "d649fae3917a5983",
+      "observe": {
+        "ended": 0,
+        "entityCount": 34,
+        "lives": 98,
+        "nextId": 321,
+        "score": 180,
+        "tick": 900
+      },
+      "tick": 900
+    }
+  ],
+  "description": "Bullets, enemies and the player collide in the same tick (multi-kill ticks and a kill plus a life lost in one tick); resolution must not depend on pair order.",
+  "inputs": [
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": -19660800,
+          "dy": 0,
+          "type": "drag"
+        }
+      ],
+      "tick": 0
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 6
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 12
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 18
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": -10682368,
+          "dy": 0,
+          "type": "drag"
+        }
+      ],
+      "tick": 20
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 24
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 30
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 36
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": -1703936,
+          "dy": 0,
+          "type": "drag"
+        }
+      ],
+      "tick": 40
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 42
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 48
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 54
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": 7274496,
+          "dy": 0,
+          "type": "drag"
+        }
+      ],
+      "tick": 60
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 66
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 72
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 78
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 16252928,
+          "dy": 0,
+          "type": "drag"
+        }
+      ],
+      "tick": 80
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 84
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 90
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 96
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": -14090240,
+          "dy": 0,
+          "type": "drag"
+        }
+      ],
+      "tick": 100
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 102
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 108
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 114
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": -5111808,
+          "dy": 0,
+          "type": "drag"
+        }
+      ],
+      "tick": 120
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 126
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 132
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 138
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 3866624,
+          "dy": 0,
+          "type": "drag"
+        }
+      ],
+      "tick": 140
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 144
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 150
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 156
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 12845056,
+          "dy": 0,
+          "type": "drag"
+        }
+      ],
+      "tick": 160
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 162
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 168
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 174
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": -17498112,
+          "dy": 0,
+          "type": "drag"
+        }
+      ],
+      "tick": 180
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 186
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 192
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 198
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": -8519680,
+          "dy": 0,
+          "type": "drag"
+        }
+      ],
+      "tick": 200
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 204
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 210
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 216
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 458752,
+          "dy": 0,
+          "type": "drag"
+        }
+      ],
+      "tick": 220
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 222
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 228
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 234
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": 9437184,
+          "dy": 0,
+          "type": "drag"
+        }
+      ],
+      "tick": 240
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 246
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 252
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 258
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 18415616,
+          "dy": 0,
+          "type": "drag"
+        }
+      ],
+      "tick": 260
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 264
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 270
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 276
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": -11927552,
+          "dy": 0,
+          "type": "drag"
+        }
+      ],
+      "tick": 280
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 282
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 288
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 294
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": -2949120,
+          "dy": 0,
+          "type": "drag"
+        }
+      ],
+      "tick": 300
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 306
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 312
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 318
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 6029312,
+          "dy": 0,
+          "type": "drag"
+        }
+      ],
+      "tick": 320
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 324
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 330
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 336
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 15007744,
+          "dy": 0,
+          "type": "drag"
+        }
+      ],
+      "tick": 340
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 342
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 348
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 354
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": -15335424,
+          "dy": 0,
+          "type": "drag"
+        }
+      ],
+      "tick": 360
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 366
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 372
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 378
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": -6356992,
+          "dy": 0,
+          "type": "drag"
+        }
+      ],
+      "tick": 380
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 384
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 390
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 396
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 2621440,
+          "dy": 0,
+          "type": "drag"
+        }
+      ],
+      "tick": 400
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 402
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 408
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 414
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": 11599872,
+          "dy": 0,
+          "type": "drag"
+        }
+      ],
+      "tick": 420
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 426
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 432
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 438
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": -18743296,
+          "dy": 0,
+          "type": "drag"
+        }
+      ],
+      "tick": 440
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 444
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 450
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 456
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": -9764864,
+          "dy": 0,
+          "type": "drag"
+        }
+      ],
+      "tick": 460
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 462
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 468
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 474
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": -786432,
+          "dy": 0,
+          "type": "drag"
+        }
+      ],
+      "tick": 480
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 486
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 492
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 498
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 8192000,
+          "dy": 0,
+          "type": "drag"
+        }
+      ],
+      "tick": 500
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 504
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 510
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 516
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 17170432,
+          "dy": 0,
+          "type": "drag"
+        }
+      ],
+      "tick": 520
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 522
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 528
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 534
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": -13172736,
+          "dy": 0,
+          "type": "drag"
+        }
+      ],
+      "tick": 540
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 546
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 552
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 558
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": -4194304,
+          "dy": 0,
+          "type": "drag"
+        }
+      ],
+      "tick": 560
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 564
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 570
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 576
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 4784128,
+          "dy": 0,
+          "type": "drag"
+        }
+      ],
+      "tick": 580
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 582
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 588
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 594
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": 13762560,
+          "dy": 0,
+          "type": "drag"
+        }
+      ],
+      "tick": 600
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 606
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 612
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 618
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": -16580608,
+          "dy": 0,
+          "type": "drag"
+        }
+      ],
+      "tick": 620
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 624
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 630
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 636
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": -7602176,
+          "dy": 0,
+          "type": "drag"
+        }
+      ],
+      "tick": 640
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 642
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 648
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 654
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": 1376256,
+          "dy": 0,
+          "type": "drag"
+        }
+      ],
+      "tick": 660
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 666
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 672
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 678
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 10354688,
+          "dy": 0,
+          "type": "drag"
+        }
+      ],
+      "tick": 680
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 684
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 690
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 696
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 19333120,
+          "dy": 0,
+          "type": "drag"
+        }
+      ],
+      "tick": 700
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 702
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 708
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 714
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": -11010048,
+          "dy": 0,
+          "type": "drag"
+        }
+      ],
+      "tick": 720
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 726
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 732
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 738
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": -2031616,
+          "dy": 0,
+          "type": "drag"
+        }
+      ],
+      "tick": 740
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 744
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 750
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 756
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 6946816,
+          "dy": 0,
+          "type": "drag"
+        }
+      ],
+      "tick": 760
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 762
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 768
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 774
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": 15925248,
+          "dy": 0,
+          "type": "drag"
+        }
+      ],
+      "tick": 780
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 786
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 792
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 798
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": -14417920,
+          "dy": 0,
+          "type": "drag"
+        }
+      ],
+      "tick": 800
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 804
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 810
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 816
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": -5439488,
+          "dy": 0,
+          "type": "drag"
+        }
+      ],
+      "tick": 820
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 822
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 828
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 834
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": 3538944,
+          "dy": 0,
+          "type": "drag"
+        }
+      ],
+      "tick": 840
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 846
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 852
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 858
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 12517376,
+          "dy": 0,
+          "type": "drag"
+        }
+      ],
+      "tick": 860
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 864
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 870
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 876
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": -17825792,
+          "dy": 0,
+          "type": "drag"
+        }
+      ],
+      "tick": 880
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 882
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 888
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 894
+    }
+  ],
+  "name": "collision-order",
+  "scenarioVersion": 1,
+  "seed": 17,
+  "spec": {
+    "path": "spec/samples/monstera-sample/monstera.spec.json",
+    "sha256": "ad0a2ac3f804979632b4aff24ccd999931c66b61cc8ecb69d87461ea91397dec"
+  },
+  "ticks": 900
+}
