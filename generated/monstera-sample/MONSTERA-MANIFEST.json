@@ -137,7 +137,7 @@
       "kind": "template",
       "mode": "644",
       "path": "ios/Sources/MonsteraSample/MonsteraSampleApp.swift",
-      "sha256": "99043635fbf581dfbcd14f692fb8e3cf2b0dd927b68e17e756d710d46d1a9b66",
+      "sha256": "41fa78458060b6fb17bd9379af1350fe6f6fc2ea324e4b3ad291709ca6e6ec84",
       "source": "templates/ios/Sources/App.swift.tmpl"
     },
     {

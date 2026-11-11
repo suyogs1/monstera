@@ -94,7 +94,8 @@ no parallel sub-agent runs were needed, because each template set took one short
 | `validate --all`, `format --check`, `check-architecture` | local + CI | pass |
 | `generate --check` vs committed output | local (Windows), fresh Windows clone, CI (Linux) | up to date, 25 files |
 | `verify` (tree vs its own manifest) | local, fresh Windows clone, CI | matches its manifest |
-| Fresh-generation manifest SHA-256 | Windows clone vs CI Linux (run 42993403656) | both `c012aa98db899661153f52ee342c80326b0de2f4c43101235a952a48367a8bb2` |
+| Fresh-generation manifest SHA-256 | Windows clone vs CI Linux (run 42993403656, commit `0bf89ea`) | both `c012aa98db899661153f52ee342c80326b0de2f4c43101235a952a48367a8bb2` |
+| Fresh-generation manifest SHA-256, final templates | Windows (local) vs CI Linux on the final PR commit | Windows `a75d60cf3a781f7113a1d3fa99453f363a16dd96c2c9b51afde2f1c1e20642bd`; CI value is printed by the `spec` job and quoted in the PR |
 | Two fresh generations + `diff -r` | CI | identical |
 | Generated Android `assembleDebug` | local (JBR 21) + CI | BUILD SUCCESSFUL |
 | Generated Android on emulator | local, Android 16 | launched, "verified", logcat `bundledMatches=true` |
@@ -135,6 +136,12 @@ Each item was attacked, not just re-run. "Before" is what the attack did on comm
 | 6 | Hooks in a fresh Kiro session | Untested live | - | Guard **verified live** (real write blocked). PostFileSave hooks: commands verified, live trigger needs a user editor save (unresolved) |
 | 7 | G0 Device Lab workflows unaffected | Adapters gained optional `DL_APP_*` overrides | - | Defaults unchanged; `android` and `ios-simulator` pass on the PR (see PR checks) |
 | 8 | CI on final PR commit | - | CI also runs `verify` and prints the fresh manifest hash | See PR checks |
+
+Found while verifying item 8: CI run 42995665802 failed its iOS log assertion although every Device
+Lab op succeeded and the screenshot shows "verified". The app logged its integrity result at
+`.info`, which unified logging keeps only in memory, and `log show` ran 71 s after launch. The
+template now logs at `.notice` (persisted). Evidence:
+`docs/evidence/g1-ios-simulator-ci/run-42995665802-log-dropped/`.
 
 Other hardening found on the way: deeply nested JSON raised a raw `RecursionError` (now
 `json.depth`); non-ASCII in error messages could break on non-UTF-8 consoles (messages are now

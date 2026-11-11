@@ -8,7 +8,9 @@ private let log = Logger(subsystem: "app.monstera.sample", category: "spec")
 struct MonsteraSampleApp: App {
     init() {
         let integrity = SpecIntegrity.check()
-        log.info("spec sha256=\(GeneratedSpec.sha256, privacy: .public) bundledMatches=\(integrity.hashMatches, privacy: .public) decodedMatches=\(integrity.decodedMatches, privacy: .public)")
+        // .notice, not .info: info messages live only in a memory buffer and can be gone by the
+        // time Device Lab runs `log show` (seen in CI run 42995665802). Notice is persisted.
+        log.notice("spec sha256=\(GeneratedSpec.sha256, privacy: .public) bundledMatches=\(integrity.hashMatches, privacy: .public) decodedMatches=\(integrity.decodedMatches, privacy: .public)")
     }
 
     var body: some Scene {
