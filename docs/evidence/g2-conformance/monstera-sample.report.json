@@ -1,7 +1,7 @@
 {
   "platforms": [
     {
-      "detail": "monstera.oracle in-process",
+      "detail": "monstera.oracle in-process (compared with its own recording)",
       "platform": "oracle",
       "status": "pass"
     },

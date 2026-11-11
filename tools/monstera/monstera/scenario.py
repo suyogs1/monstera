@@ -4,12 +4,13 @@ Contract: architecture/RUNTIME-CONTRACT.md section 7. Expected checkpoints are p
 """
 from __future__ import annotations
 
+import os
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
 from . import targets
-from .jsonio import LoadError, canonical_text, load_path
+from .jsonio import LoadError, canonical_text, load_path, sha256_hex
 from .oracle import loop, sim
 from .schema import Issue, SchemaStore
 from .validate import validate_path
@@ -18,6 +19,12 @@ SCENARIO_SCHEMA = "scenario.schema.json"
 SUFFIX = ".scenario.json"
 SCENARIOS = targets.REPO_ROOT / "spec" / "scenarios"
 OBSERVABLES = ("tick", "score", "lives", "entityCount", "ended", "nextId")
+# Upper bound on the oracle work a scenario may demand: ticks x rules x maxEntities^2 pair tests.
+# The largest committed scenario (20000 ticks, 64 entities, 3 rules) is about 2.5e8.
+MAX_ORACLE_WORK = 5_000_000_000
+# Issue codes that describe expected checkpoints or staleness, which `record` is about to rewrite.
+RECORDING_CODES = frozenset({"scenario.spec-stale", "scenario.checkpoint-order", "scenario.checkpoint-range",
+                             "scenario.final-checkpoint"})
 
 
 @dataclass(frozen=True)
@@ -85,12 +92,23 @@ def validate(path: Path, store: SchemaStore) -> tuple[dict[str, Any] | None, lis
     last = -1
     for i, cp in enumerate(data["checkpoints"]):
         if cp["tick"] <= last:
-            out.append(Issue(f"$.checkpoints[{i}].tick", "scenario.order", "checkpoint ticks must be strictly ascending"))
+            out.append(Issue(f"$.checkpoints[{i}].tick", "scenario.checkpoint-order", "checkpoint ticks must be strictly ascending"))
         if cp["tick"] > data["ticks"]:
-            out.append(Issue(f"$.checkpoints[{i}].tick", "scenario.range", f"tick {cp['tick']} exceeds ticks {data['ticks']}"))
+            out.append(Issue(f"$.checkpoints[{i}].tick", "scenario.checkpoint-range", f"tick {cp['tick']} exceeds ticks {data['ticks']}"))
         last = cp["tick"]
-    _, spec_issues = _spec_for(data, store)
+    if data["checkpoints"] and data["checkpoints"][-1]["tick"] != data["ticks"]:
+        out.append(Issue("$.checkpoints", "scenario.final-checkpoint",
+                         f"the last checkpoint must be at tick {data['ticks']}; a scenario cut short is not a test"))
+    result, spec_issues = _spec_for(data, store)
     out += spec_issues
+    if result is not None:
+        game = result.spec["game"]
+        steps = frames["count"] * game["simulation"]["maxTicksPerFrame"] if frames["count"] > 0 else data["ticks"]
+        work = steps * max(1, len(game["runtime"]["collisions"])) * game["runtime"]["maxEntities"] ** 2
+        if work > MAX_ORACLE_WORK:
+            out.append(Issue("$.ticks", "scenario.cost",
+                             f"worst-case oracle work {work:.2e} exceeds {MAX_ORACLE_WORK:.0e} "
+                             "(ticks x rules x maxEntities^2); shorten the scenario or reduce the entity cap"))
     return data, sorted(set(out))
 
 
@@ -114,16 +132,22 @@ def record(path: Path, store: SchemaStore) -> list[Issue]:
         data = load_path(path)
     except LoadError as exc:
         return [Issue(path.name, exc.code, exc.message)]
-    issues = store.validate(data, SCENARIO_SCHEMA)
-    if issues:
-        return issues
+    _, found = validate(path, store)
+    blocking = [i for i in found if i.code not in RECORDING_CODES]
+    if blocking:  # never record checkpoints for a scenario that validation rejects
+        return blocking
     spec_path = (targets.REPO_ROOT / data["spec"]["path"]).resolve()
     result = validate_path(spec_path, store)
-    if not result.ok:
-        return [Issue("$.spec.path", "scenario.spec-invalid", f"{data['spec']['path']} is not a valid specification")]
     data["spec"]["sha256"] = result.sha256
     data["checkpoints"] = oracle_checkpoints(data, store, checkpoint_ticks(data["ticks"]))
-    path.write_bytes(canonical_text(data).encode("utf-8"))
+    # Replace atomically: an interrupted write must not destroy the committed golden file.
+    temp = path.with_name(f".{path.name}.monstera-tmp")
+    try:
+        temp.write_bytes(canonical_text(data).encode("utf-8"))
+        os.replace(temp, path)
+    finally:
+        if temp.exists():
+            temp.unlink()
     return []
 
 
@@ -144,6 +168,17 @@ def check(path: Path, store: SchemaStore) -> list[Issue]:
     return []
 
 
+_CHECKED: dict[tuple[str, str], list[Issue]] = {}
+
+
+def _checked(path: Path, spec_sha: str, store: SchemaStore) -> list[Issue]:
+    """check() cached by (scenario bytes, spec sha): the oracle is deterministic, so the result is too."""
+    key = (sha256_hex(path.read_bytes()), spec_sha)
+    if key not in _CHECKED:
+        _CHECKED[key] = check(path, store)
+    return _CHECKED[key]
+
+
 def load_for_project(project_id: str, spec_sha: str, store: SchemaStore) -> list[dict[str, Any]]:
     """Validated scenarios recorded against exactly this spec, sorted by name. Raises ValueError on
     any invalid or stale scenario so generation never embeds a scenario that does not apply."""
@@ -156,5 +191,9 @@ def load_for_project(project_id: str, spec_sha: str, store: SchemaStore) -> list
             raise ValueError(f"{path.name}: no checkpoints; run `monstera scenarios record`")
         if data["spec"]["sha256"] != spec_sha:
             raise ValueError(f"{path.name}: recorded against a different spec; run `monstera scenarios record`")
+        # Goldens come only from `monstera scenarios record`: a hand-edited checkpoint must never be embedded.
+        found = _checked(path, spec_sha, store)
+        if found:
+            raise ValueError(f"{path.name}: " + "; ".join(map(str, found)))
         loaded.append(data)
     return loaded

@@ -26,7 +26,7 @@ Docker Desktop with `swift:6.1-noble`). "CI" means GitHub Actions on the PR. A c
 | 29 simulation mutants and 7 loop mutants | killed | `tools/monstera/tests/test_mutations.py`; the 5 state-affecting loop mutants die on the recorded scenarios alone |
 | Hand-computed edge expectations | tested | `tools/monstera/tests/test_boundary_lab.py` |
 
-Test counts at the time of writing: engine 182, MCP 26, gates 12/12.
+Test counts at the time of writing: engine 196, MCP 30, gates 12/12.
 
 ## Limitations (explicit)
 
@@ -47,6 +47,20 @@ Test counts at the time of writing: engine 182, MCP 26, gates 12/12.
 - The frame-duration generator produced only 4 to 12 ms frames, so the "hitch" scenario never hitched; the negative proof exposed it, the generator was fixed and the scenarios were re-recorded.
 - Architecture review (workflow `monstera-adversarial-review`): the frame loop had no recorded scenario (added 4), the MCP security document contradicted `run_conformance` (updated; the container now has no network and a read-only source mount), duplicate `junit` pin in `toolchain.json` (removed; the loader now rejects duplicate keys), stale architecture docs, un-hoisted Compose state (hoisted into `GameSession`).
 
+## Review (workflow `monstera-adversarial-review`, target 847e491)
+
+The review reported 20 issues and 7 blockers. All 7 blockers and the rest were fixed, each with a regression test (the
+reviewer's tests are `tools/monstera/tests/test_adversarial_g2.py` and `tools/monstera-mcp/tests/test_adversarial_g2.py`):
+
+- oracle-only conformance reported PASS: the verdict is now `pass` only with oracle, Kotlin and Swift all run and matching, otherwise `incomplete`;
+- conformance ran unchecked, edited sources and accepted a manifest without scenario resources: it now calls `verify` first, requires the resource, and computes the runtime digests from the files;
+- generation embedded a hand-edited golden checkpoint: embedding now requires the checkpoints to equal a fresh oracle run;
+- truncated scenarios, `record` on invalid scenarios, non-atomic `record`, unbounded oracle cost, malformed or duplicated platform output, wrong-typed MCP arguments, NaN in specs, and purity-guard gaps (float conversions and literals, nested core directories) are rejected or detected;
+- the architecture findings (no frame-loop scenario, MCP security document, stale report and evidence pairs, unpinned Swift image, duplicate `junit` key, unhoisted Compose state, stale docs) are fixed as described above.
+
+Not covered by the review or by any test: concurrent runs on one directory, and behaviour of the u32 `tick`/`nextId`/`age` counters near 2^32.
+The differential fuzz the reviewer ran (10,139 trace lines, identical on Kotlin and Swift) is a one-off result, not a committed check.
+
 ## CI
 
-Recorded in the PR after the final push; see the PR checks and the section appended below.
+Recorded below after the final push.

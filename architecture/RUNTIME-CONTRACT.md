@@ -184,4 +184,9 @@ A platform **conforms** when, for every scenario applicable to the spec, every c
 every observable equal the expected values, and its report names no divergence. A divergence report
 names the scenario, the first differing checkpoint tick, the platform and the differing fields. The
 oracle itself is validated by section 3 vectors, its unit tests, and by agreeing with both native cores.
+The verdict is `pass` only when the oracle, Kotlin and Swift all ran against generated sources that equal their manifest and
+every checkpoint matched; `fail` for any divergence or platform error; `incomplete` when a platform was skipped or not
+requested (an oracle-only run compares the oracle with its own recording and proves nothing about the native cores).
+Embedded scenarios are accepted for generation only if their checkpoints equal a fresh oracle run, and a scenario is
+rejected when its last checkpoint is not at its last tick or its worst-case oracle work exceeds a fixed bound.
 Conformance runs Kotlin on the JVM (`testDebugUnitTest`, no emulator) and Swift via `swift test`.

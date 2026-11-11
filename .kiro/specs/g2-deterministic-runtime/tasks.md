@@ -16,6 +16,6 @@ Status: **APPROVED 2026-11-11, in progress** (core, scenarios and conformance do
 - [x] 11. CI (green on PR #4; see docs/G2-RUNTIME-REPORT.md): `conformance` job (Linux: oracle + Kotlin JVM + Swift Linux; macOS: Swift + simulator smoke) [R10.1]
 - [x] 12. Kiro: `run_conformance` MCP tool, workflow step update, `scenario-validate-on-save` hook [R10.2–R10.4]
 - [x] 13. Negative proof: inject a deliberate divergence (e.g. float in Swift core) in a test branch; conformance must fail with the right tick and field; record the evidence [R9.2]
-- [ ] 14. (open) Adversarial review (`monstera-adversarial-review`) and release verification (`monstera-release-verification`); `docs/G2-RUNTIME-REPORT.md` with labels and evidence [all]
+- [~] 14. (adversarial review and mutation testing done; release verification pending) Adversarial review (`monstera-adversarial-review`) and release verification (`monstera-release-verification`); `docs/G2-RUNTIME-REPORT.md` with labels and evidence [all]
 
 Notes (2026-11-11): the oracle also covers D4 as designed. Deviations from the design: scenarios are embedded as a text resource instead of Kotlin/Swift source (JVM method-size limit); runtime config sits in game.input and game.runtime; a second sample spec, boundary-lab, holds hand-verifiable edge cases (task 10 exceeded: 14 scenarios over two specs). Task 12 hook and MCP tool are done; the workflow step already called conformance.

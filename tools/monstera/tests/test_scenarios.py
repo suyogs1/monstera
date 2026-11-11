@@ -3,6 +3,7 @@ behaviours the committed scenarios actually exercise."""
 from __future__ import annotations
 
 import json
+from unittest import mock
 import shutil
 import tempfile
 import unittest
@@ -72,7 +73,7 @@ class ScenarioFiles(Base):
         def reverse_inputs(d): d["inputs"].reverse()
         self.assertIn("scenario.order", self.codes(self.tmp_copy("monstera-sample", "input-order", reverse_inputs)))
         self.assertIn("scenario.range", self.codes(self.tmp_copy("monstera-sample", "input-order", lambda d: d["inputs"][-1].update(tick=d["ticks"]))))
-        self.assertIn("scenario.range", self.codes(self.tmp_copy("monstera-sample", "input-order", lambda d: d["checkpoints"][-1].update(tick=d["ticks"] + 1))))
+        self.assertIn("scenario.checkpoint-range", self.codes(self.tmp_copy("monstera-sample", "input-order", lambda d: d["checkpoints"][-1].update(tick=d["ticks"] + 1))))
         path = self.tmp_copy("monstera-sample", "input-order")
         renamed = path.with_name("other.scenario.json")
         path.rename(renamed)
@@ -136,7 +137,7 @@ class ConformanceComparison(Base):
     def test_oracle_only_run_produces_a_schema_valid_report(self) -> None:
         report = conformance.run(REPO / "generated" / "monstera-sample", self.store, ["oracle"])
         self.assertEqual(self.store.validate(report, "conformance.schema.json"), [])
-        self.assertEqual(report["verdict"], "pass")
+        self.assertEqual(report["verdict"], "incomplete", "the oracle alone is compared with its own recording")
         self.assertTrue(any(d["path"].endswith("Simulation.kt") for d in report["runtimeDigests"]))
         self.assertTrue(any(d["path"].endswith("Simulation.swift") for d in report["runtimeDigests"]))
         self.assertEqual({s["name"] for s in report["scenarios"]},
@@ -153,16 +154,28 @@ class ConformanceComparison(Base):
                 conformance.run(gen, self.store, ["swift"], image)
 
     def test_a_skipped_platform_is_incomplete_not_pass(self) -> None:
-        # Pointing at a directory with no android/ios packages: both native platforms are skipped.
-        tmp = Path(tempfile.mkdtemp())
-        self.addCleanup(shutil.rmtree, tmp, True)
-        src = REPO / "generated" / "monstera-sample"
-        shutil.copy(src / generate.MANIFEST, tmp / generate.MANIFEST)
-        report = conformance.run(tmp, self.store, ["oracle", "kotlin", "swift"])
+        gen = REPO / "generated" / "monstera-sample"
+        with mock.patch.object(conformance, "_kotlin", return_value=("skipped", "no gradle")), \
+                mock.patch.object(conformance, "_swift", return_value=("skipped", "no swift")):
+            report = conformance.run(gen, self.store, ["oracle", "kotlin", "swift"])
         self.assertEqual({p["platform"]: p["status"] for p in report["platforms"]},
                          {"oracle": "pass", "kotlin": "skipped", "swift": "skipped"})
         self.assertEqual(report["verdict"], "incomplete")
 
+    def test_all_three_platforms_passing_is_the_only_pass(self) -> None:
+        gen = REPO / "generated" / "monstera-sample"
+        def fake(gen_, out_file, *rest):
+            platform = "kotlin" if "android" in str(out_file) or out_file.name.startswith("kotlin") else "swift"
+            lines = []
+            for sc in scenario.load_for_project("monstera-sample", json.loads((gen / generate.MANIFEST).read_text())["spec"]["sha256"], self.store):
+                for c in sc["checkpoints"]:
+                    lines.append(json.dumps({"platform": platform, "scenario": sc["name"], "tick": c["tick"], "hash": c["hash"],
+                                             "observe": [c["observe"][k] for k in scenario.OBSERVABLES]}))
+            out_file.write_text("\n".join(lines) + "\n", encoding="utf-8")
+            return "pass", "stub"
+        with mock.patch.object(conformance, "_kotlin", side_effect=fake), mock.patch.object(conformance, "_swift", side_effect=fake):
+            report = conformance.run(gen, self.store, ["oracle", "kotlin", "swift"])
+        self.assertEqual(report["verdict"], "pass")
 
 class WhatTheScenariosExercise(Base):
     """Guards against scenarios that pass without exercising the behaviour they claim to."""

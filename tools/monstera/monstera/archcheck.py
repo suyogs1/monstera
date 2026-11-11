@@ -147,14 +147,16 @@ def _check_ci_file(rel: str, text: str, is_workflow: bool) -> list[Violation]:
 
 # The deterministic runtime core (architecture/RUNTIME-CONTRACT.md): platform-free, float-free, clock-free.
 _CORE_PATH = re.compile(
-    r"^(?:apps|generated|reference)/[^/]+/(?:android/app/src/main/kotlin/(?:[^/]+/)*runtime/[^/]+\.kt"
-    r"|ios/Runtime/Sources/[^/]+/[^/]+\.swift)$")
+    r"^(?:apps|generated|reference)/[^/]+/(?:android/app/src/main/kotlin/(?:[^/]+/)*runtime/(?:[^/]+/)*[^/]+\.kt"
+    r"|ios/Runtime/Sources/[^/]+/(?:[^/]+/)*[^/]+\.swift)$")
 _COMMENTS = re.compile(r"//[^\n]*|/\*.*?\*/", re.S)
 _CORE_RULES: list[tuple[str, re.Pattern[str]]] = [
     ("platform import (android/androidx/Compose/SwiftUI/UIKit/SpriteKit/Foundation/CoreGraphics)",
      re.compile(r"^\s*import\s+(?:android\.|androidx\.|SwiftUI|UIKit|SpriteKit|Foundation|CoreGraphics|Dispatch)", re.M)),
     ("floating point type", re.compile(r"\b(?:Double|Float|CGFloat|Float32|Float64|Float80)\b")),
     ("floating point literal", re.compile(r"(?<![\w.])\d+\.\d+(?:[eE][+-]?\d+)?[fF]?\b")),
+    ("floating point conversion or literal", re.compile(r"\.to(?:Double|Float)\s*\(|\b\d+(?:\.\d+)?[fF]\b|\b\d+(?:\.\d+)?[eE][+-]?\d+\b|\.squareRoot\s*\(|\bDouble\s*\(|\bFloat\s*\(")),
+    ("hash-order or system random collection helper", re.compile(r"\.shuffled?\s*\(|\.randomElement\s*\(|\bshuffle\s*\(")),
     ("floating point math", re.compile(r"\b(?:kotlin\.math|java\.lang\.Math|StrictMath|sqrt|sin|cos|atan2|pow)\s*\(")),
     ("wall-clock time", re.compile(r"System\.(?:currentTimeMillis|nanoTime)|SystemClock|\bDate\s*\(|ProcessInfo|DispatchTime|\bClock\b|\bInstant\b")),
     ("system randomness", re.compile(r"kotlin\.random|java\.util\.Random|SecureRandom|\bRandom\s*\.|arc4random|SystemRandomNumberGenerator|\.random\s*\(")),

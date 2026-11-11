@@ -69,7 +69,8 @@ class ProtocolTests(unittest.TestCase):
 
     def test_run_conformance_over_the_protocol(self) -> None:
         out = _payload(self.calls["run_conformance"])
-        self.assertEqual(out["report"]["verdict"], "pass")
+        self.assertEqual(out["report"]["verdict"], "incomplete", "oracle-only is never a pass")
+        self.assertNotIn("PASS", out["summary"][0])
         self.assertEqual([p["platform"] for p in out["report"]["platforms"]], ["oracle"])
         self.assertTrue(self.calls["refused_image"].is_error, "only official swift image tags are allowed")
 
