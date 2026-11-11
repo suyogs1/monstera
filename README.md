@@ -13,8 +13,15 @@ iOS. No React Native, Expo, Flutter or other cross-platform rendering framework.
 
 ## Status: Phase 0 (toolchain proof)
 
-See [docs/G0-TOOLCHAIN-REPORT.md](docs/G0-TOOLCHAIN-REPORT.md) for what is actually verified, and
-[docs/PHASE-0.md](docs/PHASE-0.md) for the completion criteria.
+| Path | Verification |
+|---|---|
+| Android on emulator (Windows and Linux CI) | SIMULATOR-TESTED |
+| iOS on Simulator (hosted macOS CI) | SIMULATOR-TESTED |
+| iOS built on Linux with xtool (unsigned) | COMPILED |
+| Any physical Android or iOS device | **Not tested** |
+
+Details and evidence: [docs/G0-TOOLCHAIN-REPORT.md](docs/G0-TOOLCHAIN-REPORT.md). Completion
+criteria: [docs/PHASE-0.md](docs/PHASE-0.md).
 
 ## Layout
 
@@ -31,7 +38,7 @@ See [docs/G0-TOOLCHAIN-REPORT.md](docs/G0-TOOLCHAIN-REPORT.md) for what is actua
 | `architecture/` | Architecture documents |
 | `docs/` | Reports, decisions, curated evidence (`docs/evidence/`) |
 | `assets/` | Game assets with provenance records (empty in Phase 0) |
-| `.github/workflows/` | CI: Android build/emulator on Linux, iOS Simulator on macOS |
+| `.github/workflows/` | CI: `android` (Linux emulator), `ios-simulator` (hosted macOS), `xtool-linux` (experimental, manual trigger only) |
 
 ## Quick start
 

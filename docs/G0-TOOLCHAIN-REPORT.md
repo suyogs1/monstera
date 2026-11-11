@@ -13,7 +13,7 @@ SIMULATOR-TESTED < PHYSICAL-DEVICE-TESTED. Each row gets the highest label with 
 | Android, Linux (GitHub Actions), emulator | **SIMULATOR-TESTED** | `docs/evidence/android-emulator-linux-ci/` (run 42969821785; passed again in run 42972339283) |
 | Android, physical device | COMPILED (same APK) | no device run |
 | iOS, hosted macOS, xtool build for simulator | **SIMULATOR-TESTED** | `docs/evidence/ios-simulator-ci/`, run 42972339058 |
-| iOS, Linux, xtool unsigned device build | **COMPILED** | `docs/evidence/xtool-linux/`, run 42972339280 |
+| iOS, Linux, xtool unsigned device build | **COMPILED** (historical; CI SDK transfer since disabled) | `docs/evidence/xtool-linux/`, run 42972339280 |
 | iOS, physical iPhone via xtool | COMPILED (unsigned build only) | not attempted: needs Apple ID + iPhone |
 | Device Lab contract and adapters | GENERATED (contract); ops proven per row above | `architecture/DEVICE-LAB.md`, `device-lab/` |
 
@@ -87,9 +87,13 @@ Full record: [XTOOL-EXPERIMENT.md](XTOOL-EXPERIMENT.md).
 - Launched: **no**. There is no simulator on Linux, and device deploy needs signing.
 - Device tested: none.
 - Screenshot: no.
-- Known limitations: Swift 6.4.2 (Linux) vs Xcode 26.6 / Swift 6.3.3 (SDK) skew. Unsigned. The
-  CI SDK hand-off raises a licensing question for the owner (see the experiment doc). Locally,
-  Linux needs an Apple ID to download `Xcode.xip`.
+- Known limitations: Swift 6.4.2 (Linux) vs Xcode 26.6 / Swift 6.3.3 (SDK) skew. Unsigned.
+  Locally, Linux needs an Apple ID to download `Xcode.xip`.
+- **G0 review action:** the CI SDK hand-off (macOS runner to Linux runner) is **disabled**
+  because its licensing is unresolved. The two SDK artifacts were deleted. `xtool-linux.yml` is now
+  an opt-in, manual-trigger experiment that never handles Apple SDK material; it builds only
+  on a runner with a developer-installed SDK. The COMPILED result is preserved as historical
+  evidence and is reproducible only with the documented setup (your own Xcode download).
 - Next action: physical iPhone test via `xtool dev` (needs **Apple ID + iPhone + USB** from the
   user); record free-account limits observed.
 
@@ -98,7 +102,9 @@ Full record: [XTOOL-EXPERIMENT.md](XTOOL-EXPERIMENT.md).
 - Contract: `device-lab/contract/README.md`, `result.schema.json`. Design: `architecture/DEVICE-LAB.md`.
 - `android-emulator`: all ops except `test` proven (local + Linux CI).
 - `ios-simulator`: build, install, launch, stop, screenshot, logs, report proven in CI.
-- `android-device`, `ios-device`: interfaces defined, never run.
+  **`test` is unsupported: there are no automated iOS tests.**
+- `android-device`, `ios-device`: implemented, never run.
+- Per-op matrix: `architecture/DEVICE-LAB.md`, "Implementation and verification matrix".
 
 ## G0 completion criteria (`docs/PHASE-0.md`)
 
@@ -108,10 +114,11 @@ Full record: [XTOOL-EXPERIMENT.md](XTOOL-EXPERIMENT.md).
 | 2 | Kiro steering and project instructions present | Met (`.kiro/steering/`, `.kiro/agents/`) |
 | 3 | Android APK builds | Met (local + Linux CI) |
 | 4 | Android app launches in an emulator | Met (local + Linux CI) |
-| 5 | xtool experiment documented and reproducible | Met (COMPILED on Linux; device deploy not attempted) |
+| 5 | xtool experiment documented and reproducible | Met (COMPILED on Linux; reproducible with your own Xcode download; CI transfer disabled; device deploy not attempted) |
 | 6 | Hosted macOS iOS Simulator build proven | Met |
 | 7 | Device Lab interfaces documented | Met |
 | 8 | G0 report accurate | This document; audit with the `report-auditor` agent |
 
-Open items, none of which block G0: physical Android, physical iPhone (needs user credentials
-and hardware), automated `test` op, licensing decision on the CI SDK hand-off.
+G0 review decision (2026-11-11): substantially successful. Open items, none of which block G0:
+physical Android, physical iPhone (needs user credentials and hardware), automated `test` op on
+both platforms, licensing decision before any CI use of Apple SDK material on Linux.
