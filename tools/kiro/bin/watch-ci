@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+# Kiro workflow watch handler wrapper. Workflows call it through Git's shell so the same command
+# works under PowerShell and POSIX shells:  git -c alias.watch-ci=!tools/kiro/bin/watch-ci watch-ci
+set -euo pipefail
+here="$(cd "$(dirname "$0")/.." && pwd)"
+probe='import sys; sys.exit(0 if sys.version_info >= (3, 10) else 1)'
+for candidate in "python3" "python" "py -3"; do
+  # shellcheck disable=SC2086 # "py -3" must split into command + flag
+  if $candidate -c "$probe" >/dev/null 2>&1; then
+    # shellcheck disable=SC2086
+    exec $candidate "$here/watch_ci.py"
+  fi
+done
+echo "watch-ci: Python 3.10+ not found" >&2
+exit 2

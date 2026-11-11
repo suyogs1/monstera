@@ -35,3 +35,6 @@ device-lab/reports/runs/
 # Python (tools/monstera)
 __pycache__/
 *.pyc
+
+# Kiro workflow scratch output (curated evidence is copied to docs/evidence/)
+.kiro/workflow-output/

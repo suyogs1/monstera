@@ -1,0 +1,55 @@
+{
+  "name": "monstera-feature",
+  "description": "Implement one task from a Kiro Spec: plan, implement, independent review loop, quality gates.",
+  "inputs": {
+    "kiro_spec": "string",
+    "task": "prompt"
+  },
+  "steps": [
+    {
+      "type": "step",
+      "id": "plan",
+      "agent": "wf-planner",
+      "prompt": "Delete .kiro/workflow-output/feature/ if it exists. Read .kiro/steering/*.md and the Kiro Spec .kiro/specs/{{kiro_spec}}/ (requirements.md, design.md, tasks.md). Task: {{task}}. Write an ordered plan to .kiro/workflow-output/feature/plan.md: files to change, tests to add, and the requirement IDs each change satisfies. The Kiro Spec is not monstera.spec.json; do not confuse them. Do not edit source files.",
+      "artifacts": {
+        "plan": ".kiro/workflow-output/feature/plan.md"
+      }
+    },
+    {
+      "type": "repeat",
+      "id": "implement-review",
+      "maxIterations": 3,
+      "onMaxIterations": "pause",
+      "stopCondition": {
+        "fileCheck": {
+          "path": ".kiro/workflow-output/feature/verdict.json",
+          "jsonPath": "verdict",
+          "value": "APPROVED"
+        }
+      },
+      "steps": [
+        {
+          "type": "step",
+          "id": "implement",
+          "agent": "wf-coder",
+          "prompt": "Implement the plan in {{artifacts.plan}}. If .kiro/workflow-output/feature/review.md exists, first fix every blocking finding in it. Never edit generator-owned output by hand: change the spec or templates and run the generator. Run the unit tests. Commit with a message citing the requirement IDs."
+        },
+        {
+          "type": "step",
+          "id": "review",
+          "agent": "wf-code-reviewer",
+          "prompt": "Review the commits made for {{artifacts.plan}} against .kiro/specs/{{kiro_spec}}/requirements.md and .kiro/steering/*.md. Write findings to .kiro/workflow-output/feature/review.md. Write {\"verdict\":\"APPROVED\"} or {\"verdict\":\"CHANGES_REQUESTED\"} to .kiro/workflow-output/feature/verdict.json."
+        }
+      ]
+    },
+    {
+      "type": "step",
+      "id": "gates",
+      "agent": "wf-coder",
+      "prompt": "Run `tools/monstera/bin/monstera gates` (Windows: `py -3 tools/monstera/monstera.py gates`) and save its full output to .kiro/workflow-output/feature/gates.txt. Mark the task complete in .kiro/specs/{{kiro_spec}}/tasks.md only if every gate passed; otherwise report the failing gates and leave it open.",
+      "artifacts": {
+        "gates": ".kiro/workflow-output/feature/gates.txt"
+      }
+    }
+  ]
+}

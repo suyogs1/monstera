@@ -21,8 +21,36 @@ HOOK_TRIGGERS = {"PreToolUse", "PostToolUse", "SessionStart", "Stop", "UserPromp
 NODE_FIELDS = {"step": ["id", "agent", "prompt"], "sequence": ["id", "steps"],
                "repeat": ["id", "steps", "maxIterations", "onMaxIterations"],
                "parallel": ["id", "branches", "joinPolicy"], "watch": ["id", "handler", "config"]}
+# Scratch output written by workflow runs; curated evidence is copied to docs/evidence/.
+IGNORABLE_KIRO_PATHS = {".kiro/workflow-output"}
+KIRO_CONFIG_DIRS = ("steering", "specs", "agents", "hooks", "prompts", "workflows", "settings", "skills")
 REQUIRED_PROMPTS = {"architecture-review", "native-implementation", "debugging", "conformance-review",
                     "security-dependency-review"}
+
+
+def _ignored_kiro_paths(root: Path) -> list[str]:
+    """Ask git itself (not a re-implementation of gitignore globbing) whether any .kiro path is
+    ignored. Probes every existing .kiro file plus one placeholder per Kiro configuration
+    directory, so an ignore rule is caught even before the first file in it exists."""
+    import subprocess
+
+    kiro = root / ".kiro"
+    probes = {p.relative_to(root).as_posix() for p in kiro.rglob("*") if p.is_file()} if kiro.exists() else set()
+    probes |= {f".kiro/{d}/probe.md" for d in KIRO_CONFIG_DIRS} | {".kiro/probe.md"}
+    probes = {p for p in probes
+              if not any(p == i or p.startswith(i + "/") for i in IGNORABLE_KIRO_PATHS)}
+    try:
+        # Paths as arguments, not --stdin: on Windows `--stdin` matched nothing in testing even for
+        # a path that the argument form reported as ignored.
+        proc = subprocess.run(["git", "check-ignore", "--no-index", "--", *sorted(probes)], cwd=root,
+                              capture_output=True, text=True)
+    except OSError:
+        return ["kiro-config: git is not available to check .gitignore"]
+    if proc.returncode not in (0, 1):  # 1 = nothing ignored; 128 = not a git repository
+        return [] if "not a git repository" in proc.stderr else [f"git check-ignore failed: {proc.stderr.strip()}"]
+    ignored = sorted(line for line in proc.stdout.splitlines() if line)
+    return [f".gitignore ignores {path}: .kiro and its configuration must stay committed "
+            f"(only {sorted(IGNORABLE_KIRO_PATHS)} may be ignored)" for path in ignored]
 
 
 def _load(path: Path, problems: list[str]) -> Any:
@@ -89,12 +117,7 @@ def check(root: Path) -> list[str]:
     problems: list[str] = []
     kiro = root / ".kiro"
 
-    gitignore = root / ".gitignore"
-    if gitignore.exists():
-        for line in gitignore.read_text(encoding="utf-8").splitlines():
-            entry = line.strip()
-            if entry and not entry.startswith(("#", "!")) and entry.lstrip("/").startswith(".kiro"):
-                problems.append(f".gitignore ignores '{entry}': .kiro must stay committed (Kiroween rule)")
+    problems += _ignored_kiro_paths(root)
 
     agents: set[str] = set()
     for path in sorted((kiro / "agents").glob("*.json")):

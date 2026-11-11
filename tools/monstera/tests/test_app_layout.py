@@ -275,10 +275,27 @@ class CiSafetyRuleTests(unittest.TestCase):
 
 
 class KiroConfigTests(unittest.TestCase):
-    def test_gitignoring_kiro_is_rejected(self) -> None:
+    def _ignore_problems(self, gitignore: str) -> list[str]:
+        import subprocess
         with tempfile.TemporaryDirectory() as tmp:
-            Path(tmp, ".gitignore").write_text(".kiro/\n", encoding="utf-8")
-            self.assertTrue(any(".kiro must stay committed" in p for p in kirocheck.check(Path(tmp))))
+            subprocess.run(["git", "init", "-q", tmp], check=True)
+            Path(tmp, ".kiro", "steering").mkdir(parents=True)
+            Path(tmp, ".kiro", "steering", "01.md").write_text("x", encoding="utf-8")
+            Path(tmp, ".kiro", "hooks").mkdir()
+            Path(tmp, ".kiro", "hooks", "h.json").write_text("{}", encoding="utf-8")  # real files are probed
+            Path(tmp, ".gitignore").write_text(gitignore, encoding="utf-8")
+            return [p for p in kirocheck.check(Path(tmp)) if ".gitignore" in p]
+
+    def test_gitignoring_kiro_config_is_rejected(self) -> None:
+        for entry in (".kiro/", "/.kiro", ".kiro/steering/", ".kiro/specs", ".kiro/hooks/*", ".kiro*",
+                      "*", "**/*.md", ".*", "*.json"):
+            with self.subTest(entry):
+                self.assertTrue(self._ignore_problems(entry + "\n"), entry)
+
+    def test_scratch_output_and_unrelated_patterns_may_be_ignored(self) -> None:
+        allowed = (".kiro/workflow-output/\n# .kiro/ comment\n*.apk\n*.iml\nbuild/\n"
+                   "generated/**/.bsp/\napps/*/ios/.bsp/\n__pycache__/\n")
+        self.assertEqual(self._ignore_problems(allowed), [])
 
     def test_workflow_lint_catches_structural_errors(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

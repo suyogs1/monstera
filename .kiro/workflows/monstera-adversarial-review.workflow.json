@@ -1,0 +1,35 @@
+{
+  "name": "monstera-adversarial-review",
+  "description": "Attack a change (probes that try to break its guarantees) in parallel with an independent architecture review; merge into one issues-only report.",
+  "inputs": {
+    "target": "string",
+    "guarantees": "prompt"
+  },
+  "steps": [
+    {
+      "type": "parallel",
+      "id": "review",
+      "joinPolicy": "allSettled",
+      "branches": [
+        {
+          "type": "step",
+          "id": "attack",
+          "agent": "wf-coder",
+          "prompt": "Target: {{target}}. Guarantees to attack: {{guarantees}}. For each guarantee, write and run probes that try to violate it (malformed inputs, path tricks, overwrite and ownership attacks, schema evolution, cross-OS bytes, concurrency/interruption). Work only in a temporary directory outside the repository and do not modify tracked files. For each successful attack, write a failing regression test into .kiro/workflow-output/adversarial/tests.patch. Write .kiro/workflow-output/adversarial/attack.md: probe, expected, observed, verdict."
+        },
+        {
+          "type": "step",
+          "id": "architecture",
+          "agent": "semantic_reviewer",
+          "prompt": "Review {{target}} against .kiro/steering/*.md and architecture/*.md. Report rule violations only (not style), each with location and evidence, to .kiro/workflow-output/adversarial/architecture.md."
+        }
+      ]
+    },
+    {
+      "type": "step",
+      "id": "aggregate",
+      "agent": "wf-review-aggregator",
+      "prompt": "Merge .kiro/workflow-output/adversarial/attack.md and architecture.md into .kiro/workflow-output/adversarial/report.md. Issues only, ranked by impact, each with reproduction and the proposed regression test from tests.patch. End with BLOCKERS: <n>."
+    }
+  ]
+}

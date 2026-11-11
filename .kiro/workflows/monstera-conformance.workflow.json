@@ -1,0 +1,43 @@
+{
+  "name": "monstera-conformance",
+  "description": "Prove the Kotlin and Swift outputs of one spec behave identically, then have two independent reviewers check the result.",
+  "inputs": {
+    "app": "string"
+  },
+  "steps": [
+    {
+      "type": "step",
+      "id": "run",
+      "agent": "wf-coder",
+      "prompt": "For the generated app at {{app}}: (1) `monstera verify {{app}}`; (2) confirm both bundled monstera.spec.json copies are byte-identical and hash to the manifest's spec sha256; (3) from G2 on, run `monstera conformance {{app}}` (golden scenarios on Kotlin/JVM and Swift). Write .kiro/workflow-output/conformance/result.json and paste its summary as your final message.",
+      "artifacts": {
+        "result": ".kiro/workflow-output/conformance/result.json"
+      }
+    },
+    {
+      "type": "parallel",
+      "id": "reviews",
+      "joinPolicy": "allSettled",
+      "branches": [
+        {
+          "type": "step",
+          "id": "review-kotlin-first",
+          "agent": "semantic_reviewer",
+          "prompt": "Using {{artifacts.result}}, read the Kotlin runtime/shell under {{app}}/android and check that the Swift side under {{app}}/ios implements the same contract (steering 08). List every behavioural divergence with file and line. Write .kiro/workflow-output/conformance/review-kotlin-first.md."
+        },
+        {
+          "type": "step",
+          "id": "review-swift-first",
+          "agent": "semantic_reviewer",
+          "prompt": "Using {{artifacts.result}}, read the Swift runtime/shell under {{app}}/ios and check that the Kotlin side under {{app}}/android implements the same contract (steering 08). List every behavioural divergence with file and line. Write .kiro/workflow-output/conformance/review-swift-first.md."
+        }
+      ]
+    },
+    {
+      "type": "step",
+      "id": "aggregate",
+      "agent": "wf-review-aggregator",
+      "prompt": "Merge .kiro/workflow-output/conformance/review-kotlin-first.md and review-swift-first.md with {{artifacts.result}} into .kiro/workflow-output/conformance/report.md. Keep only divergences, each with evidence. End with CONFORMANT or DIVERGENT."
+    }
+  ]
+}
