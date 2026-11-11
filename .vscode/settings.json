@@ -1,0 +1,8 @@
+{
+  "json.schemas": [
+    {
+      "fileMatch": ["**/spec/samples/**/monstera.spec.json"],
+      "url": "./spec/schema/monstera.spec.schema.json"
+    }
+  ]
+}

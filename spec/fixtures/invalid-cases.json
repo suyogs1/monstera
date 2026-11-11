@@ -1,0 +1,94 @@
+{
+  "description": "Invalid-specification cases. Each case applies `set` (JSON-pointer -> value) or `remove` (JSON pointers) to the valid sample spec, then expects every listed issue (path + code) and message fragment. Raw-text cases live in raw/.",
+  "base": "spec/samples/monstera-sample/monstera.spec.json",
+  "cases": [
+    {
+      "name": "unknown property with typo",
+      "set": {"/project/displayname": "Typo"},
+      "expect": [{"path": "$.project", "code": "additionalProperties", "contains": "did you mean 'displayName'"}]
+    },
+    {
+      "name": "enum value with typo",
+      "set": {"/game/orientation": "portait"},
+      "expect": [{"path": "$.game.orientation", "code": "enum", "contains": "did you mean 'portrait'"}]
+    },
+    {
+      "name": "integer given as string",
+      "set": {"/project/version/code": "7"},
+      "expect": [{"path": "$.project.version.code", "code": "type", "contains": "remove the quotes: 7"}]
+    },
+    {
+      "name": "integer given with decimal point",
+      "set": {"/project/version/code": 7.0},
+      "expect": [{"path": "$.project.version.code", "code": "type", "contains": "write 7 without a decimal point"}]
+    },
+    {
+      "name": "boolean is not a number",
+      "set": {"/game/targetFps": true},
+      "expect": [{"path": "$.game.targetFps", "code": "type", "contains": "got boolean true"}]
+    },
+    {
+      "name": "missing required section",
+      "remove": ["/game"],
+      "expect": [{"path": "$", "code": "required", "contains": "'game'"}]
+    },
+    {
+      "name": "identifier not reverse-DNS lowercase",
+      "set": {"/project/identifier": "App.Monstera"},
+      "expect": [{"path": "$.project.identifier", "code": "pattern", "contains": "Reverse-DNS"}]
+    },
+    {
+      "name": "unsupported spec version",
+      "set": {"/specVersion": 2},
+      "expect": [{"path": "$.specVersion", "code": "const", "contains": "must be 1"}]
+    },
+    {
+      "name": "duplicate target",
+      "set": {"/project/targets": ["android", "android"]},
+      "expect": [{"path": "$.project.targets[1]", "code": "uniqueItems", "contains": "duplicate"}]
+    },
+    {
+      "name": "lowercase hex color",
+      "set": {"/game/palette/accent": "#ffb000"},
+      "expect": [{"path": "$.game.palette.accent", "code": "pattern", "contains": "#RRGGBB"}]
+    },
+    {
+      "name": "zero world width",
+      "set": {"/game/world/width": 0},
+      "expect": [{"path": "$.game.world.width", "code": "exclusiveMinimum", "contains": "greater than 0"}]
+    },
+    {
+      "name": "several errors reported together, sorted by path",
+      "set": {"/game/genre": "rpg", "/project/platforms/android/minSdk": 21},
+      "expect": [
+        {"path": "$.game.genre", "code": "enum", "contains": "\"prototype\""},
+        {"path": "$.project.platforms.android.minSdk", "code": "minimum", "contains": "below the minimum 26"}
+      ]
+    },
+    {
+      "name": "orientation contradicts world aspect",
+      "set": {"/game/world/width": 1920, "/game/world/height": 1080},
+      "expect": [{"path": "$.game.world", "code": "semantic.orientation-aspect", "contains": "swap width and height"}]
+    },
+    {
+      "name": "world aspect too extreme",
+      "set": {"/game/world/width": 100, "/game/world/height": 1000},
+      "expect": [{"path": "$.game.world", "code": "semantic.world-aspect", "contains": "10.00:1"}]
+    },
+    {
+      "name": "low palette contrast",
+      "set": {"/game/palette/primary": "#1C1432"},
+      "expect": [{"path": "$.game.palette.primary", "code": "semantic.palette-contrast", "contains": "below 3.0:1"}]
+    },
+    {
+      "name": "identifier segment is a Kotlin keyword",
+      "set": {"/project/identifier": "app.monstera.object"},
+      "expect": [{"path": "$.project.identifier", "code": "semantic.identifier-keyword", "contains": "'object'"}]
+    },
+    {
+      "name": "product name shadows a system module",
+      "set": {"/project/id": "sprite-kit"},
+      "expect": [{"path": "$.project.id", "code": "semantic.product-name", "contains": "SpriteKit"}]
+    }
+  ]
+}

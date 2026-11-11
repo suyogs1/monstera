@@ -1,0 +1,92 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Project",
+  "description": "Application identity and platform targets. Shared by every generated platform.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "displayName", "identifier", "version", "targets", "platforms"],
+  "properties": {
+    "id": {
+      "description": "Project slug. Names the output directory generated/<id>/ and derives the iOS product name.",
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$",
+      "minLength": 3,
+      "maxLength": 40
+    },
+    "displayName": {
+      "description": "User-visible app name (Android label, iOS CFBundleDisplayName).",
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9 .'&!-]*$",
+      "minLength": 1,
+      "maxLength": 30
+    },
+    "identifier": {
+      "description": "Reverse-DNS identifier used as BOTH the Android applicationId/namespace and the iOS bundle ID. Restricted to the intersection of what both platforms accept.",
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(\\.[a-z][a-z0-9]*)+$",
+      "minLength": 3,
+      "maxLength": 100
+    },
+    "version": {
+      "title": "ProjectVersion",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "code"],
+      "properties": {
+        "name": {
+          "description": "Semantic version: Android versionName, iOS CFBundleShortVersionString.",
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"
+        },
+        "code": {
+          "description": "Monotonic build number: Android versionCode, iOS CFBundleVersion.",
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 2100000000
+        }
+      }
+    },
+    "targets": {
+      "description": "Platforms to generate.",
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "title": "TargetPlatform",
+        "type": "string",
+        "enum": ["android", "ios"]
+      }
+    },
+    "platforms": {
+      "title": "Platforms",
+      "description": "Platform-only settings. These have no cross-platform equivalent, so they are not duplicates of shared values.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["android", "ios"],
+      "properties": {
+        "android": {
+          "title": "AndroidPlatform",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["minSdk"],
+          "properties": {
+            "minSdk": { "type": "integer", "minimum": 26, "maximum": 36 }
+          }
+        },
+        "ios": {
+          "title": "IosPlatform",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["deploymentTarget"],
+          "properties": {
+            "deploymentTarget": {
+              "description": "Minimum iOS version, major.minor.",
+              "type": "string",
+              "enum": ["17.0", "18.0", "26.0"]
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "MonsteraSpec",
+  "description": "Canonical MONSTERA specification (monstera.spec.json). The single source of truth for one generated project.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["specVersion", "project", "game"],
+  "properties": {
+    "specVersion": {
+      "description": "Specification format version. G1 supports exactly 1.",
+      "type": "integer",
+      "const": 1
+    },
+    "project": { "$ref": "project.schema.json" },
+    "game": { "$ref": "game.schema.json" }
+  }
+}
