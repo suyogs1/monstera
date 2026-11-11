@@ -156,7 +156,8 @@ class AppLayoutOwnershipTests(unittest.TestCase):
         spec["project"]["targets"] = ["android"]
         files = generate.plan(spec, LABEL, self.store, layout="app")
         manifest = json.loads(next(f.data for f in files if f.path == generate.MANIFEST))
-        self.assertEqual(manifest["ownedRoots"], [generate.GUIDANCE_FILE, "android"])
+        # ownedRoots are fixed for the app layout, so dropping a target never changes ownership.
+        self.assertEqual(manifest["ownedRoots"], [generate.GUIDANCE_FILE, "android", "ios"])
         generate.write(files, self.root)
         self.assertFalse((self.root / "ios").exists())
         self.assertUserFilesIntact()
@@ -258,7 +259,8 @@ class CiSafetyRuleTests(unittest.TestCase):
                "      - run: xtool sdk build Xcode.app out\n")
         rules = {r for _, r in self.scan({".github/workflows/bad.yml": bad})}
         self.assertTrue({"pull_request_target trigger", "workflow without an explicit top-level permissions: block",
-                         "action not pinned to a commit SHA", "secrets used in a pull_request-triggered workflow",
+                         "action not pinned to a commit SHA",
+                         "secrets used in a pull_request/workflow_run-triggered workflow",
                          "Apple SDK generation or transfer in CI"} <= rules, rules)
 
     def test_safe_workflow_passes(self) -> None:

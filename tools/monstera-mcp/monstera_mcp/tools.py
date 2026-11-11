@@ -20,6 +20,12 @@ from monstera.schema import SchemaStore  # noqa: E402
 from monstera.validate import validate_path, validate_value  # noqa: E402
 
 MAX_INLINE_SPEC_BYTES = 64 * 1024
+
+
+def _safe_generated_child(rel: str) -> bool:
+    head, _, name = rel.partition("/")
+    return (head == "generated" and bool(name) and "/" not in name and name[0].isalnum()
+            and all(c.isalnum() or c in "._-" for c in name))
 MAX_REPORT_LINES = 1000
 MAX_RUN_LISTING = 20
 DEVICE_TARGETS = ("android-emulator", "android-device", "ios-simulator", "ios-device")
@@ -92,9 +98,12 @@ def validate_spec(path: str | None = None, spec: dict[str, Any] | None = None) -
         canonical = result.ok and file.read_bytes() == result.canonical
         return {"valid": result.ok, "sha256": result.sha256 if result.ok else None,
                 "canonical": canonical, "issues": _issues(result)}
-    if len(json.dumps(spec)) > MAX_INLINE_SPEC_BYTES:
-        raise ToolError(f"inline spec exceeds {MAX_INLINE_SPEC_BYTES} bytes")
-    result = validate_value(spec, store())
+    try:
+        if len(json.dumps(spec)) > MAX_INLINE_SPEC_BYTES:
+            raise ToolError(f"inline spec exceeds {MAX_INLINE_SPEC_BYTES} bytes")
+        result = validate_value(spec, store())
+    except RecursionError:
+        raise ToolError("inline spec is nested too deeply") from None
     return {"valid": result.ok, "sha256": result.sha256 if result.ok else None,
             "canonical": None, "issues": _issues(result)}
 
@@ -110,9 +119,21 @@ def generate_project(spec_path: str, out: str | None = None, write: bool = False
         default_dir, layout = targets.default_out(file, result.spec["project"]["id"])
     except ValueError as exc:
         raise ToolError(str(exc)) from None
-    root = _confined(out, ("generated/", "apps/"), "out") if out else default_dir
+    # Outputs are exactly one project directory (review issue 4): an app spec writes only to its
+    # own apps/<id>/; any other spec writes only to a direct child of generated/. Never a container
+    # (apps/, generated/), never nested inside another project or a hand-maintained directory.
     if out is None:
-        _confined(_label(root), ("generated/", "apps/"), "out")
+        root = default_dir
+    elif layout == "app":
+        root = _confined(out, ("apps/",), "out")
+        if _label(root) != _label(default_dir):
+            raise ToolError(f"out: an app spec generates only into its own folder {_label(default_dir)}")
+    else:
+        root = _confined(out, ("generated/",), "out")
+        rel = _label(root)
+        if not _safe_generated_child(rel):
+            raise ToolError("out: must be a direct child of generated/ (generated/<name>)")
+    _confined(_label(root), ("generated/", "apps/"), "out")
     files = generate.plan(result.spec, _label(file), store(), layout=layout)
     drift = generate.check(files, root)
     response: dict[str, Any] = {
@@ -133,10 +154,10 @@ def generate_project(spec_path: str, out: str | None = None, write: bool = False
 
 def inspect_manifest(dir: str) -> dict[str, Any]:  # noqa: A002 - matches the tool contract
     root = _confined(dir, ("generated/", "apps/"), "dir")
-    manifest = generate.read_manifest(root)
-    if manifest is None:
-        raise ToolError(f"{_label(root)} has no valid {generate.MANIFEST}")
     try:
+        manifest = generate.read_manifest(root)
+        if manifest is None:
+            raise ToolError(f"{_label(root)} has no {generate.MANIFEST}")
         drift = generate.verify(root)
     except generate.OutputError as exc:
         raise ToolError(str(exc)) from None

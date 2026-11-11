@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -138,7 +139,8 @@ def cmd_check_architecture(args: argparse.Namespace, store: SchemaStore) -> int:
     return 1 if violations else 0
 
 
-_PATH_KEYS = {"path", "targetFile", "sourcePath", "destinationPath", "file_path", "filePath"}
+_PATH_KEYS = {"path", "paths", "targetFile", "sourcePath", "destinationPath", "file_path", "filePath",
+              "oldPath", "newPath"}
 
 
 def _paths_in(value: object) -> list[str]:
@@ -147,6 +149,8 @@ def _paths_in(value: object) -> list[str]:
         for key, sub in value.items():
             if key in _PATH_KEYS and isinstance(sub, str):
                 found.append(sub)
+            elif key in _PATH_KEYS and isinstance(sub, list):
+                found += [s for s in sub if isinstance(s, str)] + _paths_in([s for s in sub if not isinstance(s, str)])
             else:
                 found += _paths_in(sub)
     elif isinstance(value, list):
@@ -155,25 +159,94 @@ def _paths_in(value: object) -> list[str]:
     return found
 
 
+def _key(path: Path) -> str:
+    return os.path.normcase(str(path))  # case-insensitive filesystems (Windows) compare folded
+
+
+def _normalize_spelling(raw: str) -> str | None:
+    """Map Windows extended-length and admin-share spellings to a plain path. None = a UNC or
+    device path we can't map, which the guard treats as owned (fail closed)."""
+    s = raw.replace("/", "\\") if os.name == "nt" else raw
+    if os.name == "nt":
+        if s.startswith("\\\\?\\UNC\\"):
+            s = "\\\\" + s[8:]
+        elif s.startswith(("\\\\?\\", "\\\\.\\")):
+            s = s[4:]
+        if s.startswith("\\\\"):
+            parts = s[2:].split("\\", 2)
+            if len(parts) >= 2 and parts[0].lower() in ("localhost", "127.0.0.1", ".") and \
+                    len(parts[1]) == 2 and parts[1][1] == "$":
+                return parts[1][0] + ":\\" + (parts[2] if len(parts) > 2 else "")
+            return None
+    return s
+
+
+def _fallback_owned(candidate: str) -> bool:
+    """Deliberately simple check used only when the full guard crashes. It uses only string
+    operations and os.path.exists, so a bug in the full guard can't break it. Blocks: anything
+    under generated/, any apps/<id>/android|ios|.kiro path, any manifest, any UNC/device path,
+    and any path with a MONSTERA-MANIFEST.json in one of its ancestor directories."""
+    try:
+        text = candidate.replace("\\", "/")
+        low = text.lower()
+        if low.startswith("//") or "monstera-manifest.json" in low:
+            return True
+        rel = low
+        repo = str(REPO_ROOT).replace("\\", "/").lower().rstrip("/") + "/"
+        if rel.startswith(repo):
+            rel = rel[len(repo):]
+        parts = [p for p in rel.split("/") if p not in ("", ".")]
+        if parts[:1] == ["generated"] or (len(parts) >= 3 and parts[0] == "apps"
+                                           and parts[2] in ("android", "ios", ".kiro")):
+            return True
+        base = text if os.path.isabs(text) else str(REPO_ROOT).replace("\\", "/") + "/" + text
+        directory = os.path.dirname(os.path.normpath(base))
+        for _ in range(64):
+            if os.path.exists(os.path.join(directory, generate.MANIFEST)):
+                return True
+            parent = os.path.dirname(directory)
+            if parent == directory:
+                break
+            directory = parent
+        return False
+    except Exception:  # noqa: BLE001 - last resort
+        return True
+
+
 def generator_owned(target: Path) -> bool:
-    """True if `target` (resolved) is generator-owned: anything under generated/, or a path inside
-    the ownedRoots of the nearest MONSTERA-MANIFEST.json above it (e.g. apps/<id>/android/**)."""
+    """True if `target` (resolved) is, or contains, generator-owned output:
+    - anything under generated/, or generated/ inside target;
+    - a path that ANY MONSTERA-MANIFEST.json above it claims (a decoy deeper manifest can't
+      release files an outer one owns);
+    - a directory containing a manifest, or containing a path an outer manifest owns
+      (moving or deleting it would move or delete owned files);
+    - anything under a directory whose manifest exists but is invalid (fail closed)."""
     generated = targets.GENERATED.resolve()
-    if target == generated or generated in target.parents:
+    tkey = _key(target)
+    if _key(generated) == tkey or tkey.startswith(_key(generated) + os.sep) or \
+            _key(target) in (_key(p) for p in generated.parents):
         return True
     root = REPO_ROOT.resolve()
     for directory in [target, *target.parents]:
-        if directory != root and root not in directory.parents:
+        if _key(directory) != _key(root) and not tkey.startswith(_key(root) + os.sep):
             break
-        manifest = generate.read_manifest(directory)
+        try:
+            manifest = generate.read_manifest(directory)
+        except generate.OutputError:
+            return True  # a manifest exists but is invalid: fail closed
         if manifest is not None:
-            rel = target.relative_to(directory).as_posix()
-            try:
-                return generate._in_owned(rel, generate._owned_from(manifest))
-            except generate.OutputError:
-                return True  # a corrupt manifest: fail closed
-        if directory == root:
+            rel = os.path.relpath(tkey, _key(directory)).replace(os.sep, "/")
+            owned = [os.path.normcase(o).replace(os.sep, "/") for o in generate._owned_from(manifest)]
+            if rel in (".", os.path.normcase(generate.MANIFEST)) or generate._in_owned(rel, owned):
+                return True
+            if any(o == "." or o.startswith(rel + "/") for o in owned):
+                return True  # target is a directory above owned paths
+        if _key(directory) == _key(root):
             break
+    if target.is_dir():
+        for found in target.rglob(generate.MANIFEST):
+            if ".git" not in found.parts:
+                return True
     return False
 
 
@@ -186,9 +259,21 @@ def cmd_guard_generated(args: argparse.Namespace, store: SchemaStore) -> int:
     except json.JSONDecodeError:
         return 0  # not a structured tool call; nothing to guard
     for candidate in _paths_in(payload):
-        target = Path(candidate)
-        target = (target if target.is_absolute() else REPO_ROOT / target).resolve()
-        if generator_owned(target):
+        try:
+            spelled = _normalize_spelling(candidate)
+            if spelled is None:
+                blocked = True  # unmappable UNC/device path: fail closed
+            else:
+                target = Path(spelled)
+                target = (target if target.is_absolute() else REPO_ROOT / target).resolve()
+                blocked = generator_owned(target)
+        except Exception as exc:  # noqa: BLE001 - a crash would exit 1, which Kiro treats as "allow"
+            # Fail closed for anything that looks generator-owned, but NOT for everything: blocking
+            # every path also blocks the edit that repairs the guard (G1.5 self-lock incident).
+            blocked = _fallback_owned(candidate)
+            print(f"guard error ({type(exc).__name__}: {exc}); fallback check: "
+                  f"{'blocking' if blocked else 'allowing'} {candidate}", file=sys.stderr)
+        if blocked:
             print(f"Blocked: {candidate} is generator-owned output. Edit the spec "
                   "(monstera.spec.json) or the templates (tools/monstera/monstera/templates/) and run "
                   "`monstera generate` instead.", file=sys.stderr)

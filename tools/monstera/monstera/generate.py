@@ -9,9 +9,10 @@ from __future__ import annotations
 
 import json
 import os
+import stat
 import string
 from dataclasses import dataclass
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from typing import Any
 from xml.sax.saxutils import escape as xml_escape
 
@@ -80,7 +81,9 @@ def owned_roots_for(layout: str, targets: list[str]) -> list[str]:
     if layout == "fixture":
         return ["."]
     if layout == "app":
-        return sorted([t for t in ("android", "ios") if t in targets] + [GUIDANCE_FILE])
+        # Fixed set, independent of project.targets: dropping a target must not change ownership
+        # (review issue 18). An unused root simply has no files.
+        return sorted(["android", "ios", GUIDANCE_FILE])
     raise ValueError(f"unknown layout {layout!r}")
 
 
@@ -217,6 +220,31 @@ def _in_owned(rel: str, owned: list[str]) -> bool:
     return rel == MANIFEST or any(o == "." or rel == o or rel.startswith(o + "/") for o in owned)
 
 
+_WINDOWS = os.name == "nt"
+
+
+def _is_link(path: Path) -> bool:
+    """True for a symlink, an NTFS junction, or anything else that resolves somewhere other than
+    where it sits. Such entries are never followed, written through or deleted through."""
+    if path.is_symlink():
+        return True
+    isjunction = getattr(os.path, "isjunction", None)  # Python 3.12+
+    if isjunction is not None and isjunction(path):
+        return True
+    try:
+        here = os.path.normcase(os.path.join(os.path.realpath(path.parent), path.name))
+        return os.path.normcase(os.path.realpath(path)) != here
+    except OSError:
+        return True
+
+
+def _mode_differs(path: Path, mode: int) -> bool:
+    current = path.stat().st_mode
+    if _WINDOWS:  # only the read-only attribute is meaningful on Windows
+        return bool(current & stat.S_IWRITE) != bool(mode & 0o200)
+    return (current & 0o777) != mode
+
+
 def _scan(root: Path, owned: list[str]) -> tuple[set[str], list[str]]:
     """Non-build-output files inside the owned roots (plus the manifest), and any symlinks met
     on the way (never followed). Files outside the owned roots are invisible: the generator
@@ -230,14 +258,14 @@ def _scan(root: Path, owned: list[str]) -> tuple[set[str], list[str]]:
             kept = []
             for d in sorted(dirnames):
                 rel = (base / d).relative_to(root).as_posix()
-                if (base / d).is_symlink():
+                if _is_link(base / d):
                     links.append(rel)
                 elif not _is_build_output(rel):
                     kept.append(d)
             dirnames[:] = kept
             for name in filenames:
                 rel = (base / name).relative_to(root).as_posix()
-                if (base / name).is_symlink():
+                if _is_link(base / name):
                     links.append(rel)
                 elif not _is_build_output(rel):
                     files.add(rel)
@@ -250,7 +278,7 @@ def _scan(root: Path, owned: list[str]) -> tuple[set[str], list[str]]:
         # A symlink anywhere on the way to an owned root would redirect writes outside it.
         for i in range(1, len(Path(entry).parts) + 1):
             hop = root.joinpath(*Path(entry).parts[:i])
-            if hop.is_symlink():
+            if (hop.exists() or hop.is_symlink()) and _is_link(hop):
                 links.append(hop.relative_to(root).as_posix())
                 break
         else:
@@ -262,12 +290,16 @@ def _scan(root: Path, owned: list[str]) -> tuple[set[str], list[str]]:
 
 
 def _owned_from(manifest: dict[str, Any]) -> list[str]:
-    owned = manifest.get("ownedRoots", ["."])  # G1 manifests predate ownedRoots: whole dir
+    owned = manifest.get("ownedRoots")
     if not (isinstance(owned, list) and owned and all(isinstance(o, str) for o in owned)):
-        raise OutputError(f"{MANIFEST} has an invalid ownedRoots value")
+        raise OutputError(f"{MANIFEST} has a missing or invalid ownedRoots value")
     for o in owned:
-        parts = Path(o).parts
-        if o != "." and (Path(o).is_absolute() or ".." in parts or not parts):
+        if o == ".":
+            continue
+        posix = PurePosixPath(o)
+        # POSIX-relative only: no backslashes, drives, roots ("\\Windows"), "..", or "./x" spellings.
+        if (not o or "\\" in o or ":" in o or o.startswith("/") or ".." in posix.parts
+                or posix.as_posix() != o):
             raise OutputError(f"{MANIFEST} ownedRoots entry {o!r} escapes the output directory")
     return owned
 
@@ -292,23 +324,57 @@ def check(files: list[OutFile], root: Path) -> Drift:
     owned = _owned_from(_planned_manifest(files))
     present, links = _scan(root, owned) if root.exists() else (set(), [])
     wanted = {f.path: f for f in files}
-    changed = sorted(p for p, f in wanted.items() if p in present and (root / p).read_bytes() != f.data)
+    changed = sorted(p for p, f in wanted.items()
+                     if p in present and ((root / p).read_bytes() != f.data or _mode_differs(root / p, f.mode)))
     missing = sorted(p for p in wanted if p not in present)
     unexpected = sorted((present - set(wanted)) | set(links))
     return Drift(tuple(changed), tuple(missing), tuple(unexpected))
 
 
 def read_manifest(root: Path) -> dict[str, Any] | None:
+    """None if there is no manifest. OutputError if one exists but is not a valid, current
+    MONSTERA manifest (callers fail closed on that)."""
     path = root / MANIFEST
-    if not path.is_file() or path.is_symlink():
+    if not path.exists() and not path.is_symlink():
         return None
+    if _is_link(path) or not path.is_file():
+        raise OutputError(f"{path} is not a regular file")
     try:
         manifest = json.loads(path.read_text(encoding="utf-8"))
-    except (OSError, ValueError):
-        return None
-    if not (isinstance(manifest, dict) and isinstance(manifest.get("files"), list)
-            and manifest.get("generator", {}).get("name") == GENERATOR_NAME):
-        return None
+    except (OSError, ValueError) as exc:
+        raise OutputError(f"{path} is not valid JSON: {exc}") from None
+    return _validated(manifest, path)
+
+
+def _validated(manifest: Any, path: Path) -> dict[str, Any]:
+    def bad(why: str) -> None:
+        raise OutputError(f"{path} is not a valid {MANIFEST}: {why}")
+
+    if not isinstance(manifest, dict):
+        bad("not a JSON object")
+    generator = manifest.get("generator")
+    if not isinstance(generator, dict) or generator.get("name") != GENERATOR_NAME:
+        bad("missing or foreign 'generator'")
+    if not isinstance(manifest.get("spec"), dict):
+        bad("'spec' must be an object")
+    # layout and ownedRoots are required: a manifest without them would otherwise be read as
+    # whole-directory ownership (review issue 3).
+    if manifest.get("layout") not in LAYOUTS:
+        bad("missing or unknown 'layout'")
+    owned = _owned_from(manifest)
+    if owned != owned_roots_for(manifest["layout"], []):
+        bad(f"ownedRoots {owned} do not match layout '{manifest['layout']}'")
+    files = manifest.get("files")
+    if not isinstance(files, list):
+        bad("'files' must be a list")
+    for entry in files:
+        if not (isinstance(entry, dict) and isinstance(entry.get("path"), str)
+                and isinstance(entry.get("sha256"), str)
+                and isinstance(entry.get("mode", "644"), str) and len(entry.get("mode", "644")) == 3
+                and set(entry.get("mode", "644")) <= set("01234567")):
+            bad("each file entry needs string 'path', 'sha256' and an octal 'mode'")
+        if not _in_owned(entry["path"], owned) or ".." in PurePosixPath(entry["path"]).parts:
+            bad(f"file {entry['path']!r} is outside ownedRoots")
     return manifest
 
 
@@ -320,7 +386,9 @@ def verify(root: Path) -> Drift:
         raise OutputError(f"{root} has no valid {MANIFEST}")
     present, links = _scan(root, _owned_from(manifest))
     recorded = {e["path"]: e["sha256"] for e in manifest["files"]}
-    changed = sorted(p for p, h in recorded.items() if p in present and sha256_hex((root / p).read_bytes()) != h)
+    modes = {e["path"]: int(e.get("mode", "644"), 8) for e in manifest["files"]}
+    changed = sorted(p for p, h in recorded.items()
+                     if p in present and (sha256_hex((root / p).read_bytes()) != h or _mode_differs(root / p, modes[p])))
     missing = sorted(p for p in recorded if p not in present)
     unexpected = sorted((present - set(recorded) - {MANIFEST}) | set(links))
     return Drift(tuple(changed), tuple(missing), tuple(unexpected))
@@ -332,29 +400,37 @@ def write(files: list[OutFile], root: Path, force: bool = False) -> None:
     Only the plan's owned roots (and the manifest) are ever read, changed or deleted. Files
     outside them (e.g. apps/<id>/monstera.spec.json, assets/, README.md) are never touched.
 
-    Always refused (even with force): owned paths containing files but no valid manifest (not
-    generator-owned), a layout or owned-root change, and symlinks on or inside owned paths.
-    Refused unless force: another project's output, a file inside an owned root that the previous
-    manifest doesn't list, or a generator-owned file modified since the last run.
+    Always refused (even with force): owned paths containing files that are neither listed in a
+    valid manifest nor byte-identical to this plan; an invalid manifest; a layout or owned-root
+    change; links (symlinks, junctions) on or inside owned paths. `--force` only discards edits
+    to files the previous manifest lists; it never deletes a file the generator didn't write.
+    Refused unless force: another project's output, or a listed file modified since the last run.
+    Files are replaced (written to a temporary file, then renamed), never rewritten in place, so a
+    hard link from an owned path can't modify the file it links to.
     Build-output locations are never touched.
-    The manifest is written last, so an interrupted run is detected and can be re-run.
+    The manifest is written last; an interrupted run leaves only files equal to the plan or to the
+    previous manifest, so re-running completes it.
     """
     if root.exists() and not root.is_dir():
         raise OutputError(f"{root} exists and is not a directory")
-    if root.is_symlink():
-        raise OutputError(f"{root} is a symlink; refusing to write through it")
+    if (root.exists() or root.is_symlink()) and _is_link(root):
+        raise OutputError(f"{root} is a symlink or junction; refusing to write through it")
     planned = {f.path: f.data for f in files}
     new_manifest = json.loads(planned[MANIFEST])
     owned = _owned_from(new_manifest)
     present, links = _scan(root, owned) if root.exists() else (set(), [])
     if links:
-        raise OutputError(f"{root} contains symlinks ({', '.join(links)}); refusing to write through them")
+        raise OutputError(f"{root} contains links ({', '.join(links)}); refusing to write through them")
 
-    previous = read_manifest(root) if root.exists() else None
-    if present and previous is None:
-        # Not overridable: --force must never wipe an arbitrary directory (e.g. `--out .`).
-        raise OutputError(f"{root} has files in generator-owned paths but no valid {MANIFEST} "
-                          "(not generator-owned); choose an empty or generator-owned directory")
+    previous = read_manifest(root) if root.exists() else None  # raises if present but invalid
+    if previous is None:
+        foreign = sorted(p for p in present - {MANIFEST} if planned.get(p) != (root / p).read_bytes())
+        if foreign:
+            # Not overridable: --force must never wipe an arbitrary directory (e.g. `--out .`).
+            # Files identical to the plan are our own output from an interrupted first run.
+            raise OutputError(f"{root} has files in generator-owned paths but no {MANIFEST} (not "
+                              f"generator-owned): {', '.join(foreign[:10])}; choose an empty or "
+                              "generator-owned directory")
     if previous is not None:
         old_layout = previous.get("layout", "fixture")
         if old_layout != new_manifest["layout"] or _owned_from(previous) != owned:
@@ -362,24 +438,31 @@ def write(files: list[OutFile], root: Path, force: bool = False) -> None:
             raise OutputError(f"{root} was generated with layout '{old_layout}' and ownedRoots "
                               f"{_owned_from(previous)}; refusing to change them to '{new_manifest['layout']}' "
                               f"{owned}. Use a fresh output directory.")
-    problems: list[str] = []
-    if previous is not None and previous.get("spec", {}).get("projectId") not in (None, new_manifest["spec"]["projectId"]):
+    problems: list[str] = []   # overridable with force
+    unowned: list[str] = []    # never overridable
+    if previous is not None and previous["spec"].get("projectId") not in (None, new_manifest["spec"]["projectId"]):
         problems.append(f"{root} belongs to project '{previous['spec']['projectId']}', "
                         f"not '{new_manifest['spec']['projectId']}'")
     recorded = {e["path"]: e["sha256"] for e in (previous or {}).get("files", [])}
     for rel in sorted(present - {MANIFEST}):
-        data_hash = sha256_hex((root / rel).read_bytes())
-        if rel in planned and planned[rel] == (root / rel).read_bytes():
+        data = (root / rel).read_bytes()
+        if planned.get(rel) == data:
             continue  # already the new content (e.g. after an interrupted run)
-        if rel in recorded and recorded[rel] == data_hash:
-            continue  # unmodified previous output
-        problems.append(f"{'modified since last generation' if rel in recorded else 'not generator-owned'}: {rel}")
+        if rel not in recorded:
+            unowned.append(rel)
+        elif recorded[rel] != sha256_hex(data):
+            problems.append(f"modified since last generation: {rel}")
+    if unowned:
+        raise OutputError("refusing to overwrite: not generator-owned (not in the previous manifest):\n  "
+                          + "\n  ".join(unowned)
+                          + "\nMove or delete these files yourself; --force never removes files the generator "
+                            "didn't write.")
     if problems and not force:
         raise OutputError("refusing to overwrite:\n  " + "\n  ".join(problems)
                           + "\nMove your changes into the spec or templates, or re-run with --force to discard them.")
 
     for rel in sorted(present - set(planned)):
-        assert _in_owned(rel, owned), rel  # _scan only returns owned paths
+        assert _in_owned(rel, owned) and rel in recorded, rel  # only files the generator wrote
         (root / rel).unlink()
     if root.exists():
         for start in (["."] if "." in owned else [o for o in owned if (root / o).is_dir()]):
@@ -392,5 +475,19 @@ def write(files: list[OutFile], root: Path, force: bool = False) -> None:
         target = root / f.path
         target.parent.mkdir(parents=True, exist_ok=True)
         if not (target.exists() and target.read_bytes() == f.data):
-            target.write_bytes(f.data)
+            _replace(target, f.data)
         os.chmod(target, f.mode)
+
+
+def _replace(target: Path, data: bytes) -> None:
+    """Write via a sibling temporary file and an atomic rename. The old directory entry is replaced,
+    so content shared through a hard link is never modified (review issue 2)."""
+    temp = target.with_name(f".{target.name}.monstera-tmp")
+    try:
+        temp.write_bytes(data)
+        if target.exists() and not os.access(target, os.W_OK):
+            os.chmod(target, stat.S_IWRITE | stat.S_IREAD)  # Windows can't rename over a read-only file
+        os.replace(temp, target)
+    finally:
+        if temp.exists():
+            temp.unlink()

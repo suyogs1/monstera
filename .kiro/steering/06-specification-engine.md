@@ -8,8 +8,11 @@ Design: `architecture/SPECIFICATION-ENGINE.md`. CLI: `tools/monstera/bin/monster
   Platform work must not start against an unmerged contract change.
 - Never edit `generated/` by hand (a PreToolUse hook blocks it). Run
   `monstera generate <spec>` and commit the result; CI runs `generate --check` and `verify`.
-- `generate` refuses to discard hand edits or unmanaged files. Use `--force` only to deliberately
-  throw them away; it never touches non-generator-owned directories or symlinks.
+- `generate` refuses to discard hand edits. `--force` only discards edits to files the previous
+  manifest lists. It never deletes a file the generator didn't write, and never writes through
+  links (symlinks, junctions) or into directories it doesn't own; remove such files yourself.
+- Ownership in `apps/<id>/` is exactly `android/`, `ios/`, `.kiro/steering/monstera-generated.md`
+  and `MONSTERA-MANIFEST.json` (see steering 02).
 - Every schema property is required and `additionalProperties` is false: no hidden defaults.
 - Schema object/enum `title` = generated Kotlin/Swift type name. New schema keywords need
   validator support first; unsupported keywords fail at load.

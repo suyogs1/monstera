@@ -26,8 +26,10 @@ apps (`reference/g0/*`). MONSTERA Studio (`studio/`) follows `07-studio.md` inst
 - `reference/g0/android` and `reference/g0/ios` are the Phase 0 toolchain proofs, kept as
   references (moved from `apps/` in G1.5). Neither imports the other.
 - `apps/` contains exactly the two Skeleton Crew applications, `apps/pumpkin-blaster/` and
-  `apps/trick-or-treat-rush/` (G3). In each, `android/` and `ios/` are generator-owned; the spec,
-  assets, README and any other files are hand-maintained.
+  `apps/trick-or-treat-rush/` (G3). In each, the generator owns exactly `android/`, `ios/`, the
+  documentation-only `.kiro/steering/monstera-generated.md` (decision 1) and
+  `MONSTERA-MANIFEST.json`, which records that ownership (decision 2). The spec, assets, README and
+  every other file, including the app's other `.kiro/` files, are hand-maintained.
 - Shared contracts (game specs, schemas, asset manifests) live outside the app trees: `spec/`.
 - Engine fixture output lives in `generated/<project.id>/`. The generator (`tools/monstera/`) is
   build tooling, never shipped in an app.

@@ -44,7 +44,8 @@ server = MCPServer(
 )
 
 READ_ONLY = ToolAnnotations(readOnlyHint=True, destructiveHint=False, idempotentHint=True, openWorldHint=False)
-WRITES = ToolAnnotations(readOnlyHint=False, destructiveHint=False, idempotentHint=True, openWorldHint=False)
+# destructiveHint: with write=true it deletes previously generated files that are no longer planned.
+WRITES = ToolAnnotations(readOnlyHint=False, destructiveHint=True, idempotentHint=True, openWorldHint=False)
 
 
 @server.tool(annotations=READ_ONLY)

@@ -114,6 +114,14 @@ def _lint_workflow(rel: str, recipe: dict[str, Any], agents: set[str], problems:
 
 
 def check(root: Path) -> list[str]:
+    """Never raises on malformed configuration: a wrong-typed field becomes a reported problem."""
+    try:
+        return _check(root)
+    except (TypeError, AttributeError, KeyError, ValueError) as exc:
+        return [f".kiro: malformed configuration ({type(exc).__name__}: {exc})"]
+
+
+def _check(root: Path) -> list[str]:
     problems: list[str] = []
     kiro = root / ".kiro"
 
@@ -166,6 +174,9 @@ def check(root: Path) -> list[str]:
             for name, server in servers.items():
                 if not isinstance(server, dict) or not server.get("command"):
                     problems.append(f".kiro/settings/mcp.json: server {name!r} needs a 'command'")
+                elif {"generate_project", "*"} & set(server.get("autoApprove", [])):
+                    problems.append(f".kiro/settings/mcp.json: server {name!r} must not auto-approve "
+                                    "generate_project (it writes)")
 
     for path in sorted((kiro / "workflows").glob("*.workflow.json")):
         data = _load(path, problems)

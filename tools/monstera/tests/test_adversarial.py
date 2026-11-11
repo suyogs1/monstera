@@ -197,11 +197,18 @@ class OwnershipTests(unittest.TestCase):
         self.assertTrue(notes.exists())
 
     def test_force_discards_local_changes_but_keeps_build_output(self) -> None:
-        (self.root / "android/NOTES.md").write_text("mine", encoding="utf-8")
+        notes = self.root / "android/NOTES.md"
+        notes.write_text("mine", encoding="utf-8")
+        with self.assertRaises(generate.OutputError):  # G1.5: --force never deletes unlisted files
+            generate.write(self.files, self.root, force=True)
+        self.assertEqual(notes.read_text(encoding="utf-8"), "mine")
+        notes.unlink()
+        edited = self.root / "ios/Package.swift"
+        edited.write_bytes(edited.read_bytes() + b"// edit\n")
         build_out = self.root / "ios/.build/cache"
         build_out.parent.mkdir(parents=True)
         build_out.write_bytes(b"\0")
-        generate.write(self.files, self.root, force=True)
+        generate.write(self.files, self.root, force=True)  # discards the edit to a listed file
         self.assertTrue(generate.verify(self.root).clean)
         self.assertTrue(build_out.exists())
 
