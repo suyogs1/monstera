@@ -1,6 +1,6 @@
 # Repository migration plan (G1.5)
 
-Status: **PROPOSED, not executed.** Approved decisions: move the G0 reference apps to
+Status: **EXECUTED in G1.5**: move `dc29888` (17 pure renames), references `01341e5`. Verification results: `docs/KIRO-USAGE.md` (G1.5 evidence ledger). Approved decisions: move the G0 reference apps to
 `reference/g0/`; `apps/` will contain exactly the two Skeleton Crew applications.
 
 Base: `main` at `ca477be` (G1 merged).

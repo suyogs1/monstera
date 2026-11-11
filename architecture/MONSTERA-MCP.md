@@ -1,6 +1,6 @@
 # MONSTERA MCP server
 
-Status: **PROPOSED (G1.5).**
+Status: **IMPLEMENTED in G1.5** (`tools/monstera-mcp/`, 20 tests). Live-in-Kiro status: `docs/KIRO-USAGE.md`.
 
 The server gives Kiro structured, typed access to the MONSTERA engine. Today an agent has to shell
 out to the CLI and parse its text. With MCP tools it gets schemas, structured results and
@@ -139,7 +139,7 @@ Proposed `.kiro/settings/mcp.json`:
   "mcpServers": {
     "monstera": {
       "command": "uv",
-      "args": ["run", "--frozen", "--project", "tools/monstera-mcp", "monstera-mcp"],
+      "args": ["run", "--frozen", "--project", "tools/monstera-mcp", "python", "tools/monstera-mcp/server.py"],
       "disabled": false,
       "autoApprove": ["validate_spec", "inspect_manifest", "get_device_report"]
     }

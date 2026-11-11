@@ -1,8 +1,9 @@
 # Kiro operating model
 
-Status: **PROPOSED (G1.5).** Nothing in this document is active until approved. After approval,
-the definitions below move into `.kiro/` unchanged, are checked with Kiro's `validate_workflow`,
-and are exercised on a small input before anyone relies on them.
+Status: **IMPLEMENTED in G1.5** (approved). The five recipes below live unchanged in
+`.kiro/workflows/`, the five prompts in `.kiro/prompts/`, and the MCP server in `tools/monstera-mcp/`.
+What has been verified live in Kiro and what is still pending is recorded in
+[`docs/KIRO-USAGE.md`](../docs/KIRO-USAGE.md); this document doesn't restate it.
 
 ## Principle: a Kiro-first skeleton
 
