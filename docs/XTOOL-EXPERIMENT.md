@@ -120,8 +120,10 @@ Actions taken at the G0 review:
   marked experimental. By default it checks the Linux toolchain only (Swift, xtool AppImage,
   `swift package describe`), and it builds only on a runner whose owner already installed a
   Darwin SDK from their own Xcode download.
-- The two `darwin-xtoolsdk` artifacts from runs 42969821746 and 42972339280 were deleted from
-  GitHub Actions on 2026-11-11. No SDK material is committed to this repository; the committed
+- All three `darwin-xtoolsdk` artifacts were deleted from GitHub Actions on 2026-11-11: runs
+  42969821746 and 42972339280, plus 42974703468, which the old `push` trigger started when
+  `tools/xtool/README.md` changed in `54768e5`. The workflow no longer has a `push` trigger.
+  Each artifact was publicly available for less than an hour. No SDK material is committed to this repository; the committed
   evidence is build logs, an `Info.plist` of our own app, and text excerpts.
 - The iOS Simulator workflow runs entirely on macOS with its own Xcode and uploads only
   screenshots, logs and reports.

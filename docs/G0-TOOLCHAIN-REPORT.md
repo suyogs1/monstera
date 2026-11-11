@@ -90,7 +90,7 @@ Full record: [XTOOL-EXPERIMENT.md](XTOOL-EXPERIMENT.md).
 - Known limitations: Swift 6.4.2 (Linux) vs Xcode 26.6 / Swift 6.3.3 (SDK) skew. Unsigned.
   Locally, Linux needs an Apple ID to download `Xcode.xip`.
 - **G0 review action:** the CI SDK hand-off (macOS runner to Linux runner) is **disabled**
-  because its licensing is unresolved. The two SDK artifacts were deleted. `xtool-linux.yml` is now
+  because its licensing is unresolved. All three SDK artifacts (runs 42969821746, 42972339280, 42974703468) were deleted. `xtool-linux.yml` is now
   an opt-in, manual-trigger experiment that never handles Apple SDK material; it builds only
   on a runner with a developer-installed SDK. The COMPILED result is preserved as historical
   evidence and is reproducible only with the documented setup (your own Xcode download).
