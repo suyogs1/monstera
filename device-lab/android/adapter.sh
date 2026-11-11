@@ -2,14 +2,17 @@
 # Device Lab adapter: Android emulator / physical device via adb.
 # Usage: device-lab/android/adapter.sh <build|install|launch|stop|screenshot|logs|test|report> [args]
 # Env: ANDROID_SERIAL (adb target), DL_TARGET_KIND=android-emulator|android-device (default emulator)
+#      DL_APP_DIR, DL_APP_PACKAGE, DL_APP_LOG_TAG = select another Gradle app, e.g. a generated
+#      project (defaults: apps/android, app.monstera.hello, MonsteraHello)
 set -euo pipefail
 # shellcheck source-path=SCRIPTDIR source=../lib.sh
 source "$(dirname "$0")/../lib.sh"
 dl_init "${DL_TARGET_KIND:-android-emulator}"
 
-APP_DIR="$DL_ROOT/apps/android"
+APP_DIR="$DL_ROOT/${DL_APP_DIR:-apps/android}"
 APK="$APP_DIR/app/build/outputs/apk/debug/app-debug.apk"
-PKG="app.monstera.hello"
+PKG="${DL_APP_PACKAGE:-app.monstera.hello}"
+LOG_TAG="${DL_APP_LOG_TAG:-MonsteraHello}"
 ACTIVITY="$PKG/.MainActivity"
 ADB="${ADB:-adb}"
 GRADLEW="./gradlew"; [ "${OS:-}" = "Windows_NT" ] && GRADLEW="./gradlew.bat"
@@ -38,7 +41,7 @@ case "$op" in
     else dl_result screenshot failed "" "empty screenshot"; exit 1; fi ;;
   logs)
     f="$DL_OUT/logs.txt"
-    "$ADB" logcat -d -v time MonsteraHello:I AndroidRuntime:E ActivityTaskManager:I '*:S' > "$f"
+    "$ADB" logcat -d -v time "$LOG_TAG:I" AndroidRuntime:E ActivityTaskManager:I '*:S' > "$f"
     dl_result logs ok "$f" ;;
   test)
     dl_unsupported test "no automated tests in Phase 0 hello world" ;;

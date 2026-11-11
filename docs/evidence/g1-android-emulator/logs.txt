@@ -1,0 +1,6 @@
+--------- beginning of system
+11-11 13:50:32.548 W/ActivityTaskManager(  752): callingPackage for (uid=2000, pid=3909) has no WPC
+11-11 13:50:32.638 I/ActivityTaskManager(  752): START u0 {flg=0x10000000 xflg=0x5 cmp=app.monstera.sample/.MainActivity} with LAUNCH_MULTIPLE from uid 2000 (com.android.shell) (BAL_ALLOW_PERMISSION) result code=0
+--------- beginning of main
+11-11 13:50:34.030 I/MonsteraSpec( 3921): spec sha256=88ddd663d84e52761fa0834f814e1b737e75f6a62d7dddceee8af37912a977e1 bundledMatches=true
+11-11 13:50:35.802 I/ActivityTaskManager(  752): Displayed app.monstera.sample/.MainActivity for user 0: +3s256ms

@@ -1,0 +1,128 @@
+# G1 specification engine: validate the canonical spec, prove generation is reproducible,
+# then compile both generated native projects with the existing Device Lab adapters.
+name: monstera
+
+on:
+  push:
+    paths: ["spec/**", "tools/monstera/**", "generated/**", "device-lab/**", ".github/workflows/monstera.yml"]
+  pull_request:
+    paths: ["spec/**", "tools/monstera/**", "generated/**", "device-lab/**", ".github/workflows/monstera.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  SPEC: spec/samples/monstera-sample/monstera.spec.json
+  OUT: generated/monstera-sample
+  XTOOL_VERSION: "1.24.0"
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  spec:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+      - name: Python version (standard library only, no installs)
+        run: python3 --version
+      - name: Unit tests
+        run: python3 -m unittest discover -s tools/monstera/tests -t tools/monstera -v
+      - name: Validate every sample spec
+        run: bash tools/monstera/bin/monstera validate --all
+      - name: Sample spec is in canonical form
+        run: bash tools/monstera/bin/monstera format --check "$SPEC"
+      - name: Invalid inputs are rejected with useful errors
+        run: |
+          for f in spec/fixtures/raw/*.json; do
+            if bash tools/monstera/bin/monstera validate "$f"; then echo "expected $f to be invalid"; exit 1; fi
+          done
+      - name: Architecture rules (native only)
+        run: bash tools/monstera/bin/monstera check-architecture
+      - name: Committed output equals a fresh generation (reproducibility)
+        run: bash tools/monstera/bin/monstera generate "$SPEC" --check
+      - name: Regenerate twice in a temp dir and compare byte for byte
+        run: |
+          bash tools/monstera/bin/monstera generate "$SPEC" --out "$RUNNER_TEMP/a"
+          bash tools/monstera/bin/monstera generate "$SPEC" --out "$RUNNER_TEMP/b"
+          diff -r "$RUNNER_TEMP/a" "$RUNNER_TEMP/b"
+          diff -r "$RUNNER_TEMP/a" "$OUT"
+      - name: Same canonical spec on both platforms
+        run: |
+          cmp "$OUT/android/app/src/main/assets/monstera.spec.json" "$OUT/ios/Sources/MonsteraSample/Resources/monstera.spec.json"
+          sha256sum "$OUT/android/app/src/main/assets/monstera.spec.json"
+
+  android-generated:
+    needs: spec
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      RUN_ID: ci-${{ github.run_id }}
+      DL_APP_DIR: generated/monstera-sample/android
+      DL_APP_PACKAGE: app.monstera.sample
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+      - name: Use preinstalled JDK 21
+        run: echo "JAVA_HOME=$JAVA_HOME_21_X64" >> "$GITHUB_ENV"
+      - name: Compile generated Android project (Device Lab build op)
+        run: bash device-lab/android/adapter.sh build
+      - name: Upload build result
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: g1-android-${{ github.run_id }}
+          path: device-lab/reports/runs/**/results.jsonl
+          if-no-files-found: warn
+
+  ios-generated:
+    needs: spec
+    runs-on: macos-26
+    timeout-minutes: 40
+    env:
+      RUN_ID: ci-${{ github.run_id }}
+      DL_APP_DIR: generated/monstera-sample/ios
+      DL_APP_PRODUCT: MonsteraSample
+      DL_APP_BUNDLE_ID: app.monstera.sample
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+      - name: Toolchain versions
+        run: xcodebuild -version && swift --version
+      - name: Install xtool ${{ env.XTOOL_VERSION }}
+        timeout-minutes: 5
+        run: |
+          curl -fsSL "https://github.com/xtool-org/xtool/releases/download/${XTOOL_VERSION}/xtool.app.zip" -o "$RUNNER_TEMP/xtool.zip"
+          ditto -x -k "$RUNNER_TEMP/xtool.zip" "$RUNNER_TEMP"
+          echo "XTOOL=$RUNNER_TEMP/xtool.app/Contents/Resources/bin/xtool" >> "$GITHUB_ENV"
+      - name: Compile generated iOS project for the simulator (Device Lab build op)
+        timeout-minutes: 20
+        run: bash device-lab/ios/adapter.sh build
+      - name: Boot an available iPhone simulator
+        run: |
+          UDID="$(xcrun simctl list devices available | grep -m1 -E '^[[:space:]]+iPhone' | grep -oE '[0-9A-F-]{36}')"
+          test -n "$UDID"
+          xcrun simctl boot "$UDID"
+          xcrun simctl bootstatus "$UDID" -b
+          echo "SIM_DEVICE=$UDID" >> "$GITHUB_ENV"
+      - name: Install, launch, screenshot, logs
+        run: |
+          A=device-lab/ios/adapter.sh
+          bash $A install
+          bash $A launch
+          sleep 5
+          bash $A screenshot 01-launched
+          bash $A logs
+          bash $A stop
+          bash $A report
+          grep -E "bundledMatches=true decodedMatches=true" device-lab/reports/runs/*/ios-simulator/logs.txt
+      - name: Upload Device Lab run (evidence only, no .app)
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: g1-ios-simulator-${{ github.run_id }}
+          path: |
+            device-lab/reports/runs/
+            !device-lab/reports/runs/**/*.app/
+          if-no-files-found: warn

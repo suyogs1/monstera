@@ -1,0 +1,8 @@
+[
+{"op":"build","target":"android-emulator","status":"ok","run_id":"g1-android-local","timestamp":"2026-11-11T08:20:31Z","artifact":"device-lab/reports/runs/g1-android-local/android-emulator/app-debug.apk"},
+{"op":"install","target":"android-emulator","status":"ok","run_id":"g1-android-local","timestamp":"2026-11-11T08:20:32Z"},
+{"op":"launch","target":"android-emulator","status":"ok","run_id":"g1-android-local","timestamp":"2026-11-11T08:20:36Z"},
+{"op":"screenshot","target":"android-emulator","status":"ok","run_id":"g1-android-local","timestamp":"2026-11-11T08:20:42Z","artifact":"device-lab/reports/runs/g1-android-local/android-emulator/01-launched.png"},
+{"op":"logs","target":"android-emulator","status":"ok","run_id":"g1-android-local","timestamp":"2026-11-11T08:20:42Z","artifact":"device-lab/reports/runs/g1-android-local/android-emulator/logs.txt"},
+{"op":"stop","target":"android-emulator","status":"ok","run_id":"g1-android-local","timestamp":"2026-11-11T08:20:43Z"}
+]
