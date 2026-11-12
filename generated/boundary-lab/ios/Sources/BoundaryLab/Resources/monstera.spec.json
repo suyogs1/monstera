@@ -1,6 +1,10 @@
 {
   "game": {
     "genre": "prototype",
+    "hud": {
+      "lifeGlyph": "",
+      "scoreLabel": "score"
+    },
     "input": {
       "dragGain": 98304,
       "scheme": "drag",
@@ -303,7 +307,9 @@
       "kinds": [
         {
           "color": "#FF7A00",
+          "effect": "none",
           "exitPolicy": "despawn",
+          "glyph": "",
           "height": 655360,
           "id": "probe",
           "lifetimeTicks": 0,
@@ -311,7 +317,9 @@
         },
         {
           "color": "#FFB000",
+          "effect": "none",
           "exitPolicy": "despawn",
+          "glyph": "",
           "height": 655360,
           "id": "target",
           "lifetimeTicks": 0,
@@ -319,7 +327,9 @@
         },
         {
           "color": "#FF7A00",
+          "effect": "none",
           "exitPolicy": "despawn",
+          "glyph": "",
           "height": 0,
           "id": "dot",
           "lifetimeTicks": 0,
@@ -327,7 +337,9 @@
         },
         {
           "color": "#FFB000",
+          "effect": "none",
           "exitPolicy": "despawn",
+          "glyph": "",
           "height": 655360,
           "id": "mover",
           "lifetimeTicks": 0,
@@ -335,7 +347,9 @@
         },
         {
           "color": "#FF7A00",
+          "effect": "none",
           "exitPolicy": "bounce",
+          "glyph": "",
           "height": 655360,
           "id": "ball",
           "lifetimeTicks": 0,
@@ -343,7 +357,9 @@
         },
         {
           "color": "#FFB000",
+          "effect": "none",
           "exitPolicy": "clamp",
+          "glyph": "",
           "height": 655360,
           "id": "stick",
           "lifetimeTicks": 0,
@@ -351,7 +367,9 @@
         },
         {
           "color": "#FF7A00",
+          "effect": "none",
           "exitPolicy": "despawn",
+          "glyph": "",
           "height": 131072,
           "id": "timer",
           "lifetimeTicks": 5,
@@ -359,7 +377,9 @@
         },
         {
           "color": "#FFB000",
+          "effect": "none",
           "exitPolicy": "clamp",
+          "glyph": "",
           "height": 1310720,
           "id": "player",
           "lifetimeTicks": 0,
@@ -367,7 +387,9 @@
         },
         {
           "color": "#FF7A00",
+          "effect": "none",
           "exitPolicy": "despawn",
+          "glyph": "",
           "height": 524288,
           "id": "bullet",
           "lifetimeTicks": 60,
@@ -375,7 +397,9 @@
         },
         {
           "color": "#FFB000",
+          "effect": "none",
           "exitPolicy": "clamp",
+          "glyph": "",
           "height": 1310720,
           "id": "mine",
           "lifetimeTicks": 0,
@@ -383,7 +407,9 @@
         },
         {
           "color": "#FF7A00",
+          "effect": "none",
           "exitPolicy": "clamp",
+          "glyph": "",
           "height": 262144,
           "id": "fast",
           "lifetimeTicks": 0,
@@ -391,7 +417,9 @@
         },
         {
           "color": "#FFB000",
+          "effect": "none",
           "exitPolicy": "despawn",
+          "glyph": "",
           "height": 262144,
           "id": "filler",
           "lifetimeTicks": 0,
@@ -399,7 +427,9 @@
         },
         {
           "color": "#FF7A00",
+          "effect": "none",
           "exitPolicy": "despawn",
+          "glyph": "",
           "height": 131072,
           "id": "spark",
           "lifetimeTicks": 3,
@@ -407,7 +437,9 @@
         },
         {
           "color": "#FFB000",
+          "effect": "none",
           "exitPolicy": "despawn",
+          "glyph": "",
           "height": 655360,
           "id": "twin",
           "lifetimeTicks": 0,
@@ -444,6 +476,11 @@
       ],
       "winScore": 0
     },
+    "screens": {
+      "loseTitle": "Game over",
+      "startHint": "Tap to start",
+      "winTitle": "You win"
+    },
     "simulation": {
       "maxTicksPerFrame": 5,
       "tickRate": 60
@@ -475,5 +512,5 @@
       "name": "0.1.0"
     }
   },
-  "specVersion": 3
+  "specVersion": 4
 }

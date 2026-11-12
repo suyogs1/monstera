@@ -89,4 +89,4 @@ Avoidance in Trick or Treat Rush is checked three ways:
   produce input traces (`tools/monstera/author_scenarios.py`). The checkpoints themselves come only from
   `monstera scenarios record`.
 - The distance meter is the score from stripes. There is no separate distance observable.
-- Plain rectangles, no artwork and no sound. Entities are not clipped to the world rectangle.
+- Superseded by the visual batch (spec v4, `docs/evidence/g4-visual-batch/`): entities are drawn as glyphs, clipped to the world rectangle, with a HUD bar, effects and start and end cards. Still no artwork files and no sound.

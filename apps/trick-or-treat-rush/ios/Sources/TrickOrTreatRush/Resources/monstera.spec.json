@@ -1,6 +1,10 @@
 {
   "game": {
     "genre": "endless-runner",
+    "hud": {
+      "lifeGlyph": "♥",
+      "scoreLabel": "RUSH"
+    },
     "input": {
       "dragGain": 65536,
       "scheme": "lanes",
@@ -63,7 +67,9 @@
       "kinds": [
         {
           "color": "#2EC4B6",
+          "effect": "none",
           "exitPolicy": "clamp",
+          "glyph": "🏃",
           "height": 13107200,
           "id": "runner",
           "lifetimeTicks": 0,
@@ -71,7 +77,9 @@
         },
         {
           "color": "#16384D",
+          "effect": "none",
           "exitPolicy": "despawn",
+          "glyph": "",
           "height": 1572864,
           "id": "stripe",
           "lifetimeTicks": 0,
@@ -79,7 +87,9 @@
         },
         {
           "color": "#8D99AE",
+          "effect": "burst",
           "exitPolicy": "despawn",
+          "glyph": "⚰️",
           "height": 9830400,
           "id": "tombstone",
           "lifetimeTicks": 0,
@@ -87,7 +97,9 @@
         },
         {
           "color": "#FF4FA3",
+          "effect": "pickup",
           "exitPolicy": "despawn",
+          "glyph": "🍬",
           "height": 6553600,
           "id": "candy",
           "lifetimeTicks": 0,
@@ -95,7 +107,9 @@
         },
         {
           "color": "#EDF2F4",
+          "effect": "burst",
           "exitPolicy": "despawn",
+          "glyph": "👻",
           "height": 9830400,
           "id": "ghost",
           "lifetimeTicks": 0,
@@ -264,6 +278,11 @@
       ],
       "winScore": 0
     },
+    "screens": {
+      "loseTitle": "Game over",
+      "startHint": "Swipe to change lanes",
+      "winTitle": "You made it!"
+    },
     "simulation": {
       "maxTicksPerFrame": 5,
       "tickRate": 60
@@ -295,5 +314,5 @@
       "name": "0.1.0"
     }
   },
-  "specVersion": 3
+  "specVersion": 4
 }

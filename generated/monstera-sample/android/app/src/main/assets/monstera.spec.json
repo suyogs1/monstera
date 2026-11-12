@@ -1,6 +1,10 @@
 {
   "game": {
     "genre": "prototype",
+    "hud": {
+      "lifeGlyph": "",
+      "scoreLabel": "score"
+    },
     "input": {
       "dragGain": 65536,
       "scheme": "tap",
@@ -71,7 +75,9 @@
       "kinds": [
         {
           "color": "#FF7A00",
+          "effect": "none",
           "exitPolicy": "clamp",
+          "glyph": "",
           "height": 6291456,
           "id": "player",
           "lifetimeTicks": 0,
@@ -79,7 +85,9 @@
         },
         {
           "color": "#FFB000",
+          "effect": "none",
           "exitPolicy": "despawn",
+          "glyph": "",
           "height": 3145728,
           "id": "bullet",
           "lifetimeTicks": 120,
@@ -87,7 +95,9 @@
         },
         {
           "color": "#FF7A00",
+          "effect": "none",
           "exitPolicy": "despawn",
+          "glyph": "",
           "height": 5242880,
           "id": "enemy",
           "lifetimeTicks": 0,
@@ -95,7 +105,9 @@
         },
         {
           "color": "#FFB000",
+          "effect": "none",
           "exitPolicy": "bounce",
+          "glyph": "",
           "height": 2621440,
           "id": "ball",
           "lifetimeTicks": 0,
@@ -103,7 +115,9 @@
         },
         {
           "color": "#FF7A00",
+          "effect": "none",
           "exitPolicy": "clamp",
+          "glyph": "",
           "height": 2097152,
           "id": "drifter",
           "lifetimeTicks": 0,
@@ -111,7 +125,9 @@
         },
         {
           "color": "#FFB000",
+          "effect": "none",
           "exitPolicy": "despawn",
+          "glyph": "",
           "height": 524288,
           "id": "spark",
           "lifetimeTicks": 30,
@@ -148,6 +164,11 @@
       ],
       "winScore": 0
     },
+    "screens": {
+      "loseTitle": "Game over",
+      "startHint": "Tap to start",
+      "winTitle": "You win"
+    },
     "simulation": {
       "maxTicksPerFrame": 5,
       "tickRate": 60
@@ -179,5 +200,5 @@
       "name": "0.1.0"
     }
   },
-  "specVersion": 3
+  "specVersion": 4
 }
