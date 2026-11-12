@@ -177,6 +177,28 @@ class ConformanceComparison(Base):
             report = conformance.run(gen, self.store, ["oracle", "kotlin", "swift"])
         self.assertEqual(report["verdict"], "pass")
 
+class ContainerAndPins(unittest.TestCase):
+    def test_swift_container_is_offline_read_only_and_writes_only_results(self) -> None:
+        pkg, results = Path("/repo/ios/Runtime"), Path("/tmp/results")
+        argv = conformance.docker_command(pkg, results, "swift:6.1-noble")
+        self.assertEqual(argv[argv.index("--network") + 1], "none")
+        mounts = [argv[i + 1] for i, a in enumerate(argv) if a == "-v"]
+        self.assertEqual(len(mounts), 2)
+        self.assertTrue(mounts[0].endswith(":/pkg:ro"), "sources must be mounted read-only")
+        self.assertTrue(mounts[1].endswith(":/out") and not mounts[1].endswith(":ro"))
+        self.assertNotIn("--privileged", argv)
+
+    def test_toolchain_pins_load_strictly_and_ci_uses_the_pinned_swift_image(self) -> None:
+        image = generate.toolchain()["ios"]["swiftConformanceImage"]
+        self.assertTrue(conformance.SWIFT_IMAGE.fullmatch(image))
+        workflow = (REPO / ".github" / "workflows" / "monstera.yml").read_text(encoding="utf-8")
+        self.assertNotIn("swift:6", workflow, "the conformance job must use --swift-image toolchain")
+        self.assertIn("--swift-image toolchain", workflow)
+        from monstera.jsonio import LoadError, loads_strict
+        with self.assertRaises(LoadError):
+            loads_strict('{"junit": "4.13.2", "junit": "4.13.2"}')
+
+
 class WhatTheScenariosExercise(Base):
     """Guards against scenarios that pass without exercising the behaviour they claim to."""
 

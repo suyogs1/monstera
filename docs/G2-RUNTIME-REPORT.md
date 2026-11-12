@@ -26,7 +26,7 @@ Docker Desktop with `swift:6.1-noble`). "CI" means GitHub Actions on the PR. A c
 | 29 simulation mutants and 7 loop mutants | killed | `tools/monstera/tests/test_mutations.py`; the 5 state-affecting loop mutants die on the recorded scenarios alone |
 | Hand-computed edge expectations | tested | `tools/monstera/tests/test_boundary_lab.py` |
 
-Test counts at the time of writing: engine 196, MCP 30, gates 12/12.
+Test counts at the time of writing (local, 2026-11-11): engine 198, MCP 30, gates 12/12, 18 scenarios matching the oracle.
 
 ## Limitations (explicit)
 
@@ -61,6 +61,25 @@ reviewer's tests are `tools/monstera/tests/test_adversarial_g2.py` and `tools/mo
 Not covered by the review or by any test: concurrent runs on one directory, and behaviour of the u32 `tick`/`nextId`/`age` counters near 2^32.
 The differential fuzz the reviewer ran (10,139 trace lines, identical on Kotlin and Swift) is a one-off result, not a committed check.
 
-## CI
+## Local verification of the final tree (commit c332a52 plus one test file)
 
-Recorded below after the final push.
+| Check | Result |
+|---|---|
+| `check-architecture`, `gates --skip-tests` (12), generated-output drift | PASS |
+| Engine tests (198), MCP tests (30, protocol included) | PASS |
+| `validate-scenario --all --oracle` (18 scenarios) | PASS |
+| Android `assembleDebug` and Kotlin JVM tests (Windows) | PASS |
+| Swift `swift test`, Linux, Docker `swift:6.1-noble`, offline and read-only mount | PASS |
+| `monstera conformance` on both specs: oracle, Kotlin, Swift | PASS, 1,513 checkpoints (`docs/evidence/g2-conformance/`) |
+| macOS iOS app build and simulator launch | NOT RUN locally (no macOS); covered by CI below |
+
+## CI (GitHub Actions, PR #4)
+
+- `05d1119`: all five jobs PASSED (spec, mcp, conformance, android-generated, ios-generated), including the macOS
+  `swift test`, the iOS app build with the local `ios/Runtime` package, the simulator launch and the
+  `runtime ticks=60 ...` line from the SpriteKit shell.
+- `c332a52` (current head): runs are QUEUED; the account's Actions usage ceiling was reached. There is no result yet.
+  `generated/`, the runtime templates and `.github/` are byte-identical between `05d1119` and `c332a52`
+  (`git diff --stat 05d1119 HEAD -- generated tools/monstera/monstera/templates .github` is empty), so the native build
+  evidence applies to the same sources; the Python tooling and tests changed and are covered by the local runs above,
+  not yet by CI. The merge needs a green CI on the final head.
