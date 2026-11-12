@@ -1,0 +1,10 @@
+Android emulator smoke test, pumpkin-blaster (G3). Run by Kiro on 2026-11-12, Windows host.
+Emulator: Android emulator 36.3.10.0, AVD Pixel_9_Pro_XL, system image android-36.1 google_apis_playstore x86_64, cold boot (-no-snapshot).
+  A first attempt with the default snapshot stayed 'offline' to adb for 7 minutes and was abandoned.
+APK: apps/pumpkin-blaster/android, ./gradlew assembleDebug (local, base commit cab0d4d plus the uncommitted G3 batch that this evidence is committed with).
+Driven with adb directly (install -r, am start -W, input swipe/tap, screencap, logcat), not the Device Lab adapter: only WSL bash is on PATH here.
+Input: drag the ship down, 12 taps to fire, drag up; wait 25 s; tap centre.
+Files: run.txt (install/launch output), logs.txt (MonsteraSpec/MonsteraRuntime logcat), 01-launched, 02-playing, 03-game-over, 04-restarted (.png).
+Observed: bundledMatches=true; HUD score/lives/time advance; the run ends with 'GAME OVER - tap to restart'; the tap starts a new session
+  (second 'runtime ticks=60' log line with a different seed; HUD back to full lives).
+Not observed: frame pacing or performance; physical device; iOS.

@@ -70,6 +70,7 @@
       ],
       "kinds": [
         {
+          "color": "#B6FF3B",
           "exitPolicy": "clamp",
           "height": 5898240,
           "id": "player",
@@ -77,6 +78,7 @@
           "width": 7864320
         },
         {
+          "color": "#FFFFFF",
           "exitPolicy": "despawn",
           "height": 1048576,
           "id": "bullet",
@@ -84,6 +86,7 @@
           "width": 2621440
         },
         {
+          "color": "#FF7A00",
           "exitPolicy": "despawn",
           "height": 7208960,
           "id": "pumpkin",
@@ -91,6 +94,7 @@
           "width": 7208960
         },
         {
+          "color": "#9B5DE5",
           "exitPolicy": "despawn",
           "height": 3276800,
           "id": "bat",
@@ -98,6 +102,7 @@
           "width": 4587520
         },
         {
+          "color": "#FF3B3B",
           "exitPolicy": "despawn",
           "height": 2359296,
           "id": "ember",
@@ -105,6 +110,7 @@
           "width": 2359296
         },
         {
+          "color": "#5C4B7D",
           "exitPolicy": "despawn",
           "height": 524288,
           "id": "star",
@@ -118,6 +124,7 @@
         {
           "intervalTicks": 60,
           "kind": "pumpkin",
+          "startTick": 0,
           "stream": "pumpkins",
           "vx": -262144,
           "vy": 0,
@@ -129,6 +136,7 @@
         {
           "intervalTicks": 140,
           "kind": "bat",
+          "startTick": 0,
           "stream": "bats",
           "vx": -589824,
           "vy": 0,
@@ -140,6 +148,7 @@
         {
           "intervalTicks": 200,
           "kind": "ember",
+          "startTick": 0,
           "stream": "embers",
           "vx": -393216,
           "vy": 0,
@@ -151,6 +160,7 @@
         {
           "intervalTicks": 24,
           "kind": "star",
+          "startTick": 0,
           "stream": "stars",
           "vx": -262144,
           "vy": 0,
@@ -193,5 +203,5 @@
       "name": "0.1.0"
     }
   },
-  "specVersion": 2
+  "specVersion": 3
 }

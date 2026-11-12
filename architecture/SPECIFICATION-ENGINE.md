@@ -37,7 +37,7 @@ monstera.spec.json ─► strict load ─► schema validation ─► semantic r
 
 ## The contract
 
-- `monstera.spec.schema.json` = `{specVersion: 2, project, game}`.
+- `monstera.spec.schema.json` = `{specVersion: 3, project, game}`.
 - `project.schema.json`: `id`, `displayName`, `identifier` (one reverse-DNS value valid on both
   platforms; it is the Android `applicationId`/namespace and the iOS bundle ID), `version`
   (`name` semver + `code`), `targets`, and `platforms.{android.minSdk, ios.deploymentTarget}`.

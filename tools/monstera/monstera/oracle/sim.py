@@ -117,7 +117,7 @@ def _apply_input(w: World, ev: dict) -> None:
 
 def _spawn(w: World) -> None:
     for sp in w.cfg.spawners:
-        if w.tick % sp["intervalTicks"] != 0:
+        if w.tick < sp["startTick"] or (w.tick - sp["startTick"]) % sp["intervalTicks"] != 0:
             continue
         rng = w.rngs[sp["stream"]]
         # Always draw x then y, even when the entity cap skips the spawn, so streams stay aligned.

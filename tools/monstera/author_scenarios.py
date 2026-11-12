@@ -19,6 +19,7 @@ REPO = Path(__file__).resolve().parents[2]
 SPEC = "spec/samples/monstera-sample/monstera.spec.json"
 LAB_SPEC = "spec/samples/boundary-lab/monstera.spec.json"
 PUMPKIN_SPEC = "apps/pumpkin-blaster/monstera.spec.json"
+RUSH_SPEC = "apps/trick-or-treat-rush/monstera.spec.json"
 SCENARIOS = REPO / "spec" / "scenarios"
 PLACEHOLDER_SHA = "0" * 64  # replaced by `monstera scenarios record`
 MAX, MIN = 2147483647, -2147483648
@@ -150,6 +151,43 @@ def build_lab() -> list[dict]:
     ]
 
 
+def pumpkin_aimer(seed: int, ticks: int) -> dict[int, list[dict]]:
+    """Input trace of a deterministic player computed by driving the oracle: it slides its bullet row toward
+    the nearest pumpkin or bat (at most 40 units per tick), avoids embers in its row, and
+    fires every 6 ticks. Checkpoints are still recorded by `monstera scenarios record`."""
+    import json as _json
+    from monstera.oracle import sim
+    game = _json.loads((REPO / PUMPKIN_SPEC).read_text(encoding="utf-8"))["game"]
+    cfg = sim.Config(game)
+    w = sim.new_world(cfg, seed)
+    ids = [k["id"] for k in cfg.kinds]
+    one = 65536
+    out: dict[int, list[dict]] = {}
+    for t in range(ticks):
+        if w.ended:
+            break
+        ship = next(e for e in w.entities if e.controlled)
+        targets = [e for e in w.entities if ids[e.kind] in ("pumpkin", "bat") and e.x > ship.x]
+        events = []
+        if targets:
+            tgt = min(targets, key=lambda e: e.x)
+            # A tap spawns the bullet at the ship's top-left, so aim the bullet row (not the ship centre).
+            want = tgt.y + cfg.kinds[tgt.kind]["height"] // 2 - cfg.kinds[cfg.kind_index["bullet"]]["height"] // 2
+            embers = [e for e in w.entities if ids[e.kind] == "ember" and ship.x < e.x < ship.x + 400 * one]
+            for em in embers:
+                if abs(em.y - want) < 120 * one:
+                    want = em.y - 160 * one if em.y > 540 * one else em.y + 160 * one
+            dy = max(-40 * one, min(40 * one, want - ship.y))
+            if dy:
+                events.append(ev("drag", 0, dy))
+        if t % 6 == 0:
+            events.append(ev("tap"))
+        if events:
+            out[t] = events
+        sim.step(w, events)
+    return out
+
+
 def build_pumpkin() -> list[dict]:
     """pumpkin-blaster (G3): the shipped game's own behaviour, driven by plausible play."""
     def play(n: int) -> dict[int, list[dict]]:
@@ -170,14 +208,98 @@ def build_pumpkin() -> list[dict]:
            2026, 2400, play(2400)),
         pb("idle-defence", "No input: four PRNG streams (pumpkins, bats, embers, stars) spawn from the right edge and the idle ship loses all five lives (the game ends near tick 1140); later ticks change nothing.",
            11, 6000, {}),
+        pb("win-1000", "A deterministic aiming player (row tracking, ember avoidance, a shot every 6 ticks) reaches the 1000-point winScore: the game ends with ended = 1 and lives left, and later ticks change nothing.",
+           1000, 6000, pumpkin_aimer(1000, 6000)),
         pb("volley-cap", "200 taps in one tick against maxEntities 128: surplus bullets are skipped, PRNG draws continue, and the volley expires before spawning resumes.",
            13, 300, {20: [ev("tap")] * 200}),
         pb("frame-jitter-60hz", "Frame-driven: 1800 frames of 12-22 ms (about 60 Hz with jitter) feed taps and drags into the fixed-tick loop of the landscape shooter.",
            17, 1800, {f: [ev("tap")] for f in range(4, 1800, 11)} | {f: [ev("drag", units(2), units(((f // 40) % 2) * 120 - 60))] for f in range(9, 1800, 40)},
            frames={"count": 1800, "seed": 606, "minNanos": 12000000, "maxNanos": 22000000}),
     ]
+# --- trick-or-treat-rush (G3) -------------------------------------------------------------------
+RUSH_STEP = 460 * 65536            # lane step = input.swipeSpeed; a lane swipe is drag(+-step, 0)
+RUSH_HAZARDS = ("tombstone", "ghost")
+
+
+def lane_left() -> dict:
+    return ev("drag", -RUSH_STEP)
+
+
+def lane_right() -> dict:
+    return ev("drag", RUSH_STEP)
+
+
+def rush_bot(seed: int, ticks: int, chase_candy: bool, dodge: bool) -> dict[int, list[dict]]:
+    """Input trace of a deterministic player, computed by driving the oracle (the oracle is only
+    used to see the world; the checkpoints are still recorded by `monstera scenarios record`).
+    Each tick it picks the nearest lane that no hazard reaches within the next 2 ticks, preferring a
+    lane with candy approaching, and swipes there one lane per event."""
+    import json as _json
+    from monstera.oracle import sim
+    game = _json.loads((REPO / RUSH_SPEC).read_text(encoding="utf-8"))["game"]
+    cfg = sim.Config(game)
+    w = sim.new_world(cfg, seed)
+    kinds = cfg.kinds
+    runner_k = kinds[cfg.kind_index["runner"]]
+    lanes = [0, RUSH_STEP, 2 * RUSH_STEP]
+
+    def hits(e, lane_x: int, horizon: int, runner) -> bool:
+        k = kinds[e.kind]
+        if not sim.overlaps(e.x, 0, k["width"], 1, lane_x, 0, runner_k["width"], 1):
+            return False
+        for s in range(1, horizon + 1):
+            y = e.y + e.vy * s
+            if sim.overlaps(0, y, 1, k["height"], 0, runner.y, 1, runner_k["height"]):
+                return True
+        return False
+
+    out: dict[int, list[dict]] = {}
+    for t in range(ticks):
+        if w.ended:
+            break
+        runner = next(e for e in w.entities if e.controlled)
+        cur = lanes.index(runner.x) if runner.x in lanes else min(range(3), key=lambda i: abs(lanes[i] - runner.x))
+        danger = [dodge and any(kinds[e.kind]["id"] in RUSH_HAZARDS and hits(e, lanes[i], 2, runner) for e in w.entities)
+                  for i in range(3)]
+        sweet = [chase_candy and any(kinds[e.kind]["id"] == "candy" and hits(e, lanes[i], 60, runner) for e in w.entities)
+                 for i in range(3)]
+        safe = [i for i in range(3) if not danger[i]] or [cur]
+        target = min(safe, key=lambda i: (not sweet[i], abs(i - cur), i))
+        if danger[cur] or (sweet[target] and not sweet[cur]):
+            events = [lane_right() if target > cur else lane_left() for _ in range(abs(target - cur))]
+        else:
+            events = []
+        if events:
+            out[t] = events
+        sim.step(w, events)
+    return out
+
+
+def build_rush() -> list[dict]:
+    def rush(name: str, description: str, seed: int, ticks: int, by_tick: dict[int, list[dict]],
+             frames: dict | None = None) -> dict:
+        return scenario(name, description, seed, ticks, by_tick, spec=RUSH_SPEC, frames=frames)
+    return [
+        rush("hand-lane-zero", "Hand-verified (tools/monstera/tests/test_trick_or_treat.py): one left swipe at tick 0 puts the runner in lane 0; the first stripe scores at step 125, the first lane-0 tombstone (spawned tick 120) costs a life in steps 234..240, and after 300 steps the score is exactly 6.",
+             3, 300, {0: [lane_left()]}),
+        rush("idle-run", "No input: the runner stays in the middle lane, scores one point per distance stripe, collects the middle-lane candy and loses all three lives to middle-lane tombstones; the run ends and later ticks change nothing.",
+             8, 1500, {}),
+        rush("lane-input-order", "Several lane swipes in one tick are applied in order and each is clamped at the world edge: left, left, right from the middle ends in the middle lane (a summed delta would end in lane 0); right, right, right ends in lane 2.",
+             21, 400, {3: [lane_left(), lane_left(), lane_right()], 50: [lane_right(), lane_right(), lane_right()],
+                       90: [lane_left()], 140: [lane_left(), lane_right(), lane_left(), lane_left()]}),
+        rush("dodge-run", "A deterministic player dodges every hazard for 90 seconds through all three difficulty phases (tombstones, ghosts from 30 s, doubled tombstones from 60 s) and keeps all three lives; candy only when it is safe.",
+             2026, 5400, rush_bot(2026, 5400, chase_candy=True, dodge=True)),
+        rush("candy-chase", "A greedy player chases candy and ignores hazards: candy scores 10 each, collisions with tombstones in the candy lanes cost lives and end the run.",
+             44, 3000, rush_bot(44, 3000, chase_candy=True, dodge=False)),
+        rush("frame-jitter", "Frame-driven: 2400 frames of 10-24 ms jitter at a 60 tick/s simulation; lane swipes are submitted per frame and land on whatever tick comes next.",
+             55, 2400, {f: [lane_left() if (f // 97) % 2 else lane_right()] for f in range(7, 2400, 41)},
+             frames={"count": 2400, "seed": 3131, "minNanos": 10000000, "maxNanos": 24000000}),
+    ]
+
+
 def main(argv: list[str]) -> int:
-    projects = (("monstera-sample", build), ("boundary-lab", build_lab), ("pumpkin-blaster", build_pumpkin))
+    projects = (("monstera-sample", build), ("boundary-lab", build_lab), ("pumpkin-blaster", build_pumpkin),
+                ("trick-or-treat-rush", build_rush))
     for project, factory in projects:
         if argv and project not in argv:
             continue  # name projects to write only those (existing recorded scenarios stay untouched)

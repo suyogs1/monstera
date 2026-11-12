@@ -1190,7 +1190,7 @@
   "seed": 7,
   "spec": {
     "path": "spec/samples/monstera-sample/monstera.spec.json",
-    "sha256": "ad0a2ac3f804979632b4aff24ccd999931c66b61cc8ecb69d87461ea91397dec"
+    "sha256": "6dd6c99c20027fbc8d16dff750c09579952dbd75d3e7d774acf30af6c20625d3"
   },
   "ticks": 90
 }

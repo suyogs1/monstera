@@ -124,10 +124,12 @@ width and height of its kind. Entities are kept sorted by id; iteration is alway
    and `entityCount < maxEntities`. `drag(dx, dy)` moves every controlled entity by
    `mul(dx, dragGain), mul(dy, dragGain)` then clamps it into the world. `swipe(dir)` sets every
    controlled entity's velocity to `dir * swipeSpeed` (`up` is -y; `none` stops it).
-2. **spawn**: for each spawner in order, when `tick mod intervalTicks == 0` (tick 0 included), draw
+2. **spawn**: for each spawner in order, when `tick >= startTick` and `(tick - startTick) mod intervalTicks == 0`
+   (so `startTick` is both the first spawn tick and the phase; `startTick = 0` is the v2 rule), draw
    `x = xMin + nextBelow(xMax - xMin + 1)` then `y = yMin + nextBelow(yMax - yMin + 1)` from its
    stream; **both draws always happen**; the entity is created with velocity `(vx, vy)` only if
-   `entityCount < maxEntities` (so a full world still consumes the stream identically).
+   `entityCount < maxEntities` (so a full world still consumes the stream identically). Before `startTick` a spawner does nothing and draws
+   nothing, so a delayed spawner's stream is untouched until its first eligible tick.
 3. **move**: for each entity, `x = add(x, vx)`, `y = add(y, vy)`, `age += 1`, then its `exitPolicy`:
    `despawn` does nothing here; `clamp` clamps the box into the world; `bounce` reflects per axis
    (`x < 0`: `x = neg(x)`, `vx = neg(vx)`; `x > maxX`: `x = sub(add(maxX, maxX), x)`, `vx = neg(vx)`;
