@@ -1,0 +1,416 @@
+{
+  "verdict": "PASS",
+  "checks": [
+    {
+      "name": "validate parity with `monstera validate --json`",
+      "ok": true,
+      "detail": "23 cases (19 invalid, 4 valid); differences: none"
+    },
+    {
+      "name": "schema digests visible in the worker",
+      "ok": true,
+      "detail": "conformance.schema.json, game.schema.json, monstera.spec.schema.json, project.schema.json, scenario.schema.json"
+    },
+    {
+      "name": "plan pumpkin-blaster: file set, contents and sizes equal CLI generate",
+      "ok": true,
+      "detail": "43 files; missing 0, extra 0, content differs 0"
+    },
+    {
+      "name": "plan pumpkin-blaster: modes equal the CLI manifest",
+      "ok": true,
+      "detail": "42 modes; differs 0"
+    },
+    {
+      "name": "plan pumpkin-blaster: MONSTERA-MANIFEST.json equals CLI output and the committed manifest",
+      "ok": true,
+      "detail": "0666d26c2244e5444958dc8dc5a1dafee0ad9d84abbd57a47f744f419dc09d5d"
+    },
+    {
+      "name": "plan pumpkin-blaster: binary asset (gradle-wrapper.jar) reproduced",
+      "ok": true,
+      "detail": "android/gradle/wrapper/gradle-wrapper.jar"
+    },
+    {
+      "name": "plan trick-or-treat-rush: file set, contents and sizes equal CLI generate",
+      "ok": true,
+      "detail": "43 files; missing 0, extra 0, content differs 0"
+    },
+    {
+      "name": "plan trick-or-treat-rush: modes equal the CLI manifest",
+      "ok": true,
+      "detail": "42 modes; differs 0"
+    },
+    {
+      "name": "plan trick-or-treat-rush: MONSTERA-MANIFEST.json equals CLI output and the committed manifest",
+      "ok": true,
+      "detail": "d3211321ac95edd7cf45cb936645aeda9381e1ce863caefc7b1c178991944289"
+    },
+    {
+      "name": "plan trick-or-treat-rush: binary asset (gradle-wrapper.jar) reproduced",
+      "ok": true,
+      "detail": "android/gradle/wrapper/gradle-wrapper.jar"
+    },
+    {
+      "name": "golden pumpkin-blaster: every scenario reproduces its committed checkpoints in the browser",
+      "ok": true,
+      "detail": "5 scenarios, 505 checkpoints, 16500 ticks; failing: none"
+    },
+    {
+      "name": "golden trick-or-treat-rush: every scenario reproduces its committed checkpoints in the browser",
+      "ok": true,
+      "detail": "6 scenarios, 606 checkpoints, 13000 ticks; failing: none"
+    },
+    {
+      "name": "edit pumpkin-blaster spawners[0].intervalTicks 60 -> 50: Pyodide equals host CPython",
+      "ok": true,
+      "detail": "first divergent tick 72, 98/101 checkpoints differ"
+    },
+    {
+      "name": "edit pumpkin-blaster behaviour change diverges",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "edit pumpkin-blaster spawners[0].intervalTicks 60 -> 60: Pyodide equals host CPython",
+      "ok": true,
+      "detail": "first divergent tick null, 0/101 checkpoints differ"
+    },
+    {
+      "name": "edit pumpkin-blaster no-op does not diverge",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "edit trick-or-treat-rush spawners[0].intervalTicks 30 -> 15: Pyodide equals host CPython",
+      "ok": true,
+      "detail": "first divergent tick 30, 100/101 checkpoints differ"
+    },
+    {
+      "name": "edit trick-or-treat-rush behaviour change diverges",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "edit trick-or-treat-rush spawners[0].intervalTicks 30 -> 30: Pyodide equals host CPython",
+      "ok": true,
+      "detail": "first divergent tick null, 0/101 checkpoints differ"
+    },
+    {
+      "name": "edit trick-or-treat-rush no-op does not diverge",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "live pumpkin-blaster: per-tick stepping final hash equals host CPython",
+      "ok": true,
+      "detail": "2400 ticks, hash 20dc7988aca6592b"
+    },
+    {
+      "name": "live trick-or-treat-rush: per-tick stepping final hash equals host CPython",
+      "ok": true,
+      "detail": "3000 ticks, hash e4ce46f0fe13b008"
+    },
+    {
+      "name": "cold engine ready in budget (localhost, no network latency)",
+      "ok": true,
+      "detail": "1290 ms <= 10000"
+    },
+    {
+      "name": "per-tick step p95 within budget",
+      "ok": true,
+      "detail": "worst p95 0.100 ms <= 3"
+    },
+    {
+      "name": "main thread stays responsive while the worker computes",
+      "ok": true,
+      "detail": "max timer gap 7 ms <= 100"
+    },
+    {
+      "name": "first-load size (brotli estimate) within budget",
+      "ok": true,
+      "detail": "4.61 MiB <= 15"
+    },
+    {
+      "name": "no page errors",
+      "ok": true,
+      "detail": ""
+    }
+  ],
+  "limits": {
+    "coldInitMs": 10000,
+    "tickP95Ms": 3,
+    "mainThreadGapMs": 100,
+    "brotliFirstLoadBytes": 15728640
+  },
+  "environment": {
+    "browser": "Chrome 157.0.8103.51 (Playwright 1.65.0, channel chrome)",
+    "node": "v22.18.0",
+    "os": "Windows_NT 10.0.26200",
+    "cpu": "Intel(R) Core(TM) 7 240H",
+    "logicalCpus": 16,
+    "hostPython": "3.14.1 (tags/v3.14.1:57e0d17, Dec  2 2025, 14:05:07) [MSC v.1944 64 bit (AMD64)]"
+  },
+  "runtime": {
+    "pyodide": "0.29.5",
+    "python": "3.13.2 (main, Sep 15 2026, 22:35:08) [Clang 21.0.0git (https:/github.com/llvm/llvm-project 2f05451198e2f222ec66cec489",
+    "engineFiles": 75
+  },
+  "size": {
+    "bundle": {
+      "pyodide": "0.29.5",
+      "engineFiles": 75,
+      "engineTextFiles": 74,
+      "engineBinaryFiles": [
+        "tools/monstera/monstera/templates/android/static/gradle/wrapper/gradle-wrapper.jar"
+      ],
+      "sizes": [
+        {
+          "name": "engine-bundle.json",
+          "raw": 1049579,
+          "gzip": 163552,
+          "brotli": 132667
+        },
+        {
+          "name": "pyodide/pyodide.mjs",
+          "raw": 17616,
+          "gzip": 7064,
+          "brotli": 6355
+        },
+        {
+          "name": "pyodide/pyodide.asm.js",
+          "raw": 1074322,
+          "gzip": 222210,
+          "brotli": 181055
+        },
+        {
+          "name": "pyodide/pyodide.asm.wasm",
+          "raw": 8647684,
+          "gzip": 2866040,
+          "brotli": 2122063
+        },
+        {
+          "name": "pyodide/python_stdlib.zip",
+          "raw": 2424003,
+          "gzip": 2384501,
+          "brotli": 2369083
+        },
+        {
+          "name": "pyodide/pyodide-lock.json",
+          "raw": 122027,
+          "gzip": 27112,
+          "brotli": 23039
+        }
+      ],
+      "total": {
+        "raw": 13335231,
+        "gzip": 5670479,
+        "brotli": 4834262
+      }
+    },
+    "networkBytesColdRaw": 13345433,
+    "requestsCold": 9
+  },
+  "timings": {
+    "cold": {
+      "pyodideMs": 946.6000000014901,
+      "bundleFetchMs": 34.600000001490116,
+      "unpackMs": 5.5,
+      "files": 75,
+      "importEngineMs": 303,
+      "totalMs": 1289.7000000029802,
+      "memoryBytes": 20971520
+    },
+    "warm": {
+      "pyodideMs": 926.5,
+      "bundleFetchMs": 34.900000005960464,
+      "unpackMs": 6,
+      "files": 75,
+      "importEngineMs": 306.19999999552965,
+      "totalMs": 1273.7000000029802,
+      "memoryBytes": 20971520
+    },
+    "coldWallMsForWholeRun": 4548,
+    "mainThreadMaxGapMs": 7.299999997019768
+  },
+  "projects": {
+    "pumpkin-blaster": {
+      "planMs": 9.100000000000108,
+      "loadScenariosMs": 748.5000000000001,
+      "planCallMs": 760.3999999985099,
+      "files": 43,
+      "scenarios": [
+        {
+          "name": "frame-jitter-60hz.scenario.json",
+          "ticks": 1800,
+          "frames": 1800,
+          "checkpoints": 101,
+          "match": true,
+          "ms": 151
+        },
+        {
+          "name": "idle-defence.scenario.json",
+          "ticks": 6000,
+          "frames": 0,
+          "checkpoints": 101,
+          "match": true,
+          "ms": 51
+        },
+        {
+          "name": "sweep-and-fire.scenario.json",
+          "ticks": 2400,
+          "frames": 0,
+          "checkpoints": 101,
+          "match": true,
+          "ms": 166
+        },
+        {
+          "name": "volley-cap.scenario.json",
+          "ticks": 300,
+          "frames": 0,
+          "checkpoints": 101,
+          "match": true,
+          "ms": 98
+        },
+        {
+          "name": "win-1000.scenario.json",
+          "ticks": 6000,
+          "frames": 0,
+          "checkpoints": 101,
+          "match": true,
+          "ms": 224
+        }
+      ],
+      "live": {
+        "project": "pumpkin-blaster",
+        "scenario": "sweep-and-fire.scenario.json",
+        "ticks": 2400,
+        "meanMs": 0.059250000000000136,
+        "p95Ms": 0.10000000000021103,
+        "maxMs": 0.4999999999997229,
+        "peakEntities": 41,
+        "ended": false,
+        "finalTick": 2400,
+        "hash": "20dc7988aca6592b"
+      }
+    },
+    "trick-or-treat-rush": {
+      "planMs": 6.099999999999994,
+      "loadScenariosMs": 195.3999999999998,
+      "planCallMs": 203.89999999850988,
+      "files": 43,
+      "scenarios": [
+        {
+          "name": "candy-chase.scenario.json",
+          "ticks": 3000,
+          "frames": 0,
+          "checkpoints": 101,
+          "match": true,
+          "ms": 10
+        },
+        {
+          "name": "dodge-run.scenario.json",
+          "ticks": 5400,
+          "frames": 0,
+          "checkpoints": 101,
+          "match": true,
+          "ms": 97
+        },
+        {
+          "name": "frame-jitter.scenario.json",
+          "ticks": 2400,
+          "frames": 2400,
+          "checkpoints": 101,
+          "match": true,
+          "ms": 19
+        },
+        {
+          "name": "hand-lane-zero.scenario.json",
+          "ticks": 300,
+          "frames": 0,
+          "checkpoints": 101,
+          "match": true,
+          "ms": 9
+        },
+        {
+          "name": "idle-run.scenario.json",
+          "ticks": 1500,
+          "frames": 0,
+          "checkpoints": 101,
+          "match": true,
+          "ms": 17
+        },
+        {
+          "name": "lane-input-order.scenario.json",
+          "ticks": 400,
+          "frames": 0,
+          "checkpoints": 101,
+          "match": true,
+          "ms": 10
+        }
+      ],
+      "live": {
+        "project": "trick-or-treat-rush",
+        "scenario": "candy-chase.scenario.json",
+        "ticks": 3000,
+        "meanMs": 0.002500000000000391,
+        "p95Ms": 0,
+        "maxMs": 0.20000000000042206,
+        "peakEntities": 10,
+        "ended": true,
+        "finalTick": 417,
+        "hash": "e4ce46f0fe13b008"
+      }
+    }
+  },
+  "edits": [
+    {
+      "project": "pumpkin-blaster",
+      "scenario": "sweep-and-fire.scenario.json",
+      "pointer": "game.runtime.spawners.0.intervalTicks",
+      "value": 50,
+      "valid": true,
+      "editedSha256": "f22c13b6269e04b2ddf34f65d59e9a85e343325f198981062567a7b8b927f2dc",
+      "firstDivergentTick": 72,
+      "divergentCheckpoints": 98,
+      "checkpoints": 101,
+      "ms": 165.0999999999998
+    },
+    {
+      "project": "pumpkin-blaster",
+      "scenario": "sweep-and-fire.scenario.json",
+      "pointer": "game.runtime.spawners.0.intervalTicks",
+      "value": 60,
+      "valid": true,
+      "editedSha256": "c65ebbdda2e89a9ea8631337f7c0f34c4d15a9eec1289e6c45144250f26c88c4",
+      "firstDivergentTick": null,
+      "divergentCheckpoints": 0,
+      "checkpoints": 101,
+      "ms": 155.6999999999995
+    },
+    {
+      "project": "trick-or-treat-rush",
+      "scenario": "candy-chase.scenario.json",
+      "pointer": "game.runtime.spawners.0.intervalTicks",
+      "value": 15,
+      "valid": true,
+      "editedSha256": "11c7f5bc0ce69bc43238a9dffe6d26b46d6a8eeeffd4fc4752b639a878c4fad3",
+      "firstDivergentTick": 30,
+      "divergentCheckpoints": 100,
+      "checkpoints": 101,
+      "ms": 12.800000000000367
+    },
+    {
+      "project": "trick-or-treat-rush",
+      "scenario": "candy-chase.scenario.json",
+      "pointer": "game.runtime.spawners.0.intervalTicks",
+      "value": 30,
+      "valid": true,
+      "editedSha256": "93fb53e06cc40b280c5a63dbbb482c389354cd7945b93f2d98562e6d2e7ddb93",
+      "firstDivergentTick": null,
+      "divergentCheckpoints": 0,
+      "checkpoints": 101,
+      "ms": 9.700000000000486
+    }
+  ]
+}
