@@ -32,7 +32,7 @@ def kotlin_config(game: dict[str, Any], package: str, header: str) -> str:
         f"            InitialEntity({_kstr(e['kind'])}, {e['x']}L, {e['y']}L, {e['vx']}L, {e['vy']}L, {str(e['controlled']).lower()})"
         for e in rt["initialEntities"])
     spawners = ",\n".join(
-        f"            SpawnerConfig({_kstr(s['stream'])}, {_kstr(s['kind'])}, {s['intervalTicks']}, {s['xMin']}L, {s['xMax']}L, "
+        f"            SpawnerConfig({_kstr(s['stream'])}, {_kstr(s['kind'])}, {s['startTick']}, {s['intervalTicks']}, {s['xMin']}L, {s['xMax']}L, "
         f"{s['yMin']}L, {s['yMax']}L, {s['vx']}L, {s['vy']}L)" for s in rt["spawners"])
     rules = ",\n".join(
         f"            CollisionRule({_kstr(c['a'])}, {_kstr(c['b'])}, {str(c['despawnA']).lower()}, "
@@ -77,7 +77,7 @@ def swift_config(game: dict[str, Any], header: str) -> str:
         f"            InitialEntity(kind: {_sstr(e['kind'])}, x: {e['x']}, y: {e['y']}, vx: {e['vx']}, vy: {e['vy']}, "
         f"controlled: {str(e['controlled']).lower()})" for e in rt["initialEntities"])
     spawners = ",\n".join(
-        f"            SpawnerConfig(stream: {_sstr(s['stream'])}, kind: {_sstr(s['kind'])}, intervalTicks: {s['intervalTicks']}, "
+        f"            SpawnerConfig(stream: {_sstr(s['stream'])}, kind: {_sstr(s['kind'])}, startTick: {s['startTick']}, intervalTicks: {s['intervalTicks']}, "
         f"xMin: {s['xMin']}, xMax: {s['xMax']}, yMin: {s['yMin']}, yMax: {s['yMax']}, vx: {s['vx']}, vy: {s['vy']})"
         for s in rt["spawners"])
     rules = ",\n".join(

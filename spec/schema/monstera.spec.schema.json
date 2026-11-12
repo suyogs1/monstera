@@ -7,9 +7,9 @@
   "required": ["specVersion", "project", "game"],
   "properties": {
     "specVersion": {
-      "description": "Specification format version. G2 supports exactly 2 (adds game.simulation, game.runtime and the extended game.input; migration in docs/SPEC-V2-MIGRATION.md).",
+      "description": "Specification format version. G2 supports exactly 3 (v3 adds spawners[].startTick and the input scheme 'lanes'; migrations in docs/SPEC-V2-MIGRATION.md).",
       "type": "integer",
-      "const": 2
+      "const": 3
     },
     "project": { "$ref": "project.schema.json" },
     "game": { "$ref": "game.schema.json" }

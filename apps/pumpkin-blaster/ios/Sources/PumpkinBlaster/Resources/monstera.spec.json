@@ -1,0 +1,207 @@
+{
+  "game": {
+    "genre": "arcade-shooter",
+    "input": {
+      "dragGain": 65536,
+      "scheme": "drag",
+      "swipeSpeed": 0,
+      "tapKind": "bullet",
+      "tapVx": 1179648,
+      "tapVy": 0
+    },
+    "orientation": "landscape",
+    "palette": {
+      "accent": "#B6FF3B",
+      "background": "#120A1E",
+      "primary": "#FF7A00"
+    },
+    "runtime": {
+      "collisions": [
+        {
+          "a": "bullet",
+          "b": "pumpkin",
+          "despawnA": true,
+          "despawnB": true,
+          "lives": 0,
+          "score": 10
+        },
+        {
+          "a": "bullet",
+          "b": "bat",
+          "despawnA": true,
+          "despawnB": true,
+          "lives": 0,
+          "score": 25
+        },
+        {
+          "a": "pumpkin",
+          "b": "player",
+          "despawnA": true,
+          "despawnB": false,
+          "lives": -1,
+          "score": 0
+        },
+        {
+          "a": "bat",
+          "b": "player",
+          "despawnA": true,
+          "despawnB": false,
+          "lives": -1,
+          "score": 0
+        },
+        {
+          "a": "ember",
+          "b": "player",
+          "despawnA": true,
+          "despawnB": false,
+          "lives": -1,
+          "score": 0
+        }
+      ],
+      "initialEntities": [
+        {
+          "controlled": true,
+          "kind": "player",
+          "vx": 0,
+          "vy": 0,
+          "x": 5242880,
+          "y": 32440320
+        }
+      ],
+      "kinds": [
+        {
+          "color": "#B6FF3B",
+          "exitPolicy": "clamp",
+          "height": 5898240,
+          "id": "player",
+          "lifetimeTicks": 0,
+          "width": 7864320
+        },
+        {
+          "color": "#FFFFFF",
+          "exitPolicy": "despawn",
+          "height": 1048576,
+          "id": "bullet",
+          "lifetimeTicks": 120,
+          "width": 2621440
+        },
+        {
+          "color": "#FF7A00",
+          "exitPolicy": "despawn",
+          "height": 7208960,
+          "id": "pumpkin",
+          "lifetimeTicks": 0,
+          "width": 7208960
+        },
+        {
+          "color": "#9B5DE5",
+          "exitPolicy": "despawn",
+          "height": 3276800,
+          "id": "bat",
+          "lifetimeTicks": 0,
+          "width": 4587520
+        },
+        {
+          "color": "#FF3B3B",
+          "exitPolicy": "despawn",
+          "height": 2359296,
+          "id": "ember",
+          "lifetimeTicks": 0,
+          "width": 2359296
+        },
+        {
+          "color": "#5C4B7D",
+          "exitPolicy": "despawn",
+          "height": 524288,
+          "id": "star",
+          "lifetimeTicks": 0,
+          "width": 524288
+        }
+      ],
+      "lives": 5,
+      "maxEntities": 128,
+      "spawners": [
+        {
+          "intervalTicks": 60,
+          "kind": "pumpkin",
+          "startTick": 0,
+          "stream": "pumpkins",
+          "vx": -262144,
+          "vy": 0,
+          "xMax": 123207680,
+          "xMin": 123207680,
+          "yMax": 63569920,
+          "yMin": 0
+        },
+        {
+          "intervalTicks": 140,
+          "kind": "bat",
+          "startTick": 0,
+          "stream": "bats",
+          "vx": -589824,
+          "vy": 0,
+          "xMax": 123207680,
+          "xMin": 123207680,
+          "yMax": 64880640,
+          "yMin": 2621440
+        },
+        {
+          "intervalTicks": 200,
+          "kind": "ember",
+          "startTick": 0,
+          "stream": "embers",
+          "vx": -393216,
+          "vy": 0,
+          "xMax": 123863040,
+          "xMin": 123863040,
+          "yMax": 68419584,
+          "yMin": 0
+        },
+        {
+          "intervalTicks": 24,
+          "kind": "star",
+          "startTick": 0,
+          "stream": "stars",
+          "vx": -262144,
+          "vy": 0,
+          "xMax": 125501440,
+          "xMin": 125501440,
+          "yMax": 70254592,
+          "yMin": 0
+        }
+      ],
+      "winScore": 1000
+    },
+    "simulation": {
+      "maxTicksPerFrame": 5,
+      "tickRate": 60
+    },
+    "targetFps": 60,
+    "world": {
+      "height": 1080,
+      "width": 1920
+    }
+  },
+  "project": {
+    "displayName": "Pumpkin Blaster",
+    "id": "pumpkin-blaster",
+    "identifier": "app.monstera.pumpkinblaster",
+    "platforms": {
+      "android": {
+        "minSdk": 26
+      },
+      "ios": {
+        "deploymentTarget": "17.0"
+      }
+    },
+    "targets": [
+      "android",
+      "ios"
+    ],
+    "version": {
+      "code": 1,
+      "name": "0.1.0"
+    }
+  },
+  "specVersion": 3
+}

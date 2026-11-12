@@ -54,7 +54,7 @@
         "scheme": {
           "title": "InputScheme",
           "type": "string",
-          "enum": ["drag", "swipe", "tap"]
+          "enum": ["drag", "swipe", "lanes", "tap"]
         },
         "dragGain": { "$ref": "#/$defs/fixed", "description": "Multiplier applied to a drag delta (65536 = 1.0)." },
         "swipeSpeed": { "$ref": "#/$defs/fixed", "description": "Speed per tick given to controlled entities by a swipe." },
@@ -91,9 +91,10 @@
             "title": "EntityKind",
             "type": "object",
             "additionalProperties": false,
-            "required": ["id", "width", "height", "lifetimeTicks", "exitPolicy"],
+            "required": ["id", "color", "width", "height", "lifetimeTicks", "exitPolicy"],
             "properties": {
               "id": { "$ref": "#/$defs/kindId" },
+              "color": { "description": "Fill color of the entity on screen (presentation only; never read by the simulation).", "$ref": "#/$defs/color" },
               "width": { "$ref": "#/$defs/size" },
               "height": { "$ref": "#/$defs/size" },
               "lifetimeTicks": { "description": "Despawn after this many ticks; 0 means unlimited.", "type": "integer", "minimum": 0, "maximum": 1000000 },
@@ -127,13 +128,14 @@
           "type": "array",
           "items": {
             "title": "Spawner",
-            "description": "Spawns one entity every intervalTicks ticks (tick 0 included) at a PRNG-chosen position in [xMin,xMax] x [yMin,yMax].",
+            "description": "Spawns one entity at startTick and every intervalTicks ticks after it at a PRNG-chosen position in [xMin,xMax] x [yMin,yMax].",
             "type": "object",
             "additionalProperties": false,
-            "required": ["stream", "kind", "intervalTicks", "xMin", "xMax", "yMin", "yMax", "vx", "vy"],
+            "required": ["stream", "kind", "startTick", "intervalTicks", "xMin", "xMax", "yMin", "yMax", "vx", "vy"],
             "properties": {
               "stream": { "description": "Name of the independent PRNG stream this spawner draws from.", "$ref": "#/$defs/kindId" },
               "kind": { "$ref": "#/$defs/kindId" },
+              "startTick": { "description": "First spawn tick and phase: spawns at startTick, startTick + intervalTicks, ... (0 = the v2 rule). Nothing is drawn before it.", "type": "integer", "minimum": 0, "maximum": 1000000 },
               "intervalTicks": { "type": "integer", "minimum": 1, "maximum": 1000000 },
               "xMin": { "$ref": "#/$defs/fixed" },
               "xMax": { "$ref": "#/$defs/fixed" },

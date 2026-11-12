@@ -67,7 +67,10 @@ MUTANTS = [
     ("score applied per rule not per pair", "sim.py", "                    score_delta += rule[\"score\"]", "                    score_delta = rule[\"score\"]"),
     ("pressed flag not serialized", "sim.py", "1 if w.ended else 0, 1 if w.pressed else 0))", "1 if w.ended else 0, 0))"),
     ("RNG state not hashed", "sim.py", "out += struct.pack(\"<QQ\", r.state, r.inc)", "out += struct.pack(\"<QQ\", 0, 0)"),
-    ("tick period off by one", "sim.py", "if w.tick % sp[\"intervalTicks\"] != 0:", "if (w.tick + 1) % sp[\"intervalTicks\"] != 0:"),
+    ("tick period off by one", "sim.py", "or (w.tick - sp[\"startTick\"]) % sp[\"intervalTicks\"] != 0:", "or (w.tick + 1 - sp[\"startTick\"]) % sp[\"intervalTicks\"] != 0:"),
+    ("spawner phase ignores startTick", "sim.py", "or (w.tick - sp[\"startTick\"]) % sp[\"intervalTicks\"] != 0:", "or w.tick % sp[\"intervalTicks\"] != 0:"),
+    ("spawner ignores startTick", "sim.py", "if w.tick < sp[\"startTick\"] or ", "if "),
+    ("spawner starts one tick late", "sim.py", "if w.tick < sp[\"startTick\"] or ", "if w.tick <= sp[\"startTick\"] or "),
 ]
 
 

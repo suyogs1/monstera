@@ -1,0 +1,24 @@
+{
+  "version": 1,
+  "active": "balanced",
+  "profiles": {
+    "lean": {
+      "maxReviewRounds": 1,
+      "ciWaitMinutes": 15,
+      "adversarialReview": "architecture-security-only",
+      "gatesCadence": "per-batch"
+    },
+    "balanced": {
+      "maxReviewRounds": 2,
+      "ciWaitMinutes": 45,
+      "adversarialReview": "per-milestone",
+      "gatesCadence": "per-batch"
+    },
+    "thorough": {
+      "maxReviewRounds": 3,
+      "ciWaitMinutes": 90,
+      "adversarialReview": "per-milestone",
+      "gatesCadence": "per-batch"
+    }
+  }
+}

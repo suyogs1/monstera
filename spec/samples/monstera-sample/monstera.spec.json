@@ -70,6 +70,7 @@
       ],
       "kinds": [
         {
+          "color": "#FF7A00",
           "exitPolicy": "clamp",
           "height": 6291456,
           "id": "player",
@@ -77,6 +78,7 @@
           "width": 6291456
         },
         {
+          "color": "#FFB000",
           "exitPolicy": "despawn",
           "height": 3145728,
           "id": "bullet",
@@ -84,6 +86,7 @@
           "width": 1048576
         },
         {
+          "color": "#FF7A00",
           "exitPolicy": "despawn",
           "height": 5242880,
           "id": "enemy",
@@ -91,6 +94,7 @@
           "width": 5242880
         },
         {
+          "color": "#FFB000",
           "exitPolicy": "bounce",
           "height": 2621440,
           "id": "ball",
@@ -98,6 +102,7 @@
           "width": 2621440
         },
         {
+          "color": "#FF7A00",
           "exitPolicy": "clamp",
           "height": 2097152,
           "id": "drifter",
@@ -105,6 +110,7 @@
           "width": 2097152
         },
         {
+          "color": "#FFB000",
           "exitPolicy": "despawn",
           "height": 524288,
           "id": "spark",
@@ -118,6 +124,7 @@
         {
           "intervalTicks": 24,
           "kind": "enemy",
+          "startTick": 0,
           "stream": "spawn",
           "vx": 0,
           "vy": 294912,
@@ -129,6 +136,7 @@
         {
           "intervalTicks": 7,
           "kind": "spark",
+          "startTick": 0,
           "stream": "fx",
           "vx": 0,
           "vy": 0,
@@ -171,5 +179,5 @@
       "name": "0.1.0"
     }
   },
-  "specVersion": 2
+  "specVersion": 3
 }

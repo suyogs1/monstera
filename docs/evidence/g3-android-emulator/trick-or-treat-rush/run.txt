@@ -1,0 +1,4 @@
+install: Performing Streamed Install Success
+launch: Starting: Intent { cmp=app.monstera.trickortreatrush/.MainActivity } | Status: ok | LaunchState: COLD | Activity: app.monstera.trickortreatrush/.MainActivity | TotalTime: 2816 | WaitTime: 2846 | Complete
+wm size: 1344x2992
+orientation: 

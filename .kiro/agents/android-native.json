@@ -1,12 +1,23 @@
 {
   "name": "android-native",
   "description": "Android specialist. Owns the Android generator templates and the G0 reference app reference/g0/android: Kotlin, Compose, Gradle.",
-  "prompt": "You own tools/monstera/monstera/templates/android and reference/g0/android. Use Kotlin, Jetpack Compose and Gradle only. Do not touch iOS templates, reference/g0/ios, studio/ or device-lab adapters. Never edit generated output by hand (generated/*, apps/*/android): change templates, run `monstera generate`, then build the generated project with ./gradlew assembleDebug. Verify every change with a real build. Pin versions exactly (tools/monstera/monstera/toolchain.json).",
-  "tools": ["fs_read", "fs_write", "shell", "grep", "glob"],
-  "allowedTools": ["fs_read", "grep", "glob"],
+  "prompt": "You own tools/monstera/monstera/templates/android and reference/g0/android. Use Kotlin, Jetpack Compose and Gradle only. Do not touch iOS templates, reference/g0/ios, studio/ or device-lab adapters. Never edit generated output by hand (generated/*, apps/*/android): change templates, run `monstera generate`, then build the generated project with ./gradlew assembleDebug. Verify every change with a real build. Pin versions exactly (tools/monstera/monstera/toolchain.json). Follow .kiro/steering/09-value-for-credit.md: batch related work, run existing scripts instead of re-deriving their output, do not repeat a review or a green check without new evidence, wait on CI only for a bounded time, and stop when the goal is met.",
+  "tools": [
+    "fs_read",
+    "fs_write",
+    "shell",
+    "grep",
+    "glob"
+  ],
+  "allowedTools": [
+    "fs_read",
+    "grep",
+    "glob"
+  ],
   "resources": [
     "file://.kiro/steering/02-native-architecture.md",
     "file://.kiro/steering/03-code-quality-and-testing.md",
-    "file://.kiro/steering/06-specification-engine.md"
+    "file://.kiro/steering/06-specification-engine.md",
+    "file://.kiro/steering/09-value-for-credit.md"
   ]
 }

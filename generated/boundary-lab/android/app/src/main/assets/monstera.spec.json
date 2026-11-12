@@ -302,6 +302,7 @@
       ],
       "kinds": [
         {
+          "color": "#FF7A00",
           "exitPolicy": "despawn",
           "height": 655360,
           "id": "probe",
@@ -309,6 +310,7 @@
           "width": 655360
         },
         {
+          "color": "#FFB000",
           "exitPolicy": "despawn",
           "height": 655360,
           "id": "target",
@@ -316,6 +318,7 @@
           "width": 655360
         },
         {
+          "color": "#FF7A00",
           "exitPolicy": "despawn",
           "height": 0,
           "id": "dot",
@@ -323,6 +326,7 @@
           "width": 0
         },
         {
+          "color": "#FFB000",
           "exitPolicy": "despawn",
           "height": 655360,
           "id": "mover",
@@ -330,6 +334,7 @@
           "width": 655360
         },
         {
+          "color": "#FF7A00",
           "exitPolicy": "bounce",
           "height": 655360,
           "id": "ball",
@@ -337,6 +342,7 @@
           "width": 655360
         },
         {
+          "color": "#FFB000",
           "exitPolicy": "clamp",
           "height": 655360,
           "id": "stick",
@@ -344,6 +350,7 @@
           "width": 655360
         },
         {
+          "color": "#FF7A00",
           "exitPolicy": "despawn",
           "height": 131072,
           "id": "timer",
@@ -351,6 +358,7 @@
           "width": 131072
         },
         {
+          "color": "#FFB000",
           "exitPolicy": "clamp",
           "height": 1310720,
           "id": "player",
@@ -358,6 +366,7 @@
           "width": 1310720
         },
         {
+          "color": "#FF7A00",
           "exitPolicy": "despawn",
           "height": 524288,
           "id": "bullet",
@@ -365,6 +374,7 @@
           "width": 262144
         },
         {
+          "color": "#FFB000",
           "exitPolicy": "clamp",
           "height": 1310720,
           "id": "mine",
@@ -372,6 +382,7 @@
           "width": 1310720
         },
         {
+          "color": "#FF7A00",
           "exitPolicy": "clamp",
           "height": 262144,
           "id": "fast",
@@ -379,6 +390,7 @@
           "width": 262144
         },
         {
+          "color": "#FFB000",
           "exitPolicy": "despawn",
           "height": 262144,
           "id": "filler",
@@ -386,6 +398,7 @@
           "width": 262144
         },
         {
+          "color": "#FF7A00",
           "exitPolicy": "despawn",
           "height": 131072,
           "id": "spark",
@@ -393,6 +406,7 @@
           "width": 131072
         },
         {
+          "color": "#FFB000",
           "exitPolicy": "despawn",
           "height": 655360,
           "id": "twin",
@@ -406,6 +420,7 @@
         {
           "intervalTicks": 1,
           "kind": "spark",
+          "startTick": 0,
           "stream": "fx",
           "vx": 0,
           "vy": 0,
@@ -417,6 +432,7 @@
         {
           "intervalTicks": 2,
           "kind": "filler",
+          "startTick": 0,
           "stream": "fill",
           "vx": 0,
           "vy": 0,
@@ -459,5 +475,5 @@
       "name": "0.1.0"
     }
   },
-  "specVersion": 2
+  "specVersion": 3
 }

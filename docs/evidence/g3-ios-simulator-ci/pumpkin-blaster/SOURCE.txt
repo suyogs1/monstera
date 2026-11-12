@@ -1,0 +1,10 @@
+iOS Simulator evidence, pumpkin-blaster (G3), copied unchanged from GitHub Actions.
+Run: monstera #31, id 43198048336, event pull_request (PR #5), commit 15f412f7b3c352dc73053d46b48b9c9f0e16136f.
+Job: ios-generated (runs-on macos-26), step "Build, test and launch every generated iOS project".
+Artifact: g1-ios-simulator-43198048336 (expires 2027-02-10). Copied: 01-launched.png, logs.txt, report.json, results.jsonl.
+Not copied: the .app bundle (excluded by the workflow).
+What it shows: Device Lab ops build, install, launch, screenshot, logs, stop, report all "ok"; the app was compiled
+with its local ios/Runtime package by xtool for the simulator; logs contain bundledMatches=true decodedMatches=true
+and a "runtime ticks=60 hash=... seed=..." line from the SpriteKit shell. The same job ran swift test on
+apps/pumpkin-blaster/ios/Runtime (7 tests, 0 failures; job log).
+Not shown: touch input (simctl cannot inject touches), so lane switching, firing and restart on iOS are compiled only.

@@ -3,7 +3,10 @@
 name: monstera
 
 on:
+  # push only for main: on a PR branch the pull_request run covers the same commit, and running both doubled
+  # every job (including the macOS one).
   push:
+    branches: [main]
     paths: ["spec/**", "tools/monstera/**", "tools/monstera-mcp/**", "generated/**", "apps/**", "device-lab/**", ".kiro/**", ".github/workflows/**"]
   pull_request:
     paths: ["spec/**", "tools/monstera/**", "tools/monstera-mcp/**", "generated/**", "apps/**", "device-lab/**", ".kiro/**", ".github/workflows/**"]
@@ -76,14 +79,18 @@ jobs:
     timeout-minutes: 20
     env:
       RUN_ID: ci-${{ github.run_id }}
-      DL_APP_DIR: generated/monstera-sample/android
-      DL_APP_PACKAGE: app.monstera.sample
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
       - name: Use preinstalled JDK 21
         run: echo "JAVA_HOME=$JAVA_HOME_21_X64" >> "$GITHUB_ENV"
-      - name: Compile generated Android project (Device Lab build op)
-        run: bash device-lab/android/adapter.sh build
+      # One job for all three projects: they share the template, so one runner and one Gradle cache.
+      - name: Compile generated Android projects (Device Lab build op)
+        run: |
+          for app in generated/monstera-sample apps/pumpkin-blaster apps/trick-or-treat-rush; do
+            echo "::group::$app"
+            RUN_ID="$RUN_ID-$(basename "$app")" DL_APP_DIR="$app/android" bash device-lab/android/adapter.sh build
+            echo "::endgroup::"
+          done
       - name: Upload build result
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
@@ -95,12 +102,9 @@ jobs:
   ios-generated:
     needs: spec
     runs-on: macos-26
-    timeout-minutes: 40
+    timeout-minutes: 60
     env:
       RUN_ID: ci-${{ github.run_id }}
-      DL_APP_DIR: generated/monstera-sample/ios
-      DL_APP_PRODUCT: MonsteraSample
-      DL_APP_BUNDLE_ID: app.monstera.sample
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
       - name: Toolchain versions
@@ -111,12 +115,6 @@ jobs:
           curl -fsSL "https://github.com/xtool-org/xtool/releases/download/${XTOOL_VERSION}/xtool.app.zip" -o "$RUNNER_TEMP/xtool.zip"
           ditto -x -k "$RUNNER_TEMP/xtool.zip" "$RUNNER_TEMP"
           echo "XTOOL=$RUNNER_TEMP/xtool.app/Contents/Resources/bin/xtool" >> "$GITHUB_ENV"
-      - name: Compile generated iOS project for the simulator (Device Lab build op)
-        timeout-minutes: 20
-        run: bash device-lab/ios/adapter.sh build
-      - name: Swift runtime conformance on macOS (swift test, no simulator)
-        timeout-minutes: 10
-        run: swift test --package-path generated/monstera-sample/ios/Runtime
       - name: Boot an available iPhone simulator
         run: |
           UDID="$(xcrun simctl list devices available | grep -m1 -E '^[[:space:]]+iPhone' | grep -oE '[0-9A-F-]{36}')"
@@ -124,19 +122,37 @@ jobs:
           xcrun simctl boot "$UDID"
           xcrun simctl bootstatus "$UDID" -b
           echo "SIM_DEVICE=$UDID" >> "$GITHUB_ENV"
-      - name: Install, launch, screenshot, logs
+      # Sequential in one job (macOS minutes are the scarce resource). Per project: compile the app with its
+      # local ios/Runtime package, run the Swift conformance tests, install, launch, screenshot, logs.
+      # simctl cannot inject touches, so lane input and restart are compiled here, not exercised.
+      - name: Build, test and launch every generated iOS project
+        timeout-minutes: 30
         run: |
           A=device-lab/ios/adapter.sh
-          bash $A install
-          bash $A launch
-          sleep 5
-          bash $A screenshot 01-launched
-          bash $A logs
-          bash $A stop
-          bash $A report
-          grep -E "bundledMatches=true decodedMatches=true" device-lab/reports/runs/*/ios-simulator/logs.txt
-          # The fixed-tick GameLoop ran in the simulator: at least 60 ticks within the 5 s wait.
-          grep -E "runtime ticks=[0-9]+ hash=[0-9a-f]{16} seed=" device-lab/reports/runs/*/ios-simulator/logs.txt
+          BASE_RUN_ID="$RUN_ID"
+          # fd 3, not stdin: swift and simctl read stdin and would swallow the remaining lines.
+          while read -r -u 3 app product bundle; do
+            echo "::group::$app"
+            export RUN_ID="$BASE_RUN_ID-$(basename "$app")" DL_APP_DIR="$app/ios" DL_APP_PRODUCT="$product" DL_APP_BUNDLE_ID="$bundle"
+            bash $A build
+            swift test --package-path "$app/ios/Runtime"
+            bash $A install
+            bash $A launch
+            sleep 5
+            bash $A screenshot 01-launched
+            bash $A logs
+            bash $A stop
+            bash $A report
+            log="device-lab/reports/runs/$RUN_ID/ios-simulator/logs.txt"
+            grep -E "bundledMatches=true decodedMatches=true" "$log"
+            # The fixed-tick GameLoop ran in the simulator: at least 60 ticks within the 5 s wait.
+            grep -E "runtime ticks=[0-9]+ hash=[0-9a-f]{16} seed=" "$log"
+            echo "::endgroup::"
+          done 3<<'EOF'
+          generated/monstera-sample MonsteraSample app.monstera.sample
+          apps/pumpkin-blaster PumpkinBlaster app.monstera.pumpkinblaster
+          apps/trick-or-treat-rush TrickOrTreatRush app.monstera.trickortreatrush
+          EOF
       - name: Upload Device Lab run (evidence only, no .app)
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
@@ -160,6 +176,10 @@ jobs:
         run: bash tools/monstera/bin/monstera conformance generated/monstera-sample --swift-image toolchain --report "$RUNNER_TEMP/conformance-sample.json"
       - name: Conformance, boundary-lab (oracle, Kotlin JVM, Swift in container)
         run: bash tools/monstera/bin/monstera conformance generated/boundary-lab --swift-image toolchain --report "$RUNNER_TEMP/conformance-lab.json"
+      - name: Conformance, pumpkin-blaster (oracle, Kotlin JVM, Swift in container)
+        run: bash tools/monstera/bin/monstera conformance apps/pumpkin-blaster --swift-image toolchain --report "$RUNNER_TEMP/conformance-pumpkin-blaster.json"
+      - name: Conformance, trick-or-treat-rush (oracle, Kotlin JVM, Swift in container)
+        run: bash tools/monstera/bin/monstera conformance apps/trick-or-treat-rush --swift-image toolchain --report "$RUNNER_TEMP/conformance-trick-or-treat-rush.json"
       - name: Upload conformance reports
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
@@ -168,4 +188,6 @@ jobs:
           path: |
             ${{ runner.temp }}/conformance-sample.json
             ${{ runner.temp }}/conformance-lab.json
+            ${{ runner.temp }}/conformance-pumpkin-blaster.json
+            ${{ runner.temp }}/conformance-trick-or-treat-rush.json
           if-no-files-found: warn

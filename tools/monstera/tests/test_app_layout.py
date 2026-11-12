@@ -315,3 +315,24 @@ class KiroConfigTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class GitIndexModeGateTests(unittest.TestCase):
+    """CI found `apps/*/android/gradlew` committed as 644 from Windows; `gates` now reports it locally."""
+
+    def test_executable_committed_without_its_bit_is_reported(self) -> None:
+        import subprocess
+        store = SchemaStore.load(REPO / "spec" / "schema")
+        with tempfile.TemporaryDirectory() as tmp:
+            out = Path(tmp) / "app"
+            files = generate.plan(sample(), LABEL, store, layout="app")
+            for f in files:
+                (out / f.path).parent.mkdir(parents=True, exist_ok=True)
+                (out / f.path).write_bytes(f.data)
+            git = ["git", "-c", "core.fileMode=false", "-c", "core.autocrlf=false"]
+            subprocess.run([*git, "init", "-q"], cwd=out, check=True)
+            subprocess.run([*git, "add", "."], cwd=out, check=True)
+            subprocess.run([*git, "update-index", "--chmod=-x", "android/gradlew"], cwd=out, check=True)
+            self.assertEqual(cli._index_mode_drift(out), [("android/gradlew", "644", "755")])
+            subprocess.run([*git, "update-index", "--chmod=+x", "android/gradlew"], cwd=out, check=True)
+            self.assertEqual(cli._index_mode_drift(out), [])

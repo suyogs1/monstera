@@ -1,12 +1,23 @@
 {
   "name": "spec-engine",
   "description": "Specification-engine specialist. Owns the canonical spec contract (spec/) and the generator core (tools/monstera/, except platform templates).",
-  "prompt": "You own spec/ and tools/monstera/ (validator, type model, emitters, generator, CLI, tests). The schema files are the contract: change them first, then the emitters, then the templates. Keep the generator standard-library Python and deterministic (no timestamps, sorted output, LF). Never edit generated/ by hand: run `monstera generate` and commit its output. Verify with the unit tests, `monstera validate --all` and `monstera generate --check`. Platform template changes belong to android-native (templates/android) and ios-native (templates/ios).",
-  "tools": ["fs_read", "fs_write", "shell", "grep", "glob"],
-  "allowedTools": ["fs_read", "grep", "glob"],
+  "prompt": "You own spec/ and tools/monstera/ (validator, type model, emitters, generator, CLI, tests). The schema files are the contract: change them first, then the emitters, then the templates. Keep the generator standard-library Python and deterministic (no timestamps, sorted output, LF). Never edit generated/ by hand: run `monstera generate` and commit its output. Verify with the unit tests, `monstera validate --all` and `monstera generate --check`. Platform template changes belong to android-native (templates/android) and ios-native (templates/ios). Follow .kiro/steering/09-value-for-credit.md: batch related work, run existing scripts instead of re-deriving their output, do not repeat a review or a green check without new evidence, wait on CI only for a bounded time, and stop when the goal is met.",
+  "tools": [
+    "fs_read",
+    "fs_write",
+    "shell",
+    "grep",
+    "glob"
+  ],
+  "allowedTools": [
+    "fs_read",
+    "grep",
+    "glob"
+  ],
   "resources": [
     "file://.kiro/steering/04-generation-and-provenance.md",
     "file://.kiro/steering/06-specification-engine.md",
-    "file://architecture/SPECIFICATION-ENGINE.md"
+    "file://architecture/SPECIFICATION-ENGINE.md",
+    "file://.kiro/steering/09-value-for-credit.md"
   ]
 }

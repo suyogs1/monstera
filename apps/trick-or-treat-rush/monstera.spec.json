@@ -1,0 +1,299 @@
+{
+  "game": {
+    "genre": "endless-runner",
+    "input": {
+      "dragGain": 65536,
+      "scheme": "lanes",
+      "swipeSpeed": 30146560,
+      "tapKind": "",
+      "tapVx": 0,
+      "tapVy": 0
+    },
+    "orientation": "portrait",
+    "palette": {
+      "accent": "#FFBF69",
+      "background": "#0E2433",
+      "primary": "#2EC4B6"
+    },
+    "runtime": {
+      "collisions": [
+        {
+          "a": "stripe",
+          "b": "runner",
+          "despawnA": true,
+          "despawnB": false,
+          "lives": 0,
+          "score": 1
+        },
+        {
+          "a": "candy",
+          "b": "runner",
+          "despawnA": true,
+          "despawnB": false,
+          "lives": 0,
+          "score": 10
+        },
+        {
+          "a": "tombstone",
+          "b": "runner",
+          "despawnA": true,
+          "despawnB": false,
+          "lives": -1,
+          "score": 0
+        },
+        {
+          "a": "ghost",
+          "b": "runner",
+          "despawnA": true,
+          "despawnB": false,
+          "lives": -1,
+          "score": 0
+        }
+      ],
+      "initialEntities": [
+        {
+          "controlled": true,
+          "kind": "runner",
+          "vx": 0,
+          "vy": 0,
+          "x": 30146560,
+          "y": 98304000
+        }
+      ],
+      "kinds": [
+        {
+          "color": "#2EC4B6",
+          "exitPolicy": "clamp",
+          "height": 13107200,
+          "id": "runner",
+          "lifetimeTicks": 0,
+          "width": 10485760
+        },
+        {
+          "color": "#16384D",
+          "exitPolicy": "despawn",
+          "height": 1572864,
+          "id": "stripe",
+          "lifetimeTicks": 0,
+          "width": 70778880
+        },
+        {
+          "color": "#8D99AE",
+          "exitPolicy": "despawn",
+          "height": 9830400,
+          "id": "tombstone",
+          "lifetimeTicks": 0,
+          "width": 14417920
+        },
+        {
+          "color": "#FF4FA3",
+          "exitPolicy": "despawn",
+          "height": 6553600,
+          "id": "candy",
+          "lifetimeTicks": 0,
+          "width": 6553600
+        },
+        {
+          "color": "#EDF2F4",
+          "exitPolicy": "despawn",
+          "height": 9830400,
+          "id": "ghost",
+          "lifetimeTicks": 0,
+          "width": 14417920
+        }
+      ],
+      "lives": 3,
+      "maxEntities": 64,
+      "spawners": [
+        {
+          "intervalTicks": 30,
+          "kind": "stripe",
+          "startTick": 0,
+          "stream": "road",
+          "vx": 0,
+          "vy": 786432,
+          "xMax": 0,
+          "xMin": 0,
+          "yMax": -1572864,
+          "yMin": -1572864
+        },
+        {
+          "intervalTicks": 270,
+          "kind": "tombstone",
+          "startTick": 120,
+          "stream": "tombs",
+          "vx": 0,
+          "vy": 786432,
+          "xMax": -1966080,
+          "xMin": -1966080,
+          "yMax": -1310720,
+          "yMin": -6553600
+        },
+        {
+          "intervalTicks": 270,
+          "kind": "tombstone",
+          "startTick": 210,
+          "stream": "tombs",
+          "vx": 0,
+          "vy": 786432,
+          "xMax": 28180480,
+          "xMin": 28180480,
+          "yMax": -1310720,
+          "yMin": -6553600
+        },
+        {
+          "intervalTicks": 270,
+          "kind": "tombstone",
+          "startTick": 300,
+          "stream": "tombs",
+          "vx": 0,
+          "vy": 786432,
+          "xMax": 58327040,
+          "xMin": 58327040,
+          "yMax": -1310720,
+          "yMin": -6553600
+        },
+        {
+          "intervalTicks": 210,
+          "kind": "candy",
+          "startTick": 60,
+          "stream": "sweets",
+          "vx": 0,
+          "vy": 786432,
+          "xMax": 32112640,
+          "xMin": 32112640,
+          "yMax": -1310720,
+          "yMin": -6553600
+        },
+        {
+          "intervalTicks": 210,
+          "kind": "candy",
+          "startTick": 130,
+          "stream": "sweets",
+          "vx": 0,
+          "vy": 786432,
+          "xMax": 62259200,
+          "xMin": 62259200,
+          "yMax": -1310720,
+          "yMin": -6553600
+        },
+        {
+          "intervalTicks": 210,
+          "kind": "candy",
+          "startTick": 200,
+          "stream": "sweets",
+          "vx": 0,
+          "vy": 786432,
+          "xMax": 1966080,
+          "xMin": 1966080,
+          "yMax": -1310720,
+          "yMin": -6553600
+        },
+        {
+          "intervalTicks": 300,
+          "kind": "ghost",
+          "startTick": 1800,
+          "stream": "ghosts",
+          "vx": 0,
+          "vy": 1310720,
+          "xMax": 58327040,
+          "xMin": 58327040,
+          "yMax": -1310720,
+          "yMin": -6553600
+        },
+        {
+          "intervalTicks": 300,
+          "kind": "ghost",
+          "startTick": 1900,
+          "stream": "ghosts",
+          "vx": 0,
+          "vy": 1310720,
+          "xMax": -1966080,
+          "xMin": -1966080,
+          "yMax": -1310720,
+          "yMin": -6553600
+        },
+        {
+          "intervalTicks": 300,
+          "kind": "ghost",
+          "startTick": 2000,
+          "stream": "ghosts",
+          "vx": 0,
+          "vy": 1310720,
+          "xMax": 28180480,
+          "xMin": 28180480,
+          "yMax": -1310720,
+          "yMin": -6553600
+        },
+        {
+          "intervalTicks": 270,
+          "kind": "tombstone",
+          "startTick": 3855,
+          "stream": "tombs-late",
+          "vx": 0,
+          "vy": 786432,
+          "xMax": 58327040,
+          "xMin": 58327040,
+          "yMax": -1310720,
+          "yMin": -6553600
+        },
+        {
+          "intervalTicks": 270,
+          "kind": "tombstone",
+          "startTick": 3675,
+          "stream": "tombs-late",
+          "vx": 0,
+          "vy": 786432,
+          "xMax": -1966080,
+          "xMin": -1966080,
+          "yMax": -1310720,
+          "yMin": -6553600
+        },
+        {
+          "intervalTicks": 270,
+          "kind": "tombstone",
+          "startTick": 3765,
+          "stream": "tombs-late",
+          "vx": 0,
+          "vy": 786432,
+          "xMax": 28180480,
+          "xMin": 28180480,
+          "yMax": -1310720,
+          "yMin": -6553600
+        }
+      ],
+      "winScore": 0
+    },
+    "simulation": {
+      "maxTicksPerFrame": 5,
+      "tickRate": 60
+    },
+    "targetFps": 60,
+    "world": {
+      "height": 1920,
+      "width": 1080
+    }
+  },
+  "project": {
+    "displayName": "Trick or Treat Rush",
+    "id": "trick-or-treat-rush",
+    "identifier": "app.monstera.trickortreatrush",
+    "platforms": {
+      "android": {
+        "minSdk": 26
+      },
+      "ios": {
+        "deploymentTarget": "17.0"
+      }
+    },
+    "targets": [
+      "android",
+      "ios"
+    ],
+    "version": {
+      "code": 1,
+      "name": "0.1.0"
+    }
+  },
+  "specVersion": 3
+}

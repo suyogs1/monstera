@@ -10,7 +10,7 @@
       "type": "step",
       "id": "gates",
       "agent": "wf-coder",
-      "prompt": "Run `monstera gates` and save the output to .kiro/workflow-output/release/gates.txt. Record the HEAD commit. Stop and report if any gate fails.",
+      "prompt": "Run `monstera gates` and save the output to .kiro/workflow-output/release/gates.txt. Record the HEAD commit. Stop and report if any gate fails. Run the gates once.",
       "artifacts": {
         "gates": ".kiro/workflow-output/release/gates.txt"
       }
@@ -30,7 +30,7 @@
       "type": "step",
       "id": "evidence",
       "agent": "wf-coder",
-      "prompt": "CI result: {{ci.output}}. Download the artifacts of those runs with gh and copy the relevant ones unchanged to docs/evidence/{{release}}/, each folder with a SOURCE.txt (run id, job, commit, runner, what was copied). Never copy .app bundles or SDK material. Update {{report}} with the run ids and results; write no result you did not observe."
+      "prompt": "CI result: {{ci.output}}. If the CI watch timed out, record the runs as pending in the report and do not poll again; claim nothing for them. Otherwise download the artifacts of those runs with gh and copy the relevant ones unchanged to docs/evidence/{{release}}/, each folder with a SOURCE.txt (run id, job, commit, runner, what was copied). Never copy .app bundles or SDK material. Update {{report}} with the run ids and results; write no result you did not observe."
     },
     {
       "type": "step",

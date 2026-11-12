@@ -123,3 +123,38 @@ class Serialization(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class SpawnerStartTick(unittest.TestCase):
+    """Contract section 4, step 2: a spawner is inactive, and draws nothing, before `startTick`."""
+
+    def world(self, start: int):
+        game = json.loads(SAMPLE.read_text(encoding="utf-8"))["game"]
+        rt = game["runtime"]
+        rt["spawners"] = [dict(rt["spawners"][1], stream="late", kind="spark", startTick=start, intervalTicks=3,
+                               yMin=0, yMax=1000)]
+        rt["initialEntities"] = []
+        return sim.new_world(sim.Config(game), 77)
+
+    def test_hand_computed_spawn_ticks(self) -> None:
+        # startTick 5, interval 3: spawns at ticks 5, 8, 11 (phase from startTick, not from 0). Steps 0..12: 3 spawns.
+        w = self.world(5)
+        counts = []
+        for _ in range(13):
+            sim.step(w, [])
+            counts.append(len(w.entities))
+        self.assertEqual(counts, [0, 0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3])
+
+    def test_start_zero_includes_tick_zero(self) -> None:
+        w = self.world(0)
+        sim.step(w, [])
+        self.assertEqual(len(w.entities), 1)
+
+    def test_first_eligible_spawn_uses_the_streams_first_draws(self) -> None:
+        w = self.world(5)
+        for _ in range(6):
+            sim.step(w, [])
+        ref = prng.Pcg32.for_stream(77, "late")
+        x = w.cfg.spawners[0]["xMin"] + ref.next_below(w.cfg.spawners[0]["xMax"] - w.cfg.spawners[0]["xMin"] + 1)
+        y = ref.next_below(1001)
+        self.assertEqual((w.entities[0].x, w.entities[0].y), (x, y + w.entities[0].vy))
