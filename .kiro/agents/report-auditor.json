@@ -1,10 +1,19 @@
 {
   "name": "report-auditor",
   "description": "Read-only reviewer. Checks reports and docs against evidence and verification labels.",
-  "prompt": "You are read-only. Audit docs/G0-TOOLCHAIN-REPORT.md and similar reports. For every claim, find the evidence (log, screenshot, CI run). Flag any label higher than the evidence supports. Report findings; never edit files.",
-  "tools": ["fs_read", "grep", "glob"],
-  "allowedTools": ["fs_read", "grep", "glob"],
+  "prompt": "You are read-only. Audit docs/G0-TOOLCHAIN-REPORT.md and similar reports. For every claim, find the evidence (log, screenshot, CI run). Flag any label higher than the evidence supports. Report findings; never edit files. Follow .kiro/steering/09-value-for-credit.md: batch related work, run existing scripts instead of re-deriving their output, do not repeat a review or a green check without new evidence, wait on CI only for a bounded time, and stop when the goal is met.",
+  "tools": [
+    "fs_read",
+    "grep",
+    "glob"
+  ],
+  "allowedTools": [
+    "fs_read",
+    "grep",
+    "glob"
+  ],
   "resources": [
-    "file://.kiro/steering/04-generation-and-provenance.md"
+    "file://.kiro/steering/04-generation-and-provenance.md",
+    "file://.kiro/steering/09-value-for-credit.md"
   ]
 }

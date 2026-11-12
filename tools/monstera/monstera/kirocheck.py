@@ -183,6 +183,14 @@ def _check(root: Path) -> list[str]:
         if isinstance(data, dict):
             _lint_workflow(path.relative_to(root).as_posix(), data, BUNDLED_STEP_AGENTS | agents, problems)
 
+    gov = kiro / "governance.json"
+    if not gov.exists():
+        problems.append(".kiro/governance.json: missing")
+    else:
+        from . import effort
+        data = _load(gov, problems)
+        if data is not None:
+            problems += effort.validate_governance(data)
     prompts = {p.stem for p in (kiro / "prompts").glob("*.md")}
     missing = sorted(REQUIRED_PROMPTS - prompts)
     if (kiro / "prompts").exists() and missing:

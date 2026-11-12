@@ -11,7 +11,7 @@ import os
 import sys
 from pathlib import Path
 
-from . import GENERATOR_NAME, GENERATOR_VERSION, archcheck, conformance, generate, kirocheck, scenario, targets
+from . import GENERATOR_NAME, GENERATOR_VERSION, archcheck, conformance, effort, generate, kirocheck, scenario, targets
 from .jsonio import canonical_text
 from .schema import SchemaError, SchemaStore
 from .validate import Result, validate_path
@@ -476,7 +476,29 @@ def build_parser() -> argparse.ArgumentParser:
     p = sub.add_parser("gates", help="run every quality gate (tests, specs, generation, architecture, Kiro config)")
     p.add_argument("--skip-tests", action="store_true", help="skip the unit tests (used by the tests themselves)")
     p.set_defaults(func=cmd_gates)
+    p = sub.add_parser("effort", help="log observed effort and print a factual report (no credit accounting)")
+    esub = p.add_subparsers(dest="effort_command", required=True)
+    q = esub.add_parser("log", help="append one effort entry")
+    q.add_argument("kind", choices=effort.KINDS)
+    q.add_argument("--seconds", type=int, default=0)
+    q.add_argument("--note", default="")
+    q.set_defaults(func=cmd_effort)
+    q = esub.add_parser("report", help="print the observed effort and change size")
+    q.add_argument("--base", help="git ref to measure the change against")
+    q.set_defaults(func=cmd_effort)
     return parser
+
+
+def cmd_effort(args: argparse.Namespace, store: SchemaStore) -> int:
+    try:
+        if args.effort_command == "log":
+            effort.append(REPO_ROOT, args.kind, args.seconds, args.note)
+        else:
+            print(effort.report(REPO_ROOT, args.base), end="")
+    except ValueError as exc:
+        print(f"monstera: {exc}", file=sys.stderr)
+        return 2
+    return 0
 
 
 def main(argv: list[str] | None = None) -> int:
