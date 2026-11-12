@@ -168,6 +168,9 @@ def plan(spec: dict[str, Any], spec_path_label: str, store: SchemaStore,
         template("android/app/src/main/AndroidManifest.xml", "android/app/src/main/AndroidManifest.xml.tmpl")
         template(f"{kt_dir}/MainActivity.kt", "android/app/src/main/kotlin/MainActivity.kt.tmpl")
         template(f"{kt_dir}/GameScreen.kt", "android/app/src/main/kotlin/GameScreen.kt.tmpl")
+        template(f"{kt_dir}/presentation/Presentation.kt", "android/presentation/Presentation.kt.tmpl")
+        template(f"android/app/src/test/kotlin/{package.replace(chr(46), chr(47))}/presentation/PresentationTest.kt",
+                 "android/presentation/PresentationTest.kt.tmpl")
         static = TEMPLATES / "android" / "static"
         for src in sorted(p for p in static.rglob("*") if p.is_file()):
             rel = "android/" + src.relative_to(static).as_posix()
@@ -200,6 +203,10 @@ def plan(spec: dict[str, Any], spec_path_label: str, store: SchemaStore,
                              emit_runtime.swift_config(game, ctx["header_slash"]).encode(), "spec", "model"))
         files.append(OutFile("ios/Runtime/Tests/MonsteraRuntimeTests/Resources/" + SCENARIOS_RESOURCE,
                              scenarios_data, "scenarios", "scenarios"))
+        template("ios/Presentation/Package.swift", "ios/Presentation/Package.swift.tmpl")
+        template("ios/Presentation/Sources/MonsteraPresentation/Presentation.swift", "ios/Presentation/Presentation.swift.tmpl")
+        template("ios/Presentation/Tests/MonsteraPresentationTests/PresentationTests.swift",
+                 "ios/Presentation/PresentationTests.swift.tmpl")
         template("ios/xtool.yml", "ios/xtool.yml.tmpl")
         template("ios/Info.plist", "ios/Info.plist.tmpl")
         template(f"{src_dir}/{product}App.swift", "ios/Sources/App.swift.tmpl")

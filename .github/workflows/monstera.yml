@@ -123,7 +123,7 @@ jobs:
           xcrun simctl bootstatus "$UDID" -b
           echo "SIM_DEVICE=$UDID" >> "$GITHUB_ENV"
       # Sequential in one job (macOS minutes are the scarce resource). Per project: compile the app with its
-      # local ios/Runtime package, run the Swift conformance tests, install, launch, screenshot, logs.
+      # local ios/Runtime and ios/Presentation packages, run the Swift conformance and presentation tests, install, launch, screenshot, logs.
       # simctl cannot inject touches, so lane input and restart are compiled here, not exercised.
       - name: Build, test and launch every generated iOS project
         timeout-minutes: 30
@@ -136,6 +136,7 @@ jobs:
             export RUN_ID="$BASE_RUN_ID-$(basename "$app")" DL_APP_DIR="$app/ios" DL_APP_PRODUCT="$product" DL_APP_BUNDLE_ID="$bundle"
             bash $A build
             swift test --package-path "$app/ios/Runtime"
+            swift test --package-path "$app/ios/Presentation"
             bash $A install
             bash $A launch
             sleep 5
