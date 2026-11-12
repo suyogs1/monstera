@@ -1,0 +1,337 @@
+{
+  "files": [
+    {
+      "kind": "template",
+      "mode": "644",
+      "path": ".kiro/steering/monstera-generated.md",
+      "sha256": "64d5436171418fc76eacfeb5b7ecc318b6df20cc97a270a5f838a47c6c12830f",
+      "source": "templates/kiro-guidance.md.tmpl"
+    },
+    {
+      "kind": "template",
+      "mode": "644",
+      "path": "android/app/build.gradle.kts",
+      "sha256": "3920dcb747f8954e8ca01f0642c718f5b3c7cc5e07229e06f959cbd976801089",
+      "source": "templates/android/app/build.gradle.kts.tmpl"
+    },
+    {
+      "kind": "template",
+      "mode": "644",
+      "path": "android/app/src/main/AndroidManifest.xml",
+      "sha256": "387bea41d011934d3311dc19c1863e7a9665701c843fdbde2914998d42d8a3f3",
+      "source": "templates/android/app/src/main/AndroidManifest.xml.tmpl"
+    },
+    {
+      "kind": "spec",
+      "mode": "644",
+      "path": "android/app/src/main/assets/monstera.spec.json",
+      "sha256": "03d3d2fcba7463a68c127584d02706ca29c2b87c36e2797a536e3a6b28ba280a",
+      "source": "spec"
+    },
+    {
+      "kind": "template",
+      "mode": "644",
+      "path": "android/app/src/main/kotlin/app/monstera/pumpkinblaster/GameScreen.kt",
+      "sha256": "f53e3784447babf01ec85e1072043bd40a5b74af97343306c6d726f11bbf1ab5",
+      "source": "templates/android/app/src/main/kotlin/GameScreen.kt.tmpl"
+    },
+    {
+      "kind": "template",
+      "mode": "644",
+      "path": "android/app/src/main/kotlin/app/monstera/pumpkinblaster/MainActivity.kt",
+      "sha256": "51c007c33942971d0ad728c1fc77b4ddf375dd54681bba53f90a8fcf939b63d4",
+      "source": "templates/android/app/src/main/kotlin/MainActivity.kt.tmpl"
+    },
+    {
+      "kind": "model",
+      "mode": "644",
+      "path": "android/app/src/main/kotlin/app/monstera/pumpkinblaster/generated/GeneratedSpec.kt",
+      "sha256": "e7e3115fe2ffeb58940c4d3f9e96f5d3dfba665bcfcad2d0a077419e513794b3",
+      "source": "schema:conformance.schema.json,game.schema.json,monstera.spec.schema.json,project.schema.json,scenario.schema.json;spec"
+    },
+    {
+      "kind": "model",
+      "mode": "644",
+      "path": "android/app/src/main/kotlin/app/monstera/pumpkinblaster/generated/MonsteraSpec.kt",
+      "sha256": "72ca350d0e6d37d6758fe0d5877bed26c43ddef367f87510645344c68e450a1f",
+      "source": "schema:conformance.schema.json,game.schema.json,monstera.spec.schema.json,project.schema.json,scenario.schema.json"
+    },
+    {
+      "kind": "template",
+      "mode": "644",
+      "path": "android/app/src/main/kotlin/app/monstera/pumpkinblaster/runtime/Fixed.kt",
+      "sha256": "9a26149d9118a6372d9334bbac56b7adbff5f22bf4272906c2478cd5448d2fed",
+      "source": "templates/android/runtime/Fixed.kt.tmpl"
+    },
+    {
+      "kind": "template",
+      "mode": "644",
+      "path": "android/app/src/main/kotlin/app/monstera/pumpkinblaster/runtime/GameLoop.kt",
+      "sha256": "aeabe78c44b91e8b0c0dc2ce39381511bde4760f95faa94ce5985e54dbd2707a",
+      "source": "templates/android/runtime/GameLoop.kt.tmpl"
+    },
+    {
+      "kind": "model",
+      "mode": "644",
+      "path": "android/app/src/main/kotlin/app/monstera/pumpkinblaster/runtime/GeneratedRuntimeConfig.kt",
+      "sha256": "559916ba024d5490cd9492a720e973fc46bb501b5442213baa84e528ca052e31",
+      "source": "spec"
+    },
+    {
+      "kind": "template",
+      "mode": "644",
+      "path": "android/app/src/main/kotlin/app/monstera/pumpkinblaster/runtime/Prng.kt",
+      "sha256": "d4b7d26b1e723f63d135b223182eaa67ab3fb9b2d772dccc45f1dca016e77148",
+      "source": "templates/android/runtime/Prng.kt.tmpl"
+    },
+    {
+      "kind": "template",
+      "mode": "644",
+      "path": "android/app/src/main/kotlin/app/monstera/pumpkinblaster/runtime/Replay.kt",
+      "sha256": "0fed8a7023a625f764ae085ab4becaad1d780524ddf3b2d9e21c075877f61958",
+      "source": "templates/android/runtime/Replay.kt.tmpl"
+    },
+    {
+      "kind": "template",
+      "mode": "644",
+      "path": "android/app/src/main/kotlin/app/monstera/pumpkinblaster/runtime/Simulation.kt",
+      "sha256": "b63166b728db0c60246f43debc1c94324ba8f78359e5aa30a8774746c50eaeea",
+      "source": "templates/android/runtime/Simulation.kt.tmpl"
+    },
+    {
+      "kind": "template",
+      "mode": "644",
+      "path": "android/app/src/test/kotlin/app/monstera/pumpkinblaster/runtime/ConformanceTest.kt",
+      "sha256": "6fa1fd0a390322a233ad40a620e53939fc85792289e1114655d2a49a75043484",
+      "source": "templates/android/runtime/ConformanceTest.kt.tmpl"
+    },
+    {
+      "kind": "scenarios",
+      "mode": "644",
+      "path": "android/app/src/test/resources/monstera-scenarios.txt",
+      "sha256": "62183605753246c1082d207269e77e4207b00359ce42f4b220aee01cd3f9f886",
+      "source": "scenarios"
+    },
+    {
+      "kind": "template",
+      "mode": "644",
+      "path": "android/build.gradle.kts",
+      "sha256": "417d8db5f276fdc6de72bec06b24b1e79278c5c18bcf98890dc88741a3887a5a",
+      "source": "templates/android/build.gradle.kts.tmpl"
+    },
+    {
+      "kind": "template",
+      "mode": "644",
+      "path": "android/gradle.properties",
+      "sha256": "5c36254423d36992532aba3dbde26225343924f2d539b07ec2f27df438ba3e09",
+      "source": "templates/android/gradle.properties.tmpl"
+    },
+    {
+      "kind": "static",
+      "mode": "644",
+      "path": "android/gradle/wrapper/gradle-wrapper.jar",
+      "sha256": "621008afc4f5d59357fcf06ffa644dd5aade5e091bdc363742710445f73cdaf8",
+      "source": "templates/android/static/gradle/wrapper/gradle-wrapper.jar"
+    },
+    {
+      "kind": "static",
+      "mode": "644",
+      "path": "android/gradle/wrapper/gradle-wrapper.properties",
+      "sha256": "a5227d69ddac28577b7da7b4e2a17b9b06bb4b5ce741f08fb3f4849d40b2fabd",
+      "source": "templates/android/static/gradle/wrapper/gradle-wrapper.properties"
+    },
+    {
+      "kind": "static",
+      "mode": "755",
+      "path": "android/gradlew",
+      "sha256": "a5a5c199ba02189ae8c46a334223371a20599d9c298ef65e7540ede4a3f72d59",
+      "source": "templates/android/static/gradlew"
+    },
+    {
+      "kind": "static",
+      "mode": "644",
+      "path": "android/gradlew.bat",
+      "sha256": "f17917f8dbe61182b149273ee78090fec1197442c3f38276af907bfa5190db16",
+      "source": "templates/android/static/gradlew.bat"
+    },
+    {
+      "kind": "template",
+      "mode": "644",
+      "path": "android/settings.gradle.kts",
+      "sha256": "50a140427b085d0e313ad602af42accfca5b8ce178a9c89e7cf03662246f11fc",
+      "source": "templates/android/settings.gradle.kts.tmpl"
+    },
+    {
+      "kind": "template",
+      "mode": "644",
+      "path": "ios/Info.plist",
+      "sha256": "2cab7898b8b882c575be528463d51c764071f9f8a3b6926f361be46164bdb06f",
+      "source": "templates/ios/Info.plist.tmpl"
+    },
+    {
+      "kind": "template",
+      "mode": "644",
+      "path": "ios/Package.swift",
+      "sha256": "8e13f7d2f55dc4275790126e46b2c96b98199f421c4cd0b346bc651d5077c1e8",
+      "source": "templates/ios/Package.swift.tmpl"
+    },
+    {
+      "kind": "template",
+      "mode": "644",
+      "path": "ios/Runtime/Package.swift",
+      "sha256": "94445a41a37eb64bbe6b2fbbfb88f1319744098d94fbded0d76f3f46733afa58",
+      "source": "templates/ios/Runtime/Package.swift.tmpl"
+    },
+    {
+      "kind": "template",
+      "mode": "644",
+      "path": "ios/Runtime/Sources/MonsteraRuntime/Fixed.swift",
+      "sha256": "26972740622940b957ec655d6278c529e03e5e4d50827f009899c509354a9887",
+      "source": "templates/ios/Runtime/Fixed.swift.tmpl"
+    },
+    {
+      "kind": "template",
+      "mode": "644",
+      "path": "ios/Runtime/Sources/MonsteraRuntime/GameLoop.swift",
+      "sha256": "4288b76b03673e357adb564ff9d3ccfd2afe88bf5402800b9593788b81246d14",
+      "source": "templates/ios/Runtime/GameLoop.swift.tmpl"
+    },
+    {
+      "kind": "model",
+      "mode": "644",
+      "path": "ios/Runtime/Sources/MonsteraRuntime/GeneratedRuntimeConfig.swift",
+      "sha256": "648d9112d7b86247b60872c6ee68de492cb89a7b38a50f9ea0c51476e9ad1783",
+      "source": "spec"
+    },
+    {
+      "kind": "template",
+      "mode": "644",
+      "path": "ios/Runtime/Sources/MonsteraRuntime/Prng.swift",
+      "sha256": "b241cea3c0d6dd9385fa40bf64bc37a44cd5df84595082d1356b05871e2b0826",
+      "source": "templates/ios/Runtime/Prng.swift.tmpl"
+    },
+    {
+      "kind": "template",
+      "mode": "644",
+      "path": "ios/Runtime/Sources/MonsteraRuntime/Replay.swift",
+      "sha256": "cdf307867ddc7913ae1c9d6bcf0eb3f05a57af76105930caa6919ea085de4eb7",
+      "source": "templates/ios/Runtime/Replay.swift.tmpl"
+    },
+    {
+      "kind": "template",
+      "mode": "644",
+      "path": "ios/Runtime/Sources/MonsteraRuntime/Simulation.swift",
+      "sha256": "af40b43ea88eaefe172252ce11c77bff84655a222385dbac047f8bbfd216ce46",
+      "source": "templates/ios/Runtime/Simulation.swift.tmpl"
+    },
+    {
+      "kind": "template",
+      "mode": "644",
+      "path": "ios/Runtime/Tests/MonsteraRuntimeTests/ConformanceTests.swift",
+      "sha256": "3edc1d1c730106edd720270624e9b9f486503a97f92fc10d7f78e844212991da",
+      "source": "templates/ios/Runtime/ConformanceTests.swift.tmpl"
+    },
+    {
+      "kind": "scenarios",
+      "mode": "644",
+      "path": "ios/Runtime/Tests/MonsteraRuntimeTests/Resources/monstera-scenarios.txt",
+      "sha256": "62183605753246c1082d207269e77e4207b00359ce42f4b220aee01cd3f9f886",
+      "source": "scenarios"
+    },
+    {
+      "kind": "template",
+      "mode": "644",
+      "path": "ios/Sources/PumpkinBlaster/ContentView.swift",
+      "sha256": "3ac040e9b1f60cb4980f476333915f12416504fc8f61110da5513ac70b47d33a",
+      "source": "templates/ios/Sources/ContentView.swift.tmpl"
+    },
+    {
+      "kind": "template",
+      "mode": "644",
+      "path": "ios/Sources/PumpkinBlaster/GameScene.swift",
+      "sha256": "23d3090191f2960e472ad306d1ded49153e21e3bf9117f4763e883911f1c2d41",
+      "source": "templates/ios/Sources/GameScene.swift.tmpl"
+    },
+    {
+      "kind": "model",
+      "mode": "644",
+      "path": "ios/Sources/PumpkinBlaster/Generated/GeneratedSpec.swift",
+      "sha256": "8a4ce4aec2777278d78a82a6d96feb0b9e701882ed8eca60ab9f283e46ded905",
+      "source": "schema:conformance.schema.json,game.schema.json,monstera.spec.schema.json,project.schema.json,scenario.schema.json;spec"
+    },
+    {
+      "kind": "model",
+      "mode": "644",
+      "path": "ios/Sources/PumpkinBlaster/Generated/MonsteraSpec.swift",
+      "sha256": "950a466cd236d1d6440b2dc9be0dce2593c9171b7716bbd5730ecd1958254fc5",
+      "source": "schema:conformance.schema.json,game.schema.json,monstera.spec.schema.json,project.schema.json,scenario.schema.json"
+    },
+    {
+      "kind": "template",
+      "mode": "644",
+      "path": "ios/Sources/PumpkinBlaster/PumpkinBlasterApp.swift",
+      "sha256": "0e5718c204f69686fd79d9ea5c6876c257923c348af8d3a8cca32adf5f97ec50",
+      "source": "templates/ios/Sources/App.swift.tmpl"
+    },
+    {
+      "kind": "spec",
+      "mode": "644",
+      "path": "ios/Sources/PumpkinBlaster/Resources/monstera.spec.json",
+      "sha256": "03d3d2fcba7463a68c127584d02706ca29c2b87c36e2797a536e3a6b28ba280a",
+      "source": "spec"
+    },
+    {
+      "kind": "template",
+      "mode": "644",
+      "path": "ios/Sources/PumpkinBlaster/SpecIntegrity.swift",
+      "sha256": "807b0e0efdcb29d929c3fb59980412bd332795827b784a75524e2d39a2118f0e",
+      "source": "templates/ios/Sources/SpecIntegrity.swift.tmpl"
+    },
+    {
+      "kind": "template",
+      "mode": "644",
+      "path": "ios/xtool.yml",
+      "sha256": "0db8e6f21e516079f9c7bb572a8921c1db66568bc04d3719211687ae9d2fca48",
+      "source": "templates/ios/xtool.yml.tmpl"
+    }
+  ],
+  "generator": {
+    "name": "monstera-generator",
+    "version": "0.1.0"
+  },
+  "layout": "app",
+  "ownedRoots": [
+    ".kiro/steering/monstera-generated.md",
+    "android",
+    "ios"
+  ],
+  "schemas": {
+    "conformance.schema.json": "04e5184d077a8f2bd5197072f617d12a6f57992b6cc563e3e506a70f72426843",
+    "game.schema.json": "1ecc1e0486c5634e34175aa183e4d7b97a9abfff921174a7314d0d24975ecb5f",
+    "monstera.spec.schema.json": "1fac7656ef064223268e26e76e7557ed22a679449fe4458a3f7f41d4c9bac1d8",
+    "project.schema.json": "741ca6bec8d9d9d60c1dbe92211c7bf9fcfecbf0adc3dd4d9725eed1a9b2f5d0",
+    "scenario.schema.json": "317bf00bc9048ddccc4c6d70f00de4ecf02633cc93608b68556efa8815636de6"
+  },
+  "spec": {
+    "path": "apps/pumpkin-blaster/monstera.spec.json",
+    "projectId": "pumpkin-blaster",
+    "sha256": "03d3d2fcba7463a68c127584d02706ca29c2b87c36e2797a536e3a6b28ba280a"
+  },
+  "toolchain": {
+    "android": {
+      "activityCompose": "1.12.4",
+      "androidGradlePlugin": "9.5.1",
+      "compileSdk": 36,
+      "composeBom": "2026.06.01",
+      "gradle": "9.9.1",
+      "junit": "4.13.2",
+      "kotlinComposePlugin": "2.4.21",
+      "targetSdk": 36
+    },
+    "ios": {
+      "swiftConformanceImage": "swift:6.1-noble",
+      "swiftToolsVersion": "6.0",
+      "xtool": "1.24.0"
+    }
+  }
+}

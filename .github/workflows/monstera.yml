@@ -160,6 +160,8 @@ jobs:
         run: bash tools/monstera/bin/monstera conformance generated/monstera-sample --swift-image toolchain --report "$RUNNER_TEMP/conformance-sample.json"
       - name: Conformance, boundary-lab (oracle, Kotlin JVM, Swift in container)
         run: bash tools/monstera/bin/monstera conformance generated/boundary-lab --swift-image toolchain --report "$RUNNER_TEMP/conformance-lab.json"
+      - name: Conformance, pumpkin-blaster (oracle, Kotlin JVM, Swift in container)
+        run: bash tools/monstera/bin/monstera conformance apps/pumpkin-blaster --swift-image toolchain --report "$RUNNER_TEMP/conformance-pumpkin-blaster.json"
       - name: Upload conformance reports
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
@@ -168,4 +170,5 @@ jobs:
           path: |
             ${{ runner.temp }}/conformance-sample.json
             ${{ runner.temp }}/conformance-lab.json
+            ${{ runner.temp }}/conformance-pumpkin-blaster.json
           if-no-files-found: warn

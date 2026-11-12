@@ -1,0 +1,178 @@
+{
+  "platforms": [
+    {
+      "detail": "monstera.oracle in-process (compared with its own recording)",
+      "platform": "oracle",
+      "status": "pass"
+    },
+    {
+      "detail": "cmd /c gradlew.bat --no-daemon --console=plain cleanTestDebugUnitTest testDebugUnitTest (cwd android) exit 0",
+      "platform": "kotlin",
+      "status": "pass"
+    },
+    {
+      "detail": "docker run swift:6.1-noble swift test (package ios/Runtime) exit 0",
+      "platform": "swift",
+      "status": "pass"
+    }
+  ],
+  "reportVersion": 1,
+  "runtimeDigests": [
+    {
+      "path": "android/app/src/main/kotlin/app/monstera/pumpkinblaster/runtime/Fixed.kt",
+      "sha256": "9a26149d9118a6372d9334bbac56b7adbff5f22bf4272906c2478cd5448d2fed"
+    },
+    {
+      "path": "android/app/src/main/kotlin/app/monstera/pumpkinblaster/runtime/GameLoop.kt",
+      "sha256": "aeabe78c44b91e8b0c0dc2ce39381511bde4760f95faa94ce5985e54dbd2707a"
+    },
+    {
+      "path": "android/app/src/main/kotlin/app/monstera/pumpkinblaster/runtime/GeneratedRuntimeConfig.kt",
+      "sha256": "559916ba024d5490cd9492a720e973fc46bb501b5442213baa84e528ca052e31"
+    },
+    {
+      "path": "android/app/src/main/kotlin/app/monstera/pumpkinblaster/runtime/Prng.kt",
+      "sha256": "d4b7d26b1e723f63d135b223182eaa67ab3fb9b2d772dccc45f1dca016e77148"
+    },
+    {
+      "path": "android/app/src/main/kotlin/app/monstera/pumpkinblaster/runtime/Replay.kt",
+      "sha256": "0fed8a7023a625f764ae085ab4becaad1d780524ddf3b2d9e21c075877f61958"
+    },
+    {
+      "path": "android/app/src/main/kotlin/app/monstera/pumpkinblaster/runtime/Simulation.kt",
+      "sha256": "b63166b728db0c60246f43debc1c94324ba8f78359e5aa30a8774746c50eaeea"
+    },
+    {
+      "path": "android/app/src/test/kotlin/app/monstera/pumpkinblaster/runtime/ConformanceTest.kt",
+      "sha256": "6fa1fd0a390322a233ad40a620e53939fc85792289e1114655d2a49a75043484"
+    },
+    {
+      "path": "ios/Runtime/Package.swift",
+      "sha256": "94445a41a37eb64bbe6b2fbbfb88f1319744098d94fbded0d76f3f46733afa58"
+    },
+    {
+      "path": "ios/Runtime/Sources/MonsteraRuntime/Fixed.swift",
+      "sha256": "26972740622940b957ec655d6278c529e03e5e4d50827f009899c509354a9887"
+    },
+    {
+      "path": "ios/Runtime/Sources/MonsteraRuntime/GameLoop.swift",
+      "sha256": "4288b76b03673e357adb564ff9d3ccfd2afe88bf5402800b9593788b81246d14"
+    },
+    {
+      "path": "ios/Runtime/Sources/MonsteraRuntime/GeneratedRuntimeConfig.swift",
+      "sha256": "648d9112d7b86247b60872c6ee68de492cb89a7b38a50f9ea0c51476e9ad1783"
+    },
+    {
+      "path": "ios/Runtime/Sources/MonsteraRuntime/Prng.swift",
+      "sha256": "b241cea3c0d6dd9385fa40bf64bc37a44cd5df84595082d1356b05871e2b0826"
+    },
+    {
+      "path": "ios/Runtime/Sources/MonsteraRuntime/Replay.swift",
+      "sha256": "cdf307867ddc7913ae1c9d6bcf0eb3f05a57af76105930caa6919ea085de4eb7"
+    },
+    {
+      "path": "ios/Runtime/Sources/MonsteraRuntime/Simulation.swift",
+      "sha256": "af40b43ea88eaefe172252ce11c77bff84655a222385dbac047f8bbfd216ce46"
+    },
+    {
+      "path": "ios/Runtime/Tests/MonsteraRuntimeTests/ConformanceTests.swift",
+      "sha256": "3edc1d1c730106edd720270624e9b9f486503a97f92fc10d7f78e844212991da"
+    },
+    {
+      "path": "ios/Runtime/Tests/MonsteraRuntimeTests/Resources/monstera-scenarios.txt",
+      "sha256": "62183605753246c1082d207269e77e4207b00359ce42f4b220aee01cd3f9f886"
+    }
+  ],
+  "scenarios": [
+    {
+      "checkpoints": 101,
+      "name": "frame-jitter-60hz",
+      "results": [
+        {
+          "divergences": [],
+          "platform": "oracle",
+          "status": "pass"
+        },
+        {
+          "divergences": [],
+          "platform": "kotlin",
+          "status": "pass"
+        },
+        {
+          "divergences": [],
+          "platform": "swift",
+          "status": "pass"
+        }
+      ],
+      "sha256": "fd25c71f2aba56e0ef67763bc18f6d37ac909580fb683a81f102c2858f4445a7"
+    },
+    {
+      "checkpoints": 101,
+      "name": "idle-defence",
+      "results": [
+        {
+          "divergences": [],
+          "platform": "oracle",
+          "status": "pass"
+        },
+        {
+          "divergences": [],
+          "platform": "kotlin",
+          "status": "pass"
+        },
+        {
+          "divergences": [],
+          "platform": "swift",
+          "status": "pass"
+        }
+      ],
+      "sha256": "0e44a34bfefeb3e40db82d34f290ee70dba3741f3d769a7a7408e27d97de59dd"
+    },
+    {
+      "checkpoints": 101,
+      "name": "sweep-and-fire",
+      "results": [
+        {
+          "divergences": [],
+          "platform": "oracle",
+          "status": "pass"
+        },
+        {
+          "divergences": [],
+          "platform": "kotlin",
+          "status": "pass"
+        },
+        {
+          "divergences": [],
+          "platform": "swift",
+          "status": "pass"
+        }
+      ],
+      "sha256": "d89d26d99f7462c5c7e17115ad48a9b4476728369dbdfa3606a2c9c682d3faa2"
+    },
+    {
+      "checkpoints": 101,
+      "name": "volley-cap",
+      "results": [
+        {
+          "divergences": [],
+          "platform": "oracle",
+          "status": "pass"
+        },
+        {
+          "divergences": [],
+          "platform": "kotlin",
+          "status": "pass"
+        },
+        {
+          "divergences": [],
+          "platform": "swift",
+          "status": "pass"
+        }
+      ],
+      "sha256": "bb9e37026b46757aaba738d838b8cd09bda7e376a067ab5db992bfdc3634d4b1"
+    }
+  ],
+  "specSha256": "03d3d2fcba7463a68c127584d02706ca29c2b87c36e2797a536e3a6b28ba280a",
+  "verdict": "pass"
+}

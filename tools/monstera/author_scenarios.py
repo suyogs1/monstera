@@ -18,6 +18,7 @@ from monstera.jsonio import canonical_text  # noqa: E402
 REPO = Path(__file__).resolve().parents[2]
 SPEC = "spec/samples/monstera-sample/monstera.spec.json"
 LAB_SPEC = "spec/samples/boundary-lab/monstera.spec.json"
+PUMPKIN_SPEC = "apps/pumpkin-blaster/monstera.spec.json"
 SCENARIOS = REPO / "spec" / "scenarios"
 PLACEHOLDER_SHA = "0" * 64  # replaced by `monstera scenarios record`
 MAX, MIN = 2147483647, -2147483648
@@ -149,8 +150,38 @@ def build_lab() -> list[dict]:
     ]
 
 
-def main() -> int:
-    for project, scenarios in (("monstera-sample", build()), ("boundary-lab", build_lab())):
+def build_pumpkin() -> list[dict]:
+    """pumpkin-blaster (G3): the shipped game's own behaviour, driven by plausible play."""
+    def play(n: int) -> dict[int, list[dict]]:
+        out: dict[int, list[dict]] = {}
+        for t in range(n):
+            events = []
+            if t % 10 == 0:
+                events.append(ev("tap"))
+            if t % 15 == 0:
+                events.append(ev("drag", units(((t // 15) % 4) * 3 - 4), units(70 if (t // 120) % 2 == 0 else -70)))
+            if events:
+                out[t] = events
+        return out
+    def pb(name: str, description: str, seed: int, ticks: int, by_tick: dict[int, list[dict]], frames: dict | None = None) -> dict:
+        return scenario(name, description, seed, ticks, by_tick, spec=PUMPKIN_SPEC, frames=frames)
+    return [
+        pb("sweep-and-fire", "A player sweeping up and down while firing every 10 ticks: bullets and pumpkins/bats collide, score accumulates (+10 pumpkin, +25 bat) and some hazards still reach the ship.",
+           2026, 2400, play(2400)),
+        pb("idle-defence", "No input: four PRNG streams (pumpkins, bats, embers, stars) spawn from the right edge and the idle ship loses all five lives (the game ends near tick 1140); later ticks change nothing.",
+           11, 6000, {}),
+        pb("volley-cap", "200 taps in one tick against maxEntities 128: surplus bullets are skipped, PRNG draws continue, and the volley expires before spawning resumes.",
+           13, 300, {20: [ev("tap")] * 200}),
+        pb("frame-jitter-60hz", "Frame-driven: 1800 frames of 12-22 ms (about 60 Hz with jitter) feed taps and drags into the fixed-tick loop of the landscape shooter.",
+           17, 1800, {f: [ev("tap")] for f in range(4, 1800, 11)} | {f: [ev("drag", units(2), units(((f // 40) % 2) * 120 - 60))] for f in range(9, 1800, 40)},
+           frames={"count": 1800, "seed": 606, "minNanos": 12000000, "maxNanos": 22000000}),
+    ]
+def main(argv: list[str]) -> int:
+    projects = (("monstera-sample", build), ("boundary-lab", build_lab), ("pumpkin-blaster", build_pumpkin))
+    for project, factory in projects:
+        if argv and project not in argv:
+            continue  # name projects to write only those (existing recorded scenarios stay untouched)
+        scenarios = factory()
         out = SCENARIOS / project
         out.mkdir(parents=True, exist_ok=True)
         for sc in scenarios:
@@ -160,4 +191,4 @@ def main() -> int:
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    raise SystemExit(main(sys.argv[1:]))
