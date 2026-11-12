@@ -14,7 +14,7 @@ from mcp.client.stdio import StdioServerParameters, stdio_client
 
 ROOT = Path(__file__).resolve().parents[3]
 SERVER = ROOT / "tools" / "monstera-mcp" / "server.py"
-EXPECTED_TOOLS = {"validate_spec", "generate_project", "inspect_manifest", "get_device_report"}
+EXPECTED_TOOLS = {"validate_spec", "generate_project", "inspect_manifest", "get_device_report", "run_conformance"}
 
 
 def _payload(result) -> dict:
@@ -38,7 +38,12 @@ async def _session_run():
                     "inspect_manifest", {"dir": "generated/monstera-sample"}),
                 "get_device_report": await session.call_tool(
                     "get_device_report", {"evidence": "docs/evidence/g1-ios-simulator-ci"}),
+                "run_conformance": await session.call_tool(
+                    "run_conformance", {"dir": "generated/monstera-sample"}),
                 "refused": await session.call_tool("inspect_manifest", {"dir": "../outside"}),
+                "refused_image": await session.call_tool(
+                    "run_conformance", {"dir": "generated/monstera-sample", "platforms": ["swift"],
+                                        "swift_image": "evil/image:latest"}),
             }
             return init, listed, calls
 
@@ -51,7 +56,7 @@ class ProtocolTests(unittest.TestCase):
     def test_server_identity(self) -> None:
         self.assertEqual(self.init.server_info.name, "monstera")
 
-    def test_exactly_the_four_engine_backed_tools(self) -> None:
+    def test_exactly_the_five_engine_backed_tools(self) -> None:
         self.assertEqual({t.name for t in self.listed.tools}, EXPECTED_TOOLS)
 
     def test_read_only_annotations(self) -> None:
@@ -59,6 +64,15 @@ class ProtocolTests(unittest.TestCase):
         for name in ("validate_spec", "inspect_manifest", "get_device_report"):
             self.assertTrue(by_name[name].annotations.read_only_hint, name)
         self.assertFalse(by_name["generate_project"].annotations.read_only_hint)
+        self.assertFalse(by_name["run_conformance"].annotations.read_only_hint, "it starts builds")
+        self.assertFalse(by_name["run_conformance"].annotations.destructive_hint)
+
+    def test_run_conformance_over_the_protocol(self) -> None:
+        out = _payload(self.calls["run_conformance"])
+        self.assertEqual(out["report"]["verdict"], "incomplete", "oracle-only is never a pass")
+        self.assertNotIn("PASS", out["summary"][0])
+        self.assertEqual([p["platform"] for p in out["report"]["platforms"]], ["oracle"])
+        self.assertTrue(self.calls["refused_image"].is_error, "only official swift image tags are allowed")
 
     def test_calls_return_engine_results(self) -> None:
         self.assertTrue(_payload(self.calls["validate_spec"])["valid"])

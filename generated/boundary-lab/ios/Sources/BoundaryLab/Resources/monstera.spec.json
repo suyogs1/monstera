@@ -1,0 +1,463 @@
+{
+  "game": {
+    "genre": "prototype",
+    "input": {
+      "dragGain": 98304,
+      "scheme": "drag",
+      "swipeSpeed": 131072,
+      "tapKind": "bullet",
+      "tapVx": 0,
+      "tapVy": -131072
+    },
+    "orientation": "landscape",
+    "palette": {
+      "accent": "#FFB000",
+      "background": "#1A1230",
+      "primary": "#FF7A00"
+    },
+    "runtime": {
+      "collisions": [
+        {
+          "a": "probe",
+          "b": "target",
+          "despawnA": true,
+          "despawnB": true,
+          "lives": 0,
+          "score": 1
+        },
+        {
+          "a": "dot",
+          "b": "target",
+          "despawnA": true,
+          "despawnB": true,
+          "lives": 0,
+          "score": 100
+        },
+        {
+          "a": "bullet",
+          "b": "mine",
+          "despawnA": true,
+          "despawnB": false,
+          "lives": -1,
+          "score": 0
+        },
+        {
+          "a": "twin",
+          "b": "twin",
+          "despawnA": true,
+          "despawnB": false,
+          "lives": 0,
+          "score": 5
+        }
+      ],
+      "initialEntities": [
+        {
+          "controlled": false,
+          "kind": "probe",
+          "vx": 0,
+          "vy": 0,
+          "x": 0,
+          "y": 0
+        },
+        {
+          "controlled": false,
+          "kind": "target",
+          "vx": 0,
+          "vy": 0,
+          "x": 655360,
+          "y": 0
+        },
+        {
+          "controlled": false,
+          "kind": "probe",
+          "vx": 0,
+          "vy": 0,
+          "x": 0,
+          "y": 1966080
+        },
+        {
+          "controlled": false,
+          "kind": "target",
+          "vx": 0,
+          "vy": 0,
+          "x": 655359,
+          "y": 1966080
+        },
+        {
+          "controlled": false,
+          "kind": "probe",
+          "vx": 0,
+          "vy": 0,
+          "x": 0,
+          "y": 3932160
+        },
+        {
+          "controlled": false,
+          "kind": "target",
+          "vx": 0,
+          "vy": 0,
+          "x": 0,
+          "y": 4587520
+        },
+        {
+          "controlled": false,
+          "kind": "probe",
+          "vx": 0,
+          "vy": 0,
+          "x": 0,
+          "y": 5898240
+        },
+        {
+          "controlled": false,
+          "kind": "target",
+          "vx": 0,
+          "vy": 0,
+          "x": 0,
+          "y": 6553599
+        },
+        {
+          "controlled": false,
+          "kind": "probe",
+          "vx": 0,
+          "vy": 0,
+          "x": 0,
+          "y": 7864320
+        },
+        {
+          "controlled": false,
+          "kind": "target",
+          "vx": 0,
+          "vy": 0,
+          "x": 655360,
+          "y": 8519680
+        },
+        {
+          "controlled": false,
+          "kind": "dot",
+          "vx": 0,
+          "vy": 0,
+          "x": 3276800,
+          "y": 9830400
+        },
+        {
+          "controlled": false,
+          "kind": "target",
+          "vx": 0,
+          "vy": 0,
+          "x": 3276800,
+          "y": 9830400
+        },
+        {
+          "controlled": false,
+          "kind": "probe",
+          "vx": 0,
+          "vy": 0,
+          "x": 3276800,
+          "y": 11796480
+        },
+        {
+          "controlled": false,
+          "kind": "target",
+          "vx": 0,
+          "vy": 0,
+          "x": 3276800,
+          "y": 11796480
+        },
+        {
+          "controlled": false,
+          "kind": "mover",
+          "vx": -65536,
+          "vy": 0,
+          "x": 327680,
+          "y": 13107200
+        },
+        {
+          "controlled": false,
+          "kind": "mover",
+          "vx": 65536,
+          "vy": 0,
+          "x": 25886720,
+          "y": 13762560
+        },
+        {
+          "controlled": false,
+          "kind": "mover",
+          "vx": 0,
+          "vy": 65536,
+          "x": 13107200,
+          "y": 19333120
+        },
+        {
+          "controlled": false,
+          "kind": "ball",
+          "vx": 65536,
+          "vy": 0,
+          "x": 25427968,
+          "y": 14417920
+        },
+        {
+          "controlled": false,
+          "kind": "ball",
+          "vx": -65536,
+          "vy": 0,
+          "x": 131072,
+          "y": 15728640
+        },
+        {
+          "controlled": false,
+          "kind": "ball",
+          "vx": 0,
+          "vy": 65536,
+          "x": 6553600,
+          "y": 18874368
+        },
+        {
+          "controlled": false,
+          "kind": "stick",
+          "vx": -327680,
+          "vy": 0,
+          "x": 196608,
+          "y": 17039360
+        },
+        {
+          "controlled": false,
+          "kind": "timer",
+          "vx": 0,
+          "vy": 0,
+          "x": 19660800,
+          "y": 6553600
+        },
+        {
+          "controlled": true,
+          "kind": "player",
+          "vx": 0,
+          "vy": 0,
+          "x": 12451840,
+          "y": 9175040
+        },
+        {
+          "controlled": false,
+          "kind": "mine",
+          "vx": 0,
+          "vy": 0,
+          "x": 12451840,
+          "y": 9175040
+        },
+        {
+          "controlled": false,
+          "kind": "fast",
+          "vx": 2147483647,
+          "vy": -2147483648,
+          "x": 19660800,
+          "y": 13107200
+        },
+        {
+          "controlled": false,
+          "kind": "target",
+          "vx": 0,
+          "vy": 0,
+          "x": 16384000,
+          "y": 655360
+        },
+        {
+          "controlled": false,
+          "kind": "probe",
+          "vx": 0,
+          "vy": 0,
+          "x": 17039360,
+          "y": 655360
+        },
+        {
+          "controlled": false,
+          "kind": "target",
+          "vx": 0,
+          "vy": 0,
+          "x": 16384000,
+          "y": 2621440
+        },
+        {
+          "controlled": false,
+          "kind": "probe",
+          "vx": 0,
+          "vy": 0,
+          "x": 16384000,
+          "y": 3276800
+        },
+        {
+          "controlled": false,
+          "kind": "twin",
+          "vx": 0,
+          "vy": 0,
+          "x": 22937600,
+          "y": 655360
+        },
+        {
+          "controlled": false,
+          "kind": "twin",
+          "vx": 0,
+          "vy": 0,
+          "x": 23265280,
+          "y": 786432
+        }
+      ],
+      "kinds": [
+        {
+          "exitPolicy": "despawn",
+          "height": 655360,
+          "id": "probe",
+          "lifetimeTicks": 0,
+          "width": 655360
+        },
+        {
+          "exitPolicy": "despawn",
+          "height": 655360,
+          "id": "target",
+          "lifetimeTicks": 0,
+          "width": 655360
+        },
+        {
+          "exitPolicy": "despawn",
+          "height": 0,
+          "id": "dot",
+          "lifetimeTicks": 0,
+          "width": 0
+        },
+        {
+          "exitPolicy": "despawn",
+          "height": 655360,
+          "id": "mover",
+          "lifetimeTicks": 0,
+          "width": 655360
+        },
+        {
+          "exitPolicy": "bounce",
+          "height": 655360,
+          "id": "ball",
+          "lifetimeTicks": 0,
+          "width": 655360
+        },
+        {
+          "exitPolicy": "clamp",
+          "height": 655360,
+          "id": "stick",
+          "lifetimeTicks": 0,
+          "width": 655360
+        },
+        {
+          "exitPolicy": "despawn",
+          "height": 131072,
+          "id": "timer",
+          "lifetimeTicks": 5,
+          "width": 131072
+        },
+        {
+          "exitPolicy": "clamp",
+          "height": 1310720,
+          "id": "player",
+          "lifetimeTicks": 0,
+          "width": 1310720
+        },
+        {
+          "exitPolicy": "despawn",
+          "height": 524288,
+          "id": "bullet",
+          "lifetimeTicks": 60,
+          "width": 262144
+        },
+        {
+          "exitPolicy": "clamp",
+          "height": 1310720,
+          "id": "mine",
+          "lifetimeTicks": 0,
+          "width": 1310720
+        },
+        {
+          "exitPolicy": "clamp",
+          "height": 262144,
+          "id": "fast",
+          "lifetimeTicks": 0,
+          "width": 262144
+        },
+        {
+          "exitPolicy": "despawn",
+          "height": 262144,
+          "id": "filler",
+          "lifetimeTicks": 0,
+          "width": 262144
+        },
+        {
+          "exitPolicy": "despawn",
+          "height": 131072,
+          "id": "spark",
+          "lifetimeTicks": 3,
+          "width": 131072
+        },
+        {
+          "exitPolicy": "despawn",
+          "height": 655360,
+          "id": "twin",
+          "lifetimeTicks": 0,
+          "width": 655360
+        }
+      ],
+      "lives": 3,
+      "maxEntities": 40,
+      "spawners": [
+        {
+          "intervalTicks": 1,
+          "kind": "spark",
+          "stream": "fx",
+          "vx": 0,
+          "vy": 0,
+          "xMax": 25952256,
+          "xMin": 0,
+          "yMax": 19398656,
+          "yMin": 0
+        },
+        {
+          "intervalTicks": 2,
+          "kind": "filler",
+          "stream": "fill",
+          "vx": 0,
+          "vy": 0,
+          "xMax": 25952256,
+          "xMin": 6553600,
+          "yMax": 19398656,
+          "yMin": 6553600
+        }
+      ],
+      "winScore": 0
+    },
+    "simulation": {
+      "maxTicksPerFrame": 5,
+      "tickRate": 60
+    },
+    "targetFps": 60,
+    "world": {
+      "height": 300,
+      "width": 400
+    }
+  },
+  "project": {
+    "displayName": "MONSTERA Boundary Lab",
+    "id": "boundary-lab",
+    "identifier": "app.monstera.boundarylab",
+    "platforms": {
+      "android": {
+        "minSdk": 26
+      },
+      "ios": {
+        "deploymentTarget": "17.0"
+      }
+    },
+    "targets": [
+      "android",
+      "ios"
+    ],
+    "version": {
+      "code": 1,
+      "name": "0.1.0"
+    }
+  },
+  "specVersion": 2
+}

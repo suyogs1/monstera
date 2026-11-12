@@ -1,0 +1,428 @@
+# GENERATED conformance scenarios - do not edit
+monstera-scenarios 1
+scenario bounce-clamp 3 12
+checkpoint 0 1a562b6f2de5e8d9 0 0 3 31 0 32
+checkpoint 1 5956d2a37954e152 1 8 3 26 0 34
+checkpoint 2 c3374bf1b770142f 2 8 3 27 0 35
+checkpoint 3 f503b177c643420f 3 8 3 28 0 37
+checkpoint 4 acf6d37ee07778dd 4 8 3 28 0 38
+checkpoint 5 3cc2319dbdc819ed 5 8 3 26 0 40
+checkpoint 6 8f736f2f2f789a39 6 8 3 26 0 41
+checkpoint 7 734077599db47f07 7 8 3 27 0 43
+checkpoint 8 3eca3f06d5c4693f 8 8 3 27 0 44
+checkpoint 9 746597dea089ae7f 9 8 3 28 0 46
+checkpoint 10 562087bb92bb8dfe 10 8 3 28 0 47
+checkpoint 11 c6a71553125a5f58 11 8 3 29 0 49
+checkpoint 12 6596b6c77829a9ff 12 8 3 29 0 50
+end
+scenario lifetime-and-cap 4 150
+checkpoint 0 99b37055916b96d9 0 0 3 31 0 32
+checkpoint 1 fe9dcf6196d6a472 1 8 3 26 0 34
+checkpoint 2 0e7db25aed92f505 2 8 3 27 0 35
+checkpoint 3 b4489632c6bb867d 3 8 3 28 0 37
+checkpoint 4 1eb1fdcc42081ab1 4 8 3 28 0 38
+checkpoint 5 3291ae3e85ff908e 5 8 3 26 0 40
+checkpoint 6 11e0c49a8cd57a93 6 8 3 26 0 41
+checkpoint 7 ab1481a41c13d84c 7 8 3 27 0 43
+checkpoint 8 62e67be44c731a81 8 8 3 27 0 44
+checkpoint 9 a31840cd9e069ce6 9 8 3 28 0 46
+checkpoint 10 0e38151550b26264 10 8 3 28 0 47
+checkpoint 11 aa619d68423d96df 11 8 3 29 0 49
+checkpoint 12 6f826cfbebd37e54 12 8 3 29 0 50
+checkpoint 13 715dcafb9585232b 13 8 3 30 0 52
+checkpoint 14 f01622576f680a04 14 8 3 30 0 53
+checkpoint 15 216e92dd3bdee160 15 8 3 30 0 55
+checkpoint 16 0474784054d56840 16 8 3 30 0 56
+checkpoint 17 a17996ba1ef56b94 17 8 3 31 0 58
+checkpoint 18 f6c37f986931943e 18 8 3 31 0 59
+checkpoint 19 58886feb241df191 19 8 3 32 0 61
+checkpoint 20 bfbd49487e775888 20 8 3 32 0 62
+checkpoint 21 8b60e8cc3132f7a1 21 8 3 33 0 64
+checkpoint 22 47bca0be2e1dea5b 22 8 3 33 0 65
+checkpoint 23 d2688fdb27150f4d 23 8 3 34 0 67
+checkpoint 24 a764acc5e5f30b6d 24 8 3 34 0 68
+checkpoint 25 dc9deafeff668a93 25 8 3 35 0 70
+checkpoint 26 49c71ea47d04675e 26 8 3 35 0 71
+checkpoint 27 2b4dee15f365a882 27 8 3 36 0 73
+checkpoint 28 0c5ceb1c2e0013b7 28 8 3 36 0 74
+checkpoint 29 77d5339a9ff01eed 29 8 3 37 0 76
+checkpoint 30 b7861dce904ca254 30 8 3 37 0 77
+checkpoint 31 ddf3ce70168dea39 31 8 3 38 0 79
+checkpoint 32 c30dceb227c8e447 32 8 3 38 0 80
+checkpoint 33 a54c451a76330a0b 33 8 3 39 0 82
+checkpoint 34 e34a25cf923a3a29 34 8 3 39 0 83
+checkpoint 35 fcd646895c250914 35 8 3 39 0 84
+checkpoint 36 359b1445d8fa3823 36 8 3 39 0 85
+checkpoint 37 6f5a004949379dd6 37 8 3 39 0 86
+checkpoint 38 4298ef9276ab00e4 38 8 3 39 0 87
+checkpoint 39 2c62d8d7a5c5039d 39 8 3 39 0 88
+checkpoint 40 e306ac50d9d3c766 40 8 3 39 0 89
+checkpoint 41 dd038a875643de32 41 8 3 39 0 90
+checkpoint 42 5e6a633dad2ab4a6 42 8 3 39 0 91
+checkpoint 43 b7e3b8432345ab8e 43 8 3 39 0 92
+checkpoint 44 2e294e21004db1f0 44 8 3 39 0 93
+checkpoint 45 aa8672d173f6d4af 45 8 3 39 0 94
+checkpoint 46 38f1d4efe587b498 46 8 3 39 0 95
+checkpoint 47 a744f490405319c5 47 8 3 39 0 96
+checkpoint 48 ff81ca02e9756f3f 48 8 3 39 0 97
+checkpoint 49 8c7d916fab7e624c 49 8 3 39 0 98
+checkpoint 50 0b5896d5b3d63dc3 50 8 3 39 0 99
+checkpoint 51 f87944714ad5e5d1 51 8 3 39 0 100
+checkpoint 52 9013d8cb28bce164 52 8 3 39 0 101
+checkpoint 53 44341da140ae9d2c 53 8 3 39 0 102
+checkpoint 54 cdd877730b3081b4 54 8 3 39 0 103
+checkpoint 55 85e1ed1484e2acf8 55 8 3 39 0 104
+checkpoint 56 023f38c3756c59bc 56 8 3 39 0 105
+checkpoint 57 a5cd69f95e848b62 57 8 3 39 0 106
+checkpoint 58 b9fd0dbceab7165b 58 8 3 39 0 107
+checkpoint 59 624abb19c8210b9f 59 8 3 39 0 108
+checkpoint 60 809be4abde4e3cb6 60 8 3 39 0 109
+checkpoint 61 1fcae7562336fdf4 61 8 3 39 0 110
+checkpoint 62 b99fdeebed0442eb 62 8 3 39 0 111
+checkpoint 63 b0b59034afdf57d2 63 8 3 39 0 112
+checkpoint 64 842ad3fcf02a652a 64 8 3 39 0 113
+checkpoint 65 b9d77999cdd9eafc 65 8 3 39 0 114
+checkpoint 66 f45fecf34da86624 66 8 3 39 0 115
+checkpoint 67 b03178938d8b7572 67 8 3 39 0 116
+checkpoint 68 8311db003c7189fe 68 8 3 39 0 117
+checkpoint 69 c91b12ce12efc491 69 8 3 39 0 118
+checkpoint 70 5753a8e4e703764a 70 8 3 39 0 119
+checkpoint 71 bad5ec55bddfe7fd 71 8 3 39 0 120
+checkpoint 72 baa443018ee8d354 72 8 3 39 0 121
+checkpoint 73 d51996c8314fa19b 73 8 3 39 0 122
+checkpoint 74 95eec17090238914 74 8 3 39 0 123
+checkpoint 75 8c5f5b5012ea0be8 75 8 3 39 0 124
+checkpoint 76 b65e9c42344483e6 76 8 3 39 0 125
+checkpoint 77 47c870dc30da47ea 77 8 3 39 0 126
+checkpoint 78 2e4deeaec3fa365f 78 8 3 39 0 127
+checkpoint 79 33efd78d8f29ca6a 79 8 3 39 0 128
+checkpoint 80 f34ac52b37159267 80 8 3 39 0 129
+checkpoint 81 240b4df86e7bd5d0 81 8 3 39 0 130
+checkpoint 82 a723511879b9ded8 82 8 3 39 0 131
+checkpoint 83 4c80d56a16c833ea 83 8 3 39 0 132
+checkpoint 84 109cfa84c8a1a69e 84 8 3 39 0 133
+checkpoint 85 84ee456398417a3d 85 8 3 39 0 134
+checkpoint 86 bcd4a0b394ab9458 86 8 3 39 0 135
+checkpoint 87 b5906a0a698d7481 87 8 3 39 0 136
+checkpoint 88 39a31a53edaddca3 88 8 3 39 0 137
+checkpoint 89 ecb71ae4a8f0ad36 89 8 3 39 0 138
+checkpoint 90 c9af0abdced7b2ad 90 8 3 39 0 139
+checkpoint 91 0810f2a281718fb6 91 8 3 39 0 140
+checkpoint 92 c5857bfd32b8c05a 92 8 3 39 0 141
+checkpoint 93 e341f8faaba4debd 93 8 3 39 0 142
+checkpoint 94 e429cc289d7d8488 94 8 3 39 0 143
+checkpoint 95 5b4ab04d21fab215 95 8 3 39 0 144
+checkpoint 96 fbecdbd5d0ced900 96 8 3 39 0 145
+checkpoint 97 c8c02ea2d5d8e973 97 8 3 39 0 146
+checkpoint 98 40a85079523a50b0 98 8 3 39 0 147
+checkpoint 99 43d104034af92a19 99 8 3 39 0 148
+checkpoint 100 f59e7ffc11064e16 100 8 3 39 0 149
+checkpoint 101 3db3efbf25db8b40 101 8 3 39 0 150
+checkpoint 102 fdafae75611fe06b 102 8 3 39 0 151
+checkpoint 103 30f5057196747f47 103 8 3 39 0 152
+checkpoint 104 ed16d0d2629df6d9 104 8 3 39 0 153
+checkpoint 105 5e20eba6125ce1de 105 8 3 39 0 154
+checkpoint 106 1343b3a42b87fe74 106 8 3 39 0 155
+checkpoint 107 055e495c6f665dca 107 8 3 39 0 156
+checkpoint 108 5011aa7f142fa30b 108 8 3 39 0 157
+checkpoint 109 1b75386aff30f541 109 8 3 39 0 158
+checkpoint 110 2794500bce25ff1a 110 8 3 39 0 159
+checkpoint 111 ccab3dc9611f76d5 111 8 3 39 0 160
+checkpoint 112 00d8f68af03074a6 112 8 3 39 0 161
+checkpoint 113 8ab4c1eb62a806ad 113 8 3 39 0 162
+checkpoint 114 d6545b5e829d2592 114 8 3 39 0 163
+checkpoint 115 3aafa2442fd460d1 115 8 3 39 0 164
+checkpoint 116 dd791f66186ca362 116 8 3 39 0 165
+checkpoint 117 a83bd2b801054cf5 117 8 3 39 0 166
+checkpoint 118 57a75fb629d893e8 118 8 3 39 0 167
+checkpoint 119 82efd7cf81efdf2d 119 8 3 39 0 168
+checkpoint 120 5f8d51858b21138d 120 8 3 39 0 169
+checkpoint 121 704e869c4c61b771 121 8 3 39 0 170
+checkpoint 122 13a1090be170c15b 122 8 3 39 0 171
+checkpoint 123 9c8a49be70667843 123 8 3 39 0 172
+checkpoint 124 9d350f2f96544fc5 124 8 3 39 0 173
+checkpoint 125 11523fc26daa9974 125 8 3 39 0 174
+checkpoint 126 bfc251418ea5c962 126 8 3 39 0 175
+checkpoint 127 28f091a74b342287 127 8 3 39 0 176
+checkpoint 128 21132d2a44a511f3 128 8 3 39 0 177
+checkpoint 129 c3ebe06438d014be 129 8 3 39 0 178
+checkpoint 130 2f30a4d62fc32d8f 130 8 3 39 0 179
+checkpoint 131 83892fecb815c6c8 131 8 3 39 0 180
+checkpoint 132 131415cbb15f36a8 132 8 3 39 0 181
+checkpoint 133 1b4dd72e69dc1fa1 133 8 3 39 0 182
+checkpoint 134 316737a1cadbfa0e 134 8 3 39 0 183
+checkpoint 135 af82524c56fd7344 135 8 3 39 0 184
+checkpoint 136 33d19e54d0bd6c77 136 8 3 39 0 185
+checkpoint 137 2020e3a542d0c190 137 8 3 39 0 186
+checkpoint 138 a30f97b9b913b5f6 138 8 3 39 0 187
+checkpoint 139 e64c860b5adc50e3 139 8 3 39 0 188
+checkpoint 140 7bb4225671f7ad93 140 8 3 39 0 189
+checkpoint 141 8a8bbbc9fa38888c 141 8 3 39 0 190
+checkpoint 142 272bbe1012ea324d 142 8 3 39 0 191
+checkpoint 143 ee0fb6482ce87055 143 8 3 39 0 192
+checkpoint 144 b435731053e20dfb 144 8 3 39 0 193
+checkpoint 145 9ee337ce50c48c2e 145 8 3 39 0 194
+checkpoint 146 38fe68521c474b01 146 8 3 39 0 195
+checkpoint 147 b86df93797177f0e 147 8 3 39 0 196
+checkpoint 148 cbee215588b30533 148 8 3 39 0 197
+checkpoint 149 865af2e9b28fd82b 149 8 3 39 0 198
+checkpoint 150 4207e8cd154251ca 150 8 3 39 0 199
+end
+scenario lives-end 6 40
+input 10 tap 0 0 none
+input 11 tap 0 0 none
+input 12 tap 0 0 none
+input 20 tap 0 0 none
+input 25 drag 65536 65536 none
+checkpoint 0 273a1297de9ccb1a 0 0 3 31 0 32
+checkpoint 1 c6c70e3d6d776e55 1 8 3 26 0 34
+checkpoint 2 c039591736126148 2 8 3 27 0 35
+checkpoint 3 e1b0a877bf203713 3 8 3 28 0 37
+checkpoint 4 9a0a1a54400757ac 4 8 3 28 0 38
+checkpoint 5 3b2cc556cbbb63ab 5 8 3 26 0 40
+checkpoint 6 750b2e08c6feca94 6 8 3 26 0 41
+checkpoint 7 f8c6c8ff2c563c3a 7 8 3 27 0 43
+checkpoint 8 9de9b342aa388166 8 8 3 27 0 44
+checkpoint 9 3b5bcb2981cce488 9 8 3 28 0 46
+checkpoint 10 5e3d4ed4955a7b81 10 8 3 28 0 47
+checkpoint 11 e3ce59c5de4beebc 11 8 2 29 0 50
+checkpoint 12 b62b28dccfee09e7 12 8 1 29 0 52
+checkpoint 13 631df1ff606b3d33 13 8 0 30 1 55
+checkpoint 14 631df1ff606b3d33 13 8 0 30 1 55
+checkpoint 15 631df1ff606b3d33 13 8 0 30 1 55
+checkpoint 16 631df1ff606b3d33 13 8 0 30 1 55
+checkpoint 17 631df1ff606b3d33 13 8 0 30 1 55
+checkpoint 18 631df1ff606b3d33 13 8 0 30 1 55
+checkpoint 19 631df1ff606b3d33 13 8 0 30 1 55
+checkpoint 20 631df1ff606b3d33 13 8 0 30 1 55
+checkpoint 21 631df1ff606b3d33 13 8 0 30 1 55
+checkpoint 22 631df1ff606b3d33 13 8 0 30 1 55
+checkpoint 23 631df1ff606b3d33 13 8 0 30 1 55
+checkpoint 24 631df1ff606b3d33 13 8 0 30 1 55
+checkpoint 25 631df1ff606b3d33 13 8 0 30 1 55
+checkpoint 26 631df1ff606b3d33 13 8 0 30 1 55
+checkpoint 27 631df1ff606b3d33 13 8 0 30 1 55
+checkpoint 28 631df1ff606b3d33 13 8 0 30 1 55
+checkpoint 29 631df1ff606b3d33 13 8 0 30 1 55
+checkpoint 30 631df1ff606b3d33 13 8 0 30 1 55
+checkpoint 31 631df1ff606b3d33 13 8 0 30 1 55
+checkpoint 32 631df1ff606b3d33 13 8 0 30 1 55
+checkpoint 33 631df1ff606b3d33 13 8 0 30 1 55
+checkpoint 34 631df1ff606b3d33 13 8 0 30 1 55
+checkpoint 35 631df1ff606b3d33 13 8 0 30 1 55
+checkpoint 36 631df1ff606b3d33 13 8 0 30 1 55
+checkpoint 37 631df1ff606b3d33 13 8 0 30 1 55
+checkpoint 38 631df1ff606b3d33 13 8 0 30 1 55
+checkpoint 39 631df1ff606b3d33 13 8 0 30 1 55
+checkpoint 40 631df1ff606b3d33 13 8 0 30 1 55
+end
+scenario loop-lives-end 34 300
+frames 300 99 25000000 45000000
+input 10 tap 0 0 none
+input 30 tap 0 0 none
+input 50 tap 0 0 none
+input 70 tap 0 0 none
+input 90 tap 0 0 none
+input 110 tap 0 0 none
+input 130 tap 0 0 none
+input 150 tap 0 0 none
+input 170 tap 0 0 none
+input 190 tap 0 0 none
+input 210 tap 0 0 none
+input 230 tap 0 0 none
+input 250 tap 0 0 none
+input 270 tap 0 0 none
+input 290 tap 0 0 none
+checkpoint 0 c4b6d7450fec85d4 0 0 3 31 0 32
+checkpoint 3 52953edd62d8e1ff 6 8 3 26 0 41
+checkpoint 6 4a3a3f98e56ae93b 12 8 3 29 0 50
+checkpoint 9 6cd3aab9c29e4f35 19 8 3 32 0 61
+checkpoint 12 32dd74445fef80bb 25 8 2 35 0 71
+checkpoint 15 888623661f4aac55 31 8 2 38 0 80
+checkpoint 18 ed2426a9ea095655 38 8 2 39 0 88
+checkpoint 21 30efbb13d34c8814 44 8 2 39 0 94
+checkpoint 24 e892fd5c8feef0ad 51 8 2 39 0 101
+checkpoint 27 8605083d35cf6096 58 8 2 39 0 108
+checkpoint 30 ae3b0d1d80c06f3d 64 8 2 39 0 114
+checkpoint 33 4fc43d934a7a356c 71 8 1 39 0 120
+checkpoint 36 dfd69a7149276451 76 8 1 40 0 124
+checkpoint 39 b8e095adc267a91b 82 8 1 40 0 128
+checkpoint 42 131c6013f6267f9c 88 8 1 40 0 132
+checkpoint 45 69da018e86957fd7 95 8 1 39 0 136
+checkpoint 48 24461626b2b01e0a 103 8 1 40 0 142
+checkpoint 51 d1694240133afe65 108 8 0 38 1 145
+checkpoint 54 d1694240133afe65 108 8 0 38 1 145
+checkpoint 57 d1694240133afe65 108 8 0 38 1 145
+checkpoint 60 d1694240133afe65 108 8 0 38 1 145
+checkpoint 63 d1694240133afe65 108 8 0 38 1 145
+checkpoint 66 d1694240133afe65 108 8 0 38 1 145
+checkpoint 69 d1694240133afe65 108 8 0 38 1 145
+checkpoint 72 d1694240133afe65 108 8 0 38 1 145
+checkpoint 75 d1694240133afe65 108 8 0 38 1 145
+checkpoint 78 d1694240133afe65 108 8 0 38 1 145
+checkpoint 81 d1694240133afe65 108 8 0 38 1 145
+checkpoint 84 d1694240133afe65 108 8 0 38 1 145
+checkpoint 87 d1694240133afe65 108 8 0 38 1 145
+checkpoint 90 d1694240133afe65 108 8 0 38 1 145
+checkpoint 93 d1694240133afe65 108 8 0 38 1 145
+checkpoint 96 d1694240133afe65 108 8 0 38 1 145
+checkpoint 99 d1694240133afe65 108 8 0 38 1 145
+checkpoint 102 d1694240133afe65 108 8 0 38 1 145
+checkpoint 105 d1694240133afe65 108 8 0 38 1 145
+checkpoint 108 d1694240133afe65 108 8 0 38 1 145
+checkpoint 111 d1694240133afe65 108 8 0 38 1 145
+checkpoint 114 d1694240133afe65 108 8 0 38 1 145
+checkpoint 117 d1694240133afe65 108 8 0 38 1 145
+checkpoint 120 d1694240133afe65 108 8 0 38 1 145
+checkpoint 123 d1694240133afe65 108 8 0 38 1 145
+checkpoint 126 d1694240133afe65 108 8 0 38 1 145
+checkpoint 129 d1694240133afe65 108 8 0 38 1 145
+checkpoint 132 d1694240133afe65 108 8 0 38 1 145
+checkpoint 135 d1694240133afe65 108 8 0 38 1 145
+checkpoint 138 d1694240133afe65 108 8 0 38 1 145
+checkpoint 141 d1694240133afe65 108 8 0 38 1 145
+checkpoint 144 d1694240133afe65 108 8 0 38 1 145
+checkpoint 147 d1694240133afe65 108 8 0 38 1 145
+checkpoint 150 d1694240133afe65 108 8 0 38 1 145
+checkpoint 153 d1694240133afe65 108 8 0 38 1 145
+checkpoint 156 d1694240133afe65 108 8 0 38 1 145
+checkpoint 159 d1694240133afe65 108 8 0 38 1 145
+checkpoint 162 d1694240133afe65 108 8 0 38 1 145
+checkpoint 165 d1694240133afe65 108 8 0 38 1 145
+checkpoint 168 d1694240133afe65 108 8 0 38 1 145
+checkpoint 171 d1694240133afe65 108 8 0 38 1 145
+checkpoint 174 d1694240133afe65 108 8 0 38 1 145
+checkpoint 177 d1694240133afe65 108 8 0 38 1 145
+checkpoint 180 d1694240133afe65 108 8 0 38 1 145
+checkpoint 183 d1694240133afe65 108 8 0 38 1 145
+checkpoint 186 d1694240133afe65 108 8 0 38 1 145
+checkpoint 189 d1694240133afe65 108 8 0 38 1 145
+checkpoint 192 d1694240133afe65 108 8 0 38 1 145
+checkpoint 195 d1694240133afe65 108 8 0 38 1 145
+checkpoint 198 d1694240133afe65 108 8 0 38 1 145
+checkpoint 201 d1694240133afe65 108 8 0 38 1 145
+checkpoint 204 d1694240133afe65 108 8 0 38 1 145
+checkpoint 207 d1694240133afe65 108 8 0 38 1 145
+checkpoint 210 d1694240133afe65 108 8 0 38 1 145
+checkpoint 213 d1694240133afe65 108 8 0 38 1 145
+checkpoint 216 d1694240133afe65 108 8 0 38 1 145
+checkpoint 219 d1694240133afe65 108 8 0 38 1 145
+checkpoint 222 d1694240133afe65 108 8 0 38 1 145
+checkpoint 225 d1694240133afe65 108 8 0 38 1 145
+checkpoint 228 d1694240133afe65 108 8 0 38 1 145
+checkpoint 231 d1694240133afe65 108 8 0 38 1 145
+checkpoint 234 d1694240133afe65 108 8 0 38 1 145
+checkpoint 237 d1694240133afe65 108 8 0 38 1 145
+checkpoint 240 d1694240133afe65 108 8 0 38 1 145
+checkpoint 243 d1694240133afe65 108 8 0 38 1 145
+checkpoint 246 d1694240133afe65 108 8 0 38 1 145
+checkpoint 249 d1694240133afe65 108 8 0 38 1 145
+checkpoint 252 d1694240133afe65 108 8 0 38 1 145
+checkpoint 255 d1694240133afe65 108 8 0 38 1 145
+checkpoint 258 d1694240133afe65 108 8 0 38 1 145
+checkpoint 261 d1694240133afe65 108 8 0 38 1 145
+checkpoint 264 d1694240133afe65 108 8 0 38 1 145
+checkpoint 267 d1694240133afe65 108 8 0 38 1 145
+checkpoint 270 d1694240133afe65 108 8 0 38 1 145
+checkpoint 273 d1694240133afe65 108 8 0 38 1 145
+checkpoint 276 d1694240133afe65 108 8 0 38 1 145
+checkpoint 279 d1694240133afe65 108 8 0 38 1 145
+checkpoint 282 d1694240133afe65 108 8 0 38 1 145
+checkpoint 285 d1694240133afe65 108 8 0 38 1 145
+checkpoint 288 d1694240133afe65 108 8 0 38 1 145
+checkpoint 291 d1694240133afe65 108 8 0 38 1 145
+checkpoint 294 d1694240133afe65 108 8 0 38 1 145
+checkpoint 297 d1694240133afe65 108 8 0 38 1 145
+checkpoint 300 d1694240133afe65 108 8 0 38 1 145
+end
+scenario negative-rounding 5 40
+input 0 drag -3 -1 none
+input 1 drag 1 3 none
+input 2 drag -2147483648 -2147483648 none
+input 3 drag 2147483647 2147483647 none
+input 4 drag -7 5 none
+input 5 swipe 0 0 left
+input 15 swipe 0 0 none
+input 15 drag -1 -1 none
+input 20 swipe 0 0 down
+checkpoint 0 1e3fff80172cded8 0 0 3 31 0 32
+checkpoint 1 1a4d17b34afc3839 1 8 3 26 0 34
+checkpoint 2 47423800376860f7 2 8 3 27 0 35
+checkpoint 3 632254b92ee5fbe3 3 8 3 28 0 37
+checkpoint 4 1a55ca3708bea0cb 4 8 3 28 0 38
+checkpoint 5 d9b281ed64e9daf5 5 8 3 26 0 40
+checkpoint 6 0aaf19e674435343 6 8 3 26 0 41
+checkpoint 7 81bc36f3d7036029 7 8 3 27 0 43
+checkpoint 8 cfd69510528b79c8 8 8 3 27 0 44
+checkpoint 9 3fd29e8a9faca2f6 9 8 3 28 0 46
+checkpoint 10 426670063a058f1d 10 8 3 28 0 47
+checkpoint 11 0f8fbac48118d931 11 8 3 29 0 49
+checkpoint 12 8469ce0e93753f55 12 8 3 29 0 50
+checkpoint 13 33c1b391553e5e8b 13 8 3 30 0 52
+checkpoint 14 04c5760ce84eb9fd 14 8 3 30 0 53
+checkpoint 15 4eb76075abe863cf 15 8 3 30 0 55
+checkpoint 16 b2ada822a589cc8e 16 8 3 30 0 56
+checkpoint 17 7bf8bc62fc2db864 17 8 3 31 0 58
+checkpoint 18 47df8b0e05a96661 18 8 3 31 0 59
+checkpoint 19 ede3905862525271 19 8 3 32 0 61
+checkpoint 20 512ff323ee99e215 20 8 3 32 0 62
+checkpoint 21 09a6ed6019c7e2a3 21 8 3 33 0 64
+checkpoint 22 23879d24b5ca3434 22 8 3 33 0 65
+checkpoint 23 b2eb53510dd6def2 23 8 3 34 0 67
+checkpoint 24 20e4ecba641e0dc7 24 8 3 34 0 68
+checkpoint 25 1d447eee40b6edbe 25 8 3 35 0 70
+checkpoint 26 d74e6695f0fff81c 26 8 3 35 0 71
+checkpoint 27 9f43e65878b3a98e 27 8 3 36 0 73
+checkpoint 28 3ea271d47dbff63c 28 8 3 36 0 74
+checkpoint 29 3d9b6dcb75723076 29 8 3 37 0 76
+checkpoint 30 fa1110dbfd543cf3 30 8 3 37 0 77
+checkpoint 31 296e1b7bad863fea 31 8 3 38 0 79
+checkpoint 32 6d752c56d3b97d36 32 8 3 38 0 80
+checkpoint 33 ee4bde3bcbee148b 33 8 3 39 0 82
+checkpoint 34 446e75bff19ad6b5 34 8 3 39 0 83
+checkpoint 35 39bdf55a077e6bc0 35 8 3 39 0 84
+checkpoint 36 8ddb76e4d7db3bf9 36 8 3 39 0 85
+checkpoint 37 c146a68126c9e0e2 37 8 3 39 0 86
+checkpoint 38 60f40fb2238f4acf 38 8 3 39 0 87
+checkpoint 39 a180c42c0a8a3685 39 8 3 39 0 88
+checkpoint 40 94be8cdcf5018155 40 8 3 39 0 89
+end
+scenario touching-edges 1 3
+checkpoint 0 c6412f2a1983e4b9 0 0 3 31 0 32
+checkpoint 1 86cb5d0a1bf53bfa 1 8 3 26 0 34
+checkpoint 2 5e8be82325899a1a 2 8 3 27 0 35
+checkpoint 3 6bf52f4296f4045a 3 8 3 28 0 37
+end
+scenario world-exit 2 30
+checkpoint 0 e9ec3aecc0b7050b 0 0 3 31 0 32
+checkpoint 1 d4833e405e1ce737 1 8 3 26 0 34
+checkpoint 2 fabe1d4721012511 2 8 3 27 0 35
+checkpoint 3 07cc1c0d65485341 3 8 3 28 0 37
+checkpoint 4 0d5f7e628a157279 4 8 3 28 0 38
+checkpoint 5 f8b42da2a6d9f75a 5 8 3 26 0 40
+checkpoint 6 ca0e0415f0efd44c 6 8 3 26 0 41
+checkpoint 7 250c71e68f997d5c 7 8 3 27 0 43
+checkpoint 8 16736110503f7cf8 8 8 3 27 0 44
+checkpoint 9 a4c37d9b7e041abc 9 8 3 28 0 46
+checkpoint 10 c61a6615dca9f29a 10 8 3 28 0 47
+checkpoint 11 91c8d6f544c97158 11 8 3 29 0 49
+checkpoint 12 e1b92ae95ec98cd6 12 8 3 29 0 50
+checkpoint 13 2a630743992d4cf4 13 8 3 30 0 52
+checkpoint 14 b99b931ed57c8f39 14 8 3 30 0 53
+checkpoint 15 4bfdba1741e41c64 15 8 3 30 0 55
+checkpoint 16 54025463ab29f9e2 16 8 3 30 0 56
+checkpoint 17 3ad05892f9ebd00e 17 8 3 31 0 58
+checkpoint 18 44d88bf164969325 18 8 3 31 0 59
+checkpoint 19 8eaf85509e169ac6 19 8 3 32 0 61
+checkpoint 20 dc16d752140be735 20 8 3 32 0 62
+checkpoint 21 4917a73323e3fdbc 21 8 3 33 0 64
+checkpoint 22 852b2efbe6dfd476 22 8 3 33 0 65
+checkpoint 23 e825d20977847dc9 23 8 3 34 0 67
+checkpoint 24 281a07ae6ea136c6 24 8 3 34 0 68
+checkpoint 25 0ca7c9db46f602a6 25 8 3 35 0 70
+checkpoint 26 33d8baacbcad4791 26 8 3 35 0 71
+checkpoint 27 6a5a35ca71bc0617 27 8 3 36 0 73
+checkpoint 28 39573f6c6944bed5 28 8 3 36 0 74
+checkpoint 29 048a9de78ad73c49 29 8 3 37 0 76
+checkpoint 30 c7327a2dc8d7f6fa 30 8 3 37 0 77
+end

@@ -1,0 +1,568 @@
+{
+  "checkpoints": [
+    {
+      "hash": "273a1297de9ccb1a",
+      "observe": {
+        "ended": 0,
+        "entityCount": 31,
+        "lives": 3,
+        "nextId": 32,
+        "score": 0,
+        "tick": 0
+      },
+      "tick": 0
+    },
+    {
+      "hash": "c6c70e3d6d776e55",
+      "observe": {
+        "ended": 0,
+        "entityCount": 26,
+        "lives": 3,
+        "nextId": 34,
+        "score": 8,
+        "tick": 1
+      },
+      "tick": 1
+    },
+    {
+      "hash": "c039591736126148",
+      "observe": {
+        "ended": 0,
+        "entityCount": 27,
+        "lives": 3,
+        "nextId": 35,
+        "score": 8,
+        "tick": 2
+      },
+      "tick": 2
+    },
+    {
+      "hash": "e1b0a877bf203713",
+      "observe": {
+        "ended": 0,
+        "entityCount": 28,
+        "lives": 3,
+        "nextId": 37,
+        "score": 8,
+        "tick": 3
+      },
+      "tick": 3
+    },
+    {
+      "hash": "9a0a1a54400757ac",
+      "observe": {
+        "ended": 0,
+        "entityCount": 28,
+        "lives": 3,
+        "nextId": 38,
+        "score": 8,
+        "tick": 4
+      },
+      "tick": 4
+    },
+    {
+      "hash": "3b2cc556cbbb63ab",
+      "observe": {
+        "ended": 0,
+        "entityCount": 26,
+        "lives": 3,
+        "nextId": 40,
+        "score": 8,
+        "tick": 5
+      },
+      "tick": 5
+    },
+    {
+      "hash": "750b2e08c6feca94",
+      "observe": {
+        "ended": 0,
+        "entityCount": 26,
+        "lives": 3,
+        "nextId": 41,
+        "score": 8,
+        "tick": 6
+      },
+      "tick": 6
+    },
+    {
+      "hash": "f8c6c8ff2c563c3a",
+      "observe": {
+        "ended": 0,
+        "entityCount": 27,
+        "lives": 3,
+        "nextId": 43,
+        "score": 8,
+        "tick": 7
+      },
+      "tick": 7
+    },
+    {
+      "hash": "9de9b342aa388166",
+      "observe": {
+        "ended": 0,
+        "entityCount": 27,
+        "lives": 3,
+        "nextId": 44,
+        "score": 8,
+        "tick": 8
+      },
+      "tick": 8
+    },
+    {
+      "hash": "3b5bcb2981cce488",
+      "observe": {
+        "ended": 0,
+        "entityCount": 28,
+        "lives": 3,
+        "nextId": 46,
+        "score": 8,
+        "tick": 9
+      },
+      "tick": 9
+    },
+    {
+      "hash": "5e3d4ed4955a7b81",
+      "observe": {
+        "ended": 0,
+        "entityCount": 28,
+        "lives": 3,
+        "nextId": 47,
+        "score": 8,
+        "tick": 10
+      },
+      "tick": 10
+    },
+    {
+      "hash": "e3ce59c5de4beebc",
+      "observe": {
+        "ended": 0,
+        "entityCount": 29,
+        "lives": 2,
+        "nextId": 50,
+        "score": 8,
+        "tick": 11
+      },
+      "tick": 11
+    },
+    {
+      "hash": "b62b28dccfee09e7",
+      "observe": {
+        "ended": 0,
+        "entityCount": 29,
+        "lives": 1,
+        "nextId": 52,
+        "score": 8,
+        "tick": 12
+      },
+      "tick": 12
+    },
+    {
+      "hash": "631df1ff606b3d33",
+      "observe": {
+        "ended": 1,
+        "entityCount": 30,
+        "lives": 0,
+        "nextId": 55,
+        "score": 8,
+        "tick": 13
+      },
+      "tick": 13
+    },
+    {
+      "hash": "631df1ff606b3d33",
+      "observe": {
+        "ended": 1,
+        "entityCount": 30,
+        "lives": 0,
+        "nextId": 55,
+        "score": 8,
+        "tick": 13
+      },
+      "tick": 14
+    },
+    {
+      "hash": "631df1ff606b3d33",
+      "observe": {
+        "ended": 1,
+        "entityCount": 30,
+        "lives": 0,
+        "nextId": 55,
+        "score": 8,
+        "tick": 13
+      },
+      "tick": 15
+    },
+    {
+      "hash": "631df1ff606b3d33",
+      "observe": {
+        "ended": 1,
+        "entityCount": 30,
+        "lives": 0,
+        "nextId": 55,
+        "score": 8,
+        "tick": 13
+      },
+      "tick": 16
+    },
+    {
+      "hash": "631df1ff606b3d33",
+      "observe": {
+        "ended": 1,
+        "entityCount": 30,
+        "lives": 0,
+        "nextId": 55,
+        "score": 8,
+        "tick": 13
+      },
+      "tick": 17
+    },
+    {
+      "hash": "631df1ff606b3d33",
+      "observe": {
+        "ended": 1,
+        "entityCount": 30,
+        "lives": 0,
+        "nextId": 55,
+        "score": 8,
+        "tick": 13
+      },
+      "tick": 18
+    },
+    {
+      "hash": "631df1ff606b3d33",
+      "observe": {
+        "ended": 1,
+        "entityCount": 30,
+        "lives": 0,
+        "nextId": 55,
+        "score": 8,
+        "tick": 13
+      },
+      "tick": 19
+    },
+    {
+      "hash": "631df1ff606b3d33",
+      "observe": {
+        "ended": 1,
+        "entityCount": 30,
+        "lives": 0,
+        "nextId": 55,
+        "score": 8,
+        "tick": 13
+      },
+      "tick": 20
+    },
+    {
+      "hash": "631df1ff606b3d33",
+      "observe": {
+        "ended": 1,
+        "entityCount": 30,
+        "lives": 0,
+        "nextId": 55,
+        "score": 8,
+        "tick": 13
+      },
+      "tick": 21
+    },
+    {
+      "hash": "631df1ff606b3d33",
+      "observe": {
+        "ended": 1,
+        "entityCount": 30,
+        "lives": 0,
+        "nextId": 55,
+        "score": 8,
+        "tick": 13
+      },
+      "tick": 22
+    },
+    {
+      "hash": "631df1ff606b3d33",
+      "observe": {
+        "ended": 1,
+        "entityCount": 30,
+        "lives": 0,
+        "nextId": 55,
+        "score": 8,
+        "tick": 13
+      },
+      "tick": 23
+    },
+    {
+      "hash": "631df1ff606b3d33",
+      "observe": {
+        "ended": 1,
+        "entityCount": 30,
+        "lives": 0,
+        "nextId": 55,
+        "score": 8,
+        "tick": 13
+      },
+      "tick": 24
+    },
+    {
+      "hash": "631df1ff606b3d33",
+      "observe": {
+        "ended": 1,
+        "entityCount": 30,
+        "lives": 0,
+        "nextId": 55,
+        "score": 8,
+        "tick": 13
+      },
+      "tick": 25
+    },
+    {
+      "hash": "631df1ff606b3d33",
+      "observe": {
+        "ended": 1,
+        "entityCount": 30,
+        "lives": 0,
+        "nextId": 55,
+        "score": 8,
+        "tick": 13
+      },
+      "tick": 26
+    },
+    {
+      "hash": "631df1ff606b3d33",
+      "observe": {
+        "ended": 1,
+        "entityCount": 30,
+        "lives": 0,
+        "nextId": 55,
+        "score": 8,
+        "tick": 13
+      },
+      "tick": 27
+    },
+    {
+      "hash": "631df1ff606b3d33",
+      "observe": {
+        "ended": 1,
+        "entityCount": 30,
+        "lives": 0,
+        "nextId": 55,
+        "score": 8,
+        "tick": 13
+      },
+      "tick": 28
+    },
+    {
+      "hash": "631df1ff606b3d33",
+      "observe": {
+        "ended": 1,
+        "entityCount": 30,
+        "lives": 0,
+        "nextId": 55,
+        "score": 8,
+        "tick": 13
+      },
+      "tick": 29
+    },
+    {
+      "hash": "631df1ff606b3d33",
+      "observe": {
+        "ended": 1,
+        "entityCount": 30,
+        "lives": 0,
+        "nextId": 55,
+        "score": 8,
+        "tick": 13
+      },
+      "tick": 30
+    },
+    {
+      "hash": "631df1ff606b3d33",
+      "observe": {
+        "ended": 1,
+        "entityCount": 30,
+        "lives": 0,
+        "nextId": 55,
+        "score": 8,
+        "tick": 13
+      },
+      "tick": 31
+    },
+    {
+      "hash": "631df1ff606b3d33",
+      "observe": {
+        "ended": 1,
+        "entityCount": 30,
+        "lives": 0,
+        "nextId": 55,
+        "score": 8,
+        "tick": 13
+      },
+      "tick": 32
+    },
+    {
+      "hash": "631df1ff606b3d33",
+      "observe": {
+        "ended": 1,
+        "entityCount": 30,
+        "lives": 0,
+        "nextId": 55,
+        "score": 8,
+        "tick": 13
+      },
+      "tick": 33
+    },
+    {
+      "hash": "631df1ff606b3d33",
+      "observe": {
+        "ended": 1,
+        "entityCount": 30,
+        "lives": 0,
+        "nextId": 55,
+        "score": 8,
+        "tick": 13
+      },
+      "tick": 34
+    },
+    {
+      "hash": "631df1ff606b3d33",
+      "observe": {
+        "ended": 1,
+        "entityCount": 30,
+        "lives": 0,
+        "nextId": 55,
+        "score": 8,
+        "tick": 13
+      },
+      "tick": 35
+    },
+    {
+      "hash": "631df1ff606b3d33",
+      "observe": {
+        "ended": 1,
+        "entityCount": 30,
+        "lives": 0,
+        "nextId": 55,
+        "score": 8,
+        "tick": 13
+      },
+      "tick": 36
+    },
+    {
+      "hash": "631df1ff606b3d33",
+      "observe": {
+        "ended": 1,
+        "entityCount": 30,
+        "lives": 0,
+        "nextId": 55,
+        "score": 8,
+        "tick": 13
+      },
+      "tick": 37
+    },
+    {
+      "hash": "631df1ff606b3d33",
+      "observe": {
+        "ended": 1,
+        "entityCount": 30,
+        "lives": 0,
+        "nextId": 55,
+        "score": 8,
+        "tick": 13
+      },
+      "tick": 38
+    },
+    {
+      "hash": "631df1ff606b3d33",
+      "observe": {
+        "ended": 1,
+        "entityCount": 30,
+        "lives": 0,
+        "nextId": 55,
+        "score": 8,
+        "tick": 13
+      },
+      "tick": 39
+    },
+    {
+      "hash": "631df1ff606b3d33",
+      "observe": {
+        "ended": 1,
+        "entityCount": 30,
+        "lives": 0,
+        "nextId": 55,
+        "score": 8,
+        "tick": 13
+      },
+      "tick": 40
+    }
+  ],
+  "description": "Three taps each spawn a bullet on the mine (one life each): the game ends on the third and later input is ignored with the tick frozen.",
+  "frames": {
+    "count": 0,
+    "maxNanos": 0,
+    "minNanos": 0,
+    "seed": 0
+  },
+  "inputs": [
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 10
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 11
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 12
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 20
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 65536,
+          "dy": 65536,
+          "type": "drag"
+        }
+      ],
+      "tick": 25
+    }
+  ],
+  "name": "lives-end",
+  "scenarioVersion": 1,
+  "seed": 6,
+  "spec": {
+    "path": "spec/samples/boundary-lab/monstera.spec.json",
+    "sha256": "f8507b7ea40f3b4e840352118a1f08103338e126439b0096504c3dc6d5c1efc9"
+  },
+  "ticks": 40
+}

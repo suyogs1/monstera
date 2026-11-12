@@ -1,0 +1,99 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Scenario",
+  "description": "Golden conformance scenario: a spec reference, a seed, an input trace and expected checkpoints recorded by the oracle (architecture/RUNTIME-CONTRACT.md section 7).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["scenarioVersion", "name", "description", "spec", "seed", "ticks", "frames", "inputs", "checkpoints"],
+  "properties": {
+    "scenarioVersion": { "type": "integer", "const": 1 },
+    "name": {
+      "description": "Lowercase identifier; also the file name stem.",
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]{0,47}$"
+    },
+    "description": { "description": "What behaviour this scenario pins down.", "type": "string", "minLength": 1, "maxLength": 400 },
+    "spec": {
+      "title": "ScenarioSpecRef",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": { "description": "Repository-relative POSIX path of the canonical spec.", "type": "string", "minLength": 1, "maxLength": 200 },
+        "sha256": { "description": "SHA-256 of the canonical spec the checkpoints were recorded against.", "type": "string", "pattern": "^[0-9a-f]{64}$" }
+      }
+    },
+    "seed": { "description": "PRNG seed, 0..2^53-1 so it is exact in JSON.", "type": "integer", "minimum": 0, "maximum": 9007199254740991 },
+    "ticks": { "description": "Tick-driven scenarios: steps to run. Frame-driven scenarios: must equal frames.count.", "type": "integer", "minimum": 1, "maximum": 100000 },
+    "frames": {
+      "title": "ScenarioFrames",
+      "description": "count 0: tick-driven (inputs[].tick and checkpoints[].tick count ticks). count above 0: the shell-free GameLoop is driven by count generated frame durations (RUNTIME-CONTRACT section 1) and those fields count FRAMES; the durations come from an LCG seeded with `seed`, uniformly in [minNanos, maxNanos]. All four are 0 for tick-driven scenarios.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["count", "seed", "minNanos", "maxNanos"],
+      "properties": {
+        "count": { "type": "integer", "minimum": 0, "maximum": 100000 },
+        "seed": { "type": "integer", "minimum": 0, "maximum": 2147483647 },
+        "minNanos": { "type": "integer", "minimum": 0, "maximum": 4000000000 },
+        "maxNanos": { "type": "integer", "minimum": 0, "maximum": 4000000000 }
+      }
+    },
+    "inputs": {
+      "description": "Events by tick, ascending. Events for tick t are applied at the start of the step that begins at tick t.",
+      "type": "array",
+      "items": {
+        "title": "InputStep",
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["tick", "events"],
+        "properties": {
+          "tick": { "type": "integer", "minimum": 0, "maximum": 99999 },
+          "events": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "title": "ScenarioEvent",
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["type", "dx", "dy", "dir"],
+              "properties": {
+                "type": { "title": "ScenarioEventType", "type": "string", "enum": ["press", "release", "tap", "drag", "swipe"] },
+                "dx": { "description": "Q16.16 raw; used by drag only.", "type": "integer", "minimum": -2147483648, "maximum": 2147483647 },
+                "dy": { "description": "Q16.16 raw; used by drag only.", "type": "integer", "minimum": -2147483648, "maximum": 2147483647 },
+                "dir": { "title": "ScenarioDirection", "description": "Used by swipe only.", "type": "string", "enum": ["none", "up", "down", "left", "right"] }
+              }
+            }
+          }
+        }
+      }
+    },
+    "checkpoints": {
+      "description": "Expected state after `tick` steps (0 = initial). Empty until `monstera scenarios record` has run.",
+      "type": "array",
+      "items": {
+        "title": "ScenarioCheckpoint",
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["tick", "hash", "observe"],
+        "properties": {
+          "tick": { "type": "integer", "minimum": 0, "maximum": 100000 },
+          "hash": { "description": "FNV-1a 64 of the canonical state serialization, 16 lowercase hex digits.", "type": "string", "pattern": "^[0-9a-f]{16}$" },
+          "observe": {
+            "title": "Observed",
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["tick", "score", "lives", "entityCount", "ended", "nextId"],
+            "properties": {
+              "tick": { "type": "integer", "minimum": 0, "maximum": 100000 },
+              "score": { "type": "integer", "minimum": -2147483648, "maximum": 2147483647 },
+              "lives": { "type": "integer", "minimum": -2147483648, "maximum": 2147483647 },
+              "entityCount": { "type": "integer", "minimum": 0, "maximum": 1024 },
+              "ended": { "type": "integer", "minimum": 0, "maximum": 1 },
+              "nextId": { "type": "integer", "minimum": 1, "maximum": 4294967295 }
+            }
+          }
+        }
+      }
+    }
+  }
+}

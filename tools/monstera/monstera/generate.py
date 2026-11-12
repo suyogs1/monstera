@@ -16,8 +16,8 @@ from pathlib import Path, PurePosixPath
 from typing import Any
 from xml.sax.saxutils import escape as xml_escape
 
-from . import GENERATOR_NAME, GENERATOR_VERSION, emit_kotlin, emit_swift
-from .jsonio import canonical_bytes, sha256_hex
+from . import GENERATOR_NAME, GENERATOR_VERSION, emit_kotlin, emit_runtime, emit_swift
+from .jsonio import canonical_bytes, loads_strict, sha256_hex
 from .naming import product_name
 from .schema import SchemaStore
 from .typemodel import build as build_types
@@ -54,7 +54,7 @@ class OutFile:
 
 
 def toolchain() -> dict[str, Any]:
-    return json.loads((PACKAGE_DIR / "toolchain.json").read_text(encoding="utf-8"))
+    return loads_strict((PACKAGE_DIR / "toolchain.json").read_text(encoding="utf-8"))  # rejects duplicate keys
 
 
 def _normalize(data: bytes, crlf: bool) -> bytes:
@@ -87,8 +87,13 @@ def owned_roots_for(layout: str, targets: list[str]) -> list[str]:
     raise ValueError(f"unknown layout {layout!r}")
 
 
+RUNTIME_KOTLIN = ("Fixed", "Prng", "Simulation", "Replay", "GameLoop")
+RUNTIME_SWIFT = ("Fixed", "Prng", "Simulation", "Replay", "GameLoop")
+SCENARIOS_RESOURCE = "monstera-scenarios.txt"
+
+
 def plan(spec: dict[str, Any], spec_path_label: str, store: SchemaStore,
-         layout: str = "fixture") -> list[OutFile]:
+         layout: str = "fixture", scenarios: list[dict[str, Any]] | None = None) -> list[OutFile]:
     if layout not in LAYOUTS:
         raise ValueError(f"unknown layout {layout!r}; expected one of {sorted(LAYOUTS)}")
     canonical = canonical_bytes(spec)
@@ -124,6 +129,7 @@ def plan(spec: dict[str, Any], spec_path_label: str, store: SchemaStore,
         "kotlin_compose": tc["android"]["kotlinComposePlugin"],
         "compose_bom": tc["android"]["composeBom"],
         "activity_compose": tc["android"]["activityCompose"],
+        "junit": tc["android"]["junit"],
         "android_orientation": game["orientation"],
         "swift_tools": tc["ios"]["swiftToolsVersion"],
         "ios_target": project["platforms"]["ios"]["deploymentTarget"],
@@ -140,6 +146,7 @@ def plan(spec: dict[str, Any], spec_path_label: str, store: SchemaStore,
                     "| `cd ios && xtool dev build --triple arm64-apple-ios-simulator` |")
     ctx["platform_rows"] = "\n".join(rows)
 
+    scenarios_data = emit_runtime.scenarios_text(scenarios or []).encode()
     files: list[OutFile] = []
 
     def template(out: str, tmpl: str) -> None:
@@ -160,11 +167,19 @@ def plan(spec: dict[str, Any], spec_path_label: str, store: SchemaStore,
         template("android/app/build.gradle.kts", "android/app/build.gradle.kts.tmpl")
         template("android/app/src/main/AndroidManifest.xml", "android/app/src/main/AndroidManifest.xml.tmpl")
         template(f"{kt_dir}/MainActivity.kt", "android/app/src/main/kotlin/MainActivity.kt.tmpl")
+        template(f"{kt_dir}/GameScreen.kt", "android/app/src/main/kotlin/GameScreen.kt.tmpl")
         static = TEMPLATES / "android" / "static"
         for src in sorted(p for p in static.rglob("*") if p.is_file()):
             rel = "android/" + src.relative_to(static).as_posix()
             data = src.read_bytes() if src.suffix in BINARY_SUFFIXES else _normalize(src.read_bytes(), src.suffix == ".bat")
             files.append(OutFile(rel, data, _rel(src), "static", 0o755 if rel in EXECUTABLE else 0o644))
+        for name in RUNTIME_KOTLIN:
+            template(f"{kt_dir}/runtime/{name}.kt", f"android/runtime/{name}.kt.tmpl")
+        template(f"android/app/src/test/kotlin/{package.replace(chr(46), chr(47))}/runtime/ConformanceTest.kt",
+                 "android/runtime/ConformanceTest.kt.tmpl")
+        files.append(OutFile(f"{kt_dir}/runtime/GeneratedRuntimeConfig.kt",
+                             emit_runtime.kotlin_config(game, package, ctx["header_slash"]).encode(), "spec", "model"))
+        files.append(OutFile("android/app/src/test/resources/" + SCENARIOS_RESOURCE, scenarios_data, "scenarios", "scenarios"))
         files.append(OutFile("android/app/src/main/assets/" + SPEC_FILE, canonical, "spec", "spec"))
         files.append(OutFile(f"{kt_dir}/generated/MonsteraSpec.kt",
                              emit_kotlin.models(types, f"{package}.generated", ctx["header_slash"]).encode(),
@@ -177,11 +192,19 @@ def plan(spec: dict[str, Any], spec_path_label: str, store: SchemaStore,
     if "ios" in project["targets"]:
         src_dir = f"ios/Sources/{product}"
         template("ios/Package.swift", "ios/Package.swift.tmpl")
+        template("ios/Runtime/Package.swift", "ios/Runtime/Package.swift.tmpl")
+        for name in RUNTIME_SWIFT:
+            template(f"ios/Runtime/Sources/MonsteraRuntime/{name}.swift", f"ios/Runtime/{name}.swift.tmpl")
+        template("ios/Runtime/Tests/MonsteraRuntimeTests/ConformanceTests.swift", "ios/Runtime/ConformanceTests.swift.tmpl")
+        files.append(OutFile("ios/Runtime/Sources/MonsteraRuntime/GeneratedRuntimeConfig.swift",
+                             emit_runtime.swift_config(game, ctx["header_slash"]).encode(), "spec", "model"))
+        files.append(OutFile("ios/Runtime/Tests/MonsteraRuntimeTests/Resources/" + SCENARIOS_RESOURCE,
+                             scenarios_data, "scenarios", "scenarios"))
         template("ios/xtool.yml", "ios/xtool.yml.tmpl")
         template("ios/Info.plist", "ios/Info.plist.tmpl")
         template(f"{src_dir}/{product}App.swift", "ios/Sources/App.swift.tmpl")
         template(f"{src_dir}/ContentView.swift", "ios/Sources/ContentView.swift.tmpl")
-        template(f"{src_dir}/SpecScene.swift", "ios/Sources/SpecScene.swift.tmpl")
+        template(f"{src_dir}/GameScene.swift", "ios/Sources/GameScene.swift.tmpl")
         template(f"{src_dir}/SpecIntegrity.swift", "ios/Sources/SpecIntegrity.swift.tmpl")
         files.append(OutFile(f"{src_dir}/Resources/{SPEC_FILE}", canonical, "spec", "spec"))
         files.append(OutFile(f"{src_dir}/Generated/MonsteraSpec.swift",

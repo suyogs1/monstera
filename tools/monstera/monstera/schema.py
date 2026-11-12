@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import difflib
 import json
+import math
 import re
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -37,7 +38,7 @@ RESERVED_TYPE_NAMES = frozenset({
     "Color", "ContentView", "Data", "Date", "Dictionary", "Double", "Equatable", "Error", "Float",
     "GeneratedSpec", "Int", "List", "Logger", "Long", "MainActivity", "Map", "Never", "Nothing",
     "Object", "Optional", "Package", "Protocol", "Result", "Scene", "Self", "Sendable", "Set",
-    "SpecIntegrity", "SpecScene", "SpecScreen", "String", "Target", "Type", "Unit", "View", "Void",
+    "GameScene", "GameScreen", "SpecIntegrity", "SpecScene", "SpecScreen", "String", "Target", "Type", "Unit", "View", "Void",
 })
 # Kotlin hard keywords plus Swift keywords: illegal (or needing escapes) as property names.
 FIELD_KEYWORDS = frozenset("""
@@ -96,7 +97,7 @@ _TYPE_CHECKS = {
     "array": lambda v: isinstance(v, list),
     "string": lambda v: isinstance(v, str),
     "integer": lambda v: isinstance(v, int) and not isinstance(v, bool),
-    "number": lambda v: isinstance(v, (int, float)) and not isinstance(v, bool),
+    "number": lambda v: isinstance(v, (int, float)) and not isinstance(v, bool) and (isinstance(v, int) or math.isfinite(v)),
     "boolean": lambda v: isinstance(v, bool),
 }
 
@@ -240,9 +241,9 @@ class SchemaStore:
 
     # ---------------------------------------------------------------- validation
 
-    def validate(self, instance: Any) -> list[Issue]:
+    def validate(self, instance: Any, root: str = ROOT_SCHEMA) -> list[Issue]:
         issues: list[Issue] = []
-        self._validate(self.documents[ROOT_SCHEMA], instance, "$", ROOT_SCHEMA, issues)
+        self._validate(self.documents[root], instance, "$", root, issues)
         return sorted(set(issues))
 
     def _validate(self, node: dict[str, Any], value: Any, path: str, base: str, out: list[Issue]) -> None:

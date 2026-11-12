@@ -1,0 +1,1838 @@
+{
+  "checkpoints": [
+    {
+      "hash": "d615f382ac8e3167",
+      "observe": {
+        "ended": 0,
+        "entityCount": 3,
+        "lives": 99,
+        "nextId": 4,
+        "score": 0,
+        "tick": 0
+      },
+      "tick": 0
+    },
+    {
+      "hash": "c856b2d252799c16",
+      "observe": {
+        "ended": 0,
+        "entityCount": 5,
+        "lives": 99,
+        "nextId": 6,
+        "score": 0,
+        "tick": 2
+      },
+      "tick": 2
+    },
+    {
+      "hash": "5fa67fc431ce53c5",
+      "observe": {
+        "ended": 0,
+        "entityCount": 5,
+        "lives": 99,
+        "nextId": 6,
+        "score": 0,
+        "tick": 4
+      },
+      "tick": 4
+    },
+    {
+      "hash": "a72ca63fb9cac495",
+      "observe": {
+        "ended": 0,
+        "entityCount": 5,
+        "lives": 99,
+        "nextId": 6,
+        "score": 0,
+        "tick": 6
+      },
+      "tick": 6
+    },
+    {
+      "hash": "7547edecf76c671e",
+      "observe": {
+        "ended": 0,
+        "entityCount": 6,
+        "lives": 99,
+        "nextId": 7,
+        "score": 0,
+        "tick": 8
+      },
+      "tick": 8
+    },
+    {
+      "hash": "9db052bf5d5e5224",
+      "observe": {
+        "ended": 0,
+        "entityCount": 6,
+        "lives": 99,
+        "nextId": 7,
+        "score": 0,
+        "tick": 10
+      },
+      "tick": 10
+    },
+    {
+      "hash": "f8f67a61bc6bc9a2",
+      "observe": {
+        "ended": 0,
+        "entityCount": 64,
+        "lives": 99,
+        "nextId": 65,
+        "score": 0,
+        "tick": 12
+      },
+      "tick": 12
+    },
+    {
+      "hash": "28efc69a04d39afe",
+      "observe": {
+        "ended": 0,
+        "entityCount": 64,
+        "lives": 99,
+        "nextId": 65,
+        "score": 0,
+        "tick": 14
+      },
+      "tick": 14
+    },
+    {
+      "hash": "2bcc3e509eb8f57a",
+      "observe": {
+        "ended": 0,
+        "entityCount": 64,
+        "lives": 99,
+        "nextId": 65,
+        "score": 0,
+        "tick": 16
+      },
+      "tick": 16
+    },
+    {
+      "hash": "030bfcc3ca3c6430",
+      "observe": {
+        "ended": 0,
+        "entityCount": 64,
+        "lives": 99,
+        "nextId": 65,
+        "score": 0,
+        "tick": 18
+      },
+      "tick": 18
+    },
+    {
+      "hash": "c524d08e140ba8ad",
+      "observe": {
+        "ended": 0,
+        "entityCount": 64,
+        "lives": 99,
+        "nextId": 65,
+        "score": 0,
+        "tick": 20
+      },
+      "tick": 20
+    },
+    {
+      "hash": "ed9e568e1ddd0f01",
+      "observe": {
+        "ended": 0,
+        "entityCount": 64,
+        "lives": 99,
+        "nextId": 65,
+        "score": 0,
+        "tick": 22
+      },
+      "tick": 22
+    },
+    {
+      "hash": "0ae4e6957c9ef6b0",
+      "observe": {
+        "ended": 0,
+        "entityCount": 64,
+        "lives": 99,
+        "nextId": 65,
+        "score": 0,
+        "tick": 24
+      },
+      "tick": 24
+    },
+    {
+      "hash": "72e628a496718de4",
+      "observe": {
+        "ended": 0,
+        "entityCount": 64,
+        "lives": 99,
+        "nextId": 65,
+        "score": 0,
+        "tick": 26
+      },
+      "tick": 26
+    },
+    {
+      "hash": "5d0ed5a34b0c23e3",
+      "observe": {
+        "ended": 0,
+        "entityCount": 64,
+        "lives": 99,
+        "nextId": 65,
+        "score": 0,
+        "tick": 28
+      },
+      "tick": 28
+    },
+    {
+      "hash": "9303b16630d50c0f",
+      "observe": {
+        "ended": 0,
+        "entityCount": 63,
+        "lives": 99,
+        "nextId": 65,
+        "score": 0,
+        "tick": 30
+      },
+      "tick": 30
+    },
+    {
+      "hash": "2e867d8586348492",
+      "observe": {
+        "ended": 0,
+        "entityCount": 63,
+        "lives": 99,
+        "nextId": 65,
+        "score": 0,
+        "tick": 32
+      },
+      "tick": 32
+    },
+    {
+      "hash": "b561b1e49f6385b4",
+      "observe": {
+        "ended": 0,
+        "entityCount": 63,
+        "lives": 99,
+        "nextId": 65,
+        "score": 0,
+        "tick": 34
+      },
+      "tick": 34
+    },
+    {
+      "hash": "a9cc928631716d3a",
+      "observe": {
+        "ended": 0,
+        "entityCount": 64,
+        "lives": 99,
+        "nextId": 66,
+        "score": 0,
+        "tick": 36
+      },
+      "tick": 36
+    },
+    {
+      "hash": "0a751a12847697d9",
+      "observe": {
+        "ended": 0,
+        "entityCount": 63,
+        "lives": 99,
+        "nextId": 66,
+        "score": 0,
+        "tick": 38
+      },
+      "tick": 38
+    },
+    {
+      "hash": "5586c68346d7e814",
+      "observe": {
+        "ended": 0,
+        "entityCount": 63,
+        "lives": 99,
+        "nextId": 66,
+        "score": 0,
+        "tick": 40
+      },
+      "tick": 40
+    },
+    {
+      "hash": "ceeb52caf46ee80c",
+      "observe": {
+        "ended": 0,
+        "entityCount": 63,
+        "lives": 99,
+        "nextId": 66,
+        "score": 0,
+        "tick": 42
+      },
+      "tick": 42
+    },
+    {
+      "hash": "7adb0d050c9b50b2",
+      "observe": {
+        "ended": 0,
+        "entityCount": 64,
+        "lives": 99,
+        "nextId": 67,
+        "score": 0,
+        "tick": 44
+      },
+      "tick": 44
+    },
+    {
+      "hash": "eaeb45ebe7ecd714",
+      "observe": {
+        "ended": 0,
+        "entityCount": 64,
+        "lives": 99,
+        "nextId": 67,
+        "score": 0,
+        "tick": 46
+      },
+      "tick": 46
+    },
+    {
+      "hash": "75cb1c27c687ea2f",
+      "observe": {
+        "ended": 0,
+        "entityCount": 64,
+        "lives": 99,
+        "nextId": 67,
+        "score": 0,
+        "tick": 48
+      },
+      "tick": 48
+    },
+    {
+      "hash": "e514ac0a32a739ab",
+      "observe": {
+        "ended": 0,
+        "entityCount": 64,
+        "lives": 99,
+        "nextId": 67,
+        "score": 0,
+        "tick": 50
+      },
+      "tick": 50
+    },
+    {
+      "hash": "443f006f45f752f4",
+      "observe": {
+        "ended": 0,
+        "entityCount": 64,
+        "lives": 99,
+        "nextId": 67,
+        "score": 0,
+        "tick": 52
+      },
+      "tick": 52
+    },
+    {
+      "hash": "5d0e0c4f26433362",
+      "observe": {
+        "ended": 0,
+        "entityCount": 64,
+        "lives": 99,
+        "nextId": 67,
+        "score": 0,
+        "tick": 54
+      },
+      "tick": 54
+    },
+    {
+      "hash": "69d9e5c62948e11a",
+      "observe": {
+        "ended": 0,
+        "entityCount": 64,
+        "lives": 99,
+        "nextId": 67,
+        "score": 0,
+        "tick": 56
+      },
+      "tick": 56
+    },
+    {
+      "hash": "aa36989b6eb22689",
+      "observe": {
+        "ended": 0,
+        "entityCount": 64,
+        "lives": 99,
+        "nextId": 67,
+        "score": 0,
+        "tick": 58
+      },
+      "tick": 58
+    },
+    {
+      "hash": "fbbc884105d54441",
+      "observe": {
+        "ended": 0,
+        "entityCount": 64,
+        "lives": 99,
+        "nextId": 67,
+        "score": 0,
+        "tick": 60
+      },
+      "tick": 60
+    },
+    {
+      "hash": "df7d5edbd2a5ee81",
+      "observe": {
+        "ended": 0,
+        "entityCount": 64,
+        "lives": 99,
+        "nextId": 67,
+        "score": 0,
+        "tick": 62
+      },
+      "tick": 62
+    },
+    {
+      "hash": "a1a0831526a1b304",
+      "observe": {
+        "ended": 0,
+        "entityCount": 64,
+        "lives": 99,
+        "nextId": 67,
+        "score": 0,
+        "tick": 64
+      },
+      "tick": 64
+    },
+    {
+      "hash": "6a5434fbca3543b3",
+      "observe": {
+        "ended": 0,
+        "entityCount": 63,
+        "lives": 99,
+        "nextId": 67,
+        "score": 0,
+        "tick": 66
+      },
+      "tick": 66
+    },
+    {
+      "hash": "de2804d81aa61cf8",
+      "observe": {
+        "ended": 0,
+        "entityCount": 63,
+        "lives": 99,
+        "nextId": 67,
+        "score": 0,
+        "tick": 68
+      },
+      "tick": 68
+    },
+    {
+      "hash": "3f0f59e96cb7b7d0",
+      "observe": {
+        "ended": 0,
+        "entityCount": 63,
+        "lives": 99,
+        "nextId": 67,
+        "score": 0,
+        "tick": 70
+      },
+      "tick": 70
+    },
+    {
+      "hash": "fe86355779bd17f6",
+      "observe": {
+        "ended": 0,
+        "entityCount": 63,
+        "lives": 99,
+        "nextId": 68,
+        "score": 0,
+        "tick": 72
+      },
+      "tick": 72
+    },
+    {
+      "hash": "bda21e5ae1c00e50",
+      "observe": {
+        "ended": 0,
+        "entityCount": 64,
+        "lives": 99,
+        "nextId": 69,
+        "score": 0,
+        "tick": 74
+      },
+      "tick": 74
+    },
+    {
+      "hash": "5e0427a3c637a8c8",
+      "observe": {
+        "ended": 0,
+        "entityCount": 64,
+        "lives": 99,
+        "nextId": 69,
+        "score": 0,
+        "tick": 76
+      },
+      "tick": 76
+    },
+    {
+      "hash": "7e923b08817931e1",
+      "observe": {
+        "ended": 0,
+        "entityCount": 64,
+        "lives": 99,
+        "nextId": 69,
+        "score": 0,
+        "tick": 78
+      },
+      "tick": 78
+    },
+    {
+      "hash": "63b0ef8561c1737f",
+      "observe": {
+        "ended": 0,
+        "entityCount": 64,
+        "lives": 99,
+        "nextId": 69,
+        "score": 0,
+        "tick": 80
+      },
+      "tick": 80
+    },
+    {
+      "hash": "75d39fd3865dbbb4",
+      "observe": {
+        "ended": 0,
+        "entityCount": 64,
+        "lives": 99,
+        "nextId": 69,
+        "score": 0,
+        "tick": 82
+      },
+      "tick": 82
+    },
+    {
+      "hash": "3132e54e79ed14a5",
+      "observe": {
+        "ended": 0,
+        "entityCount": 64,
+        "lives": 99,
+        "nextId": 69,
+        "score": 0,
+        "tick": 84
+      },
+      "tick": 84
+    },
+    {
+      "hash": "acd1617928a11519",
+      "observe": {
+        "ended": 0,
+        "entityCount": 64,
+        "lives": 99,
+        "nextId": 69,
+        "score": 0,
+        "tick": 86
+      },
+      "tick": 86
+    },
+    {
+      "hash": "89df276bb564937b",
+      "observe": {
+        "ended": 0,
+        "entityCount": 64,
+        "lives": 99,
+        "nextId": 69,
+        "score": 0,
+        "tick": 88
+      },
+      "tick": 88
+    },
+    {
+      "hash": "989bd90e56d2b0cb",
+      "observe": {
+        "ended": 0,
+        "entityCount": 64,
+        "lives": 99,
+        "nextId": 69,
+        "score": 0,
+        "tick": 90
+      },
+      "tick": 90
+    },
+    {
+      "hash": "8e48922b149e6678",
+      "observe": {
+        "ended": 0,
+        "entityCount": 64,
+        "lives": 99,
+        "nextId": 69,
+        "score": 0,
+        "tick": 92
+      },
+      "tick": 92
+    },
+    {
+      "hash": "2a0f5be930b4f9fb",
+      "observe": {
+        "ended": 0,
+        "entityCount": 64,
+        "lives": 99,
+        "nextId": 69,
+        "score": 0,
+        "tick": 94
+      },
+      "tick": 94
+    },
+    {
+      "hash": "2479e163630e68a5",
+      "observe": {
+        "ended": 0,
+        "entityCount": 64,
+        "lives": 99,
+        "nextId": 69,
+        "score": 0,
+        "tick": 96
+      },
+      "tick": 96
+    },
+    {
+      "hash": "e14233189983c6ba",
+      "observe": {
+        "ended": 0,
+        "entityCount": 64,
+        "lives": 99,
+        "nextId": 69,
+        "score": 0,
+        "tick": 98
+      },
+      "tick": 98
+    },
+    {
+      "hash": "32317c5f1e2b4b29",
+      "observe": {
+        "ended": 0,
+        "entityCount": 63,
+        "lives": 99,
+        "nextId": 69,
+        "score": 0,
+        "tick": 100
+      },
+      "tick": 100
+    },
+    {
+      "hash": "f4fc133b4bb70b4c",
+      "observe": {
+        "ended": 0,
+        "entityCount": 63,
+        "lives": 99,
+        "nextId": 69,
+        "score": 0,
+        "tick": 102
+      },
+      "tick": 102
+    },
+    {
+      "hash": "cc2682202652b6a6",
+      "observe": {
+        "ended": 0,
+        "entityCount": 63,
+        "lives": 99,
+        "nextId": 69,
+        "score": 0,
+        "tick": 104
+      },
+      "tick": 104
+    },
+    {
+      "hash": "1cca422bc8e4db12",
+      "observe": {
+        "ended": 0,
+        "entityCount": 64,
+        "lives": 99,
+        "nextId": 70,
+        "score": 0,
+        "tick": 106
+      },
+      "tick": 106
+    },
+    {
+      "hash": "0d2fa24e6078373d",
+      "observe": {
+        "ended": 0,
+        "entityCount": 6,
+        "lives": 99,
+        "nextId": 70,
+        "score": 0,
+        "tick": 108
+      },
+      "tick": 108
+    },
+    {
+      "hash": "2104997ed69098b8",
+      "observe": {
+        "ended": 0,
+        "entityCount": 6,
+        "lives": 99,
+        "nextId": 70,
+        "score": 0,
+        "tick": 110
+      },
+      "tick": 110
+    },
+    {
+      "hash": "08f6bd97664c6fc0",
+      "observe": {
+        "ended": 0,
+        "entityCount": 6,
+        "lives": 99,
+        "nextId": 70,
+        "score": 0,
+        "tick": 112
+      },
+      "tick": 112
+    },
+    {
+      "hash": "a4eeb1a6982ff900",
+      "observe": {
+        "ended": 0,
+        "entityCount": 7,
+        "lives": 99,
+        "nextId": 71,
+        "score": 0,
+        "tick": 114
+      },
+      "tick": 114
+    },
+    {
+      "hash": "9979291798aa2e58",
+      "observe": {
+        "ended": 0,
+        "entityCount": 7,
+        "lives": 99,
+        "nextId": 71,
+        "score": 0,
+        "tick": 116
+      },
+      "tick": 116
+    },
+    {
+      "hash": "52a9a51427c1e7f1",
+      "observe": {
+        "ended": 0,
+        "entityCount": 7,
+        "lives": 99,
+        "nextId": 71,
+        "score": 0,
+        "tick": 118
+      },
+      "tick": 118
+    },
+    {
+      "hash": "265e2fdc89a31e98",
+      "observe": {
+        "ended": 0,
+        "entityCount": 8,
+        "lives": 99,
+        "nextId": 72,
+        "score": 0,
+        "tick": 120
+      },
+      "tick": 120
+    },
+    {
+      "hash": "83b77bbd8933dd05",
+      "observe": {
+        "ended": 0,
+        "entityCount": 9,
+        "lives": 99,
+        "nextId": 73,
+        "score": 0,
+        "tick": 122
+      },
+      "tick": 122
+    },
+    {
+      "hash": "d9f536283ba1d329",
+      "observe": {
+        "ended": 0,
+        "entityCount": 9,
+        "lives": 99,
+        "nextId": 73,
+        "score": 0,
+        "tick": 124
+      },
+      "tick": 124
+    },
+    {
+      "hash": "9449c2c01a5cdff5",
+      "observe": {
+        "ended": 0,
+        "entityCount": 9,
+        "lives": 99,
+        "nextId": 73,
+        "score": 0,
+        "tick": 126
+      },
+      "tick": 126
+    },
+    {
+      "hash": "c644525606c7efac",
+      "observe": {
+        "ended": 0,
+        "entityCount": 10,
+        "lives": 99,
+        "nextId": 74,
+        "score": 0,
+        "tick": 128
+      },
+      "tick": 128
+    },
+    {
+      "hash": "df502cfbafb9d7b4",
+      "observe": {
+        "ended": 0,
+        "entityCount": 10,
+        "lives": 99,
+        "nextId": 74,
+        "score": 0,
+        "tick": 130
+      },
+      "tick": 130
+    },
+    {
+      "hash": "36d4f2a7608ab0dd",
+      "observe": {
+        "ended": 0,
+        "entityCount": 10,
+        "lives": 99,
+        "nextId": 74,
+        "score": 0,
+        "tick": 132
+      },
+      "tick": 132
+    },
+    {
+      "hash": "557c179ae93ee2b0",
+      "observe": {
+        "ended": 0,
+        "entityCount": 11,
+        "lives": 99,
+        "nextId": 75,
+        "score": 0,
+        "tick": 134
+      },
+      "tick": 134
+    },
+    {
+      "hash": "418b3ce54ad1e854",
+      "observe": {
+        "ended": 0,
+        "entityCount": 10,
+        "lives": 99,
+        "nextId": 75,
+        "score": 0,
+        "tick": 136
+      },
+      "tick": 136
+    },
+    {
+      "hash": "2bd54520d545b88e",
+      "observe": {
+        "ended": 0,
+        "entityCount": 10,
+        "lives": 99,
+        "nextId": 75,
+        "score": 0,
+        "tick": 138
+      },
+      "tick": 138
+    },
+    {
+      "hash": "43f49190f867eb15",
+      "observe": {
+        "ended": 0,
+        "entityCount": 10,
+        "lives": 99,
+        "nextId": 75,
+        "score": 0,
+        "tick": 140
+      },
+      "tick": 140
+    },
+    {
+      "hash": "47f3defac97817fb",
+      "observe": {
+        "ended": 0,
+        "entityCount": 10,
+        "lives": 99,
+        "nextId": 76,
+        "score": 0,
+        "tick": 142
+      },
+      "tick": 142
+    },
+    {
+      "hash": "30f444704facbd85",
+      "observe": {
+        "ended": 0,
+        "entityCount": 10,
+        "lives": 99,
+        "nextId": 76,
+        "score": 0,
+        "tick": 144
+      },
+      "tick": 144
+    },
+    {
+      "hash": "97409c92ab5033e0",
+      "observe": {
+        "ended": 0,
+        "entityCount": 11,
+        "lives": 99,
+        "nextId": 77,
+        "score": 0,
+        "tick": 146
+      },
+      "tick": 146
+    },
+    {
+      "hash": "9165420270cce72a",
+      "observe": {
+        "ended": 0,
+        "entityCount": 12,
+        "lives": 99,
+        "nextId": 78,
+        "score": 0,
+        "tick": 148
+      },
+      "tick": 148
+    },
+    {
+      "hash": "e017d1740f04a88d",
+      "observe": {
+        "ended": 0,
+        "entityCount": 11,
+        "lives": 99,
+        "nextId": 78,
+        "score": 0,
+        "tick": 150
+      },
+      "tick": 150
+    },
+    {
+      "hash": "def4628112fe46b4",
+      "observe": {
+        "ended": 0,
+        "entityCount": 11,
+        "lives": 99,
+        "nextId": 78,
+        "score": 0,
+        "tick": 152
+      },
+      "tick": 152
+    },
+    {
+      "hash": "c82accec3e76a597",
+      "observe": {
+        "ended": 0,
+        "entityCount": 11,
+        "lives": 99,
+        "nextId": 78,
+        "score": 0,
+        "tick": 154
+      },
+      "tick": 154
+    },
+    {
+      "hash": "0e5b46cff41d5e22",
+      "observe": {
+        "ended": 0,
+        "entityCount": 11,
+        "lives": 99,
+        "nextId": 79,
+        "score": 0,
+        "tick": 156
+      },
+      "tick": 156
+    },
+    {
+      "hash": "d4f830963af1447e",
+      "observe": {
+        "ended": 0,
+        "entityCount": 11,
+        "lives": 99,
+        "nextId": 79,
+        "score": 0,
+        "tick": 158
+      },
+      "tick": 158
+    },
+    {
+      "hash": "6d066b8579c08532",
+      "observe": {
+        "ended": 0,
+        "entityCount": 11,
+        "lives": 99,
+        "nextId": 79,
+        "score": 0,
+        "tick": 160
+      },
+      "tick": 160
+    },
+    {
+      "hash": "c768f7a7ea889807",
+      "observe": {
+        "ended": 0,
+        "entityCount": 12,
+        "lives": 99,
+        "nextId": 80,
+        "score": 0,
+        "tick": 162
+      },
+      "tick": 162
+    },
+    {
+      "hash": "91d65707edf1ac52",
+      "observe": {
+        "ended": 0,
+        "entityCount": 11,
+        "lives": 99,
+        "nextId": 80,
+        "score": 0,
+        "tick": 164
+      },
+      "tick": 164
+    },
+    {
+      "hash": "8718af3fde2a58c2",
+      "observe": {
+        "ended": 0,
+        "entityCount": 11,
+        "lives": 99,
+        "nextId": 80,
+        "score": 0,
+        "tick": 166
+      },
+      "tick": 166
+    },
+    {
+      "hash": "c4f722f69cb98c8e",
+      "observe": {
+        "ended": 0,
+        "entityCount": 11,
+        "lives": 99,
+        "nextId": 80,
+        "score": 0,
+        "tick": 168
+      },
+      "tick": 168
+    },
+    {
+      "hash": "cb9b872d77a550cd",
+      "observe": {
+        "ended": 0,
+        "entityCount": 12,
+        "lives": 99,
+        "nextId": 82,
+        "score": 0,
+        "tick": 170
+      },
+      "tick": 170
+    },
+    {
+      "hash": "43f38f472eb67a27",
+      "observe": {
+        "ended": 0,
+        "entityCount": 12,
+        "lives": 99,
+        "nextId": 82,
+        "score": 0,
+        "tick": 172
+      },
+      "tick": 172
+    },
+    {
+      "hash": "d0366bd1a3bf0838",
+      "observe": {
+        "ended": 0,
+        "entityCount": 12,
+        "lives": 99,
+        "nextId": 82,
+        "score": 0,
+        "tick": 174
+      },
+      "tick": 174
+    },
+    {
+      "hash": "5c23dd6205ab61e3",
+      "observe": {
+        "ended": 0,
+        "entityCount": 13,
+        "lives": 99,
+        "nextId": 83,
+        "score": 0,
+        "tick": 176
+      },
+      "tick": 176
+    },
+    {
+      "hash": "c878cbb2789bbb76",
+      "observe": {
+        "ended": 0,
+        "entityCount": 12,
+        "lives": 99,
+        "nextId": 83,
+        "score": 0,
+        "tick": 178
+      },
+      "tick": 178
+    },
+    {
+      "hash": "7b8a02fbe327f20a",
+      "observe": {
+        "ended": 0,
+        "entityCount": 12,
+        "lives": 99,
+        "nextId": 83,
+        "score": 0,
+        "tick": 180
+      },
+      "tick": 180
+    },
+    {
+      "hash": "39dcd2de6d86c462",
+      "observe": {
+        "ended": 0,
+        "entityCount": 12,
+        "lives": 99,
+        "nextId": 83,
+        "score": 0,
+        "tick": 182
+      },
+      "tick": 182
+    },
+    {
+      "hash": "12b01452cdb1c781",
+      "observe": {
+        "ended": 0,
+        "entityCount": 12,
+        "lives": 99,
+        "nextId": 84,
+        "score": 0,
+        "tick": 184
+      },
+      "tick": 184
+    },
+    {
+      "hash": "50ba491d2c2c133c",
+      "observe": {
+        "ended": 0,
+        "entityCount": 12,
+        "lives": 99,
+        "nextId": 84,
+        "score": 0,
+        "tick": 186
+      },
+      "tick": 186
+    },
+    {
+      "hash": "98cc89cbe6c51ee2",
+      "observe": {
+        "ended": 0,
+        "entityCount": 12,
+        "lives": 99,
+        "nextId": 84,
+        "score": 0,
+        "tick": 188
+      },
+      "tick": 188
+    },
+    {
+      "hash": "c5b09e825fef69bc",
+      "observe": {
+        "ended": 0,
+        "entityCount": 13,
+        "lives": 99,
+        "nextId": 85,
+        "score": 0,
+        "tick": 190
+      },
+      "tick": 190
+    },
+    {
+      "hash": "c8d2d580a3e7d974",
+      "observe": {
+        "ended": 0,
+        "entityCount": 12,
+        "lives": 99,
+        "nextId": 85,
+        "score": 0,
+        "tick": 192
+      },
+      "tick": 192
+    },
+    {
+      "hash": "35285c43e45b1004",
+      "observe": {
+        "ended": 0,
+        "entityCount": 13,
+        "lives": 99,
+        "nextId": 86,
+        "score": 0,
+        "tick": 194
+      },
+      "tick": 194
+    },
+    {
+      "hash": "371d28615f78892a",
+      "observe": {
+        "ended": 0,
+        "entityCount": 13,
+        "lives": 99,
+        "nextId": 86,
+        "score": 0,
+        "tick": 196
+      },
+      "tick": 196
+    },
+    {
+      "hash": "5ae593483e370c42",
+      "observe": {
+        "ended": 0,
+        "entityCount": 13,
+        "lives": 99,
+        "nextId": 87,
+        "score": 0,
+        "tick": 198
+      },
+      "tick": 198
+    },
+    {
+      "hash": "6411e47f42da16b8",
+      "observe": {
+        "ended": 0,
+        "entityCount": 13,
+        "lives": 99,
+        "nextId": 87,
+        "score": 0,
+        "tick": 200
+      },
+      "tick": 200
+    },
+    {
+      "hash": "ab05172d4ce4e084",
+      "observe": {
+        "ended": 0,
+        "entityCount": 13,
+        "lives": 99,
+        "nextId": 87,
+        "score": 0,
+        "tick": 202
+      },
+      "tick": 202
+    },
+    {
+      "hash": "6ff8196bd57c8c8a",
+      "observe": {
+        "ended": 0,
+        "entityCount": 14,
+        "lives": 99,
+        "nextId": 88,
+        "score": 0,
+        "tick": 204
+      },
+      "tick": 204
+    },
+    {
+      "hash": "08dbfef7594d864e",
+      "observe": {
+        "ended": 0,
+        "entityCount": 13,
+        "lives": 99,
+        "nextId": 88,
+        "score": 0,
+        "tick": 206
+      },
+      "tick": 206
+    },
+    {
+      "hash": "73edb4c40ae6fc3f",
+      "observe": {
+        "ended": 0,
+        "entityCount": 13,
+        "lives": 99,
+        "nextId": 88,
+        "score": 0,
+        "tick": 208
+      },
+      "tick": 208
+    },
+    {
+      "hash": "b9aadd7a275d0615",
+      "observe": {
+        "ended": 0,
+        "entityCount": 13,
+        "lives": 99,
+        "nextId": 88,
+        "score": 0,
+        "tick": 210
+      },
+      "tick": 210
+    },
+    {
+      "hash": "d8f7d76eb4619887",
+      "observe": {
+        "ended": 0,
+        "entityCount": 13,
+        "lives": 99,
+        "nextId": 89,
+        "score": 0,
+        "tick": 212
+      },
+      "tick": 212
+    },
+    {
+      "hash": "9a9ac1e754c60f75",
+      "observe": {
+        "ended": 0,
+        "entityCount": 13,
+        "lives": 99,
+        "nextId": 89,
+        "score": 0,
+        "tick": 214
+      },
+      "tick": 214
+    },
+    {
+      "hash": "40d702d8ff2a1605",
+      "observe": {
+        "ended": 0,
+        "entityCount": 13,
+        "lives": 99,
+        "nextId": 89,
+        "score": 0,
+        "tick": 216
+      },
+      "tick": 216
+    },
+    {
+      "hash": "2b09708cf16df229",
+      "observe": {
+        "ended": 0,
+        "entityCount": 15,
+        "lives": 99,
+        "nextId": 91,
+        "score": 0,
+        "tick": 218
+      },
+      "tick": 218
+    },
+    {
+      "hash": "87759a20036b90e1",
+      "observe": {
+        "ended": 0,
+        "entityCount": 14,
+        "lives": 99,
+        "nextId": 91,
+        "score": 0,
+        "tick": 220
+      },
+      "tick": 220
+    }
+  ],
+  "description": "80 taps in a single tick hit maxEntities; skipped spawns must still consume the PRNG draws, and spawning resumes once bullets expire.",
+  "frames": {
+    "count": 0,
+    "maxNanos": 0,
+    "minNanos": 0,
+    "seed": 0
+  },
+  "inputs": [
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        },
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "tap"
+        }
+      ],
+      "tick": 10
+    }
+  ],
+  "name": "entity-cap",
+  "scenarioVersion": 1,
+  "seed": 5,
+  "spec": {
+    "path": "spec/samples/monstera-sample/monstera.spec.json",
+    "sha256": "ad0a2ac3f804979632b4aff24ccd999931c66b61cc8ecb69d87461ea91397dec"
+  },
+  "ticks": 220
+}

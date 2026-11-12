@@ -11,9 +11,13 @@ let package = Package(
     products: [
         .library(name: "@@{product}", targets: ["@@{product}"]),
     ],
+    dependencies: [
+        .package(path: "Runtime"),
+    ],
     targets: [
         .target(
             name: "@@{product}",
+            dependencies: [.product(name: "MonsteraRuntime", package: "Runtime")],
             resources: [.copy("Resources/monstera.spec.json")]
         ),
     ]

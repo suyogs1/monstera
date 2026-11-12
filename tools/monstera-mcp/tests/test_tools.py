@@ -85,6 +85,13 @@ class SecurityTests(unittest.TestCase):
         self.assertRefused(tools.get_device_report, evidence="device-lab/../README.md")
         self.assertRefused(tools.get_device_report, evidence="docs/evidence/g1-ios-simulator-ci", target="pc")
 
+    def test_run_conformance_paths_and_arguments_confined(self) -> None:
+        for bad in ("../outside", "docs", "/etc", "spec/samples/monstera-sample", "generated/../docs"):
+            self.assertRefused(tools.run_conformance, bad)
+        self.assertRefused(tools.run_conformance, "generated/monstera-sample", platforms=["rm"])
+        self.assertRefused(tools.run_conformance, "generated/monstera-sample", platforms=["swift"],
+                           swift_image="attacker/image:1")
+
     def test_oversized_inline_spec_refused(self) -> None:
         self.assertRefused(tools.validate_spec, spec={"x": "y" * (tools.MAX_INLINE_SPEC_BYTES + 1)})
 

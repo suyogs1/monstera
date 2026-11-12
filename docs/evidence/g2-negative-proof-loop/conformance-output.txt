@@ -1,0 +1,15 @@
+spec ad0a2ac3f804  verdict: FAIL
+  oracle  pass     monstera.oracle in-process
+  swift   fail     docker run swift:6.1-noble swift test (package ios/Runtime) exit 1
+  collision-order       101 checkpoints  oracle=pass swift=pass
+  entity-cap            111 checkpoints  oracle=pass swift=pass
+  game-over             101 checkpoints  oracle=pass swift=pass
+  idle                  101 checkpoints  oracle=pass swift=pass
+  input-order           121 checkpoints  oracle=pass swift=pass
+  long-run              101 checkpoints  oracle=pass swift=pass
+  loop-120hz            101 checkpoints  oracle=pass swift=pass
+  loop-hitch            101 checkpoints  oracle=pass swift=fail
+    DIVERGENCE swift at tick 8: tick, entityCount, nextId, hash (expected hash 2e616f938b515855, got 031fce8ff6a7368c)
+  loop-jitter           101 checkpoints  oracle=pass swift=pass
+  saturation             91 checkpoints  oracle=pass swift=pass
+  spawn-determinism     101 checkpoints  oracle=pass swift=pass

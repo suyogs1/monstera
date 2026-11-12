@@ -1,0 +1,36 @@
+@@{header_slash}
+package @@{package}.runtime
+
+/**
+ * Q16.16 fixed point with saturation. Contract: architecture/RUNTIME-CONTRACT.md section 2.
+ * Raw values live in Long; every result is saturated to the int32 range so products fit in 64 bits.
+ */
+object Fx {
+    const val FRAC_BITS: Int = 16
+    const val ONE: Long = 1L shl 16
+    const val RAW_MIN: Long = -(1L shl 31)
+    const val RAW_MAX: Long = (1L shl 31) - 1
+
+    fun sat(v: Long): Long = if (v < RAW_MIN) RAW_MIN else if (v > RAW_MAX) RAW_MAX else v
+
+    /** Saturates an exact sum to int32 (score and lives counters). */
+    fun sat32(v: Long): Long = sat(v)
+
+    // Operands are saturated first: a shell is not trusted to supply in-range values.
+    fun add(a: Long, b: Long): Long = sat(sat(a) + sat(b))
+    fun sub(a: Long, b: Long): Long = sat(sat(a) - sat(b))
+    fun neg(a: Long): Long = sat(-sat(a))
+
+    /** (a * b) >> 16 with an arithmetic shift: rounds toward negative infinity. */
+    fun mul(a: Long, b: Long): Long = sat((sat(a) * sat(b)) shr FRAC_BITS)
+
+    /** trunc((a << 16) / b), rounding toward zero. Division by zero saturates by the sign of `a`. */
+    fun div(a0: Long, b0: Long): Long {
+        val a = sat(a0)
+        val b = sat(b0)
+        if (b == 0L) return if (a > 0L) RAW_MAX else if (a < 0L) RAW_MIN else 0L
+        return sat((a shl FRAC_BITS) / b)  // Long division truncates toward zero
+    }
+
+    fun clamp(v: Long, lo: Long, hi: Long): Long = if (v < lo) lo else if (v > hi) hi else v
+}

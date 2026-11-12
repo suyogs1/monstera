@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ConformanceReport",
+  "description": "Machine-readable result of `monstera conformance`: which platforms ran which scenarios against which spec and runtime sources, and where any of them diverged.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["reportVersion", "specSha256", "runtimeDigests", "platforms", "scenarios", "verdict"],
+  "properties": {
+    "reportVersion": { "type": "integer", "const": 1 },
+    "specSha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "runtimeDigests": {
+      "description": "SHA-256 of every runtime source file, as recorded in the generated project's manifest (provenance).",
+      "type": "array",
+      "items": {
+        "title": "RuntimeDigest",
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "sha256"],
+        "properties": {
+          "path": { "type": "string", "minLength": 1 },
+          "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+        }
+      }
+    },
+    "platforms": {
+      "type": "array",
+      "items": {
+        "title": "PlatformRun",
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["platform", "status", "detail"],
+        "properties": {
+          "platform": { "title": "ConformancePlatform", "type": "string", "enum": ["oracle", "kotlin", "swift"] },
+          "status": { "title": "RunStatus", "type": "string", "enum": ["pass", "fail", "skipped", "error"] },
+          "detail": { "description": "Command that ran, or why it was skipped.", "type": "string" }
+        }
+      }
+    },
+    "scenarios": {
+      "type": "array",
+      "items": {
+        "title": "ScenarioResult",
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "sha256", "checkpoints", "results"],
+        "properties": {
+          "name": { "type": "string" },
+          "sha256": { "description": "SHA-256 of the scenario file bytes.", "type": "string", "pattern": "^[0-9a-f]{64}$" },
+          "checkpoints": { "type": "integer", "minimum": 0 },
+          "results": {
+            "type": "array",
+            "items": {
+              "title": "PlatformScenarioResult",
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["platform", "status", "divergences"],
+              "properties": {
+                "platform": { "type": "string", "enum": ["oracle", "kotlin", "swift"] },
+                "status": { "type": "string", "enum": ["pass", "fail", "skipped", "error"] },
+                "divergences": {
+                  "description": "At most one entry: the first checkpoint that differs from the expected values.",
+                  "type": "array",
+                  "items": {
+                    "title": "Divergence",
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": ["tick", "fields", "expectedHash", "actualHash"],
+                    "properties": {
+                      "tick": { "type": "integer", "minimum": 0 },
+                      "fields": { "description": "Names of the differing observables, plus 'hash' and 'missing' where they apply.", "type": "array", "items": { "type": "string" } },
+                      "expectedHash": { "type": "string" },
+                      "actualHash": { "type": "string" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "verdict": { "title": "ConformanceVerdict", "description": "pass: every requested platform ran and matched. fail: a divergence or error. incomplete: nothing diverged but a platform was skipped.", "type": "string", "enum": ["pass", "fail", "incomplete"] }
+  }
+}

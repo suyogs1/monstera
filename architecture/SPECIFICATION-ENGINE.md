@@ -37,7 +37,7 @@ monstera.spec.json ─► strict load ─► schema validation ─► semantic r
 
 ## The contract
 
-- `monstera.spec.schema.json` = `{specVersion: 1, project, game}`.
+- `monstera.spec.schema.json` = `{specVersion: 2, project, game}`.
 - `project.schema.json`: `id`, `displayName`, `identifier` (one reverse-DNS value valid on both
   platforms; it is the Android `applicationId`/namespace and the iOS bundle ID), `version`
   (`name` semver + `code`), `targets`, and `platforms.{android.minSdk, ios.deploymentTarget}`.
@@ -87,7 +87,7 @@ generated/<project.id>/
             app/src/main/kotlin/<identifier path>/MainActivity.kt
             app/src/main/kotlin/<identifier path>/generated/{MonsteraSpec,GeneratedSpec}.kt
   ios/      Package.swift, xtool.yml, Info.plist
-            Sources/<Product>/{<Product>App,ContentView,SpecScene,SpecIntegrity}.swift
+            Sources/<Product>/{<Product>App,ContentView,GameScene,SpecIntegrity}.swift
             Sources/<Product>/Resources/monstera.spec.json           canonical copy
             Sources/<Product>/Generated/{MonsteraSpec,GeneratedSpec}.swift
 ```

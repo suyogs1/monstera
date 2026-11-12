@@ -1,7 +1,7 @@
 """MONSTERA MCP server (stdio). Run:
     uv run --frozen --project tools/monstera-mcp python tools/monstera-mcp/server.py
 
-Registers exactly the four engine-backed tools (architecture/MONSTERA-MCP.md). Adding a tool
+Registers exactly the five engine-backed tools (architecture/MONSTERA-MCP.md). Adding a tool
 requires a merged, tested engine function and a documented contract first.
 """
 
@@ -92,6 +92,19 @@ def get_device_report(run_id: str | None = None, evidence: str | None = None,
     docs/evidence/<dir>/ containing report.json. With neither, lists the newest local runs.
     Only lines matching device-lab/contract/result.schema.json are returned."""
     return tools.get_device_report(run_id=run_id, evidence=evidence, target=target)
+
+
+@server.tool(annotations=ToolAnnotations(readOnlyHint=False, destructiveHint=False, idempotentHint=True, openWorldHint=False))
+@_refusals_as_tool_errors
+def run_conformance(dir: str, platforms: list[str] | None = None,  # noqa: A002 - contract name
+                    swift_image: str | None = None) -> dict[str, Any]:
+    """Run every golden scenario recorded for a generated project and compare each checkpoint with the
+    expected values. `dir` is under generated/ or apps/. `platforms` is a subset of oracle, kotlin, swift
+    (default: oracle only). kotlin runs the generated JVM unit tests with Gradle; swift runs `swift test`
+    in `swift_image` (e.g. swift:6.1-noble) or a local toolchain. Returns the machine-readable report
+    (conformance.schema.json) and a text summary naming the first divergent tick and fields per platform.
+    Needs the user to approve each call: it starts builds."""
+    return tools.run_conformance(dir=dir, platforms=platforms, swift_image=swift_image)
 
 
 def main() -> None:

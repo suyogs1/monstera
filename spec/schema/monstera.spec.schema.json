@@ -7,9 +7,9 @@
   "required": ["specVersion", "project", "game"],
   "properties": {
     "specVersion": {
-      "description": "Specification format version. G1 supports exactly 1.",
+      "description": "Specification format version. G2 supports exactly 2 (adds game.simulation, game.runtime and the extended game.input; migration in docs/SPEC-V2-MIGRATION.md).",
       "type": "integer",
-      "const": 1
+      "const": 2
     },
     "project": { "$ref": "project.schema.json" },
     "game": { "$ref": "game.schema.json" }

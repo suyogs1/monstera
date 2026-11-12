@@ -46,7 +46,7 @@ and workflow below repeat the distinction wherever both appear.
 |---|---|---|
 | `steering/01`–`06` | Present, used | 01/02 updated for the Studio split; 07 (Studio) and 08 (runtime) added; `fileMatch` front matter where a file is area-specific |
 | `agents/` (6) | Present. Fields (`name`, `description`, `prompt`, `tools`, `allowedTools`, `resources`) match the documented schema; tool names mix the documented alias `shell` with `fs_read`/`fs_write` | **Verify that each agent loads in the agent picker** (not yet confirmed); fix any tool name that doesn't resolve |
-| `hooks/` (3) | Present. The guard was verified live (a real write was blocked); the 2 save hooks still need a user editor save | Owner confirms the save hooks (instructions in the G1 report); add the hooks below |
+| `hooks/` (5) | Present. The guard was verified live (a real write was blocked); the 2 save hooks still need a user editor save | Owner confirms the save hooks (instructions in the G1 report); add the hooks below |
 | `specs/g1-specification-engine` | Present (requirements, design, tasks; all tasks done) | Keep as the G1 record |
 | `prompts/` | Empty | Add the 5 prompts below |
 | `workflows/` | Missing | Add the 5 recipes below |
@@ -76,7 +76,7 @@ their own definitions, and the permission rules of the launching session still a
 | `validate-specs-on-save` | PostFileSave `monstera.spec.json`, `*.schema.json` | `monstera validate --all` | Active; awaits owner confirmation |
 | `architecture-check-on-build-file-save` | PostFileSave build manifests | `monstera check-architecture` | Active; awaits owner confirmation |
 | `gates-on-task-complete` (**new**) | PostTaskExec | `monstera gates`: tests, validate, `generate --check`, `verify`, architecture | G1.5 |
-| `scenario-validate-on-save` (**new**) | PostFileSave `*.scenario.json` | `monstera validate-scenario` | G2 (when scenarios exist) |
+| `scenario-validate-on-save` (**new**) | PostFileSave `*.scenario.json` | `monstera validate-scenario --all --oracle` | G2 (when scenarios exist) |
 
 `monstera gates` is a new **thin** CLI command that runs the existing checks in order and prints
 one summary line per gate. It's the single definition of "green" shared by the hook, the

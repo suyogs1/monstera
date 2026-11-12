@@ -11,7 +11,7 @@ import os
 import sys
 from pathlib import Path
 
-from . import GENERATOR_NAME, GENERATOR_VERSION, archcheck, generate, kirocheck, targets
+from . import GENERATOR_NAME, GENERATOR_VERSION, archcheck, conformance, generate, kirocheck, scenario, targets
 from .jsonio import canonical_text
 from .schema import SchemaError, SchemaStore
 from .validate import Result, validate_path
@@ -94,7 +94,12 @@ def cmd_generate(args: argparse.Namespace, store: SchemaStore) -> int:
         return 2
     out = Path(args.out) if args.out else default_dir
     layout = args.layout or default_layout
-    files = generate.plan(result.spec, _label(path), store, layout=layout)
+    try:
+        files = generate.plan(result.spec, _label(path), store, layout=layout,
+                              scenarios=scenario.load_for_project(result.spec["project"]["id"], result.sha256, store))
+    except ValueError as exc:
+        print(f"generate: {exc}", file=sys.stderr)
+        return 1
     if args.check:
         drift = generate.check(files, out)
         if drift.clean:
@@ -129,6 +134,76 @@ def cmd_verify(args: argparse.Namespace, store: SchemaStore) -> int:
         for item in items:
             print(f"  {label}: {item}")
     return 1
+
+
+def _scenario_paths(args: argparse.Namespace) -> list[Path]:
+    paths = [Path(p) for p in args.files]
+    if args.all:
+        paths += sorted(scenario.SCENARIOS.rglob(f"*{scenario.SUFFIX}"))
+    return paths
+
+
+def cmd_validate_scenario(args: argparse.Namespace, store: SchemaStore) -> int:
+    paths = _scenario_paths(args)
+    if not paths:
+        print("validate-scenario: give scenario paths or --all", file=sys.stderr)
+        return 2
+    failed = 0
+    for path in paths:
+        issues = scenario.check(path, store) if args.oracle else scenario.validate(path, store)[1]
+        if issues:
+            failed += 1
+            print(f"{_label(path)}: INVALID ({len(issues)} issue{'s' if len(issues) != 1 else ''})")
+            for issue in issues:
+                print(f"  {issue}")
+        else:
+            print(f"{_label(path)}: valid" + (", matches the oracle" if args.oracle else ""))
+    return 1 if failed else 0
+
+
+def cmd_scenarios_record(args: argparse.Namespace, store: SchemaStore) -> int:
+    """Explicit regeneration of expected checkpoints. The only command that rewrites them."""
+    paths = _scenario_paths(args)
+    if not paths:
+        print("scenarios record: give scenario paths or --all", file=sys.stderr)
+        return 2
+    failed = 0
+    for path in paths:
+        issues = scenario.record(path, store)
+        if issues:
+            failed += 1
+            print(f"{_label(path)}: NOT RECORDED")
+            for issue in issues:
+                print(f"  {issue}")
+        else:
+            print(f"{_label(path)}: recorded")
+    return 1 if failed else 0
+
+
+def cmd_conformance(args: argparse.Namespace, store: SchemaStore) -> int:
+    platforms = [p.strip() for p in args.platforms.split(",") if p.strip()]
+    unknown = sorted(set(platforms) - set(conformance.PLATFORMS))
+    if unknown or not platforms:
+        print(f"conformance: --platforms must be a subset of {list(conformance.PLATFORMS)}", file=sys.stderr)
+        return 2
+    try:
+        report = conformance.run(Path(args.dir), store, platforms, args.swift_image)
+    except (conformance.ConformanceError, generate.OutputError, ValueError) as exc:
+        print(f"conformance: {exc}", file=sys.stderr)
+        return 2
+    issues = store.validate(report, "conformance.schema.json")
+    if issues:
+        print("conformance: internal error, report violates conformance.schema.json:", file=sys.stderr)
+        for issue in issues:
+            print(f"  {issue}", file=sys.stderr)
+        return 2
+    if args.report:
+        Path(args.report).write_text(canonical_text(report), encoding="utf-8", newline="\n")
+    if args.json:
+        print(json.dumps(report, sort_keys=True))
+    else:
+        print("\n".join(conformance.summarize(report)))
+    return 0 if report["verdict"] == "pass" else 1
 
 
 def cmd_check_architecture(args: argparse.Namespace, store: SchemaStore) -> int:
@@ -309,7 +384,13 @@ def cmd_gates(args: argparse.Namespace, store: SchemaStore) -> int:
             continue
         gate(f"canonical {label}", target.spec.read_bytes() == result.canonical,
              "canonical" if target.spec.read_bytes() == result.canonical else "run `monstera format`")
-        files = generate.plan(result.spec, label, store, layout=target.layout)
+        try:
+            files = generate.plan(result.spec, label, store, layout=target.layout,
+                                  scenarios=scenario.load_for_project(result.spec["project"]["id"], result.sha256, store))
+        except ValueError as exc:
+            gate(f"scenarios {label}", False, str(exc)[:500])
+            continue
+        gate(f"scenarios {label}", True, f"{len(scenario.scenario_files(result.spec['project']['id']))} scenario(s)")
         drift = generate.check(files, target.out)
         gate(f"generate --check {_label(target.out)}", drift.clean,
              f"{len(files)} files" if drift.clean else f"changed={list(drift.changed)} missing={list(drift.missing)} "
@@ -359,6 +440,27 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--force", action="store_true",
                    help="discard hand edits and unmanaged files in the output directory (never follows symlinks)")
     p.set_defaults(func=cmd_generate)
+
+    p = sub.add_parser("validate-scenario", help="validate golden scenario files")
+    p.add_argument("files", nargs="*")
+    p.add_argument("--all", action="store_true", help="every scenario under spec/scenarios/")
+    p.add_argument("--oracle", action="store_true", help="also require the checkpoints to equal a fresh oracle run")
+    p.set_defaults(func=cmd_validate_scenario)
+
+    p = sub.add_parser("scenarios", help="scenario maintenance")
+    ssub = p.add_subparsers(dest="scenarios_command", required=True)
+    q = ssub.add_parser("record", help="rewrite expected checkpoints from the oracle (explicit, never implicit)")
+    q.add_argument("files", nargs="*")
+    q.add_argument("--all", action="store_true")
+    q.set_defaults(func=cmd_scenarios_record)
+
+    p = sub.add_parser("conformance", help="run every scenario on the oracle, Kotlin and Swift and compare")
+    p.add_argument("dir", help="generated project directory (generated/<id> or apps/<id>)")
+    p.add_argument("--platforms", default=",".join(conformance.PLATFORMS), help="comma-separated subset of oracle,kotlin,swift")
+    p.add_argument("--swift-image", help="run Swift in this container image, or 'toolchain' for the image pinned in toolchain.json, instead of a local toolchain")
+    p.add_argument("--report", help="write the machine-readable report (conformance.schema.json) here")
+    p.add_argument("--json", action="store_true", help="print the report as one JSON line")
+    p.set_defaults(func=cmd_conformance)
 
     p = sub.add_parser("verify", help="check a generated directory against its own manifest")
     p.add_argument("dir")

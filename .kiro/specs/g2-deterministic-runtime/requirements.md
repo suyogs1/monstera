@@ -1,6 +1,6 @@
 # G2 Deterministic native runtime and cross-platform behavioural conformance: requirements
 
-Status: **PROPOSED, not approved. Do not execute.**
+Status: **APPROVED 2026-11-11, in progress** (core, scenarios and conformance done; shells and CI evidence open, see tasks).
 
 This is a **Kiro Spec** (how MONSTERA is developed in G2). It is not a MONSTERA canonical
 specification (`monstera.spec.json`), which describes a generated app.

@@ -1,0 +1,188 @@
+{
+  "platforms": [
+    {
+      "detail": "monstera.oracle in-process",
+      "platform": "oracle",
+      "status": "pass"
+    },
+    {
+      "detail": "docker run swift:6.1-noble swift test (package ios/Runtime) exit 1",
+      "platform": "swift",
+      "status": "fail"
+    }
+  ],
+  "reportVersion": 1,
+  "runtimeDigests": [
+    {
+      "path": "android/app/src/main/kotlin/app/monstera/boundarylab/runtime/Fixed.kt",
+      "sha256": "cffb9781c6695667ffa6f383426c0324ec26d422f540585319d0966ea1aa5b8a"
+    },
+    {
+      "path": "android/app/src/main/kotlin/app/monstera/boundarylab/runtime/GeneratedRuntimeConfig.kt",
+      "sha256": "e22d5c9ed731755fa5181c9730a486036ec1de4f21f473ca5ef1d82b2c32bfc0"
+    },
+    {
+      "path": "android/app/src/main/kotlin/app/monstera/boundarylab/runtime/Prng.kt",
+      "sha256": "094cc2b794cdccdeb4335e813c0ad2123079ec41420e2aeef23d26e4bec0db95"
+    },
+    {
+      "path": "android/app/src/main/kotlin/app/monstera/boundarylab/runtime/Replay.kt",
+      "sha256": "6d7d4bdf7de7ccfef539595f0742f972d22e4422edefa484916dfd2fa4038c8d"
+    },
+    {
+      "path": "android/app/src/main/kotlin/app/monstera/boundarylab/runtime/Simulation.kt",
+      "sha256": "4f8c32a86c5d4fae06946cf193dedc75d4a99410cfc607a9396dbd0a56ba12ac"
+    },
+    {
+      "path": "android/app/src/test/kotlin/app/monstera/boundarylab/runtime/ConformanceTest.kt",
+      "sha256": "0e69991f1dcef946bc4b825693cce535b45b5f8b0b607c876f814b6c305ecb9c"
+    },
+    {
+      "path": "ios/Runtime/Package.swift",
+      "sha256": "257cc6a894f6cd09fd137ca857e93068ea376cc142ca64f6b2f92ded38d4fd85"
+    },
+    {
+      "path": "ios/Runtime/Sources/MonsteraRuntime/Fixed.swift",
+      "sha256": "e21417e76f2c8b5ad51e0d514119564f704d68077b745f018c2d14783903d491"
+    },
+    {
+      "path": "ios/Runtime/Sources/MonsteraRuntime/GeneratedRuntimeConfig.swift",
+      "sha256": "9dcfeddeca63c8a2247ac4b20c70dd812ff223d81e3a49ebd97340de2e93fb3e"
+    },
+    {
+      "path": "ios/Runtime/Sources/MonsteraRuntime/Prng.swift",
+      "sha256": "c1f954b84d0230e202f192df21647e7eb242011c67d5b7de8e264f1af8fb3318"
+    },
+    {
+      "path": "ios/Runtime/Sources/MonsteraRuntime/Replay.swift",
+      "sha256": "9171ddea3f67934a54f6a304b750c86c0daba62a00c7e997dcfedc46aef6b40c"
+    },
+    {
+      "path": "ios/Runtime/Sources/MonsteraRuntime/Simulation.swift",
+      "sha256": "928ad2f574c1433033a646355fee64c46eac79087cbe4d0796c8b90aa8a27af1"
+    },
+    {
+      "path": "ios/Runtime/Tests/MonsteraRuntimeTests/ConformanceTests.swift",
+      "sha256": "23bc4e363e50d16c6adaebc3ace128cc368655730d5c89b671c76ddba4846d68"
+    },
+    {
+      "path": "ios/Runtime/Tests/MonsteraRuntimeTests/Resources/monstera-scenarios.txt",
+      "sha256": "d10e36585163936d3fce7ad127a25faad444456a5f08bc52d54eba6cb10c3f9b"
+    }
+  ],
+  "scenarios": [
+    {
+      "checkpoints": 13,
+      "name": "bounce-clamp",
+      "results": [
+        {
+          "divergences": [],
+          "platform": "oracle",
+          "status": "pass"
+        },
+        {
+          "divergences": [],
+          "platform": "swift",
+          "status": "pass"
+        }
+      ],
+      "sha256": "45574122bd5f0bb63f40c7338aa39bdb86879bdc224d7c1db8ff8c35e828a5dc"
+    },
+    {
+      "checkpoints": 151,
+      "name": "lifetime-and-cap",
+      "results": [
+        {
+          "divergences": [],
+          "platform": "oracle",
+          "status": "pass"
+        },
+        {
+          "divergences": [],
+          "platform": "swift",
+          "status": "pass"
+        }
+      ],
+      "sha256": "0029093ba3ed29914995cf1da2f384af9cdc7e56578dd4a3948f7844e8134074"
+    },
+    {
+      "checkpoints": 41,
+      "name": "lives-end",
+      "results": [
+        {
+          "divergences": [],
+          "platform": "oracle",
+          "status": "pass"
+        },
+        {
+          "divergences": [],
+          "platform": "swift",
+          "status": "pass"
+        }
+      ],
+      "sha256": "86aae77f44c1cbfc7d439708d19d7875dac1b6d3eeb6587b80de9b2c1732eae2"
+    },
+    {
+      "checkpoints": 41,
+      "name": "negative-rounding",
+      "results": [
+        {
+          "divergences": [],
+          "platform": "oracle",
+          "status": "pass"
+        },
+        {
+          "divergences": [
+            {
+              "actualHash": "e33bbf5d8d11871f",
+              "expectedHash": "1a4d17b34afc3839",
+              "fields": [
+                "hash"
+              ],
+              "tick": 1
+            }
+          ],
+          "platform": "swift",
+          "status": "fail"
+        }
+      ],
+      "sha256": "5f8e22413067d50534ed00aaed4904afa032c1945dec54544fb6172a80cf440c"
+    },
+    {
+      "checkpoints": 4,
+      "name": "touching-edges",
+      "results": [
+        {
+          "divergences": [],
+          "platform": "oracle",
+          "status": "pass"
+        },
+        {
+          "divergences": [],
+          "platform": "swift",
+          "status": "pass"
+        }
+      ],
+      "sha256": "583330978eb8d18971a9852fc954c8734219e6eecd90b5eef991335fc416884c"
+    },
+    {
+      "checkpoints": 31,
+      "name": "world-exit",
+      "results": [
+        {
+          "divergences": [],
+          "platform": "oracle",
+          "status": "pass"
+        },
+        {
+          "divergences": [],
+          "platform": "swift",
+          "status": "pass"
+        }
+      ],
+      "sha256": "54995523059955a948a95458fdf6f30f7cecf78e413014f3b413e89f599c6729"
+    }
+  ],
+  "specSha256": "f8507b7ea40f3b4e840352118a1f08103338e126439b0096504c3dc6d5c1efc9",
+  "verdict": "fail"
+}

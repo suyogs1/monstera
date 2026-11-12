@@ -13,7 +13,7 @@ per-tool permissions.
 2. **Only tools backed by working functionality.** A tool exists only when the function behind
    it exists and is tested.
 3. **Least privilege.** Read-only tools by default; one write path, which obeys the engine's
-   ownership rules; no shell, no network, no `--force`.
+   ownership rules; no shell, no `--force`; the single exception is `run_conformance`, which starts test builds, is never auto-approved, and runs containers without network and with read-only sources (see Security).
 
 ## Tools
 
@@ -23,7 +23,7 @@ per-tool permissions.
 | `generate_project` | `generate.plan` + `generate.check` / `generate.write(force=False)` | writes **only** when `write=true` | ask |
 | `inspect_manifest` | `generate.read_manifest` + `generate.verify` | none | auto-approve |
 | `get_device_report` | reads Device Lab `report.json` (contract: `device-lab/contract/result.schema.json`) | none | auto-approve |
-| `run_conformance` | G2 conformance runner | none (runs tests) | **added in G2**, when the runner exists |
+| `run_conformance` | `conformance.run` (`monstera conformance`) | none to the repository; starts Gradle / a Swift container; `platforms` defaults to `oracle`; `swift_image` must be an official `swift:<version>` tag | ask (added in G2) |
 | `build_native_app` | Studio build dispatch / Device Lab `build` op | builds; may dispatch CI | **added in G4**, when dispatch exists |
 
 ### `validate_spec`
@@ -157,8 +157,8 @@ relative paths from the workspace root under Kiro on Windows, the fallback is th
 |---|---|
 | Path traversal | Every path argument is resolved and must be inside the repository root. Specs only under `spec/` or `apps/*/monstera.spec.json`; outputs only under `generated/` or `apps/<id>/`; reports only under `device-lab/reports/runs/` or `docs/evidence/`. Symlinks are refused |
 | Destructive writes | Write only through `generate.write(force=False)`; no force anywhere in the server |
-| Command execution | None. The server never spawns processes (`build_native_app`, when added, gets its own review) |
-| Network | None |
+| Command execution | Only `run_conformance` spawns processes: `gradlew` (Kotlin unit tests) and `docker run` / `swift test` (Swift). Arguments are never shell-interpolated; `platforms` is a fixed set and `swift_image` must match an official `swift:<version>` tag (or `toolchain`). Reviewed in G2 (adversarial review, 2026-11-11). `build_native_app`, when added, gets its own review |
+| Network | The server opens none. `run_conformance` may make Docker pull the pinned Swift image if it is absent; the test container itself runs with `--network none`, the package mounted read-only (`:ro`) and only a results directory writable |
 | Resource use | Inline spec size cap (64 KiB); report results capped; JSON depth limits come from the engine loader |
 | Secrets | The server reads no environment secrets and never returns file contents outside its declared outputs |
 | Supply chain | One pinned dependency tree in `uv.lock`, reviewed with the `security-dependency-review` prompt |
@@ -168,7 +168,7 @@ relative paths from the workspace root under Kiro on Windows, the fallback is th
 1. **Unit tests**: each tool handler called directly against fixtures. Results must equal the CLI
    for the same input (identical issues, SHA-256, drift lists).
 2. **Protocol smoke test**: start the server over stdio with the SDK's client, then `initialize`,
-   `tools/list` (exactly the four tools, with their schemas) and one `tools/call` per tool.
+   `tools/list` (exactly the five tools, with their schemas) and one `tools/call` per tool.
 3. **Security tests**: a path outside the repo, `../` traversal, a symlink, an oversized inline
    spec, and `write=true` against a hand-edited tree must all be refused.
 4. **Live Kiro check**: Kiro lists the server's tools and an agent calls `validate_spec`. Recorded

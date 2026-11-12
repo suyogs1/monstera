@@ -1,0 +1,176 @@
+{
+  "checkpoints": [
+    {
+      "hash": "1a562b6f2de5e8d9",
+      "observe": {
+        "ended": 0,
+        "entityCount": 31,
+        "lives": 3,
+        "nextId": 32,
+        "score": 0,
+        "tick": 0
+      },
+      "tick": 0
+    },
+    {
+      "hash": "5956d2a37954e152",
+      "observe": {
+        "ended": 0,
+        "entityCount": 26,
+        "lives": 3,
+        "nextId": 34,
+        "score": 8,
+        "tick": 1
+      },
+      "tick": 1
+    },
+    {
+      "hash": "c3374bf1b770142f",
+      "observe": {
+        "ended": 0,
+        "entityCount": 27,
+        "lives": 3,
+        "nextId": 35,
+        "score": 8,
+        "tick": 2
+      },
+      "tick": 2
+    },
+    {
+      "hash": "f503b177c643420f",
+      "observe": {
+        "ended": 0,
+        "entityCount": 28,
+        "lives": 3,
+        "nextId": 37,
+        "score": 8,
+        "tick": 3
+      },
+      "tick": 3
+    },
+    {
+      "hash": "acf6d37ee07778dd",
+      "observe": {
+        "ended": 0,
+        "entityCount": 28,
+        "lives": 3,
+        "nextId": 38,
+        "score": 8,
+        "tick": 4
+      },
+      "tick": 4
+    },
+    {
+      "hash": "3cc2319dbdc819ed",
+      "observe": {
+        "ended": 0,
+        "entityCount": 26,
+        "lives": 3,
+        "nextId": 40,
+        "score": 8,
+        "tick": 5
+      },
+      "tick": 5
+    },
+    {
+      "hash": "8f736f2f2f789a39",
+      "observe": {
+        "ended": 0,
+        "entityCount": 26,
+        "lives": 3,
+        "nextId": 41,
+        "score": 8,
+        "tick": 6
+      },
+      "tick": 6
+    },
+    {
+      "hash": "734077599db47f07",
+      "observe": {
+        "ended": 0,
+        "entityCount": 27,
+        "lives": 3,
+        "nextId": 43,
+        "score": 8,
+        "tick": 7
+      },
+      "tick": 7
+    },
+    {
+      "hash": "3eca3f06d5c4693f",
+      "observe": {
+        "ended": 0,
+        "entityCount": 27,
+        "lives": 3,
+        "nextId": 44,
+        "score": 8,
+        "tick": 8
+      },
+      "tick": 8
+    },
+    {
+      "hash": "746597dea089ae7f",
+      "observe": {
+        "ended": 0,
+        "entityCount": 28,
+        "lives": 3,
+        "nextId": 46,
+        "score": 8,
+        "tick": 9
+      },
+      "tick": 9
+    },
+    {
+      "hash": "562087bb92bb8dfe",
+      "observe": {
+        "ended": 0,
+        "entityCount": 28,
+        "lives": 3,
+        "nextId": 47,
+        "score": 8,
+        "tick": 10
+      },
+      "tick": 10
+    },
+    {
+      "hash": "c6a71553125a5f58",
+      "observe": {
+        "ended": 0,
+        "entityCount": 29,
+        "lives": 3,
+        "nextId": 49,
+        "score": 8,
+        "tick": 11
+      },
+      "tick": 11
+    },
+    {
+      "hash": "6596b6c77829a9ff",
+      "observe": {
+        "ended": 0,
+        "entityCount": 29,
+        "lives": 3,
+        "nextId": 50,
+        "score": 8,
+        "tick": 12
+      },
+      "tick": 12
+    }
+  ],
+  "description": "Bounce reflects position and velocity at the exact wall (right, left, bottom), clamp pins at the wall, saturated velocity ends clamped.",
+  "frames": {
+    "count": 0,
+    "maxNanos": 0,
+    "minNanos": 0,
+    "seed": 0
+  },
+  "inputs": [],
+  "name": "bounce-clamp",
+  "scenarioVersion": 1,
+  "seed": 3,
+  "spec": {
+    "path": "spec/samples/boundary-lab/monstera.spec.json",
+    "sha256": "f8507b7ea40f3b4e840352118a1f08103338e126439b0096504c3dc6d5c1efc9"
+  },
+  "ticks": 12
+}
