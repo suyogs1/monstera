@@ -26,10 +26,17 @@ generator. This game uses the v3 primitives `spawners[].startTick` and `input.sc
   each (`docs/evidence/g3-conformance/`). `hand-lane-zero` is checked against hand-computed values.
 - Android `assembleDebug` succeeds. On the Android emulator, the app launched, lane swipes, scoring, game over and
   restart were observed (`docs/evidence/g3-android-emulator/trick-or-treat-rush/`).
+- iOS, via GitHub Actions run #31 ([43198048336](https://github.com/suyogs1/monstera/actions/runs/43198048336),
+  commit `15f412f`, macOS runner), evidence in `docs/evidence/g3-ios-simulator-ci/trick-or-treat-rush/`:
+  - The app was built for the iOS Simulator with its local `ios/Runtime` package.
+  - `swift test` passed on that package (7 tests).
+  - The app was installed and launched on the Simulator. The fixed-tick game loop ran (a logged
+    `runtime ticks=60 hash=... seed=...` line), the bundled spec matched (`bundledMatches=true`), and a screenshot was taken.
 
-## Not yet run
+## Not tested
 
-- The iOS app build and the iOS Simulator (needs macOS CI).
-- Any physical device.
+- iOS lane swipes and restart are compiled but not interaction-tested: the Simulator tooling used in CI
+  cannot inject touches. They were exercised on the Android emulator only.
+- Physical iOS or Android devices.
 
 The shells draw plain rectangles (no artwork yet) and do not clip entities to the world rectangle.

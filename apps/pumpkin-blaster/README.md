@@ -14,10 +14,17 @@ Landscape 2D arcade shooter. Drag to move the ship and tap to fire. Pumpkins (+1
   each. These include `win-1000`, which reaches the win score with lives left (`docs/evidence/g3-conformance/`).
 - Android `assembleDebug` succeeds. On the Android emulator, launch, firing, scoring, game over and restart were
   observed (`docs/evidence/g3-android-emulator/pumpkin-blaster/`).
+- iOS, via GitHub Actions run #31 ([43198048336](https://github.com/suyogs1/monstera/actions/runs/43198048336),
+  commit `15f412f`, macOS runner), evidence in `docs/evidence/g3-ios-simulator-ci/pumpkin-blaster/`:
+  - The app was built for the iOS Simulator with its local `ios/Runtime` package.
+  - `swift test` passed on that package (7 tests).
+  - The app was installed and launched on the Simulator. The fixed-tick game loop ran (a logged
+    `runtime ticks=60 hash=... seed=...` line), the bundled spec matched (`bundledMatches=true`), and a screenshot was taken.
 
-## Not yet run
+## Not tested
 
-- The iOS app build and the iOS Simulator (needs macOS CI).
-- Any physical device.
+- iOS firing, ship dragging and restart are compiled but not interaction-tested: the Simulator tooling
+  used in CI cannot inject touches. They were exercised on the Android emulator only.
+- Physical iOS or Android devices.
 
 The shells draw plain rectangles (no artwork yet) and do not clip entities to the world rectangle.
