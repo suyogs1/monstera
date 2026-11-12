@@ -40,7 +40,7 @@
     {
       "name": "unsupported spec version",
       "set": {"/specVersion": 1},
-      "expect": [{"path": "$.specVersion", "code": "const", "contains": "must be 3"}]
+      "expect": [{"path": "$.specVersion", "code": "const", "contains": "must be 4"}]
     },
     {
       "name": "duplicate target",

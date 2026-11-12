@@ -7,9 +7,9 @@
   "required": ["specVersion", "project", "game"],
   "properties": {
     "specVersion": {
-      "description": "Specification format version. G2 supports exactly 3 (v3 adds spawners[].startTick and the input scheme 'lanes'; migrations in docs/SPEC-V2-MIGRATION.md).",
+      "description": "Specification format version. G2 supports exactly 4 (v4 adds the presentation fields kinds[].glyph, kinds[].effect, game.hud and game.screens; migrations in docs/SPEC-V2-MIGRATION.md).",
       "type": "integer",
-      "const": 3
+      "const": 4
     },
     "project": { "$ref": "project.schema.json" },
     "game": { "$ref": "game.schema.json" }
