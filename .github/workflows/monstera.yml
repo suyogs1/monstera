@@ -3,7 +3,10 @@
 name: monstera
 
 on:
+  # push only for main: on a PR branch the pull_request run covers the same commit, and running both doubled
+  # every job (including the macOS one).
   push:
+    branches: [main]
     paths: ["spec/**", "tools/monstera/**", "tools/monstera-mcp/**", "generated/**", "apps/**", "device-lab/**", ".kiro/**", ".github/workflows/**"]
   pull_request:
     paths: ["spec/**", "tools/monstera/**", "tools/monstera-mcp/**", "generated/**", "apps/**", "device-lab/**", ".kiro/**", ".github/workflows/**"]

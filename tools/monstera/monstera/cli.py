@@ -356,6 +356,26 @@ def cmd_guard_generated(args: argparse.Namespace, store: SchemaStore) -> int:
     return 0
 
 
+def _index_mode_drift(out: Path) -> list[tuple[str, str, str]]:
+    """Tracked files whose git index mode differs from the manifest. Windows git does not record the
+    executable bit of new files, so a generated `gradlew` committed there is 644 and fails `verify`
+    on Linux and macOS. Untracked files and a missing git are not reported."""
+    import subprocess
+    manifest = json.loads((out / generate.MANIFEST).read_text(encoding="utf-8"))
+    try:
+        proc = subprocess.run(["git", "ls-files", "-s", "--", "."], cwd=out, capture_output=True, text=True)
+    except OSError:
+        return []
+    if proc.returncode != 0:
+        return []
+    index = {}
+    for line in proc.stdout.splitlines():
+        meta, _, path = line.partition("\t")
+        index[path] = meta.split()[0][-3:]
+    return [(e["path"], index[e["path"]], e["mode"]) for e in manifest["files"]
+            if e["path"] in index and index[e["path"]] != e["mode"]]
+
+
 def cmd_gates(args: argparse.Namespace, store: SchemaStore) -> int:
     """The single definition of "green", shared by the Kiro hook, the workflows and CI."""
     import subprocess
@@ -401,6 +421,11 @@ def cmd_gates(args: argparse.Namespace, store: SchemaStore) -> int:
                 gate(f"verify {_label(target.out)}", v.clean, "matches manifest" if v.clean else str(v))
             except generate.OutputError as exc:
                 gate(f"verify {_label(target.out)}", False, str(exc))
+            wrong = _index_mode_drift(target.out)
+            gate(f"git modes {_label(target.out)}", not wrong,
+                 "index modes match the manifest" if not wrong else
+                 "; ".join(f"{p} is {have} in git, manifest says {want}" for p, have, want in wrong)
+                 + " (fix: git update-index --chmod=+x|-x <path>)")
 
     violations = archcheck.check(REPO_ROOT)
     gate("architecture", not violations, "ok" if not violations else "; ".join(map(str, violations)))
