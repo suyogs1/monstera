@@ -1,0 +1,8 @@
+[
+{"op":"build","target":"ios-simulator","status":"ok","run_id":"ci-43198048336-pumpkin-blaster","timestamp":"2026-11-12T10:20:57Z","artifact":"device-lab/reports/runs/ci-43198048336-pumpkin-blaster/ios-simulator/PumpkinBlaster.app"},
+{"op":"install","target":"ios-simulator","status":"ok","run_id":"ci-43198048336-pumpkin-blaster","timestamp":"2026-11-12T10:22:05Z"},
+{"op":"launch","target":"ios-simulator","status":"ok","run_id":"ci-43198048336-pumpkin-blaster","timestamp":"2026-11-12T10:22:15Z"},
+{"op":"screenshot","target":"ios-simulator","status":"ok","run_id":"ci-43198048336-pumpkin-blaster","timestamp":"2026-11-12T10:22:24Z","artifact":"device-lab/reports/runs/ci-43198048336-pumpkin-blaster/ios-simulator/01-launched.png"},
+{"op":"logs","target":"ios-simulator","status":"ok","run_id":"ci-43198048336-pumpkin-blaster","timestamp":"2026-11-12T10:22:35Z","artifact":"device-lab/reports/runs/ci-43198048336-pumpkin-blaster/ios-simulator/logs.txt"},
+{"op":"stop","target":"ios-simulator","status":"ok","run_id":"ci-43198048336-pumpkin-blaster","timestamp":"2026-11-12T10:22:39Z"}
+]

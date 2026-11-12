@@ -1,4 +1,4 @@
-# G3: two games from one foundation (in progress, branch `g3/pumpkin-blaster`)
+# G3: two games from one foundation (PR #5, branch `g3/pumpkin-blaster`, depends on PR #4)
 
 | | Pumpkin Blaster | Trick or Treat Rush |
 |---|---|---|
@@ -31,18 +31,48 @@ schedule. Three additions, all required properties (`docs/SPEC-V2-MIGRATION.md`)
 
 Jumping was not added. It isn't needed for a lane runner.
 
-## Verification (local, Windows host, 2026-11-12)
+## Verification
+
+Local, Windows host, 2026-11-12, at `a559a53` (gates re-run at `15f412f`):
 
 | Check | Result |
 |---|---|
-| `monstera gates`: 215 tests, 4 specs, generation drift, architecture, Kiro config | PASS 23/23 |
+| `monstera gates`: 216 tests, 4 specs, generation drift, git index modes, architecture, Kiro config | PASS 27/27 (at `15f412f`) |
 | `monstera conformance` (oracle, Kotlin JVM, Swift `swift:6.1-noble` container), both apps | PASS (`docs/evidence/g3-conformance/`) |
 | Same on `generated/monstera-sample` and `generated/boundary-lab` after the v3 migration | PASS (output not kept) |
 | Android `assembleDebug`, both apps | PASS |
 | Android emulator: launch, input, scoring, game over, restart, both apps | observed (`docs/evidence/g3-android-emulator/`) |
-| iOS app build, iOS Simulator | NOT RUN (no macOS; the CI `ios-generated` job builds the shared shell via `generated/monstera-sample`) |
 | Physical devices | NOT RUN |
-| CI on this branch | NOT RUN (not pushed) |
+
+GitHub Actions, run monstera #31 (id `43198048336`, `pull_request`, PR #5 head `15f412f`), all five jobs passed:
+
+| Job | What ran | Result |
+|---|---|---|
+| spec | unit tests, validate, `gates --skip-tests` (including `git modes`) | PASS |
+| mcp | MCP server tests | PASS |
+| android-generated | `assembleDebug` for monstera-sample, pumpkin-blaster, trick-or-treat-rush | PASS (3 builds) |
+| conformance | oracle, Kotlin, Swift container on all 4 projects | PASS (TTR 606, PB 505 checkpoints) |
+| ios-generated (macos-26) | per project: xtool simulator build with the local `ios/Runtime` package, `swift test` (7 tests), install, launch, screenshot, logs | PASS (3 projects); SIMULATOR-TESTED (launch and fixed-tick loop only) with `docs/evidence/g3-ios-simulator-ci/` |
+
+On iOS, touch input (lane swipes, firing) and tap-to-restart are **compiled, not exercised**: `simctl` cannot
+inject touches. They were exercised on the Android emulator only.
+
+### CI failure on the first push (run monstera #30, id `43197273908`, commit `5aa23e5`)
+
+- **Failure:** job `spec`, step "All quality gates". `gates: FAILED (18/22)`, with
+  `generate --check` and `verify` reporting `changed=['android/gradlew']` for both apps. The run failed in 34 s and
+  the dependent jobs were skipped.
+- **Root cause:** the file content was correct (blob `249efbb`, identical to the template and to `generated/*`).
+  The git mode was wrong: `100644` instead of the manifest's `755`, because Windows git does not record the
+  executable bit of new files. The bug was introduced in `cab0d4d` (Pumpkin Blaster) and repeated in `a559a53`
+  (Trick or Treat Rush). Local gates passed because the mode check is not meaningful on Windows, and CI had not
+  run on those commits.
+- **Fix:** `15f412f` sets both files to `100755`.
+- **Regression protection:** the new `git modes` gate compares git index modes with the manifest.
+  `GitIndexModeGateTests` checks it with a temporary repository. Against a checkout of `5aa23e5` the gate
+  reports `android/gradlew is 644 in git, manifest says 755` for both apps; at `15f412f` it is clean.
+- The same commit also made CI run once per PR commit (`push` now only on `main`), because `push` and
+  `pull_request` had been running every job twice.
 
 Avoidance in Trick or Treat Rush is checked three ways:
 
@@ -53,7 +83,8 @@ Avoidance in Trick or Treat Rush is checked three ways:
 ## Limitations
 
 - Restart is shell behaviour: a new `World` with a new seed. No golden scenario can express it; it was
-  observed on the Android emulator only.
+  observed on the Android emulator only. On iOS it is compiled, not exercised.
+- The iOS screenshot of the landscape game is captured in the simulator's portrait frame, so it appears rotated.
 - The players in `dodge-run`, `candy-chase` and `win-1000` are scripted bots that read oracle state to
   produce input traces (`tools/monstera/author_scenarios.py`). The checkpoints themselves come only from
   `monstera scenarios record`.
