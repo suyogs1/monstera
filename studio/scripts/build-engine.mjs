@@ -1,7 +1,9 @@
 // Packs the UNMODIFIED engine (and the data it reads) at its repository-relative paths and copies the
 // pinned Pyodide runtime next to it. Output (git-ignored): public/engine/, public/pyodide/.
 // Adapted from studio/spike/build-bundle.mjs; the spike stays untouched so M0 remains reproducible.
-// M1 validates and serializes only, so scenarios and the Gradle wrapper jar are not bundled (M2 adds them).
+// M2 restores what M1 left out: golden scenarios (and the sample specs they reference) and the Gradle wrapper jar.
+import { createHash } from "node:crypto";
+import { execFileSync } from "node:child_process";
 import { copyFileSync, mkdirSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { join, relative, sep } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -18,32 +20,54 @@ const TEMPLATES = [
   { id: "lantern-run", path: "spec/samples/lantern-run/monstera.spec.json", group: "kiro-sample" },
 ];
 
+// Binary files are stored base64 ({ e: "b" }); the engine reads the Gradle wrapper jar when it plans a project.
+const BINARY = (p) => p.endsWith(".jar");
 function walk(dir, out = []) {
   for (const name of readdirSync(dir).sort()) {
     if (name === "__pycache__") continue;
     const full = join(dir, name);
     if (statSync(full).isDirectory()) walk(full, out);
-    else if (!name.endsWith(".pyc") && !name.endsWith(".jar")) out.push(full); // the wrapper jar is only read by generate (M2)
+    else if (!name.endsWith(".pyc")) out.push(full);
   }
   return out;
 }
+
+// Scenarios reference a spec by repository path; every referenced spec must be present (checked below).
+const SCENARIO_SPECS = ["spec/samples/monstera-sample", "spec/samples/boundary-lab"]
+  .map((d) => join(repo, ...d.split("/"), "monstera.spec.json"));
 
 const wanted = [
   ...walk(join(repo, "tools", "monstera", "monstera")),
   ...readdirSync(join(repo, "spec", "schema")).filter((n) => n.endsWith(".json")).sort()
     .map((n) => join(repo, "spec", "schema", n)),
+  ...walk(join(repo, "spec", "scenarios")).filter((f) => f.endsWith(".scenario.json")),
   ...TEMPLATES.map((t) => join(repo, ...t.path.split("/"))),
+  ...SCENARIO_SPECS,
 ];
 
 // A Windows checkout may hold CRLF (git text=auto); the repository blob is LF. Bundle the LF form.
 const lf = (s) => s.replace(/\r\n/g, "\n");
 const files = wanted.map((full) => {
   const p = relative(repo, full).split(sep).join("/");
+  if (BINARY(p)) return { p, e: "b", d: readFileSync(full).toString("base64") };
   const text = readFileSync(full).toString("utf8");
   const d = p.endsWith(".bat") ? text : lf(text);
   if (d.includes("\r") && !p.endsWith(".bat")) throw new Error(`${p} contains a lone CR`);
   return { p, d };
 });
+
+// Every binary must equal the blob git stores (a checkout filter must never alter it), and every spec a bundled
+// scenario points at must be bundled.
+const sha256 = (b) => createHash("sha256").update(b).digest("hex");
+for (const f of files.filter((x) => x.e === "b")) {
+  const blob = execFileSync("git", ["show", `HEAD:${f.p}`], { cwd: repo, maxBuffer: 1 << 26 });
+  if (sha256(blob) !== sha256(Buffer.from(f.d, "base64"))) throw new Error(`${f.p} differs from the committed blob`);
+}
+const have = new Set(files.map((f) => f.p));
+for (const f of files.filter((x) => x.p.startsWith("spec/scenarios/"))) {
+  const ref = JSON.parse(f.d).spec.path;
+  if (!have.has(ref)) throw new Error(`${f.p} references ${ref}, which is not in the bundle`);
+}
 
 const outEngine = join(studio, "public", "engine");
 const outPyodide = join(studio, "public", "pyodide");

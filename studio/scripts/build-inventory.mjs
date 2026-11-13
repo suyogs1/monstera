@@ -121,6 +121,30 @@ function mcp() {
   return { servers, tools, source: "tools/monstera-mcp/server.py" };
 }
 
+// ------------------------------------------------------------------ committed native conformance reports
+// Every `monstera conformance` report committed under docs/evidence, as written by the tool. Studio shows one only
+// when its specSha256 equals the draft's exact SHA-256; it never infers native results from browser execution.
+function conformanceReports() {
+  const root = join(repo, "docs", "evidence");
+  const out = [];
+  const walk = (dir) => {
+    for (const name of readdirSync(dir, { withFileTypes: true }).sort((a, b) => (a.name < b.name ? -1 : 1))) {
+      const full = join(dir, name.name);
+      if (name.isDirectory()) walk(full);
+      else if (name.name.endsWith(".report.json")) {
+        const r = JSON.parse(readText(full));
+        out.push({
+          file: full.slice(repo.length + 1).split("\\").join("/"), specSha256: r.specSha256, verdict: r.verdict,
+          platforms: (r.platforms ?? []).map((p) => ({ platform: p.platform, status: p.status })),
+          scenarios: (r.scenarios ?? []).map((s) => s.name),
+        });
+      }
+    }
+  };
+  walk(root);
+  return out;
+}
+
 const inventory = {
   commit: stamp(),
   sources: SOURCES,
@@ -131,6 +155,9 @@ if (inventory.mcp.tools.length === 0) throw new Error("no MCP tools were found i
 const out = join(studio, "src", "generated");
 mkdirSync(out, { recursive: true });
 writeFileSync(join(out, "inventory.json"), JSON.stringify(inventory, null, 2) + "\n");
+const conformance = conformanceReports();
+writeFileSync(join(out, "conformance.json"), JSON.stringify({ commit: inventory.commit.short, reports: conformance }, null, 2) + "\n");
+console.log(`native conformance reports: ${conformance.length} (${conformance.map((r) => r.file.split("/").pop()).join(", ")})`);
 console.log(`inventory @ ${inventory.commit.short}${inventory.commit.dirty ? " (dirty)" : ""}: ${inventory.agents.length} agents, ` +
   `${inventory.mcp.tools.length} MCP tools, ${inventory.hooks.length} hooks, ${inventory.workflows.length} workflows, ` +
   `${inventory.steering.length} steering files, ${inventory.prompts.length} prompts`);

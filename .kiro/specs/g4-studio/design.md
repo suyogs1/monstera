@@ -34,6 +34,14 @@ and scenario lookup behave exactly as in the CLI.
    file and requires the recorded hash. The spike called `sim.Config` and `sim.run_scenario` directly and
    skipped frame-based scenarios (`frames.count > 0`). M2 adds one small engine function that runs a
    scenario against a given validated spec (handling frames), with a Python test, and the CLI keeps its behaviour.
+   **M2 engine changes (approved 2026-11-13, the only exceptions to "Studio never edits tools/monstera"):** they are
+   engine changes made for Studio, reviewed as such, and carry CLI-unchanged tests. (a) `scenario.checkpoints_for_game`
+   (pure, in-memory; `oracle_checkpoints` keeps its recorded-hash check). (b) `scenario.StaleScenarios(ValueError)`,
+   raised by `load_for_project` only when goldens were recorded for another spec SHA-256 (same message, same CLI exit
+   codes), so the export omits goldens only in that case and refuses every other scenario failure like the CLI.
+   "Unmodified engine" in `build-engine.mjs` means the bundle is the repository's engine files, byte for byte.
+   The glue functions `golden_report`, `plan_template` and `preview_trace` are the acceptance interface
+   (`studio/scripts/m2-*.mjs` compare them with host CPython); they are read-only and have no UI.
 3. **CRLF**: a Windows checkout can hold CRLF in `apps/**` (git `text=auto`). The bundle script uses the LF form
    that git stores. Hashes are over canonical JSON, so validation is unaffected.
 4. Draft validation should use `loads_strict` and `validate_value`; the spike showed it equals the file path.

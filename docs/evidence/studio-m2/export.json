@@ -1,0 +1,356 @@
+{
+  "verdict": "PASS",
+  "browser": "Chrome 157.0.8103.51",
+  "exports": [
+    {
+      "case": "pumpkin-blaster unedited",
+      "planMs": 1930,
+      "zipMs": 141,
+      "goldens": {
+        "included": 5,
+        "omitted": 0,
+        "text": "Includes the 5 recorded golden scenarios of apps/pumpkin-blaster/monstera.spec.json in the native conformance tests.",
+        "role": null
+      },
+      "filename": "pumpkin-blaster-native-source.zip",
+      "treeFiles": 48
+    },
+    {
+      "case": "trick-or-treat-rush unedited",
+      "planMs": 857,
+      "zipMs": 90,
+      "goldens": {
+        "included": 6,
+        "omitted": 0,
+        "text": "Includes the 6 recorded golden scenarios of apps/trick-or-treat-rush/monstera.spec.json in the native conformance tests.",
+        "role": null
+      },
+      "filename": "trick-or-treat-rush-native-source.zip",
+      "treeFiles": 48
+    },
+    {
+      "case": "lantern-run unedited",
+      "planMs": 225,
+      "zipMs": 95,
+      "goldens": {
+        "included": 4,
+        "omitted": 0,
+        "text": "Includes the 4 recorded golden scenarios of spec/samples/lantern-run/monstera.spec.json in the native conformance tests.",
+        "role": null
+      },
+      "filename": "lantern-run-native-source.zip",
+      "treeFiles": 49
+    },
+    {
+      "case": "pumpkin-blaster edited",
+      "planMs": 115,
+      "zipMs": 88,
+      "goldens": {
+        "included": 0,
+        "omitted": 5,
+        "text": "Recorded goldens omitted. This draft is not the specification its 5 recorded golden scenarios were recorded for, so the export embeds none (the generated conformance tests have no scenarios). monstera generate refuses this spec until the goldens are re-recorded with monstera scenarios record.",
+        "role": "alert"
+      },
+      "filename": "pumpkin-blaster-native-source.zip",
+      "treeFiles": 48
+    },
+    {
+      "case": "trick-or-treat-rush edited",
+      "planMs": 67,
+      "zipMs": 89,
+      "goldens": {
+        "included": 0,
+        "omitted": 6,
+        "text": "Recorded goldens omitted. This draft is not the specification its 6 recorded golden scenarios were recorded for, so the export embeds none (the generated conformance tests have no scenarios). monstera generate refuses this spec until the goldens are re-recorded with monstera scenarios record.",
+        "role": "alert"
+      },
+      "filename": "trick-or-treat-rush-native-source.zip",
+      "treeFiles": 48
+    }
+  ],
+  "verification": [
+    {
+      "name": "pumpkin-blaster unedited",
+      "files": 48,
+      "missing": [],
+      "extra": [],
+      "contentDiffers": [],
+      "modeDiffers": [],
+      "executables": [
+        "android/gradlew"
+      ],
+      "manifestSha256": "fd2331dc0b5043acf08c2c64f813da62f77e555f0094606788bcb095bfa9f8a1",
+      "manifestSpec": {
+        "path": "apps/pumpkin-blaster/monstera.spec.json",
+        "projectId": "pumpkin-blaster",
+        "sha256": "08c7a90d9fcfd599c0b5f83743ba339e61f57f1fb10938cf6806d70cda7e0be3"
+      },
+      "manifestSpecShaOk": true,
+      "specAssetShaOk": true,
+      "jarSha256": "621008afc4f5d59357fcf06ffa644dd5aade5e091bdc363742710445f73cdaf8",
+      "jarEqualsCommittedTemplate": true,
+      "scenariosResourceBytes": 73914,
+      "reference": "monstera generate apps/pumpkin-blaster/monstera.spec.json",
+      "equalsCommittedManifest": true,
+      "scenariosEmbedded": 5,
+      "scenariosResourceEqualsCli": true,
+      "zipProblems": [],
+      "zipSha256": "508aa8305e1154e5c343cc04f373fece3dda0fa2641b612503779255390d02df"
+    },
+    {
+      "name": "trick-or-treat-rush unedited",
+      "files": 48,
+      "missing": [],
+      "extra": [],
+      "contentDiffers": [],
+      "modeDiffers": [],
+      "executables": [
+        "android/gradlew"
+      ],
+      "manifestSha256": "6103e7e572724bc83423f411de2097b7800a30cfc1db7616820a48f58968b025",
+      "manifestSpec": {
+        "path": "apps/trick-or-treat-rush/monstera.spec.json",
+        "projectId": "trick-or-treat-rush",
+        "sha256": "edcc2000685684cfc17fcbe3634bb01d2967b7d590cfceabb02a2286eaa79b4c"
+      },
+      "manifestSpecShaOk": true,
+      "specAssetShaOk": true,
+      "jarSha256": "621008afc4f5d59357fcf06ffa644dd5aade5e091bdc363742710445f73cdaf8",
+      "jarEqualsCommittedTemplate": true,
+      "scenariosResourceBytes": 36978,
+      "reference": "monstera generate apps/trick-or-treat-rush/monstera.spec.json",
+      "equalsCommittedManifest": true,
+      "scenariosEmbedded": 6,
+      "scenariosResourceEqualsCli": true,
+      "zipProblems": [],
+      "zipSha256": "7b6d905cd60317f6b8ecab0e870d8954e90933eb2af53ec6883a65f69d8f07da"
+    },
+    {
+      "name": "lantern-run unedited",
+      "files": 49,
+      "missing": [],
+      "extra": [],
+      "contentDiffers": [],
+      "modeDiffers": [],
+      "executables": [
+        "android/gradlew"
+      ],
+      "manifestSha256": "6aea4e625fa3034359157934874a9dad1664cbe329cb5385ab453333afc2eb61",
+      "manifestSpec": {
+        "path": "spec/samples/lantern-run/monstera.spec.json",
+        "projectId": "lantern-run",
+        "sha256": "cc08da835eab0e59b23ddb58e766cd9420e41514124e09b7903438a5fd0d60b1"
+      },
+      "manifestSpecShaOk": true,
+      "specAssetShaOk": true,
+      "jarSha256": "621008afc4f5d59357fcf06ffa644dd5aade5e091bdc363742710445f73cdaf8",
+      "jarEqualsCommittedTemplate": true,
+      "scenariosResourceBytes": 20851,
+      "reference": "monstera generate spec/samples/lantern-run/monstera.spec.json",
+      "scenariosEmbedded": 4,
+      "scenariosResourceEqualsCli": true,
+      "zipProblems": [],
+      "zipSha256": "2697cb293a9c4b6e69ac978fbef87d8332ab2fc688f819751ab4d85c34b41331"
+    },
+    {
+      "name": "pumpkin-blaster edited (lives 7)",
+      "files": 48,
+      "missing": [],
+      "extra": [],
+      "contentDiffers": [],
+      "modeDiffers": [],
+      "executables": [
+        "android/gradlew"
+      ],
+      "manifestSha256": "09e53302a767abc340ac64288e75536a9b4cffb4d921682330ef965b6dc3696f",
+      "manifestSpec": {
+        "path": "apps/pumpkin-blaster/monstera.spec.json",
+        "projectId": "pumpkin-blaster",
+        "sha256": "9bbe2fc505f6a77f339fda053f05ffbcb068382b550b09f993e83758fe19d749"
+      },
+      "manifestSpecShaOk": true,
+      "specAssetShaOk": true,
+      "jarSha256": "621008afc4f5d59357fcf06ffa644dd5aade5e091bdc363742710445f73cdaf8",
+      "jarEqualsCommittedTemplate": true,
+      "scenariosResourceBytes": 69,
+      "reference": "generate.plan(<edited spec>, 'apps/pumpkin-blaster/monstera.spec.json', layout='app', scenarios=[])",
+      "cliRefuses": true,
+      "cliMessage": "generate: frame-jitter-60hz.scenario.json: recorded against a different spec; run `monstera scenarios record`",
+      "scenariosResourceIsEmpty": true,
+      "specAssetIsCanonicalDraft": true,
+      "zipProblems": [],
+      "zipSha256": "6e7c6c5f7cb238208b24d921fc87c34ac50bc474d1e332792e4bd2757ca1b914"
+    },
+    {
+      "name": "trick-or-treat-rush edited (lives 4)",
+      "files": 48,
+      "missing": [],
+      "extra": [],
+      "contentDiffers": [],
+      "modeDiffers": [],
+      "executables": [
+        "android/gradlew"
+      ],
+      "manifestSha256": "81e9262da9ac0ee86b56ac5a791f683c5e46f8099593e76ffb30d01384ec1bdf",
+      "manifestSpec": {
+        "path": "apps/trick-or-treat-rush/monstera.spec.json",
+        "projectId": "trick-or-treat-rush",
+        "sha256": "37fb0c919cfa2c0bf40ef48befd424e03bd88735e8c02bb27fe6119f6dffa66f"
+      },
+      "manifestSpecShaOk": true,
+      "specAssetShaOk": true,
+      "jarSha256": "621008afc4f5d59357fcf06ffa644dd5aade5e091bdc363742710445f73cdaf8",
+      "jarEqualsCommittedTemplate": true,
+      "scenariosResourceBytes": 69,
+      "reference": "generate.plan(<edited spec>, 'apps/trick-or-treat-rush/monstera.spec.json', layout='app', scenarios=[])",
+      "cliRefuses": true,
+      "cliMessage": "generate: candy-chase.scenario.json: recorded against a different spec; run `monstera scenarios record`",
+      "scenariosResourceIsEmpty": true,
+      "specAssetIsCanonicalDraft": true,
+      "zipProblems": [],
+      "zipSha256": "5d2ca9115198346fc87ec57e80ec527c3db57034a4884b1b7919686f705be0f6"
+    }
+  ],
+  "checks": [
+    {
+      "name": "pumpkin-blaster (unedited): the export embeds its 5 committed golden scenarios and says so",
+      "ok": true,
+      "detail": "Includes the 5 recorded golden scenarios of apps/pumpkin-blaster/monstera.spec.json in the"
+    },
+    {
+      "name": "trick-or-treat-rush (unedited): the export embeds its 6 committed golden scenarios and says so",
+      "ok": true,
+      "detail": "Includes the 6 recorded golden scenarios of apps/trick-or-treat-rush/monstera.spec.json in"
+    },
+    {
+      "name": "lantern-run (unedited): the export embeds its 4 committed golden scenarios and says so",
+      "ok": true,
+      "detail": "Includes the 4 recorded golden scenarios of spec/samples/lantern-run/monstera.spec.json in"
+    },
+    {
+      "name": "pumpkin-blaster (edited, lives 7): exports with no scenarios and a prominent notice that 5 recorded goldens were omitted",
+      "ok": true,
+      "detail": "Recorded goldens omitted. This draft is not the specification its 5 recorded golden scenarios were recorded fo"
+    },
+    {
+      "name": "trick-or-treat-rush (edited, lives 4): exports with no scenarios and a prominent notice that 6 recorded goldens were omitted",
+      "ok": true,
+      "detail": "Recorded goldens omitted. This draft is not the specification its 6 recorded golden scenarios were recorded fo"
+    },
+    {
+      "name": "after an edit the generated files are marked stale and the download is disabled",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "an invalid draft cannot be generated",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "the export is labelled GENERATED and claims no compile, simulator or device result",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "no build button exists",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "no request leaves the origin (the ZIP is built in the page)",
+      "ok": true,
+      "detail": "all same-origin"
+    },
+    {
+      "name": "no console or page errors",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "pumpkin-blaster unedited: ZIP is valid (CRCs, regular files, safe unique paths) and equals monstera generate apps/pumpkin-blaster/monstera.spec.json: paths, contents, modes",
+      "ok": true,
+      "detail": "48 files; missing 0, extra 0, differ 0, modes 0; executables android/gradlew; zip problems none"
+    },
+    {
+      "name": "pumpkin-blaster unedited: manifest and the bundled spec carry the exact spec SHA-256; the Gradle wrapper JAR equals the committed binary",
+      "ok": true,
+      "detail": "manifest fd2331dc0b50 for apps/pumpkin-blaster/monstera.spec.json; jar 621008afc4f5"
+    },
+    {
+      "name": "pumpkin-blaster unedited: MONSTERA-MANIFEST.json equals the committed manifest",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "pumpkin-blaster unedited: the embedded golden scenarios equal the CLI's (5 scenarios, 73914 bytes)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "trick-or-treat-rush unedited: ZIP is valid (CRCs, regular files, safe unique paths) and equals monstera generate apps/trick-or-treat-rush/monstera.spec.json: paths, contents, modes",
+      "ok": true,
+      "detail": "48 files; missing 0, extra 0, differ 0, modes 0; executables android/gradlew; zip problems none"
+    },
+    {
+      "name": "trick-or-treat-rush unedited: manifest and the bundled spec carry the exact spec SHA-256; the Gradle wrapper JAR equals the committed binary",
+      "ok": true,
+      "detail": "manifest 6103e7e57272 for apps/trick-or-treat-rush/monstera.spec.json; jar 621008afc4f5"
+    },
+    {
+      "name": "trick-or-treat-rush unedited: MONSTERA-MANIFEST.json equals the committed manifest",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "trick-or-treat-rush unedited: the embedded golden scenarios equal the CLI's (6 scenarios, 36978 bytes)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "lantern-run unedited: ZIP is valid (CRCs, regular files, safe unique paths) and equals monstera generate spec/samples/lantern-run/monstera.spec.json: paths, contents, modes",
+      "ok": true,
+      "detail": "49 files; missing 0, extra 0, differ 0, modes 0; executables android/gradlew; zip problems none"
+    },
+    {
+      "name": "lantern-run unedited: manifest and the bundled spec carry the exact spec SHA-256; the Gradle wrapper JAR equals the committed binary",
+      "ok": true,
+      "detail": "manifest 6aea4e625fa3 for spec/samples/lantern-run/monstera.spec.json; jar 621008afc4f5"
+    },
+    {
+      "name": "lantern-run unedited: the embedded golden scenarios equal the CLI's (4 scenarios, 20851 bytes)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "pumpkin-blaster edited (lives 7): ZIP is valid (CRCs, regular files, safe unique paths) and equals generate.plan(<edited spec>, 'apps/pumpkin-blaster/monstera.spec.json', layout='app', scenarios=[]): paths, contents, modes",
+      "ok": true,
+      "detail": "48 files; missing 0, extra 0, differ 0, modes 0; executables android/gradlew; zip problems none"
+    },
+    {
+      "name": "pumpkin-blaster edited (lives 7): manifest and the bundled spec carry the exact spec SHA-256; the Gradle wrapper JAR equals the committed binary",
+      "ok": true,
+      "detail": "manifest 09e53302a767 for apps/pumpkin-blaster/monstera.spec.json; jar 621008afc4f5"
+    },
+    {
+      "name": "pumpkin-blaster edited (lives 7): the CLI refuses this spec (stale goldens) and the export has no scenarios and the canonical draft",
+      "ok": true,
+      "detail": "generate: frame-jitter-60hz.scenario.json: recorded against a different spec; run `monstera scenarios record`"
+    },
+    {
+      "name": "trick-or-treat-rush edited (lives 4): ZIP is valid (CRCs, regular files, safe unique paths) and equals generate.plan(<edited spec>, 'apps/trick-or-treat-rush/monstera.spec.json', layout='app', scenarios=[]): paths, contents, modes",
+      "ok": true,
+      "detail": "48 files; missing 0, extra 0, differ 0, modes 0; executables android/gradlew; zip problems none"
+    },
+    {
+      "name": "trick-or-treat-rush edited (lives 4): manifest and the bundled spec carry the exact spec SHA-256; the Gradle wrapper JAR equals the committed binary",
+      "ok": true,
+      "detail": "manifest 81e9262da9ac for apps/trick-or-treat-rush/monstera.spec.json; jar 621008afc4f5"
+    },
+    {
+      "name": "trick-or-treat-rush edited (lives 4): the CLI refuses this spec (stale goldens) and the export has no scenarios and the canonical draft",
+      "ok": true,
+      "detail": "generate: candy-chase.scenario.json: recorded against a different spec; run `monstera scenarios record`"
+    }
+  ]
+}

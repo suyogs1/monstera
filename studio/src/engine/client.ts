@@ -1,5 +1,5 @@
 import type {
-  DraftValidation, EngineFunction, EngineTimings, TemplateInfo, TemplateLoad, WorkerRequest, WorkerResponse,
+  BadgeCheck, BadgeScenario, DraftValidation, EngineEvent, ExportPlan, EngineFunction, EngineTimings, GoldenRow, PreviewFrame, PreviewStart, PreviewTrace, PlanTemplate, TemplateInfo, TemplateLoad, WorkerRequest, WorkerResponse,
 } from "./protocol";
 
 type WithoutId<T> = T extends unknown ? Omit<T, "id"> : never;
@@ -42,12 +42,29 @@ export class EngineClient {
     this.templates = r.templates;
   }
 
+  /** Observer for reply size and parse time (the preview reports its snapshot cost with it). */
+  onReply: ((fn: EngineFunction, bytes: number, parseMs: number) => void) | undefined;
+
   private async call<T>(fn: EngineFunction, ...args: string[]): Promise<T> {
-    return JSON.parse((await this.send({ cmd: "call", fn, args })) as string) as T;
+    const text = (await this.send({ cmd: "call", fn, args })) as string;
+    const t0 = performance.now();
+    const value = JSON.parse(text) as T;
+    this.onReply?.(fn, text.length, performance.now() - t0);
+    return value;
   }
 
   info() { return this.call<{ python: string; repoRoot: string; schemaDigests: Record<string, string> }>("info"); }
   schemas() { return this.call<Record<string, string>>("schemas"); }
   validateDraft(text: string) { return this.call<DraftValidation>("validate_draft", text); }
   template(path: string) { return this.call<TemplateLoad>("template", path); }
+  goldenReport() { return this.call<GoldenRow[]>("golden_report"); }
+  planTemplate(path: string) { return this.call<PlanTemplate>("plan_template", path); }
+  badgeScenarios(templatePath: string) { return this.call<BadgeScenario[]>("badge_scenarios", templatePath); }
+  badgeCheck(draftText: string, scenarioFile: string) { return this.call<BadgeCheck>("badge_check", draftText, scenarioFile); }
+  previewStart(draftText: string, seed: number) { return this.call<PreviewStart>("preview_start", draftText, String(seed)); }
+  previewFrame(session: number, elapsedNanos: number, events: EngineEvent[]) {
+    return this.call<PreviewFrame>("preview_frame", String(session), String(elapsedNanos), JSON.stringify(events));
+  }
+  previewTrace() { return this.call<PreviewTrace | null>("preview_trace"); }
+  exportPlan(draftText: string, originPath: string | null) { return this.call<ExportPlan>("export_plan", draftText, originPath ?? ""); }
 }

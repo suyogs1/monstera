@@ -1,0 +1,767 @@
+{
+  "verdict": "PASS",
+  "browser": "Chrome 157.0.8103.51",
+  "hostPython": "3.14.1 (tags/v3.14.1:57e0d17, Dec  2 2025, 14:05:07) [MSC v.1944 64 bit (AMD64)]",
+  "limits": {
+    "coldInitMs": 10000,
+    "brotliFirstLoadBytes": 15728640
+  },
+  "engineTimings": {
+    "pyodideMs": 1615.9000000059605,
+    "bundleFetchMs": 19.200000017881393,
+    "unpackMs": 10.199999988079071,
+    "importEngineMs": 93.40000000596046,
+    "totalMs": 1738.7000000178814,
+    "files": 105
+  },
+  "goldens": {
+    "count": 33,
+    "frameDriven": 7,
+    "checkpoints": 3028,
+    "ticks": 81805,
+    "wallMsAllInBrowserIncludingCheck": 8361,
+    "scenarios": [
+      {
+        "file": "spec/scenarios/boundary-lab/bounce-clamp.scenario.json",
+        "frameDriven": false,
+        "ticks": 12,
+        "checkpoints": 13,
+        "matchesCommitted": true,
+        "firstDivergenceFromCommitted": null,
+        "equalsHostCPython": true,
+        "engineCheckClean": true,
+        "finalHash": "6596b6c77829a9ff",
+        "msBrowser": 5.1,
+        "msHost": 2.4
+      },
+      {
+        "file": "spec/scenarios/boundary-lab/lifetime-and-cap.scenario.json",
+        "frameDriven": false,
+        "ticks": 150,
+        "checkpoints": 151,
+        "matchesCommitted": true,
+        "firstDivergenceFromCommitted": null,
+        "equalsHostCPython": true,
+        "engineCheckClean": true,
+        "finalHash": "4207e8cd154251ca",
+        "msBrowser": 49.2,
+        "msHost": 26.9
+      },
+      {
+        "file": "spec/scenarios/boundary-lab/lives-end.scenario.json",
+        "frameDriven": false,
+        "ticks": 40,
+        "checkpoints": 41,
+        "matchesCommitted": true,
+        "firstDivergenceFromCommitted": null,
+        "equalsHostCPython": true,
+        "engineCheckClean": true,
+        "finalHash": "631df1ff606b3d33",
+        "msBrowser": 9.8,
+        "msHost": 5
+      },
+      {
+        "file": "spec/scenarios/boundary-lab/loop-lives-end.scenario.json",
+        "frameDriven": true,
+        "ticks": 300,
+        "checkpoints": 101,
+        "matchesCommitted": true,
+        "firstDivergenceFromCommitted": null,
+        "equalsHostCPython": true,
+        "engineCheckClean": true,
+        "finalHash": "d1694240133afe65",
+        "msBrowser": 36.4,
+        "msHost": 19.1
+      },
+      {
+        "file": "spec/scenarios/boundary-lab/negative-rounding.scenario.json",
+        "frameDriven": false,
+        "ticks": 40,
+        "checkpoints": 41,
+        "matchesCommitted": true,
+        "firstDivergenceFromCommitted": null,
+        "equalsHostCPython": true,
+        "engineCheckClean": true,
+        "finalHash": "94be8cdcf5018155",
+        "msBrowser": 13.3,
+        "msHost": 6.7
+      },
+      {
+        "file": "spec/scenarios/boundary-lab/touching-edges.scenario.json",
+        "frameDriven": false,
+        "ticks": 3,
+        "checkpoints": 4,
+        "matchesCommitted": true,
+        "firstDivergenceFromCommitted": null,
+        "equalsHostCPython": true,
+        "engineCheckClean": true,
+        "finalHash": "6bf52f4296f4045a",
+        "msBrowser": 1.2,
+        "msHost": 0.8
+      },
+      {
+        "file": "spec/scenarios/boundary-lab/world-exit.scenario.json",
+        "frameDriven": false,
+        "ticks": 30,
+        "checkpoints": 31,
+        "matchesCommitted": true,
+        "firstDivergenceFromCommitted": null,
+        "equalsHostCPython": true,
+        "engineCheckClean": true,
+        "finalHash": "c7327a2dc8d7f6fa",
+        "msBrowser": 9.4,
+        "msHost": 5.3
+      },
+      {
+        "file": "spec/scenarios/lantern-run/frame-jitter.scenario.json",
+        "frameDriven": true,
+        "ticks": 900,
+        "checkpoints": 101,
+        "matchesCommitted": true,
+        "firstDivergenceFromCommitted": null,
+        "equalsHostCPython": true,
+        "engineCheckClean": true,
+        "finalHash": "520782c302ae3387",
+        "msBrowser": 15.7,
+        "msHost": 7.6
+      },
+      {
+        "file": "spec/scenarios/lantern-run/idle-keeper.scenario.json",
+        "frameDriven": false,
+        "ticks": 3000,
+        "checkpoints": 101,
+        "matchesCommitted": true,
+        "firstDivergenceFromCommitted": null,
+        "equalsHostCPython": true,
+        "engineCheckClean": true,
+        "finalHash": "f2661e7417ba3c6f",
+        "msBrowser": 34.1,
+        "msHost": 19.3
+      },
+      {
+        "file": "spec/scenarios/lantern-run/lantern-win.scenario.json",
+        "frameDriven": false,
+        "ticks": 7600,
+        "checkpoints": 101,
+        "matchesCommitted": true,
+        "firstDivergenceFromCommitted": null,
+        "equalsHostCPython": true,
+        "engineCheckClean": true,
+        "finalHash": "525f59feb8a2f4ba",
+        "msBrowser": 71.3,
+        "msHost": 44.2
+      },
+      {
+        "file": "spec/scenarios/lantern-run/swipe-patrol.scenario.json",
+        "frameDriven": false,
+        "ticks": 1800,
+        "checkpoints": 101,
+        "matchesCommitted": true,
+        "firstDivergenceFromCommitted": null,
+        "equalsHostCPython": true,
+        "engineCheckClean": true,
+        "finalHash": "88cd1c14814b0e96",
+        "msBrowser": 14.4,
+        "msHost": 10
+      },
+      {
+        "file": "spec/scenarios/monstera-sample/collision-order.scenario.json",
+        "frameDriven": false,
+        "ticks": 900,
+        "checkpoints": 101,
+        "matchesCommitted": true,
+        "firstDivergenceFromCommitted": null,
+        "equalsHostCPython": true,
+        "engineCheckClean": true,
+        "finalHash": "d649fae3917a5983",
+        "msBrowser": 127,
+        "msHost": 111.2
+      },
+      {
+        "file": "spec/scenarios/monstera-sample/entity-cap.scenario.json",
+        "frameDriven": false,
+        "ticks": 220,
+        "checkpoints": 111,
+        "matchesCommitted": true,
+        "firstDivergenceFromCommitted": null,
+        "equalsHostCPython": true,
+        "engineCheckClean": true,
+        "finalHash": "87759a20036b90e1",
+        "msBrowser": 46.9,
+        "msHost": 34.1
+      },
+      {
+        "file": "spec/scenarios/monstera-sample/game-over.scenario.json",
+        "frameDriven": false,
+        "ticks": 20000,
+        "checkpoints": 101,
+        "matchesCommitted": true,
+        "firstDivergenceFromCommitted": null,
+        "equalsHostCPython": true,
+        "engineCheckClean": true,
+        "finalHash": "feb00c3496c8e24f",
+        "msBrowser": 646.8,
+        "msHost": 578.3
+      },
+      {
+        "file": "spec/scenarios/monstera-sample/idle.scenario.json",
+        "frameDriven": false,
+        "ticks": 600,
+        "checkpoints": 101,
+        "matchesCommitted": true,
+        "firstDivergenceFromCommitted": null,
+        "equalsHostCPython": true,
+        "engineCheckClean": true,
+        "finalHash": "cd632d709f157c61",
+        "msBrowser": 34.4,
+        "msHost": 24.7
+      },
+      {
+        "file": "spec/scenarios/monstera-sample/input-order.scenario.json",
+        "frameDriven": false,
+        "ticks": 120,
+        "checkpoints": 121,
+        "matchesCommitted": true,
+        "firstDivergenceFromCommitted": null,
+        "equalsHostCPython": true,
+        "engineCheckClean": true,
+        "finalHash": "b229b4ac542f3598",
+        "msBrowser": 12.2,
+        "msHost": 8.1
+      },
+      {
+        "file": "spec/scenarios/monstera-sample/long-run.scenario.json",
+        "frameDriven": false,
+        "ticks": 10000,
+        "checkpoints": 101,
+        "matchesCommitted": true,
+        "firstDivergenceFromCommitted": null,
+        "equalsHostCPython": true,
+        "engineCheckClean": true,
+        "finalHash": "67dda277ff993417",
+        "msBrowser": 790.7,
+        "msHost": 641.6
+      },
+      {
+        "file": "spec/scenarios/monstera-sample/loop-120hz.scenario.json",
+        "frameDriven": true,
+        "ticks": 1200,
+        "checkpoints": 101,
+        "matchesCommitted": true,
+        "firstDivergenceFromCommitted": null,
+        "equalsHostCPython": true,
+        "engineCheckClean": true,
+        "finalHash": "c5cbdd8000a87ba8",
+        "msBrowser": 61,
+        "msHost": 44.9
+      },
+      {
+        "file": "spec/scenarios/monstera-sample/loop-hitch.scenario.json",
+        "frameDriven": true,
+        "ticks": 800,
+        "checkpoints": 101,
+        "matchesCommitted": true,
+        "firstDivergenceFromCommitted": null,
+        "equalsHostCPython": true,
+        "engineCheckClean": true,
+        "finalHash": "3f53b6a3c96d67b3",
+        "msBrowser": 233.8,
+        "msHost": 179.7
+      },
+      {
+        "file": "spec/scenarios/monstera-sample/loop-jitter.scenario.json",
+        "frameDriven": true,
+        "ticks": 1500,
+        "checkpoints": 101,
+        "matchesCommitted": true,
+        "firstDivergenceFromCommitted": null,
+        "equalsHostCPython": true,
+        "engineCheckClean": true,
+        "finalHash": "55d2715b1b498980",
+        "msBrowser": 135.1,
+        "msHost": 104.2
+      },
+      {
+        "file": "spec/scenarios/monstera-sample/saturation.scenario.json",
+        "frameDriven": false,
+        "ticks": 90,
+        "checkpoints": 91,
+        "matchesCommitted": true,
+        "firstDivergenceFromCommitted": null,
+        "equalsHostCPython": true,
+        "engineCheckClean": true,
+        "finalHash": "e10fa8d8e79a261b",
+        "msBrowser": 7.8,
+        "msHost": 4.5
+      },
+      {
+        "file": "spec/scenarios/monstera-sample/spawn-determinism.scenario.json",
+        "frameDriven": false,
+        "ticks": 3000,
+        "checkpoints": 101,
+        "matchesCommitted": true,
+        "firstDivergenceFromCommitted": null,
+        "equalsHostCPython": true,
+        "engineCheckClean": true,
+        "finalHash": "b1b7011716a2e036",
+        "msBrowser": 163.9,
+        "msHost": 126.2
+      },
+      {
+        "file": "spec/scenarios/pumpkin-blaster/frame-jitter-60hz.scenario.json",
+        "frameDriven": true,
+        "ticks": 1800,
+        "checkpoints": 101,
+        "matchesCommitted": true,
+        "firstDivergenceFromCommitted": null,
+        "equalsHostCPython": true,
+        "engineCheckClean": true,
+        "finalHash": "c4ea1e5321820231",
+        "msBrowser": 226.1,
+        "msHost": 154.7
+      },
+      {
+        "file": "spec/scenarios/pumpkin-blaster/idle-defence.scenario.json",
+        "frameDriven": false,
+        "ticks": 6000,
+        "checkpoints": 101,
+        "matchesCommitted": true,
+        "firstDivergenceFromCommitted": null,
+        "equalsHostCPython": true,
+        "engineCheckClean": true,
+        "finalHash": "ce66e4c3bba81a4e",
+        "msBrowser": 81.3,
+        "msHost": 52.8
+      },
+      {
+        "file": "spec/scenarios/pumpkin-blaster/sweep-and-fire.scenario.json",
+        "frameDriven": false,
+        "ticks": 2400,
+        "checkpoints": 101,
+        "matchesCommitted": true,
+        "firstDivergenceFromCommitted": null,
+        "equalsHostCPython": true,
+        "engineCheckClean": true,
+        "finalHash": "20dc7988aca6592b",
+        "msBrowser": 254,
+        "msHost": 173
+      },
+      {
+        "file": "spec/scenarios/pumpkin-blaster/volley-cap.scenario.json",
+        "frameDriven": false,
+        "ticks": 300,
+        "checkpoints": 101,
+        "matchesCommitted": true,
+        "firstDivergenceFromCommitted": null,
+        "equalsHostCPython": true,
+        "engineCheckClean": true,
+        "finalHash": "1c981fe6d273c184",
+        "msBrowser": 156.9,
+        "msHost": 103.1
+      },
+      {
+        "file": "spec/scenarios/pumpkin-blaster/win-1000.scenario.json",
+        "frameDriven": false,
+        "ticks": 6000,
+        "checkpoints": 101,
+        "matchesCommitted": true,
+        "firstDivergenceFromCommitted": null,
+        "equalsHostCPython": true,
+        "engineCheckClean": true,
+        "finalHash": "fde5308cb60195a9",
+        "msBrowser": 333.4,
+        "msHost": 249.2
+      },
+      {
+        "file": "spec/scenarios/trick-or-treat-rush/candy-chase.scenario.json",
+        "frameDriven": false,
+        "ticks": 3000,
+        "checkpoints": 101,
+        "matchesCommitted": true,
+        "firstDivergenceFromCommitted": null,
+        "equalsHostCPython": true,
+        "engineCheckClean": true,
+        "finalHash": "e4ce46f0fe13b008",
+        "msBrowser": 13.4,
+        "msHost": 9.5
+      },
+      {
+        "file": "spec/scenarios/trick-or-treat-rush/dodge-run.scenario.json",
+        "frameDriven": false,
+        "ticks": 5400,
+        "checkpoints": 101,
+        "matchesCommitted": true,
+        "firstDivergenceFromCommitted": null,
+        "equalsHostCPython": true,
+        "engineCheckClean": true,
+        "finalHash": "c68fd718ed7342ad",
+        "msBrowser": 139.5,
+        "msHost": 100.5
+      },
+      {
+        "file": "spec/scenarios/trick-or-treat-rush/frame-jitter.scenario.json",
+        "frameDriven": true,
+        "ticks": 2400,
+        "checkpoints": 101,
+        "matchesCommitted": true,
+        "firstDivergenceFromCommitted": null,
+        "equalsHostCPython": true,
+        "engineCheckClean": true,
+        "finalHash": "73041e9029155219",
+        "msBrowser": 26.1,
+        "msHost": 17
+      },
+      {
+        "file": "spec/scenarios/trick-or-treat-rush/hand-lane-zero.scenario.json",
+        "frameDriven": false,
+        "ticks": 300,
+        "checkpoints": 101,
+        "matchesCommitted": true,
+        "firstDivergenceFromCommitted": null,
+        "equalsHostCPython": true,
+        "engineCheckClean": true,
+        "finalHash": "f0744dff92b9b27d",
+        "msBrowser": 10.6,
+        "msHost": 7.4
+      },
+      {
+        "file": "spec/scenarios/trick-or-treat-rush/idle-run.scenario.json",
+        "frameDriven": false,
+        "ticks": 1500,
+        "checkpoints": 101,
+        "matchesCommitted": true,
+        "firstDivergenceFromCommitted": null,
+        "equalsHostCPython": true,
+        "engineCheckClean": true,
+        "finalHash": "c95e4b92f1842549",
+        "msBrowser": 23.6,
+        "msHost": 16.8
+      },
+      {
+        "file": "spec/scenarios/trick-or-treat-rush/lane-input-order.scenario.json",
+        "frameDriven": false,
+        "ticks": 400,
+        "checkpoints": 101,
+        "matchesCommitted": true,
+        "firstDivergenceFromCommitted": null,
+        "equalsHostCPython": true,
+        "engineCheckClean": true,
+        "finalHash": "3312d873908a8dfa",
+        "msBrowser": 13.4,
+        "msHost": 8.8
+      }
+    ]
+  },
+  "plans": [
+    {
+      "project": "pumpkin-blaster",
+      "files": 48,
+      "specSha256": "08c7a90d9fcfd599c0b5f83743ba339e61f57f1fb10938cf6806d70cda7e0be3",
+      "manifestSha256": "fd2331dc0b5043acf08c2c64f813da62f77e555f0094606788bcb095bfa9f8a1",
+      "jarSha256": "621008afc4f5d59357fcf06ffa644dd5aade5e091bdc363742710445f73cdaf8",
+      "scenariosEmbedded": 5,
+      "recordedScenarios": 5,
+      "msPlan": 1062
+    },
+    {
+      "project": "trick-or-treat-rush",
+      "files": 48,
+      "specSha256": "edcc2000685684cfc17fcbe3634bb01d2967b7d590cfceabb02a2286eaa79b4c",
+      "manifestSha256": "6103e7e572724bc83423f411de2097b7800a30cfc1db7616820a48f58968b025",
+      "jarSha256": "621008afc4f5d59357fcf06ffa644dd5aade5e091bdc363742710445f73cdaf8",
+      "scenariosEmbedded": 6,
+      "recordedScenarios": 6,
+      "msPlan": 288
+    }
+  ],
+  "bundle": {
+    "files": 105,
+    "scenarioFiles": 33,
+    "scenarioRawBytes": 1320293,
+    "binaryFiles": [
+      {
+        "path": "tools/monstera/monstera/templates/android/static/gradle/wrapper/gradle-wrapper.jar",
+        "base64Bytes": 65540
+      }
+    ],
+    "assets": [
+      {
+        "file": "engine/engine-bundle.json",
+        "raw": 1989821,
+        "brotli": 178122
+      },
+      {
+        "file": "pyodide/pyodide.mjs",
+        "raw": 17616,
+        "brotli": 6355
+      },
+      {
+        "file": "pyodide/pyodide.asm.js",
+        "raw": 1074322,
+        "brotli": 181055
+      },
+      {
+        "file": "pyodide/pyodide.asm.wasm",
+        "raw": 8647684,
+        "brotli": 2122063
+      },
+      {
+        "file": "pyodide/python_stdlib.zip",
+        "raw": 2424003,
+        "brotli": 2369083
+      },
+      {
+        "file": "pyodide/pyodide-lock.json",
+        "raw": 122027,
+        "brotli": 23039
+      }
+    ],
+    "appAssets": {
+      "raw": 390101,
+      "brotli": 103366
+    },
+    "firstLoadBrotliBytes": 4983083
+  },
+  "checks": [
+    {
+      "name": "engine ready within 10000 ms (localhost, cold)",
+      "ok": true,
+      "detail": "1739 ms; 105 files (unpack 10 ms)"
+    },
+    {
+      "name": "the browser sees the same scenario files as the repository",
+      "ok": true,
+      "detail": "33 in the browser, 33 on the host"
+    },
+    {
+      "name": "golden spec/scenarios/boundary-lab/bounce-clamp.scenario.json: 13 checkpoints, 12 ticks",
+      "ok": true,
+      "detail": "final hash 6596b6c77829a9ff; browser 5.1 ms, host 2.4 ms"
+    },
+    {
+      "name": "golden spec/scenarios/boundary-lab/lifetime-and-cap.scenario.json: 151 checkpoints, 150 ticks",
+      "ok": true,
+      "detail": "final hash 4207e8cd154251ca; browser 49.2 ms, host 26.9 ms"
+    },
+    {
+      "name": "golden spec/scenarios/boundary-lab/lives-end.scenario.json: 41 checkpoints, 40 ticks",
+      "ok": true,
+      "detail": "final hash 631df1ff606b3d33; browser 9.8 ms, host 5 ms"
+    },
+    {
+      "name": "golden spec/scenarios/boundary-lab/loop-lives-end.scenario.json (frame-driven): 101 checkpoints, 300 ticks",
+      "ok": true,
+      "detail": "final hash d1694240133afe65; browser 36.4 ms, host 19.1 ms"
+    },
+    {
+      "name": "golden spec/scenarios/boundary-lab/negative-rounding.scenario.json: 41 checkpoints, 40 ticks",
+      "ok": true,
+      "detail": "final hash 94be8cdcf5018155; browser 13.3 ms, host 6.7 ms"
+    },
+    {
+      "name": "golden spec/scenarios/boundary-lab/touching-edges.scenario.json: 4 checkpoints, 3 ticks",
+      "ok": true,
+      "detail": "final hash 6bf52f4296f4045a; browser 1.2 ms, host 0.8 ms"
+    },
+    {
+      "name": "golden spec/scenarios/boundary-lab/world-exit.scenario.json: 31 checkpoints, 30 ticks",
+      "ok": true,
+      "detail": "final hash c7327a2dc8d7f6fa; browser 9.4 ms, host 5.3 ms"
+    },
+    {
+      "name": "golden spec/scenarios/lantern-run/frame-jitter.scenario.json (frame-driven): 101 checkpoints, 900 ticks",
+      "ok": true,
+      "detail": "final hash 520782c302ae3387; browser 15.7 ms, host 7.6 ms"
+    },
+    {
+      "name": "golden spec/scenarios/lantern-run/idle-keeper.scenario.json: 101 checkpoints, 3000 ticks",
+      "ok": true,
+      "detail": "final hash f2661e7417ba3c6f; browser 34.1 ms, host 19.3 ms"
+    },
+    {
+      "name": "golden spec/scenarios/lantern-run/lantern-win.scenario.json: 101 checkpoints, 7600 ticks",
+      "ok": true,
+      "detail": "final hash 525f59feb8a2f4ba; browser 71.3 ms, host 44.2 ms"
+    },
+    {
+      "name": "golden spec/scenarios/lantern-run/swipe-patrol.scenario.json: 101 checkpoints, 1800 ticks",
+      "ok": true,
+      "detail": "final hash 88cd1c14814b0e96; browser 14.4 ms, host 10 ms"
+    },
+    {
+      "name": "golden spec/scenarios/monstera-sample/collision-order.scenario.json: 101 checkpoints, 900 ticks",
+      "ok": true,
+      "detail": "final hash d649fae3917a5983; browser 127 ms, host 111.2 ms"
+    },
+    {
+      "name": "golden spec/scenarios/monstera-sample/entity-cap.scenario.json: 111 checkpoints, 220 ticks",
+      "ok": true,
+      "detail": "final hash 87759a20036b90e1; browser 46.9 ms, host 34.1 ms"
+    },
+    {
+      "name": "golden spec/scenarios/monstera-sample/game-over.scenario.json: 101 checkpoints, 20000 ticks",
+      "ok": true,
+      "detail": "final hash feb00c3496c8e24f; browser 646.8 ms, host 578.3 ms"
+    },
+    {
+      "name": "golden spec/scenarios/monstera-sample/idle.scenario.json: 101 checkpoints, 600 ticks",
+      "ok": true,
+      "detail": "final hash cd632d709f157c61; browser 34.4 ms, host 24.7 ms"
+    },
+    {
+      "name": "golden spec/scenarios/monstera-sample/input-order.scenario.json: 121 checkpoints, 120 ticks",
+      "ok": true,
+      "detail": "final hash b229b4ac542f3598; browser 12.2 ms, host 8.1 ms"
+    },
+    {
+      "name": "golden spec/scenarios/monstera-sample/long-run.scenario.json: 101 checkpoints, 10000 ticks",
+      "ok": true,
+      "detail": "final hash 67dda277ff993417; browser 790.7 ms, host 641.6 ms"
+    },
+    {
+      "name": "golden spec/scenarios/monstera-sample/loop-120hz.scenario.json (frame-driven): 101 checkpoints, 1200 ticks",
+      "ok": true,
+      "detail": "final hash c5cbdd8000a87ba8; browser 61 ms, host 44.9 ms"
+    },
+    {
+      "name": "golden spec/scenarios/monstera-sample/loop-hitch.scenario.json (frame-driven): 101 checkpoints, 800 ticks",
+      "ok": true,
+      "detail": "final hash 3f53b6a3c96d67b3; browser 233.8 ms, host 179.7 ms"
+    },
+    {
+      "name": "golden spec/scenarios/monstera-sample/loop-jitter.scenario.json (frame-driven): 101 checkpoints, 1500 ticks",
+      "ok": true,
+      "detail": "final hash 55d2715b1b498980; browser 135.1 ms, host 104.2 ms"
+    },
+    {
+      "name": "golden spec/scenarios/monstera-sample/saturation.scenario.json: 91 checkpoints, 90 ticks",
+      "ok": true,
+      "detail": "final hash e10fa8d8e79a261b; browser 7.8 ms, host 4.5 ms"
+    },
+    {
+      "name": "golden spec/scenarios/monstera-sample/spawn-determinism.scenario.json: 101 checkpoints, 3000 ticks",
+      "ok": true,
+      "detail": "final hash b1b7011716a2e036; browser 163.9 ms, host 126.2 ms"
+    },
+    {
+      "name": "golden spec/scenarios/pumpkin-blaster/frame-jitter-60hz.scenario.json (frame-driven): 101 checkpoints, 1800 ticks",
+      "ok": true,
+      "detail": "final hash c4ea1e5321820231; browser 226.1 ms, host 154.7 ms"
+    },
+    {
+      "name": "golden spec/scenarios/pumpkin-blaster/idle-defence.scenario.json: 101 checkpoints, 6000 ticks",
+      "ok": true,
+      "detail": "final hash ce66e4c3bba81a4e; browser 81.3 ms, host 52.8 ms"
+    },
+    {
+      "name": "golden spec/scenarios/pumpkin-blaster/sweep-and-fire.scenario.json: 101 checkpoints, 2400 ticks",
+      "ok": true,
+      "detail": "final hash 20dc7988aca6592b; browser 254 ms, host 173 ms"
+    },
+    {
+      "name": "golden spec/scenarios/pumpkin-blaster/volley-cap.scenario.json: 101 checkpoints, 300 ticks",
+      "ok": true,
+      "detail": "final hash 1c981fe6d273c184; browser 156.9 ms, host 103.1 ms"
+    },
+    {
+      "name": "golden spec/scenarios/pumpkin-blaster/win-1000.scenario.json: 101 checkpoints, 6000 ticks",
+      "ok": true,
+      "detail": "final hash fde5308cb60195a9; browser 333.4 ms, host 249.2 ms"
+    },
+    {
+      "name": "golden spec/scenarios/trick-or-treat-rush/candy-chase.scenario.json: 101 checkpoints, 3000 ticks",
+      "ok": true,
+      "detail": "final hash e4ce46f0fe13b008; browser 13.4 ms, host 9.5 ms"
+    },
+    {
+      "name": "golden spec/scenarios/trick-or-treat-rush/dodge-run.scenario.json: 101 checkpoints, 5400 ticks",
+      "ok": true,
+      "detail": "final hash c68fd718ed7342ad; browser 139.5 ms, host 100.5 ms"
+    },
+    {
+      "name": "golden spec/scenarios/trick-or-treat-rush/frame-jitter.scenario.json (frame-driven): 101 checkpoints, 2400 ticks",
+      "ok": true,
+      "detail": "final hash 73041e9029155219; browser 26.1 ms, host 17 ms"
+    },
+    {
+      "name": "golden spec/scenarios/trick-or-treat-rush/hand-lane-zero.scenario.json: 101 checkpoints, 300 ticks",
+      "ok": true,
+      "detail": "final hash f0744dff92b9b27d; browser 10.6 ms, host 7.4 ms"
+    },
+    {
+      "name": "golden spec/scenarios/trick-or-treat-rush/idle-run.scenario.json: 101 checkpoints, 1500 ticks",
+      "ok": true,
+      "detail": "final hash c95e4b92f1842549; browser 23.6 ms, host 16.8 ms"
+    },
+    {
+      "name": "golden spec/scenarios/trick-or-treat-rush/lane-input-order.scenario.json: 101 checkpoints, 400 ticks",
+      "ok": true,
+      "detail": "final hash 3312d873908a8dfa; browser 13.4 ms, host 8.8 ms"
+    },
+    {
+      "name": "the proof includes frame-driven scenarios",
+      "ok": true,
+      "detail": "7 frame-driven"
+    },
+    {
+      "name": "plan pumpkin-blaster: file set, contents and sizes equal `monstera generate`",
+      "ok": true,
+      "detail": "48 files; missing 0, extra 0, content differs 0"
+    },
+    {
+      "name": "plan pumpkin-blaster: modes equal the CLI manifest",
+      "ok": true,
+      "detail": "47 modes; differs 0"
+    },
+    {
+      "name": "plan pumpkin-blaster: MONSTERA-MANIFEST.json equals the CLI output and the committed manifest",
+      "ok": true,
+      "detail": "fd2331dc0b5043acf08c2c64f813da62f77e555f0094606788bcb095bfa9f8a1"
+    },
+    {
+      "name": "plan pumpkin-blaster: gradle-wrapper.jar equals the CLI output and the committed blob",
+      "ok": true,
+      "detail": "android/gradle/wrapper/gradle-wrapper.jar 621008afc4f5d59357fcf06ffa644dd5aade5e091bdc363742710445f73cdaf8"
+    },
+    {
+      "name": "plan pumpkin-blaster: embeds all 5 recorded scenarios",
+      "ok": true,
+      "detail": "5"
+    },
+    {
+      "name": "plan trick-or-treat-rush: file set, contents and sizes equal `monstera generate`",
+      "ok": true,
+      "detail": "48 files; missing 0, extra 0, content differs 0"
+    },
+    {
+      "name": "plan trick-or-treat-rush: modes equal the CLI manifest",
+      "ok": true,
+      "detail": "47 modes; differs 0"
+    },
+    {
+      "name": "plan trick-or-treat-rush: MONSTERA-MANIFEST.json equals the CLI output and the committed manifest",
+      "ok": true,
+      "detail": "6103e7e572724bc83423f411de2097b7800a30cfc1db7616820a48f58968b025"
+    },
+    {
+      "name": "plan trick-or-treat-rush: gradle-wrapper.jar equals the CLI output and the committed blob",
+      "ok": true,
+      "detail": "android/gradle/wrapper/gradle-wrapper.jar 621008afc4f5d59357fcf06ffa644dd5aade5e091bdc363742710445f73cdaf8"
+    },
+    {
+      "name": "plan trick-or-treat-rush: embeds all 6 recorded scenarios",
+      "ok": true,
+      "detail": "6"
+    },
+    {
+      "name": "first load (brotli estimate) within 15 MiB",
+      "ok": true,
+      "detail": "4.75 MiB"
+    },
+    {
+      "name": "no console or page errors",
+      "ok": true,
+      "detail": ""
+    }
+  ]
+}

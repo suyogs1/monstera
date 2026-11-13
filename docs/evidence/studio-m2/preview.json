@@ -1,0 +1,549 @@
+{
+  "verdict": "PASS",
+  "browser": "Chrome 157.0.8103.51",
+  "limits": {
+    "restartMs": 1000,
+    "mainThreadGapMs": 100,
+    "engineFrameP95Ms": 3
+  },
+  "measureWindowMs": 3000,
+  "templates": [
+    {
+      "template": "pumpkin-blaster",
+      "scheme": "drag",
+      "sha256": "08c7a90d9fcfd599c0b5f83743ba339e61f57f1fb10938cf6806d70cda7e0be3",
+      "framesPerSecond": 60,
+      "framesSent": 181,
+      "framesSkippedBusy": 0,
+      "roundTripMs": {
+        "n": 181,
+        "p50": 0.699999988079071,
+        "p95": 1.2000000178813934,
+        "max": 3.4000000059604645
+      },
+      "engineFrameMs": {
+        "n": 181,
+        "p50": 0.10000000000021103,
+        "p95": 0.300000000000189,
+        "max": 0.39999999999995595
+      },
+      "snapshotBytes": {
+        "n": 181,
+        "p50": 739,
+        "p95": 822,
+        "max": 826
+      },
+      "parseMs": {
+        "n": 181,
+        "p50": 0,
+        "p95": 0.09999999403953552,
+        "max": 0.10000002384185791
+      },
+      "entities": {
+        "n": 181,
+        "p50": 14,
+        "p95": 16,
+        "max": 16
+      },
+      "maxMainThreadGapMs": 21.9,
+      "restartMs": {
+        "median": 179,
+        "max": 193,
+        "all": [
+          176,
+          176,
+          179,
+          186,
+          193
+        ]
+      },
+      "endCardReached": true,
+      "inputEvents": 58,
+      "inputTypes": [
+        "drag",
+        "press",
+        "release",
+        "tap"
+      ]
+    },
+    {
+      "template": "trick-or-treat-rush",
+      "scheme": "lanes",
+      "sha256": "edcc2000685684cfc17fcbe3634bb01d2967b7d590cfceabb02a2286eaa79b4c",
+      "framesPerSecond": 59.9,
+      "framesSent": 180,
+      "framesSkippedBusy": 0,
+      "roundTripMs": {
+        "n": 180,
+        "p50": 0.6000000238418579,
+        "p95": 0.9000000059604645,
+        "max": 7.0999999940395355
+      },
+      "engineFrameMs": {
+        "n": 180,
+        "p50": 0.09999999999976694,
+        "p95": 0.19999999999953388,
+        "max": 0.39999999999906777
+      },
+      "snapshotBytes": {
+        "n": 180,
+        "p50": 344,
+        "p95": 450,
+        "max": 482
+      },
+      "parseMs": {
+        "n": 180,
+        "p50": 0,
+        "p95": 0.09999999403953552,
+        "max": 0.19999998807907104
+      },
+      "entities": {
+        "n": 180,
+        "p50": 6,
+        "p95": 8,
+        "max": 9
+      },
+      "maxMainThreadGapMs": 19.5,
+      "restartMs": {
+        "median": 176,
+        "max": 177,
+        "all": [
+          171,
+          176,
+          176,
+          177,
+          177
+        ]
+      },
+      "endCardReached": true,
+      "inputEvents": 9,
+      "inputTypes": [
+        "drag",
+        "press",
+        "release",
+        "tap"
+      ]
+    },
+    {
+      "template": "lantern-run",
+      "scheme": "swipe",
+      "sha256": "cc08da835eab0e59b23ddb58e766cd9420e41514124e09b7903438a5fd0d60b1",
+      "framesPerSecond": 59.8,
+      "framesSent": 180,
+      "framesSkippedBusy": 0,
+      "roundTripMs": {
+        "n": 180,
+        "p50": 0.5999999940395355,
+        "p95": 1,
+        "max": 3.5999999940395355
+      },
+      "engineFrameMs": {
+        "n": 180,
+        "p50": 0.09999999999976694,
+        "p95": 0.19999999999953388,
+        "max": 0.2999999999993008
+      },
+      "snapshotBytes": {
+        "n": 180,
+        "p50": 201,
+        "p95": 203,
+        "max": 203
+      },
+      "parseMs": {
+        "n": 180,
+        "p50": 0,
+        "p95": 0.09999999403953552,
+        "max": 0.10000002384185791
+      },
+      "entities": {
+        "n": 180,
+        "p50": 1,
+        "p95": 1,
+        "max": 1
+      },
+      "maxMainThreadGapMs": 19.6,
+      "restartMs": {
+        "median": 177,
+        "max": 188,
+        "all": [
+          176,
+          176,
+          177,
+          179,
+          188
+        ]
+      },
+      "endCardReached": true,
+      "inputEvents": 12,
+      "inputTypes": [
+        "press",
+        "release",
+        "swipe"
+      ]
+    }
+  ],
+  "badgeWhilePreviewing": {
+    "badgeMs": 1114,
+    "maxMainThreadGapMs": 16.5,
+    "framesSent": 9,
+    "framesSkippedBusy": 58,
+    "roundTripMs": {
+      "n": 9,
+      "p50": 59.5,
+      "p95": 371.59999999403954,
+      "max": 371.59999999403954
+    }
+  },
+  "replays": [
+    {
+      "session": "pumpkin-blaster: played",
+      "frames": 187,
+      "events": 58,
+      "browserHash": "0e688b0b2b66e43e",
+      "hostHash": "0e688b0b2b66e43e",
+      "tick": 185,
+      "truncated": false
+    },
+    {
+      "session": "pumpkin-blaster: lives 1 until ended",
+      "frames": 502,
+      "events": 0,
+      "browserHash": "eca3f167a2061a4f",
+      "hostHash": "eca3f167a2061a4f",
+      "tick": 481,
+      "truncated": false
+    },
+    {
+      "session": "trick-or-treat-rush: played",
+      "frames": 186,
+      "events": 9,
+      "browserHash": "28ee62549bb80ca0",
+      "hostHash": "28ee62549bb80ca0",
+      "tick": 185,
+      "truncated": false
+    },
+    {
+      "session": "trick-or-treat-rush: lives 1 until ended",
+      "frames": 346,
+      "events": 0,
+      "browserHash": "f018a2d029f5e3ac",
+      "hostHash": "f018a2d029f5e3ac",
+      "tick": 326,
+      "truncated": false
+    },
+    {
+      "session": "lantern-run: played",
+      "frames": 187,
+      "events": 12,
+      "browserHash": "a9ffe0b79562e9c4",
+      "hostHash": "a9ffe0b79562e9c4",
+      "tick": 186,
+      "truncated": false
+    },
+    {
+      "session": "lantern-run: lives 1 until ended",
+      "frames": 2235,
+      "events": 0,
+      "browserHash": "8b8a50479f9d481e",
+      "hostHash": "8b8a50479f9d481e",
+      "tick": 2215,
+      "truncated": false
+    },
+    {
+      "session": "pumpkin-blaster: attract during badge run",
+      "frames": 39,
+      "events": 0,
+      "browserHash": "aafec7907c59a20f",
+      "hostHash": "aafec7907c59a20f",
+      "tick": 58,
+      "truncated": false
+    }
+  ],
+  "checks": [
+    {
+      "name": "pumpkin-blaster: the preview starts from the engine for the template's exact SHA-256",
+      "ok": true,
+      "detail": "08c7a90d9fcf; scheme drag"
+    },
+    {
+      "name": "pumpkin-blaster: before the first tap the game runs unattended behind the start card",
+      "ok": true,
+      "detail": "tick 42"
+    },
+    {
+      "name": "pumpkin-blaster: the first tap starts a fresh session with a fresh seed",
+      "ok": true,
+      "detail": "seed 414423158006939 -> 7343511216474487"
+    },
+    {
+      "name": "pumpkin-blaster: pointer input (drag) reaches the engine as drag, press, release, tap events",
+      "ok": true,
+      "detail": "58 events: drag, press, release, tap"
+    },
+    {
+      "name": "pumpkin-blaster: main thread stays responsive while playing (max timer gap <= 100 ms)",
+      "ok": true,
+      "detail": "21.9 ms"
+    },
+    {
+      "name": "pumpkin-blaster: engine frame p95 <= 3 ms",
+      "ok": true,
+      "detail": "p95 0.30 ms, max 0.40 ms"
+    },
+    {
+      "name": "pumpkin-blaster: edit 1 restarts the preview with the edited spec (lives 6, engine reports 6)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "pumpkin-blaster: edit 2 restarts the preview with the edited spec (lives 7, engine reports 7)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "pumpkin-blaster: edit 3 restarts the preview with the edited spec (lives 6, engine reports 6)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "pumpkin-blaster: edit 4 restarts the preview with the edited spec (lives 7, engine reports 7)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "pumpkin-blaster: edit 5 restarts the preview with the edited spec (lives 6, engine reports 6)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "pumpkin-blaster: a valid edit restarts the preview within 1000 ms (5 edits)",
+      "ok": true,
+      "detail": "median 179 ms, max 193 ms (includes the 150 ms validation debounce)"
+    },
+    {
+      "name": "pumpkin-blaster: an invalid draft pauses the preview, says why, and stops stepping",
+      "ok": true,
+      "detail": "Paused: the draft has 1 validation issue(s); showing the last valid version."
+    },
+    {
+      "name": "pumpkin-blaster: a valid draft again resumes with its exact SHA-256 (back to the template)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "pumpkin-blaster: the engine ends the game, the end card shows, and a tap restarts a fresh session",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "trick-or-treat-rush: the preview starts from the engine for the template's exact SHA-256",
+      "ok": true,
+      "detail": "edcc20006856; scheme lanes"
+    },
+    {
+      "name": "trick-or-treat-rush: before the first tap the game runs unattended behind the start card",
+      "ok": true,
+      "detail": "tick 46"
+    },
+    {
+      "name": "trick-or-treat-rush: the first tap starts a fresh session with a fresh seed",
+      "ok": true,
+      "detail": "seed 1925968384086825 -> 8439182529640291"
+    },
+    {
+      "name": "trick-or-treat-rush: pointer input (lanes) reaches the engine as drag, press, release events",
+      "ok": true,
+      "detail": "9 events: drag, press, release, tap"
+    },
+    {
+      "name": "trick-or-treat-rush: main thread stays responsive while playing (max timer gap <= 100 ms)",
+      "ok": true,
+      "detail": "19.5 ms"
+    },
+    {
+      "name": "trick-or-treat-rush: engine frame p95 <= 3 ms",
+      "ok": true,
+      "detail": "p95 0.20 ms, max 0.40 ms"
+    },
+    {
+      "name": "trick-or-treat-rush: edit 1 restarts the preview with the edited spec (lives 4, engine reports 4)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "trick-or-treat-rush: edit 2 restarts the preview with the edited spec (lives 5, engine reports 5)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "trick-or-treat-rush: edit 3 restarts the preview with the edited spec (lives 4, engine reports 4)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "trick-or-treat-rush: edit 4 restarts the preview with the edited spec (lives 5, engine reports 5)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "trick-or-treat-rush: edit 5 restarts the preview with the edited spec (lives 4, engine reports 4)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "trick-or-treat-rush: a valid edit restarts the preview within 1000 ms (5 edits)",
+      "ok": true,
+      "detail": "median 176 ms, max 177 ms (includes the 150 ms validation debounce)"
+    },
+    {
+      "name": "trick-or-treat-rush: an invalid draft pauses the preview, says why, and stops stepping",
+      "ok": true,
+      "detail": "Paused: the draft has 1 validation issue(s); showing the last valid version."
+    },
+    {
+      "name": "trick-or-treat-rush: a valid draft again resumes with its exact SHA-256 (back to the template)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "trick-or-treat-rush: the engine ends the game, the end card shows, and a tap restarts a fresh session",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "lantern-run: the preview starts from the engine for the template's exact SHA-256",
+      "ok": true,
+      "detail": "cc08da835eab; scheme swipe"
+    },
+    {
+      "name": "lantern-run: before the first tap the game runs unattended behind the start card",
+      "ok": true,
+      "detail": "tick 47"
+    },
+    {
+      "name": "lantern-run: the first tap starts a fresh session with a fresh seed",
+      "ok": true,
+      "detail": "seed 151262311068920 -> 2604843835464945"
+    },
+    {
+      "name": "lantern-run: pointer input (swipe) reaches the engine as press, release, swipe events",
+      "ok": true,
+      "detail": "12 events: press, release, swipe"
+    },
+    {
+      "name": "lantern-run: main thread stays responsive while playing (max timer gap <= 100 ms)",
+      "ok": true,
+      "detail": "19.6 ms"
+    },
+    {
+      "name": "lantern-run: engine frame p95 <= 3 ms",
+      "ok": true,
+      "detail": "p95 0.20 ms, max 0.30 ms"
+    },
+    {
+      "name": "lantern-run: edit 1 restarts the preview with the edited spec (lives 4, engine reports 4)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "lantern-run: edit 2 restarts the preview with the edited spec (lives 5, engine reports 5)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "lantern-run: edit 3 restarts the preview with the edited spec (lives 4, engine reports 4)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "lantern-run: edit 4 restarts the preview with the edited spec (lives 5, engine reports 5)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "lantern-run: edit 5 restarts the preview with the edited spec (lives 4, engine reports 4)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "lantern-run: a valid edit restarts the preview within 1000 ms (5 edits)",
+      "ok": true,
+      "detail": "median 177 ms, max 188 ms (includes the 150 ms validation debounce)"
+    },
+    {
+      "name": "lantern-run: an invalid draft pauses the preview, says why, and stops stepping",
+      "ok": true,
+      "detail": "Paused: the draft has 1 validation issue(s); showing the last valid version."
+    },
+    {
+      "name": "lantern-run: a valid draft again resumes with its exact SHA-256 (back to the template)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "lantern-run: the engine ends the game, the end card shows, and a tap restarts a fresh session",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "while the badge runs, the badge still MATCHes and the main thread stays responsive",
+      "ok": true,
+      "detail": "badge match in 1114 ms; max main-thread gap 16.5 ms"
+    },
+    {
+      "name": "while the badge holds the worker, preview frames are skipped and never queued (one request in flight)",
+      "ok": true,
+      "detail": "9 frames sent, 58 display frames skipped, worst round trip 372 ms"
+    },
+    {
+      "name": "the preview is labelled 'simulation exact, touch mapping approximate'",
+      "ok": true,
+      "detail": "simulation exact, touch mapping approximate"
+    },
+    {
+      "name": "exact: pumpkin-blaster: played (187 frames, 58 events) replays on host CPython to the same state",
+      "ok": true,
+      "detail": "0e688b0b2b66e43e / 0e688b0b2b66e43e, tick 185"
+    },
+    {
+      "name": "exact: pumpkin-blaster: lives 1 until ended (502 frames, 0 events) replays on host CPython to the same state",
+      "ok": true,
+      "detail": "eca3f167a2061a4f / eca3f167a2061a4f, tick 481"
+    },
+    {
+      "name": "exact: trick-or-treat-rush: played (186 frames, 9 events) replays on host CPython to the same state",
+      "ok": true,
+      "detail": "28ee62549bb80ca0 / 28ee62549bb80ca0, tick 185"
+    },
+    {
+      "name": "exact: trick-or-treat-rush: lives 1 until ended (346 frames, 0 events) replays on host CPython to the same state",
+      "ok": true,
+      "detail": "f018a2d029f5e3ac / f018a2d029f5e3ac, tick 326"
+    },
+    {
+      "name": "exact: lantern-run: played (187 frames, 12 events) replays on host CPython to the same state",
+      "ok": true,
+      "detail": "a9ffe0b79562e9c4 / a9ffe0b79562e9c4, tick 186"
+    },
+    {
+      "name": "exact: lantern-run: lives 1 until ended (2235 frames, 0 events) replays on host CPython to the same state",
+      "ok": true,
+      "detail": "8b8a50479f9d481e / 8b8a50479f9d481e, tick 2215"
+    },
+    {
+      "name": "exact: pumpkin-blaster: attract during badge run (39 frames, 0 events) replays on host CPython to the same state",
+      "ok": true,
+      "detail": "aafec7907c59a20f / aafec7907c59a20f, tick 58"
+    },
+    {
+      "name": "no request leaves the origin",
+      "ok": true,
+      "detail": "all same-origin"
+    },
+    {
+      "name": "no console or page errors",
+      "ok": true,
+      "detail": ""
+    }
+  ]
+}

@@ -1,0 +1,214 @@
+{
+  "verdict": "PASS",
+  "browser": "Chrome 157.0.8103.51",
+  "templates": [
+    {
+      "template": "pumpkin-blaster",
+      "visibleEntities": 5,
+      "controlledKind": "player",
+      "entitiesOutsideWorld": 0,
+      "clicked": "pumpkin",
+      "overlapTested": false,
+      "highlighted": {
+        "kind": "player",
+        "count": 1
+      }
+    },
+    {
+      "template": "trick-or-treat-rush",
+      "visibleEntities": 5,
+      "controlledKind": "runner",
+      "entitiesOutsideWorld": 0,
+      "clicked": "stripe",
+      "overlapTested": true,
+      "highlighted": {
+        "kind": "stripe",
+        "count": 3
+      }
+    },
+    {
+      "template": "lantern-run",
+      "visibleEntities": 4,
+      "controlledKind": "keeper",
+      "entitiesOutsideWorld": 0,
+      "clicked": "wisp",
+      "overlapTested": false,
+      "highlighted": {
+        "kind": "lantern",
+        "count": 2
+      }
+    }
+  ],
+  "checks": [
+    {
+      "name": "pumpkin-blaster: Inspect holds the preview (no engine frames for 500 ms)",
+      "ok": true,
+      "detail": "7 frames before and after"
+    },
+    {
+      "name": "pumpkin-blaster: clicking an entity selects its kind and opens that kind's card in the Entities editor",
+      "ok": true,
+      "detail": "clicked entity 2 (pumpkin); Entities card kinds[2] = pumpkin focused, selected true"
+    },
+    {
+      "name": "pumpkin-blaster: overlapping entities",
+      "ok": true,
+      "detail": "no overlap of different kinds on screen in this frame (covered by unit tests)"
+    },
+    {
+      "name": "pumpkin-blaster: clicking empty world space clears the selection and does not navigate",
+      "ok": true,
+      "detail": "Held. Click an entity to open its kind. No entity there."
+    },
+    {
+      "name": "pumpkin-blaster: clicking the HUD (outside the world rectangle) selects nothing",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "pumpkin-blaster: selecting kind 'player' in the editor highlights exactly its 1 visible entities in the preview",
+      "ok": true,
+      "detail": "1 highlighted"
+    },
+    {
+      "name": "pumpkin-blaster: a kind with no entity on screen highlights nothing",
+      "ok": true,
+      "detail": "bullet"
+    },
+    {
+      "name": "pumpkin-blaster: selection and highlighting leave the draft untouched (same revision, SHA-256 and document)",
+      "ok": true,
+      "detail": "08c7a90d9fcf"
+    },
+    {
+      "name": "pumpkin-blaster: while inspecting, no frame or event reached the engine",
+      "ok": true,
+      "detail": "7 recorded frames"
+    },
+    {
+      "name": "pumpkin-blaster: Resume continues the same session",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "trick-or-treat-rush: Inspect holds the preview (no engine frames for 500 ms)",
+      "ok": true,
+      "detail": "108 frames before and after"
+    },
+    {
+      "name": "trick-or-treat-rush: clicking an entity selects its kind and opens that kind's card in the Entities editor",
+      "ok": true,
+      "detail": "clicked entity 2 (stripe); Entities card kinds[1] = stripe focused, selected true"
+    },
+    {
+      "name": "trick-or-treat-rush: where entities of different kinds overlap, the topmost one is selected",
+      "ok": true,
+      "detail": "candy"
+    },
+    {
+      "name": "trick-or-treat-rush: clicking empty world space clears the selection and does not navigate",
+      "ok": true,
+      "detail": "Held. Click an entity to open its kind. No entity there."
+    },
+    {
+      "name": "trick-or-treat-rush: clicking the HUD (outside the world rectangle) selects nothing",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "trick-or-treat-rush: selecting kind 'stripe' in the editor highlights exactly its 3 visible entities in the preview",
+      "ok": true,
+      "detail": "3 highlighted"
+    },
+    {
+      "name": "trick-or-treat-rush: a kind with no entity on screen highlights nothing",
+      "ok": true,
+      "detail": "tombstone"
+    },
+    {
+      "name": "trick-or-treat-rush: selection and highlighting leave the draft untouched (same revision, SHA-256 and document)",
+      "ok": true,
+      "detail": "edcc20006856"
+    },
+    {
+      "name": "trick-or-treat-rush: while inspecting, no frame or event reached the engine",
+      "ok": true,
+      "detail": "66 recorded frames"
+    },
+    {
+      "name": "trick-or-treat-rush: Resume continues the same session",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "lantern-run: Inspect holds the preview (no engine frames for 500 ms)",
+      "ok": true,
+      "detail": "629 frames before and after"
+    },
+    {
+      "name": "lantern-run: clicking an entity selects its kind and opens that kind's card in the Entities editor",
+      "ok": true,
+      "detail": "clicked entity 4 (wisp); Entities card kinds[2] = wisp focused, selected true"
+    },
+    {
+      "name": "lantern-run: overlapping entities",
+      "ok": true,
+      "detail": "no overlap of different kinds on screen in this frame (covered by unit tests)"
+    },
+    {
+      "name": "lantern-run: clicking empty world space clears the selection and does not navigate",
+      "ok": true,
+      "detail": "Held. Click an entity to open its kind. No entity there."
+    },
+    {
+      "name": "lantern-run: clicking the HUD (outside the world rectangle) selects nothing",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "lantern-run: selecting kind 'lantern' in the editor highlights exactly its 2 visible entities in the preview",
+      "ok": true,
+      "detail": "2 highlighted"
+    },
+    {
+      "name": "lantern-run: selection and highlighting leave the draft untouched (same revision, SHA-256 and document)",
+      "ok": true,
+      "detail": "cc08da835eab"
+    },
+    {
+      "name": "lantern-run: while inspecting, no frame or event reached the engine",
+      "ok": true,
+      "detail": "486 recorded frames"
+    },
+    {
+      "name": "lantern-run: Resume continues the same session",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "exact: pumpkin-blaster: played, inspected, resumed (40 frames) replays on host CPython to the same state",
+      "ok": true,
+      "detail": "0a66f8370029595f / 0a66f8370029595f"
+    },
+    {
+      "name": "exact: trick-or-treat-rush: played, inspected, resumed (99 frames) replays on host CPython to the same state",
+      "ok": true,
+      "detail": "d1126f2c6e6791a7 / d1126f2c6e6791a7"
+    },
+    {
+      "name": "exact: lantern-run: played, inspected, resumed (519 frames) replays on host CPython to the same state",
+      "ok": true,
+      "detail": "f84ec54efb0538ed / f84ec54efb0538ed"
+    },
+    {
+      "name": "at least one click selected a kind other than the player, and one highlight covered several entities",
+      "ok": true,
+      "detail": "pumpkin-blaster: clicked pumpkin, highlighted 1 player; trick-or-treat-rush: clicked stripe, highlighted 3 stripe; lantern-run: clicked wisp, highlighted 2 lantern"
+    },
+    {
+      "name": "no console or page errors",
+      "ok": true,
+      "detail": ""
+    }
+  ]
+}

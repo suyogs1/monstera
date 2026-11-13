@@ -295,9 +295,14 @@ export function FieldGrid({ children }: { children: ReactNode }) {
   return <div className="field-grid">{children}</div>;
 }
 
-export function Card({ title, aside, children, dataPath }: { title: ReactNode; aside?: ReactNode; children: ReactNode; dataPath?: string }) {
+export function Card({ title, aside, children, dataPath, selected, onActivate }: {
+  title: ReactNode; aside?: ReactNode; children: ReactNode; dataPath?: string;
+  /** Click-through: the card is the selected kind (highlighted in the preview); onActivate runs on focus or click inside. */
+  selected?: boolean; onActivate?: () => void;
+}) {
   return (
-    <section className="card" data-path={dataPath} tabIndex={dataPath ? -1 : undefined}>
+    <section className={selected ? "card selected" : "card"} data-path={dataPath} data-selected={selected ? "true" : undefined}
+      tabIndex={dataPath ? -1 : undefined} onFocusCapture={onActivate} onPointerDown={onActivate}>
       <header><h3>{title}</h3>{aside}</header>
       {children}
     </section>

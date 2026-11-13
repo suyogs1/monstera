@@ -10,7 +10,14 @@
     "build": "npm run prepare-assets && tsc --noEmit && vite build",
     "typecheck": "tsc --noEmit",
     "test": "vitest --run",
-    "acceptance": "node scripts/acceptance.mjs"
+    "acceptance": "node scripts/acceptance.mjs",
+    "m2:batch1": "node scripts/m2-batch1.mjs",
+    "m2:badge": "node scripts/m2-badge.mjs",
+    "m2:preview": "node scripts/m2-preview.mjs",
+    "m2:clickthrough": "node scripts/m2-clickthrough.mjs",
+    "m2:export": "node scripts/m2-export.mjs",
+    "m2:e2e": "node scripts/m2-e2e.mjs",
+    "m2:acceptance": "node scripts/m2-acceptance.mjs"
   },
   "dependencies": {
     "pyodide": "0.29.5",
