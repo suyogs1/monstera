@@ -1,0 +1,1552 @@
+{
+  "checkpoints": [
+    {
+      "hash": "a2d3ac1953e4e9e6",
+      "observe": {
+        "ended": 0,
+        "entityCount": 1,
+        "lives": 3,
+        "nextId": 2,
+        "score": 0,
+        "tick": 0
+      },
+      "tick": 0
+    },
+    {
+      "hash": "94a17a5910aaa620",
+      "observe": {
+        "ended": 0,
+        "entityCount": 1,
+        "lives": 3,
+        "nextId": 3,
+        "score": 0,
+        "tick": 76
+      },
+      "tick": 76
+    },
+    {
+      "hash": "eb44957a84cddfed",
+      "observe": {
+        "ended": 0,
+        "entityCount": 2,
+        "lives": 3,
+        "nextId": 4,
+        "score": 0,
+        "tick": 152
+      },
+      "tick": 152
+    },
+    {
+      "hash": "609209231810f173",
+      "observe": {
+        "ended": 0,
+        "entityCount": 4,
+        "lives": 3,
+        "nextId": 6,
+        "score": 0,
+        "tick": 228
+      },
+      "tick": 228
+    },
+    {
+      "hash": "26a415ee562d876a",
+      "observe": {
+        "ended": 0,
+        "entityCount": 4,
+        "lives": 3,
+        "nextId": 7,
+        "score": 0,
+        "tick": 304
+      },
+      "tick": 304
+    },
+    {
+      "hash": "d3b61ba98a75c2ba",
+      "observe": {
+        "ended": 0,
+        "entityCount": 4,
+        "lives": 3,
+        "nextId": 8,
+        "score": 0,
+        "tick": 380
+      },
+      "tick": 380
+    },
+    {
+      "hash": "85484d040672e86c",
+      "observe": {
+        "ended": 0,
+        "entityCount": 4,
+        "lives": 3,
+        "nextId": 9,
+        "score": 0,
+        "tick": 456
+      },
+      "tick": 456
+    },
+    {
+      "hash": "283ecd390f898a4f",
+      "observe": {
+        "ended": 0,
+        "entityCount": 4,
+        "lives": 3,
+        "nextId": 11,
+        "score": 10,
+        "tick": 532
+      },
+      "tick": 532
+    },
+    {
+      "hash": "37813e5cfa65e7a3",
+      "observe": {
+        "ended": 0,
+        "entityCount": 3,
+        "lives": 3,
+        "nextId": 12,
+        "score": 10,
+        "tick": 608
+      },
+      "tick": 608
+    },
+    {
+      "hash": "9116a5c27054e593",
+      "observe": {
+        "ended": 0,
+        "entityCount": 4,
+        "lives": 3,
+        "nextId": 14,
+        "score": 10,
+        "tick": 684
+      },
+      "tick": 684
+    },
+    {
+      "hash": "db1c0ed20a3da772",
+      "observe": {
+        "ended": 0,
+        "entityCount": 3,
+        "lives": 3,
+        "nextId": 15,
+        "score": 10,
+        "tick": 760
+      },
+      "tick": 760
+    },
+    {
+      "hash": "fcbde697a5dc9c8a",
+      "observe": {
+        "ended": 0,
+        "entityCount": 2,
+        "lives": 3,
+        "nextId": 16,
+        "score": 20,
+        "tick": 836
+      },
+      "tick": 836
+    },
+    {
+      "hash": "9876ae686a2c49c3",
+      "observe": {
+        "ended": 0,
+        "entityCount": 1,
+        "lives": 3,
+        "nextId": 17,
+        "score": 30,
+        "tick": 912
+      },
+      "tick": 912
+    },
+    {
+      "hash": "88785a6cb66cfb43",
+      "observe": {
+        "ended": 0,
+        "entityCount": 2,
+        "lives": 3,
+        "nextId": 19,
+        "score": 30,
+        "tick": 988
+      },
+      "tick": 988
+    },
+    {
+      "hash": "5da7d122018f54e0",
+      "observe": {
+        "ended": 0,
+        "entityCount": 2,
+        "lives": 3,
+        "nextId": 20,
+        "score": 30,
+        "tick": 1064
+      },
+      "tick": 1064
+    },
+    {
+      "hash": "813812aa4cb988c9",
+      "observe": {
+        "ended": 0,
+        "entityCount": 3,
+        "lives": 3,
+        "nextId": 22,
+        "score": 30,
+        "tick": 1140
+      },
+      "tick": 1140
+    },
+    {
+      "hash": "0ad17235a0e53390",
+      "observe": {
+        "ended": 0,
+        "entityCount": 3,
+        "lives": 3,
+        "nextId": 24,
+        "score": 30,
+        "tick": 1216
+      },
+      "tick": 1216
+    },
+    {
+      "hash": "42ef8eb5cd9b505e",
+      "observe": {
+        "ended": 0,
+        "entityCount": 3,
+        "lives": 3,
+        "nextId": 26,
+        "score": 30,
+        "tick": 1292
+      },
+      "tick": 1292
+    },
+    {
+      "hash": "ec3db25e760f5da9",
+      "observe": {
+        "ended": 0,
+        "entityCount": 2,
+        "lives": 3,
+        "nextId": 27,
+        "score": 30,
+        "tick": 1368
+      },
+      "tick": 1368
+    },
+    {
+      "hash": "a62ff5808d3613b1",
+      "observe": {
+        "ended": 0,
+        "entityCount": 2,
+        "lives": 3,
+        "nextId": 30,
+        "score": 30,
+        "tick": 1444
+      },
+      "tick": 1444
+    },
+    {
+      "hash": "04752f3fe23fd9da",
+      "observe": {
+        "ended": 0,
+        "entityCount": 2,
+        "lives": 3,
+        "nextId": 32,
+        "score": 40,
+        "tick": 1520
+      },
+      "tick": 1520
+    },
+    {
+      "hash": "9218007fc8790128",
+      "observe": {
+        "ended": 0,
+        "entityCount": 2,
+        "lives": 3,
+        "nextId": 34,
+        "score": 40,
+        "tick": 1596
+      },
+      "tick": 1596
+    },
+    {
+      "hash": "d216b8b3e35bd354",
+      "observe": {
+        "ended": 0,
+        "entityCount": 2,
+        "lives": 3,
+        "nextId": 36,
+        "score": 40,
+        "tick": 1672
+      },
+      "tick": 1672
+    },
+    {
+      "hash": "aad9ddee357d9a36",
+      "observe": {
+        "ended": 0,
+        "entityCount": 3,
+        "lives": 3,
+        "nextId": 39,
+        "score": 50,
+        "tick": 1748
+      },
+      "tick": 1748
+    },
+    {
+      "hash": "0e73429c100fb282",
+      "observe": {
+        "ended": 0,
+        "entityCount": 2,
+        "lives": 3,
+        "nextId": 40,
+        "score": 50,
+        "tick": 1824
+      },
+      "tick": 1824
+    },
+    {
+      "hash": "04f120d740c819fa",
+      "observe": {
+        "ended": 0,
+        "entityCount": 2,
+        "lives": 3,
+        "nextId": 42,
+        "score": 60,
+        "tick": 1900
+      },
+      "tick": 1900
+    },
+    {
+      "hash": "642a60571a91c632",
+      "observe": {
+        "ended": 0,
+        "entityCount": 3,
+        "lives": 3,
+        "nextId": 44,
+        "score": 60,
+        "tick": 1976
+      },
+      "tick": 1976
+    },
+    {
+      "hash": "05f30b305cc6d923",
+      "observe": {
+        "ended": 0,
+        "entityCount": 2,
+        "lives": 3,
+        "nextId": 47,
+        "score": 60,
+        "tick": 2052
+      },
+      "tick": 2052
+    },
+    {
+      "hash": "e02c5241d3f6433b",
+      "observe": {
+        "ended": 0,
+        "entityCount": 3,
+        "lives": 3,
+        "nextId": 49,
+        "score": 60,
+        "tick": 2128
+      },
+      "tick": 2128
+    },
+    {
+      "hash": "16ab249d62515e22",
+      "observe": {
+        "ended": 0,
+        "entityCount": 2,
+        "lives": 3,
+        "nextId": 52,
+        "score": 70,
+        "tick": 2204
+      },
+      "tick": 2204
+    },
+    {
+      "hash": "f796115a5daccf8c",
+      "observe": {
+        "ended": 0,
+        "entityCount": 2,
+        "lives": 3,
+        "nextId": 52,
+        "score": 70,
+        "tick": 2280
+      },
+      "tick": 2280
+    },
+    {
+      "hash": "8ee2c2fd95b56f8e",
+      "observe": {
+        "ended": 0,
+        "entityCount": 4,
+        "lives": 3,
+        "nextId": 55,
+        "score": 70,
+        "tick": 2356
+      },
+      "tick": 2356
+    },
+    {
+      "hash": "0784600191edeb92",
+      "observe": {
+        "ended": 0,
+        "entityCount": 3,
+        "lives": 3,
+        "nextId": 58,
+        "score": 70,
+        "tick": 2432
+      },
+      "tick": 2432
+    },
+    {
+      "hash": "84b945487e3726a9",
+      "observe": {
+        "ended": 0,
+        "entityCount": 3,
+        "lives": 3,
+        "nextId": 60,
+        "score": 70,
+        "tick": 2508
+      },
+      "tick": 2508
+    },
+    {
+      "hash": "39e3b2931516f133",
+      "observe": {
+        "ended": 0,
+        "entityCount": 4,
+        "lives": 3,
+        "nextId": 62,
+        "score": 70,
+        "tick": 2584
+      },
+      "tick": 2584
+    },
+    {
+      "hash": "7ba59edc5256c636",
+      "observe": {
+        "ended": 0,
+        "entityCount": 4,
+        "lives": 3,
+        "nextId": 64,
+        "score": 70,
+        "tick": 2660
+      },
+      "tick": 2660
+    },
+    {
+      "hash": "b01073004b30f1e9",
+      "observe": {
+        "ended": 0,
+        "entityCount": 4,
+        "lives": 3,
+        "nextId": 67,
+        "score": 70,
+        "tick": 2736
+      },
+      "tick": 2736
+    },
+    {
+      "hash": "f83878fba85beab8",
+      "observe": {
+        "ended": 0,
+        "entityCount": 5,
+        "lives": 3,
+        "nextId": 68,
+        "score": 70,
+        "tick": 2812
+      },
+      "tick": 2812
+    },
+    {
+      "hash": "b025c3f7d01ae210",
+      "observe": {
+        "ended": 0,
+        "entityCount": 5,
+        "lives": 3,
+        "nextId": 70,
+        "score": 70,
+        "tick": 2888
+      },
+      "tick": 2888
+    },
+    {
+      "hash": "699094431d56b77c",
+      "observe": {
+        "ended": 0,
+        "entityCount": 4,
+        "lives": 3,
+        "nextId": 72,
+        "score": 80,
+        "tick": 2964
+      },
+      "tick": 2964
+    },
+    {
+      "hash": "6936ecd47f93e43a",
+      "observe": {
+        "ended": 0,
+        "entityCount": 4,
+        "lives": 3,
+        "nextId": 75,
+        "score": 80,
+        "tick": 3040
+      },
+      "tick": 3040
+    },
+    {
+      "hash": "1bfaeceaac4e93dc",
+      "observe": {
+        "ended": 0,
+        "entityCount": 3,
+        "lives": 3,
+        "nextId": 77,
+        "score": 80,
+        "tick": 3116
+      },
+      "tick": 3116
+    },
+    {
+      "hash": "7bacbd9dc05220ff",
+      "observe": {
+        "ended": 0,
+        "entityCount": 4,
+        "lives": 3,
+        "nextId": 79,
+        "score": 80,
+        "tick": 3192
+      },
+      "tick": 3192
+    },
+    {
+      "hash": "0895c97f04f0b00a",
+      "observe": {
+        "ended": 0,
+        "entityCount": 3,
+        "lives": 3,
+        "nextId": 80,
+        "score": 80,
+        "tick": 3268
+      },
+      "tick": 3268
+    },
+    {
+      "hash": "503dd1e80397f533",
+      "observe": {
+        "ended": 0,
+        "entityCount": 4,
+        "lives": 3,
+        "nextId": 83,
+        "score": 80,
+        "tick": 3344
+      },
+      "tick": 3344
+    },
+    {
+      "hash": "3e81873beabf5f05",
+      "observe": {
+        "ended": 0,
+        "entityCount": 5,
+        "lives": 3,
+        "nextId": 85,
+        "score": 80,
+        "tick": 3420
+      },
+      "tick": 3420
+    },
+    {
+      "hash": "0317c93d9fbc482d",
+      "observe": {
+        "ended": 0,
+        "entityCount": 4,
+        "lives": 3,
+        "nextId": 87,
+        "score": 80,
+        "tick": 3496
+      },
+      "tick": 3496
+    },
+    {
+      "hash": "4ba3b472e9dfdcff",
+      "observe": {
+        "ended": 0,
+        "entityCount": 4,
+        "lives": 3,
+        "nextId": 89,
+        "score": 80,
+        "tick": 3572
+      },
+      "tick": 3572
+    },
+    {
+      "hash": "86f1ffaee15ad26e",
+      "observe": {
+        "ended": 0,
+        "entityCount": 3,
+        "lives": 3,
+        "nextId": 92,
+        "score": 80,
+        "tick": 3648
+      },
+      "tick": 3648
+    },
+    {
+      "hash": "698a7f7976b4a2c7",
+      "observe": {
+        "ended": 0,
+        "entityCount": 2,
+        "lives": 3,
+        "nextId": 94,
+        "score": 80,
+        "tick": 3724
+      },
+      "tick": 3724
+    },
+    {
+      "hash": "b708d91e532e6aa2",
+      "observe": {
+        "ended": 0,
+        "entityCount": 2,
+        "lives": 3,
+        "nextId": 95,
+        "score": 80,
+        "tick": 3800
+      },
+      "tick": 3800
+    },
+    {
+      "hash": "5e737ea573f74ce9",
+      "observe": {
+        "ended": 0,
+        "entityCount": 3,
+        "lives": 3,
+        "nextId": 97,
+        "score": 90,
+        "tick": 3876
+      },
+      "tick": 3876
+    },
+    {
+      "hash": "ec9bb29f743d5d89",
+      "observe": {
+        "ended": 0,
+        "entityCount": 3,
+        "lives": 3,
+        "nextId": 100,
+        "score": 90,
+        "tick": 3952
+      },
+      "tick": 3952
+    },
+    {
+      "hash": "4b80ec959b395941",
+      "observe": {
+        "ended": 0,
+        "entityCount": 4,
+        "lives": 3,
+        "nextId": 102,
+        "score": 90,
+        "tick": 4028
+      },
+      "tick": 4028
+    },
+    {
+      "hash": "9708ac7893a0dd32",
+      "observe": {
+        "ended": 0,
+        "entityCount": 3,
+        "lives": 3,
+        "nextId": 105,
+        "score": 90,
+        "tick": 4104
+      },
+      "tick": 4104
+    },
+    {
+      "hash": "5c6e281697a17ff0",
+      "observe": {
+        "ended": 0,
+        "entityCount": 3,
+        "lives": 3,
+        "nextId": 106,
+        "score": 90,
+        "tick": 4180
+      },
+      "tick": 4180
+    },
+    {
+      "hash": "d05bdd887d0c5b3f",
+      "observe": {
+        "ended": 0,
+        "entityCount": 3,
+        "lives": 3,
+        "nextId": 108,
+        "score": 90,
+        "tick": 4256
+      },
+      "tick": 4256
+    },
+    {
+      "hash": "a899dc31f83a4d54",
+      "observe": {
+        "ended": 0,
+        "entityCount": 3,
+        "lives": 3,
+        "nextId": 110,
+        "score": 100,
+        "tick": 4332
+      },
+      "tick": 4332
+    },
+    {
+      "hash": "0fb815c612f2d427",
+      "observe": {
+        "ended": 0,
+        "entityCount": 4,
+        "lives": 3,
+        "nextId": 113,
+        "score": 100,
+        "tick": 4408
+      },
+      "tick": 4408
+    },
+    {
+      "hash": "cac7233572f5743f",
+      "observe": {
+        "ended": 0,
+        "entityCount": 4,
+        "lives": 3,
+        "nextId": 114,
+        "score": 100,
+        "tick": 4484
+      },
+      "tick": 4484
+    },
+    {
+      "hash": "19fc33aa5a0eceaf",
+      "observe": {
+        "ended": 0,
+        "entityCount": 3,
+        "lives": 3,
+        "nextId": 117,
+        "score": 100,
+        "tick": 4560
+      },
+      "tick": 4560
+    },
+    {
+      "hash": "dd7a5ca3f50589c3",
+      "observe": {
+        "ended": 0,
+        "entityCount": 2,
+        "lives": 3,
+        "nextId": 119,
+        "score": 100,
+        "tick": 4636
+      },
+      "tick": 4636
+    },
+    {
+      "hash": "11b5369a2b345d99",
+      "observe": {
+        "ended": 0,
+        "entityCount": 2,
+        "lives": 3,
+        "nextId": 122,
+        "score": 100,
+        "tick": 4712
+      },
+      "tick": 4712
+    },
+    {
+      "hash": "fdaef9d882f9d96a",
+      "observe": {
+        "ended": 0,
+        "entityCount": 2,
+        "lives": 3,
+        "nextId": 122,
+        "score": 100,
+        "tick": 4788
+      },
+      "tick": 4788
+    },
+    {
+      "hash": "07f1cca58e917bc0",
+      "observe": {
+        "ended": 0,
+        "entityCount": 2,
+        "lives": 3,
+        "nextId": 125,
+        "score": 100,
+        "tick": 4864
+      },
+      "tick": 4864
+    },
+    {
+      "hash": "09be0236df151d47",
+      "observe": {
+        "ended": 0,
+        "entityCount": 3,
+        "lives": 3,
+        "nextId": 127,
+        "score": 100,
+        "tick": 4940
+      },
+      "tick": 4940
+    },
+    {
+      "hash": "a8feae8624bf2d39",
+      "observe": {
+        "ended": 0,
+        "entityCount": 4,
+        "lives": 3,
+        "nextId": 130,
+        "score": 110,
+        "tick": 5016
+      },
+      "tick": 5016
+    },
+    {
+      "hash": "021a47923953b1bd",
+      "observe": {
+        "ended": 0,
+        "entityCount": 3,
+        "lives": 3,
+        "nextId": 131,
+        "score": 110,
+        "tick": 5092
+      },
+      "tick": 5092
+    },
+    {
+      "hash": "abae6bf48a5da3db",
+      "observe": {
+        "ended": 0,
+        "entityCount": 4,
+        "lives": 3,
+        "nextId": 134,
+        "score": 110,
+        "tick": 5168
+      },
+      "tick": 5168
+    },
+    {
+      "hash": "b23c52731970cc11",
+      "observe": {
+        "ended": 0,
+        "entityCount": 3,
+        "lives": 3,
+        "nextId": 135,
+        "score": 110,
+        "tick": 5244
+      },
+      "tick": 5244
+    },
+    {
+      "hash": "82fc2a718c821b35",
+      "observe": {
+        "ended": 0,
+        "entityCount": 2,
+        "lives": 3,
+        "nextId": 138,
+        "score": 110,
+        "tick": 5320
+      },
+      "tick": 5320
+    },
+    {
+      "hash": "2f754022f31b091b",
+      "observe": {
+        "ended": 0,
+        "entityCount": 1,
+        "lives": 3,
+        "nextId": 139,
+        "score": 110,
+        "tick": 5396
+      },
+      "tick": 5396
+    },
+    {
+      "hash": "daa732a1d1756c2f",
+      "observe": {
+        "ended": 0,
+        "entityCount": 1,
+        "lives": 3,
+        "nextId": 142,
+        "score": 110,
+        "tick": 5472
+      },
+      "tick": 5472
+    },
+    {
+      "hash": "c7168540996bd6ec",
+      "observe": {
+        "ended": 0,
+        "entityCount": 2,
+        "lives": 3,
+        "nextId": 144,
+        "score": 120,
+        "tick": 5548
+      },
+      "tick": 5548
+    },
+    {
+      "hash": "f78e91539f13f73c",
+      "observe": {
+        "ended": 0,
+        "entityCount": 3,
+        "lives": 3,
+        "nextId": 147,
+        "score": 120,
+        "tick": 5624
+      },
+      "tick": 5624
+    },
+    {
+      "hash": "1b0db7587e296aa7",
+      "observe": {
+        "ended": 0,
+        "entityCount": 3,
+        "lives": 3,
+        "nextId": 147,
+        "score": 120,
+        "tick": 5700
+      },
+      "tick": 5700
+    },
+    {
+      "hash": "93c085433689280f",
+      "observe": {
+        "ended": 0,
+        "entityCount": 3,
+        "lives": 3,
+        "nextId": 150,
+        "score": 120,
+        "tick": 5776
+      },
+      "tick": 5776
+    },
+    {
+      "hash": "b635c8d39d544c45",
+      "observe": {
+        "ended": 0,
+        "entityCount": 3,
+        "lives": 3,
+        "nextId": 152,
+        "score": 120,
+        "tick": 5852
+      },
+      "tick": 5852
+    },
+    {
+      "hash": "8541e913837e0adf",
+      "observe": {
+        "ended": 0,
+        "entityCount": 4,
+        "lives": 3,
+        "nextId": 155,
+        "score": 120,
+        "tick": 5928
+      },
+      "tick": 5928
+    },
+    {
+      "hash": "e5a4a8ff5442f028",
+      "observe": {
+        "ended": 0,
+        "entityCount": 4,
+        "lives": 3,
+        "nextId": 157,
+        "score": 120,
+        "tick": 6004
+      },
+      "tick": 6004
+    },
+    {
+      "hash": "18c958b86cace8e1",
+      "observe": {
+        "ended": 0,
+        "entityCount": 5,
+        "lives": 3,
+        "nextId": 159,
+        "score": 120,
+        "tick": 6080
+      },
+      "tick": 6080
+    },
+    {
+      "hash": "3078756a7bed9cf2",
+      "observe": {
+        "ended": 0,
+        "entityCount": 5,
+        "lives": 3,
+        "nextId": 161,
+        "score": 120,
+        "tick": 6156
+      },
+      "tick": 6156
+    },
+    {
+      "hash": "8313b0836510ebeb",
+      "observe": {
+        "ended": 0,
+        "entityCount": 5,
+        "lives": 3,
+        "nextId": 163,
+        "score": 120,
+        "tick": 6232
+      },
+      "tick": 6232
+    },
+    {
+      "hash": "2f06270f791ed1b1",
+      "observe": {
+        "ended": 0,
+        "entityCount": 4,
+        "lives": 3,
+        "nextId": 165,
+        "score": 120,
+        "tick": 6308
+      },
+      "tick": 6308
+    },
+    {
+      "hash": "c7760f88dbfc3183",
+      "observe": {
+        "ended": 0,
+        "entityCount": 4,
+        "lives": 3,
+        "nextId": 167,
+        "score": 120,
+        "tick": 6384
+      },
+      "tick": 6384
+    },
+    {
+      "hash": "adddd514df3b2f95",
+      "observe": {
+        "ended": 0,
+        "entityCount": 3,
+        "lives": 3,
+        "nextId": 169,
+        "score": 120,
+        "tick": 6460
+      },
+      "tick": 6460
+    },
+    {
+      "hash": "9725177d3dd45dcb",
+      "observe": {
+        "ended": 0,
+        "entityCount": 3,
+        "lives": 3,
+        "nextId": 172,
+        "score": 120,
+        "tick": 6536
+      },
+      "tick": 6536
+    },
+    {
+      "hash": "c2aecad247600ab7",
+      "observe": {
+        "ended": 0,
+        "entityCount": 4,
+        "lives": 3,
+        "nextId": 174,
+        "score": 120,
+        "tick": 6612
+      },
+      "tick": 6612
+    },
+    {
+      "hash": "6bbad3e0a5faf49e",
+      "observe": {
+        "ended": 0,
+        "entityCount": 4,
+        "lives": 3,
+        "nextId": 175,
+        "score": 120,
+        "tick": 6688
+      },
+      "tick": 6688
+    },
+    {
+      "hash": "94d2b5b399607164",
+      "observe": {
+        "ended": 0,
+        "entityCount": 6,
+        "lives": 3,
+        "nextId": 177,
+        "score": 120,
+        "tick": 6764
+      },
+      "tick": 6764
+    },
+    {
+      "hash": "77ce084e8fc353cd",
+      "observe": {
+        "ended": 0,
+        "entityCount": 7,
+        "lives": 3,
+        "nextId": 180,
+        "score": 120,
+        "tick": 6840
+      },
+      "tick": 6840
+    },
+    {
+      "hash": "9df8ba2456c55a95",
+      "observe": {
+        "ended": 0,
+        "entityCount": 5,
+        "lives": 3,
+        "nextId": 182,
+        "score": 120,
+        "tick": 6916
+      },
+      "tick": 6916
+    },
+    {
+      "hash": "49ae48fb5df5b43c",
+      "observe": {
+        "ended": 0,
+        "entityCount": 4,
+        "lives": 3,
+        "nextId": 184,
+        "score": 120,
+        "tick": 6992
+      },
+      "tick": 6992
+    },
+    {
+      "hash": "a553a883892b0682",
+      "observe": {
+        "ended": 0,
+        "entityCount": 5,
+        "lives": 3,
+        "nextId": 186,
+        "score": 120,
+        "tick": 7068
+      },
+      "tick": 7068
+    },
+    {
+      "hash": "91d3d1cf7a843e74",
+      "observe": {
+        "ended": 0,
+        "entityCount": 2,
+        "lives": 3,
+        "nextId": 189,
+        "score": 130,
+        "tick": 7144
+      },
+      "tick": 7144
+    },
+    {
+      "hash": "0c0a9a7d2995550f",
+      "observe": {
+        "ended": 0,
+        "entityCount": 1,
+        "lives": 3,
+        "nextId": 190,
+        "score": 130,
+        "tick": 7220
+      },
+      "tick": 7220
+    },
+    {
+      "hash": "790be0e9c3e3b54d",
+      "observe": {
+        "ended": 0,
+        "entityCount": 2,
+        "lives": 3,
+        "nextId": 192,
+        "score": 130,
+        "tick": 7296
+      },
+      "tick": 7296
+    },
+    {
+      "hash": "f905087355e00b00",
+      "observe": {
+        "ended": 0,
+        "entityCount": 2,
+        "lives": 3,
+        "nextId": 194,
+        "score": 130,
+        "tick": 7372
+      },
+      "tick": 7372
+    },
+    {
+      "hash": "261dc87a87d89fcf",
+      "observe": {
+        "ended": 0,
+        "entityCount": 3,
+        "lives": 3,
+        "nextId": 197,
+        "score": 140,
+        "tick": 7448
+      },
+      "tick": 7448
+    },
+    {
+      "hash": "f34d99347649a4c7",
+      "observe": {
+        "ended": 0,
+        "entityCount": 3,
+        "lives": 3,
+        "nextId": 199,
+        "score": 140,
+        "tick": 7524
+      },
+      "tick": 7524
+    },
+    {
+      "hash": "525f59feb8a2f4ba",
+      "observe": {
+        "ended": 1,
+        "entityCount": 3,
+        "lives": 3,
+        "nextId": 201,
+        "score": 150,
+        "tick": 7591
+      },
+      "tick": 7600
+    }
+  ],
+  "description": "Long run through both wisp spawners: the keeper collects 15 lanterns, dodges every wisp and reaches winScore 150 (ended at tick 7591 with 3 lives).",
+  "frames": {
+    "count": 0,
+    "maxNanos": 0,
+    "minNanos": 0,
+    "seed": 0
+  },
+  "inputs": [
+    {
+      "events": [
+        {
+          "dir": "left",
+          "dx": 0,
+          "dy": 0,
+          "type": "swipe"
+        }
+      ],
+      "tick": 60
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "swipe"
+        }
+      ],
+      "tick": 120
+    },
+    {
+      "events": [
+        {
+          "dir": "right",
+          "dx": 0,
+          "dy": 0,
+          "type": "swipe"
+        }
+      ],
+      "tick": 600
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "swipe"
+        }
+      ],
+      "tick": 630
+    },
+    {
+      "events": [
+        {
+          "dir": "up",
+          "dx": 0,
+          "dy": 0,
+          "type": "swipe"
+        }
+      ],
+      "tick": 645
+    },
+    {
+      "events": [
+        {
+          "dir": "right",
+          "dx": 0,
+          "dy": 0,
+          "type": "swipe"
+        }
+      ],
+      "tick": 1305
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "swipe"
+        }
+      ],
+      "tick": 1380
+    },
+    {
+      "events": [
+        {
+          "dir": "left",
+          "dx": 0,
+          "dy": 0,
+          "type": "swipe"
+        }
+      ],
+      "tick": 1455
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "swipe"
+        }
+      ],
+      "tick": 1515
+    },
+    {
+      "events": [
+        {
+          "dir": "right",
+          "dx": 0,
+          "dy": 0,
+          "type": "swipe"
+        }
+      ],
+      "tick": 1725
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "swipe"
+        }
+      ],
+      "tick": 1770
+    },
+    {
+      "events": [
+        {
+          "dir": "left",
+          "dx": 0,
+          "dy": 0,
+          "type": "swipe"
+        }
+      ],
+      "tick": 1830
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "swipe"
+        }
+      ],
+      "tick": 1890
+    },
+    {
+      "events": [
+        {
+          "dir": "right",
+          "dx": 0,
+          "dy": 0,
+          "type": "swipe"
+        }
+      ],
+      "tick": 2475
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "swipe"
+        }
+      ],
+      "tick": 2580
+    },
+    {
+      "events": [
+        {
+          "dir": "left",
+          "dx": 0,
+          "dy": 0,
+          "type": "swipe"
+        }
+      ],
+      "tick": 3375
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "swipe"
+        }
+      ],
+      "tick": 3405
+    },
+    {
+      "events": [
+        {
+          "dir": "left",
+          "dx": 0,
+          "dy": 0,
+          "type": "swipe"
+        }
+      ],
+      "tick": 3825
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "swipe"
+        }
+      ],
+      "tick": 3915
+    },
+    {
+      "events": [
+        {
+          "dir": "right",
+          "dx": 0,
+          "dy": 0,
+          "type": "swipe"
+        }
+      ],
+      "tick": 4545
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "swipe"
+        }
+      ],
+      "tick": 4560
+    },
+    {
+      "events": [
+        {
+          "dir": "left",
+          "dx": 0,
+          "dy": 0,
+          "type": "swipe"
+        }
+      ],
+      "tick": 5160
+    },
+    {
+      "events": [
+        {
+          "dir": "right",
+          "dx": 0,
+          "dy": 0,
+          "type": "swipe"
+        }
+      ],
+      "tick": 5175
+    },
+    {
+      "events": [
+        {
+          "dir": "none",
+          "dx": 0,
+          "dy": 0,
+          "type": "swipe"
+        }
+      ],
+      "tick": 5265
+    },
+    {
+      "events": [
+        {
+          "dir": "down",
+          "dx": 0,
+          "dy": 0,
+          "type": "swipe"
+        }
+      ],
+      "tick": 5760
+    },
+    {
+      "events": [
+        {
+          "dir": "left",
+          "dx": 0,
+          "dy": 0,
+          "type": "swipe"
+        }
+      ],
+      "tick": 6015
+    },
+    {
+      "events": [
+        {
+          "dir": "up",
+          "dx": 0,
+          "dy": 0,
+          "type": "swipe"
+        }
+      ],
+      "tick": 6855
+    },
+    {
+      "events": [
+        {
+          "dir": "right",
+          "dx": 0,
+          "dy": 0,
+          "type": "swipe"
+        }
+      ],
+      "tick": 7155
+    },
+    {
+      "events": [
+        {
+          "dir": "left",
+          "dx": 0,
+          "dy": 0,
+          "type": "swipe"
+        }
+      ],
+      "tick": 7515
+    }
+  ],
+  "name": "lantern-win",
+  "scenarioVersion": 1,
+  "seed": 1,
+  "spec": {
+    "path": "spec/samples/lantern-run/monstera.spec.json",
+    "sha256": "cc08da835eab0e59b23ddb58e766cd9420e41514124e09b7903438a5fd0d60b1"
+  },
+  "ticks": 7600
+}

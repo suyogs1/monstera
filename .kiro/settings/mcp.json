@@ -13,6 +13,7 @@
       "disabled": false,
       "autoApprove": [
         "validate_spec",
+        "engine_info",
         "inspect_manifest",
         "get_device_report"
       ]

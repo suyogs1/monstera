@@ -1,0 +1,162 @@
+{
+  "game": {
+    "genre": "endless-runner",
+    "hud": {
+      "lifeGlyph": "🕯",
+      "scoreLabel": "LIGHT"
+    },
+    "input": {
+      "dragGain": 65536,
+      "scheme": "swipe",
+      "swipeSpeed": 393216,
+      "tapKind": "",
+      "tapVx": 0,
+      "tapVy": 0
+    },
+    "orientation": "portrait",
+    "palette": {
+      "accent": "#7DF9FF",
+      "background": "#12081F",
+      "primary": "#FFB703"
+    },
+    "runtime": {
+      "collisions": [
+        {
+          "a": "lantern",
+          "b": "keeper",
+          "despawnA": true,
+          "despawnB": false,
+          "lives": 0,
+          "score": 10
+        },
+        {
+          "a": "wisp",
+          "b": "keeper",
+          "despawnA": true,
+          "despawnB": false,
+          "lives": -1,
+          "score": 0
+        }
+      ],
+      "initialEntities": [
+        {
+          "controlled": true,
+          "kind": "keeper",
+          "vx": 0,
+          "vy": 0,
+          "x": 32112640,
+          "y": 98304000
+        }
+      ],
+      "kinds": [
+        {
+          "color": "#FFB703",
+          "effect": "none",
+          "exitPolicy": "clamp",
+          "glyph": "🧙",
+          "height": 6553600,
+          "id": "keeper",
+          "lifetimeTicks": 0,
+          "width": 6553600
+        },
+        {
+          "color": "#FFD166",
+          "effect": "pickup",
+          "exitPolicy": "despawn",
+          "glyph": "🏮",
+          "height": 5242880,
+          "id": "lantern",
+          "lifetimeTicks": 0,
+          "width": 5242880
+        },
+        {
+          "color": "#7DF9FF",
+          "effect": "burst",
+          "exitPolicy": "despawn",
+          "glyph": "👻",
+          "height": 6553600,
+          "id": "wisp",
+          "lifetimeTicks": 0,
+          "width": 6553600
+        }
+      ],
+      "lives": 3,
+      "maxEntities": 64,
+      "spawners": [
+        {
+          "intervalTicks": 90,
+          "kind": "lantern",
+          "startTick": 30,
+          "stream": "lanterns",
+          "vx": 0,
+          "vy": 262144,
+          "xMax": 65536000,
+          "xMin": 0,
+          "yMax": -5242880,
+          "yMin": -6553600
+        },
+        {
+          "intervalTicks": 150,
+          "kind": "wisp",
+          "startTick": 180,
+          "stream": "wisps",
+          "vx": 0,
+          "vy": 327680,
+          "xMax": 64487424,
+          "xMin": 0,
+          "yMax": -6553600,
+          "yMin": -7864320
+        },
+        {
+          "intervalTicks": 100,
+          "kind": "wisp",
+          "startTick": 1200,
+          "stream": "wisps-late",
+          "vx": 0,
+          "vy": 458752,
+          "xMax": 64487424,
+          "xMin": 0,
+          "yMax": -6553600,
+          "yMin": -7864320
+        }
+      ],
+      "winScore": 150
+    },
+    "screens": {
+      "loseTitle": "The lights went out",
+      "startHint": "Swipe to move",
+      "winTitle": "The path is lit!"
+    },
+    "simulation": {
+      "maxTicksPerFrame": 5,
+      "tickRate": 60
+    },
+    "targetFps": 60,
+    "world": {
+      "height": 1920,
+      "width": 1080
+    }
+  },
+  "project": {
+    "displayName": "Lantern Run",
+    "id": "lantern-run",
+    "identifier": "app.monstera.lanternrun",
+    "platforms": {
+      "android": {
+        "minSdk": 26
+      },
+      "ios": {
+        "deploymentTarget": "17.0"
+      }
+    },
+    "targets": [
+      "android",
+      "ios"
+    ],
+    "version": {
+      "code": 1,
+      "name": "0.1.0"
+    }
+  },
+  "specVersion": 4
+}

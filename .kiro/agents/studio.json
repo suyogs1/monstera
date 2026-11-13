@@ -1,25 +1,39 @@
 {
-  "name": "studio",
-  "description": "MONSTERA Studio specialist. Owns studio/ (web frontend and Python API) only.",
-  "prompt": "You own studio/ (web frontend for Vercel, Python API for Railway). The API imports tools/monstera for all validation and generation; never reimplement or copy engine logic, and never edit tools/monstera, spec/schema or generated output. Forms derive from spec/schema/*.schema.json. The browser never builds native code: builds are dispatched to GitHub Actions workers. Keep every credential server-side: no token in the frontend bundle, API responses or logs. Pin every dependency exactly. Studio work must never delay G2. Follow .kiro/steering/09-value-for-credit.md: batch related work, run existing scripts instead of re-deriving their output, do not repeat a review or a green check without new evidence, wait on CI only for a bounded time, and stop when the goal is met.",
-  "tools": [
-    "fs_read",
-    "fs_write",
-    "shell",
-    "grep",
-    "glob",
-    "web_search",
-    "web_fetch"
-  ],
-  "allowedTools": [
-    "fs_read",
-    "grep",
-    "glob"
-  ],
-  "resources": [
-    "file://.kiro/steering/01-mission-and-boundaries.md",
-    "file://.kiro/steering/07-studio.md",
-    "file://architecture/MONSTERA-STUDIO.md",
-    "file://.kiro/steering/09-value-for-credit.md"
-  ]
+    "name":  "studio",
+    "description":  "MONSTERA Studio specialist. Owns studio/ only: a static web app (Vite, React, TypeScript) that runs the unmodified Python engine in the browser with Pyodide. No backend.",
+    "prompt":  "You own studio/. Studio is static: the unmodified engine (tools/monstera, spec/schema) runs in a Pyodide Web Worker, and there is no backend, no server-side secret and no build dispatch. Never reimplement or copy engine logic and never edit tools/monstera, spec/schema, templates or generated output; forms derive from the schemas and values display in game units while the spec stores raw Q16.16 integers. The canonical monstera.spec.json is the only contract with Kiro: Studio imports and exports it. The Developer Integration area is a static inventory of the repository plus a handoff; never claim that Studio has a Kiro connection and never simulate one. Design and tasks: .kiro/specs/g4-studio/. Pin every dependency exactly. Follow .kiro/steering/09-value-for-credit.md: batch related work, run existing scripts instead of re-deriving their output, do not repeat a review or a green check without new evidence, wait on CI only for a bounded time, and stop when the goal is met.",
+    "tools":  [
+                  "read",
+                  "write",
+                  "shell",
+                  "web"
+              ],
+    "permissions":  {
+                        "rules":  [
+                                      {
+                                          "capability":  "fs_write",
+                                          "match":  [
+                                                        "studio/**",
+                                                        ".kiro/specs/g4-studio/**"
+                                                    ],
+                                          "effect":  "allow"
+                                      },
+                                      {
+                                          "capability":  "fs_write",
+                                          "match":  [
+                                                        "tools/monstera/**",
+                                                        "spec/schema/**",
+                                                        "generated/**",
+                                                        "apps/**"
+                                                    ],
+                                          "effect":  "deny"
+                                      }
+                                  ]
+                    },
+    "resources":  [
+                      "file://.kiro/steering/01-mission-and-boundaries.md",
+                      "file://.kiro/steering/07-studio.md",
+                      "file://.kiro/steering/09-value-for-credit.md",
+                      "file://.kiro/specs/g4-studio/design.md"
+                  ]
 }

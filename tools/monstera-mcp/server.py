@@ -1,7 +1,7 @@
 """MONSTERA MCP server (stdio). Run:
     uv run --frozen --project tools/monstera-mcp python tools/monstera-mcp/server.py
 
-Registers exactly the five engine-backed tools (architecture/MONSTERA-MCP.md). Adding a tool
+Registers exactly the six engine-backed tools (architecture/MONSTERA-MCP.md). Adding a tool
 requires a merged, tested engine function and a documented contract first.
 """
 
@@ -76,11 +76,22 @@ def generate_project(spec_path: str, out: str | None = None, write: bool = False
 
 @server.tool(annotations=READ_ONLY)
 @_refusals_as_tool_errors
-def inspect_manifest(dir: str) -> dict[str, Any]:  # noqa: A002 - contract name
+def inspect_manifest(dir: str, files: bool = False) -> dict[str, Any]:  # noqa: A002 - contract name
     """Summarize a generated directory's MONSTERA-MANIFEST.json (generator, spec SHA-256, layout,
     owned roots, schema digests, toolchain, file counts by kind) and verify the directory
-    against it (changed / missing / unexpected files). `dir` is under generated/ or apps/."""
-    return tools.inspect_manifest(dir=dir)
+    against it (changed / missing / unexpected files). `dir` is under generated/ or apps/.
+    With files=true, also lists every file as {path, kind, source}: the template, schema or spec
+    it was generated from."""
+    return tools.inspect_manifest(dir=dir, files=files)
+
+
+@server.tool(annotations=READ_ONLY)
+@_refusals_as_tool_errors
+def engine_info() -> dict[str, Any]:
+    """Report which MONSTERA engine this server process runs: generator version, supported spec
+    version, schema digests, when the process started, and whether the schemas or engine files
+    changed on disk since then (`stale`). Check it before using results as evidence."""
+    return tools.engine_info()
 
 
 @server.tool(annotations=READ_ONLY)
