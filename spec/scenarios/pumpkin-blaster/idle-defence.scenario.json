@@ -1226,7 +1226,7 @@
   "seed": 11,
   "spec": {
     "path": "apps/pumpkin-blaster/monstera.spec.json",
-    "sha256": "c65ebbdda2e89a9ea8631337f7c0f34c4d15a9eec1289e6c45144250f26c88c4"
+    "sha256": "08c7a90d9fcfd599c0b5f83743ba339e61f57f1fb10938cf6806d70cda7e0be3"
   },
   "ticks": 6000
 }

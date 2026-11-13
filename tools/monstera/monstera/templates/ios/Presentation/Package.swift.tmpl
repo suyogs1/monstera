@@ -1,0 +1,19 @@
+// swift-tools-version: @@{swift_tools}
+@@{header_slash}
+// Presentation logic (layout, clipping, effects, texts): pure Swift with no UIKit/SwiftUI/SpriteKit and
+// no dependency on the runtime core, so `swift test` runs on Linux and macOS without a simulator.
+import PackageDescription
+
+let package = Package(
+    name: "MonsteraPresentation",
+    platforms: [
+        .iOS("@@{ios_target}"),
+    ],
+    products: [
+        .library(name: "MonsteraPresentation", targets: ["MonsteraPresentation"]),
+    ],
+    targets: [
+        .target(name: "MonsteraPresentation"),
+        .testTarget(name: "MonsteraPresentationTests", dependencies: ["MonsteraPresentation"]),
+    ]
+)

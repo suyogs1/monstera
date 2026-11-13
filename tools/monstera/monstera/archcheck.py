@@ -162,6 +162,8 @@ _CORE_RULES: list[tuple[str, re.Pattern[str]]] = [
     ("system randomness", re.compile(r"kotlin\.random|java\.util\.Random|SecureRandom|\bRandom\s*\.|arc4random|SystemRandomNumberGenerator|\.random\s*\(")),
     ("locale", re.compile(r"\bLocale\b")),
     ("logical shift on signed values (use arithmetic shifts only)", re.compile(r"\bushr\b")),
+    ("presentation-only name (the core must not read glyphs, effects, HUD or screen fields; contract section 9)",
+     re.compile(r"\b(?:presentation|MonsteraPresentation|glyph|KindEffect|HudConfig|ScreenConfig)\b", re.I)),
 ]
 
 

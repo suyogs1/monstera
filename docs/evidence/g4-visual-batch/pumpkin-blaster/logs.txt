@@ -1,0 +1,6 @@
+--------- beginning of main
+11-12 17:16:35.582  9136  9136 I MonsteraSpec: spec sha256=08c7a90d9fcfd599c0b5f83743ba339e61f57f1fb10938cf6806d70cda7e0be3 bundledMatches=true
+11-12 17:16:38.729  9136  9136 I MonsteraRuntime: runtime ticks=60 hash=4c8b073f57d02ee0 seed=1794483995499
+11-12 17:16:40.436  9136  9136 I MonsteraRuntime: runtime ticks=60 hash=f8b5b29711ce9a55 seed=1794483999333
+11-12 17:16:52.584  9136  9136 I MonsteraRuntime: runtime ticks=60 hash=4dd36c23ecad4fc5 seed=1794484011516
+11-12 17:18:03.326  9136  9136 I MonsteraRuntime: runtime ticks=61 hash=1041f0f4ea577bd0 seed=1794484082241

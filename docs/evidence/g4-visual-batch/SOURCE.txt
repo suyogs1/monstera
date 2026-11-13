@@ -1,0 +1,5 @@
+Android emulator evidence for the G4 visual batch (spec v4). Label: SIMULATOR-TESTED on the Android emulator only.
+Device: Pixel_9_Pro_XL AVD (1344x2992), debug APKs built by ./gradlew testDebugUnitTest assembleDebug from apps/<id>/android on 2026-11-12.
+Driver: adb input tap/swipe (script not kept). Screens: 01 start card (attract mode behind it), 02 after the first tap, 03 effect attempts while playing
+(burst, pickup ring and +N popup are 0.3 to 0.6 s long, so frames were sampled), 04 end card (04-after-Ns are the waits before it), 05 after tapping to restart.
+Not covered: iOS interaction (the iOS shells are compiled in CI only, never run by hand), physical devices, the red flash and shake on life loss (no frame captured).

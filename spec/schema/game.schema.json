@@ -4,7 +4,7 @@
   "description": "Game contract shared by all platforms: presentation (genre, orientation, palette, world) and the deterministic runtime (simulation, input, entity kinds, spawners, collisions). Runtime semantics: architecture/RUNTIME-CONTRACT.md.",
   "type": "object",
   "additionalProperties": false,
-  "required": ["genre", "orientation", "targetFps", "world", "palette", "input", "simulation", "runtime"],
+  "required": ["genre", "orientation", "targetFps", "world", "palette", "hud", "screens", "input", "simulation", "runtime"],
   "properties": {
     "genre": {
       "title": "Genre",
@@ -42,6 +42,29 @@
         "background": { "$ref": "#/$defs/color" },
         "primary": { "$ref": "#/$defs/color" },
         "accent": { "$ref": "#/$defs/color" }
+      }
+    },
+    "hud": {
+      "title": "HudConfig",
+      "description": "Heads-up display (presentation only; never read by the simulation). The HUD occupies a bar above the world rectangle.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["lifeGlyph", "scoreLabel"],
+      "properties": {
+        "lifeGlyph": { "$ref": "#/$defs/glyph", "description": "Drawn once per remaining life. The empty string shows the number of lives as text instead." },
+        "scoreLabel": { "$ref": "#/$defs/text", "description": "Label in front of the score." }
+      }
+    },
+    "screens": {
+      "title": "ScreenConfig",
+      "description": "Texts of the start and end cards (presentation only). The start card title and the end card score line come from project.displayName and the game state.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["startHint", "winTitle", "loseTitle"],
+      "properties": {
+        "startHint": { "$ref": "#/$defs/text", "description": "Instruction on the start card." },
+        "winTitle": { "$ref": "#/$defs/text", "description": "Title of the end card when the game ended with lives left." },
+        "loseTitle": { "$ref": "#/$defs/text", "description": "Title of the end card when the game ended with no lives left." }
       }
     },
     "input": {
@@ -91,10 +114,17 @@
             "title": "EntityKind",
             "type": "object",
             "additionalProperties": false,
-            "required": ["id", "color", "width", "height", "lifetimeTicks", "exitPolicy"],
+            "required": ["id", "color", "glyph", "effect", "width", "height", "lifetimeTicks", "exitPolicy"],
             "properties": {
               "id": { "$ref": "#/$defs/kindId" },
               "color": { "description": "Fill color of the entity on screen (presentation only; never read by the simulation).", "$ref": "#/$defs/color" },
+              "glyph": { "$ref": "#/$defs/glyph", "description": "Symbol drawn centred in the entity box and scaled to it, presentation only. The empty string draws the color rectangle." },
+              "effect": {
+                "title": "KindEffect",
+                "description": "Presentation effect when an entity of this kind vanishes while fully inside the world: none, burst (particles) or pickup (ring and a +score popup). Effects never touch the simulation. Use none for kinds that expire or leave the world by their own motion.",
+                "type": "string",
+                "enum": ["none", "burst", "pickup"]
+              },
               "width": { "$ref": "#/$defs/size" },
               "height": { "$ref": "#/$defs/size" },
               "lifetimeTicks": { "description": "Despawn after this many ticks; 0 means unlimited.", "type": "integer", "minimum": 0, "maximum": 1000000 },
@@ -172,6 +202,19 @@
       "description": "Opaque sRGB color, #RRGGBB, uppercase hex.",
       "type": "string",
       "pattern": "^#[0-9A-F]{6}$"
+    },
+    "glyph": {
+      "description": "At most 8 characters (one symbol or emoji), or the empty string. No control characters, quotes, backslashes or dollar signs.",
+      "type": "string",
+      "maxLength": 8,
+      "pattern": "^[^\\u0000-\\u001F\\u007F\"\\\\$]*$"
+    },
+    "text": {
+      "description": "Display text of 1 to 40 characters. No control characters, quotes, backslashes or dollar signs.",
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 40,
+      "pattern": "^[^\\u0000-\\u001F\\u007F\"\\\\$]+$"
     },
     "fixed": {
       "description": "Q16.16 fixed-point raw integer (1.0 = 65536), saturating int32 range.",

@@ -1,0 +1,17 @@
+{
+  "name": "monstera-studio-spike",
+  "private": true,
+  "type": "module",
+  "description": "G4 M0 feasibility spike: the unmodified MONSTERA engine inside a browser Pyodide worker. Not the Studio.",
+  "scripts": {
+    "bundle": "node build-bundle.mjs",
+    "reference": "py reference.py",
+    "spike": "node run-spike.mjs"
+  },
+  "dependencies": {
+    "pyodide": "0.29.5"
+  },
+  "devDependencies": {
+    "playwright-core": "1.65.0"
+  }
+}

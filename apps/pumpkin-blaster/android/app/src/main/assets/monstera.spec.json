@@ -1,6 +1,10 @@
 {
   "game": {
     "genre": "arcade-shooter",
+    "hud": {
+      "lifeGlyph": "♥",
+      "scoreLabel": "SCORE"
+    },
     "input": {
       "dragGain": 65536,
       "scheme": "drag",
@@ -71,7 +75,9 @@
       "kinds": [
         {
           "color": "#B6FF3B",
+          "effect": "none",
           "exitPolicy": "clamp",
+          "glyph": "🛸",
           "height": 5898240,
           "id": "player",
           "lifetimeTicks": 0,
@@ -79,7 +85,9 @@
         },
         {
           "color": "#FFFFFF",
+          "effect": "none",
           "exitPolicy": "despawn",
+          "glyph": "",
           "height": 1048576,
           "id": "bullet",
           "lifetimeTicks": 120,
@@ -87,7 +95,9 @@
         },
         {
           "color": "#FF7A00",
+          "effect": "burst",
           "exitPolicy": "despawn",
+          "glyph": "🎃",
           "height": 7208960,
           "id": "pumpkin",
           "lifetimeTicks": 0,
@@ -95,7 +105,9 @@
         },
         {
           "color": "#9B5DE5",
+          "effect": "burst",
           "exitPolicy": "despawn",
+          "glyph": "🦇",
           "height": 3276800,
           "id": "bat",
           "lifetimeTicks": 0,
@@ -103,7 +115,9 @@
         },
         {
           "color": "#FF3B3B",
+          "effect": "burst",
           "exitPolicy": "despawn",
+          "glyph": "🔥",
           "height": 2359296,
           "id": "ember",
           "lifetimeTicks": 0,
@@ -111,7 +125,9 @@
         },
         {
           "color": "#5C4B7D",
+          "effect": "none",
           "exitPolicy": "despawn",
+          "glyph": "",
           "height": 524288,
           "id": "star",
           "lifetimeTicks": 0,
@@ -172,6 +188,11 @@
       ],
       "winScore": 1000
     },
+    "screens": {
+      "loseTitle": "Game over",
+      "startHint": "Drag to move, tap to fire",
+      "winTitle": "Pumpkins blasted!"
+    },
     "simulation": {
       "maxTicksPerFrame": 5,
       "tickRate": 60
@@ -203,5 +224,5 @@
       "name": "0.1.0"
     }
   },
-  "specVersion": 3
+  "specVersion": 4
 }

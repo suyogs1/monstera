@@ -192,3 +192,24 @@ requested (an oracle-only run compares the oracle with its own recording and pro
 Embedded scenarios are accepted for generation only if their checkpoints equal a fresh oracle run, and a scenario is
 rejected when its last checkpoint is not at its last tick or its worst-case oracle work exceeds a fixed bound.
 Conformance runs Kotlin on the JVM (`testDebugUnitTest`, no emulator) and Swift via `swift test`.
+
+## 9. Presentation fields (visual only)
+Spec v4 adds fields that exist only for drawing. They are part of the canonical spec, so they change its SHA-256, and they are
+never part of the simulation:
+`game.runtime.kinds[].glyph`, `game.runtime.kinds[].effect`, `game.hud.{lifeGlyph, scoreLabel}`, `game.screens.{startHint, winTitle, loseTitle}`,
+and the older `kinds[].color` and `game.palette`.
+
+1. The core is configured only from `GeneratedRuntimeConfig`, which the generator builds from the fields of sections 2 to 6. It never
+   receives a presentation field, so changing one cannot change a tick, a draw of any PRNG stream, the serialized state or its hash.
+2. Presentation code lives outside the core directories (`.../presentation/` on Android, `ios/Presentation/` on iOS). It reads
+   `score`, `lives`, `ended` and the entity list after the frame's ticks, never writes to the world, never calls `GameLoop.frame`
+   and never reads a clock itself (the shell passes the frame time). Floating point is allowed there.
+3. `monstera check-architecture` rejects the names `presentation`, `glyph`, `KindEffect`, `HudConfig` and `ScreenConfig` in core sources.
+4. Effects are inferred from state differences between two frames (an entity of an effect kind vanished while its last box was completely
+   inside the world; lives went down). They add no event stream to the core and no checkpoint field.
+5. A golden scenario recorded before a presentation edit is still valid after it: `scenarios record` changes only the recorded spec
+   hash and `tests/test_presentation.py` proves the checkpoints of every frame-free scenario are identical for a spec with every
+   presentation field changed.
+6. Drawing is clipped to the world rectangle; the HUD bar and the letterbox are never drawn into by the world. The layout, the clip
+   rule and the effect rules are specified by the `presentation` unit tests, which exist once per platform and are independent
+   implementations like the cores. They are not part of conformance and are not compared across platforms.
