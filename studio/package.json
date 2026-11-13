@@ -1,0 +1,30 @@
+{
+  "name": "monstera-studio",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "MONSTERA Studio: static web app. The unmodified Python engine runs in a Pyodide worker. No backend.",
+  "scripts": {
+    "prepare-assets": "node scripts/build-engine.mjs && node scripts/build-inventory.mjs",
+    "dev": "npm run prepare-assets && vite",
+    "build": "npm run prepare-assets && tsc --noEmit && vite build",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest --run",
+    "acceptance": "node scripts/acceptance.mjs"
+  },
+  "dependencies": {
+    "pyodide": "0.29.5",
+    "react": "19.3.1",
+    "react-dom": "19.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "22.20.5",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@vitejs/plugin-react": "6.3.0",
+    "playwright-core": "1.65.0",
+    "typescript": "5.9.3",
+    "vite": "8.3.8",
+    "vitest": "5.1.0"
+  }
+}

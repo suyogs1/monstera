@@ -38,6 +38,12 @@ and scenario lookup behave exactly as in the CLI.
    that git stores. Hashes are over canonical JSON, so validation is unaffected.
 4. Draft validation should use `loads_strict` and `validate_value`; the spike showed it equals the file path.
 
+5. **The M1 bundle is smaller than the M0 bundle on purpose.** M1 only validates and serializes, so
+   `studio/scripts/build-engine.mjs` leaves out `spec/scenarios/**` and the binary `gradle-wrapper.jar`. M2 restores both
+   (the spike's base64 handling for binaries): the jar is required for R6.1 plan parity and the source export, the
+   scenarios for the badge and for exporting an unedited template with its goldens (finding 1). Until then
+   `generate.plan` must not be called in Studio.
+
 ## Acceptance (M0)
 Executed by `studio/spike`, evidence in `docs/evidence/studio-spike/spike-result.json`.
 
