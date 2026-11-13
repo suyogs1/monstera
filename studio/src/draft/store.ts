@@ -12,6 +12,18 @@ export interface Baseline {
   /** Engine canonical text of the starting document (for "edited?" and the diff in the Spec view). */
   canonicalText: string | null;
   sha256: string | null;
+  /** The template whose recorded goldens apply (the badge). Never derived from the draft's own project.id. */
+  origin?: Origin | null;
+}
+
+export interface Origin {
+  templateId: string;
+  /** Repository path of the template spec; scenarios are matched by their recorded `spec.path`. */
+  path: string;
+  /** template: loaded from it; identical: an imported file byte-equal (canonical SHA-256) to it; declared: chosen by the user. */
+  basis: "template" | "identical" | "declared";
+  /** The template's engine canonical text (what the badge explanation compares the draft with). */
+  canonicalText: string;
 }
 
 export interface DraftState {
@@ -76,6 +88,12 @@ export class DraftStore {
   set(path: Path, value: Json): void {
     if (this.state.doc === null) return;
     this.replace(setAt(this.state.doc, path, value));
+  }
+
+  /** Records which template's goldens apply to the current draft (the document itself is unchanged). */
+  setOrigin(origin: Origin | null): void {
+    if (this.state.baseline === null) return;
+    this.commit({ ...this.state, baseline: { ...this.state.baseline, origin } }, true);
   }
 
   /** Called by the validation runner. Results for an older revision are dropped. */

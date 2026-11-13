@@ -1,0 +1,970 @@
+{
+  "verdict": "PASS",
+  "browser": "Chrome 157.0.8103.51",
+  "cases": [
+    {
+      "case": "pumpkin-blaster: unedited",
+      "verdict": "match",
+      "scenarios": 5,
+      "diverged": 0,
+      "first": null,
+      "explanation": "note",
+      "ms": 1098,
+      "wallMs": 1159,
+      "sawRunning": true
+    },
+    {
+      "case": "pumpkin-blaster: behaviour edit spawners[0].intervalTicks 60 -> 50",
+      "verdict": "diverged",
+      "scenarios": 5,
+      "diverged": 5,
+      "first": "frame-jitter-60hz.scenario.json @ 54",
+      "explanation": "expected",
+      "ms": 999,
+      "wallMs": 1050,
+      "sawRunning": true
+    },
+    {
+      "case": "pumpkin-blaster: display-only project.displayName",
+      "verdict": "match",
+      "scenarios": 5,
+      "diverged": 0,
+      "first": null,
+      "explanation": "note",
+      "ms": 974,
+      "wallMs": 1015,
+      "sawRunning": true
+    },
+    {
+      "case": "pumpkin-blaster: display-only game.palette.primary",
+      "verdict": "match",
+      "scenarios": 5,
+      "diverged": 0,
+      "first": null,
+      "explanation": "note",
+      "ms": 989,
+      "wallMs": 1032,
+      "sawRunning": true
+    },
+    {
+      "case": "pumpkin-blaster: display-only game.palette.accent",
+      "verdict": "match",
+      "scenarios": 5,
+      "diverged": 0,
+      "first": null,
+      "explanation": "note",
+      "ms": 974,
+      "wallMs": 1015,
+      "sawRunning": true
+    },
+    {
+      "case": "pumpkin-blaster: display-only game.palette.background",
+      "verdict": "match",
+      "scenarios": 5,
+      "diverged": 0,
+      "first": null,
+      "explanation": "note",
+      "ms": 968,
+      "wallMs": 1016,
+      "sawRunning": true
+    },
+    {
+      "case": "pumpkin-blaster: display-only game.hud.lifeGlyph",
+      "verdict": "match",
+      "scenarios": 5,
+      "diverged": 0,
+      "first": null,
+      "explanation": "note",
+      "ms": 968,
+      "wallMs": 1019,
+      "sawRunning": true
+    },
+    {
+      "case": "pumpkin-blaster: display-only game.hud.scoreLabel",
+      "verdict": "match",
+      "scenarios": 5,
+      "diverged": 0,
+      "first": null,
+      "explanation": "note",
+      "ms": 980,
+      "wallMs": 1015,
+      "sawRunning": true
+    },
+    {
+      "case": "pumpkin-blaster: display-only game.screens.startHint",
+      "verdict": "match",
+      "scenarios": 5,
+      "diverged": 0,
+      "first": null,
+      "explanation": "note",
+      "ms": 984,
+      "wallMs": 1032,
+      "sawRunning": true
+    },
+    {
+      "case": "pumpkin-blaster: display-only game.screens.winTitle",
+      "verdict": "match",
+      "scenarios": 5,
+      "diverged": 0,
+      "first": null,
+      "explanation": "note",
+      "ms": 997,
+      "wallMs": 1048,
+      "sawRunning": true
+    },
+    {
+      "case": "pumpkin-blaster: display-only game.screens.loseTitle",
+      "verdict": "match",
+      "scenarios": 5,
+      "diverged": 0,
+      "first": null,
+      "explanation": "note",
+      "ms": 966,
+      "wallMs": 1015,
+      "sawRunning": true
+    },
+    {
+      "case": "pumpkin-blaster: display-only game.runtime.kinds[].color",
+      "verdict": "match",
+      "scenarios": 5,
+      "diverged": 0,
+      "first": null,
+      "explanation": "note",
+      "ms": 968,
+      "wallMs": 1013,
+      "sawRunning": true
+    },
+    {
+      "case": "pumpkin-blaster: display-only game.runtime.kinds[].glyph",
+      "verdict": "match",
+      "scenarios": 5,
+      "diverged": 0,
+      "first": null,
+      "explanation": "note",
+      "ms": 998,
+      "wallMs": 1042,
+      "sawRunning": true
+    },
+    {
+      "case": "pumpkin-blaster: display-only game.runtime.kinds[].effect",
+      "verdict": "match",
+      "scenarios": 5,
+      "diverged": 0,
+      "first": null,
+      "explanation": "note",
+      "ms": 963,
+      "wallMs": 998,
+      "sawRunning": true
+    },
+    {
+      "case": "trick-or-treat-rush: unedited",
+      "verdict": "match",
+      "scenarios": 6,
+      "diverged": 0,
+      "first": null,
+      "explanation": "note",
+      "ms": 260,
+      "wallMs": 289,
+      "sawRunning": true
+    },
+    {
+      "case": "trick-or-treat-rush: behaviour edit spawners[0].intervalTicks halved",
+      "verdict": "diverged",
+      "scenarios": 6,
+      "diverged": 6,
+      "first": "candy-chase.scenario.json @ 30",
+      "explanation": "expected",
+      "ms": 331,
+      "wallMs": 382,
+      "sawRunning": true
+    },
+    {
+      "case": "trick-or-treat-rush: display-only project.displayName",
+      "verdict": "match",
+      "scenarios": 6,
+      "diverged": 0,
+      "first": null,
+      "explanation": "note",
+      "ms": 252,
+      "wallMs": 298,
+      "sawRunning": true
+    },
+    {
+      "case": "trick-or-treat-rush: display-only game.palette.primary",
+      "verdict": "match",
+      "scenarios": 6,
+      "diverged": 0,
+      "first": null,
+      "explanation": "note",
+      "ms": 251,
+      "wallMs": 298,
+      "sawRunning": true
+    },
+    {
+      "case": "trick-or-treat-rush: display-only game.palette.accent",
+      "verdict": "match",
+      "scenarios": 6,
+      "diverged": 0,
+      "first": null,
+      "explanation": "note",
+      "ms": 250,
+      "wallMs": 299,
+      "sawRunning": true
+    },
+    {
+      "case": "trick-or-treat-rush: display-only game.palette.background",
+      "verdict": "match",
+      "scenarios": 6,
+      "diverged": 0,
+      "first": null,
+      "explanation": "note",
+      "ms": 247,
+      "wallMs": 298,
+      "sawRunning": true
+    },
+    {
+      "case": "trick-or-treat-rush: display-only game.hud.lifeGlyph",
+      "verdict": "match",
+      "scenarios": 6,
+      "diverged": 0,
+      "first": null,
+      "explanation": "note",
+      "ms": 258,
+      "wallMs": 299,
+      "sawRunning": true
+    },
+    {
+      "case": "trick-or-treat-rush: display-only game.hud.scoreLabel",
+      "verdict": "match",
+      "scenarios": 6,
+      "diverged": 0,
+      "first": null,
+      "explanation": "note",
+      "ms": 253,
+      "wallMs": 298,
+      "sawRunning": true
+    },
+    {
+      "case": "trick-or-treat-rush: display-only game.screens.startHint",
+      "verdict": "match",
+      "scenarios": 6,
+      "diverged": 0,
+      "first": null,
+      "explanation": "note",
+      "ms": 256,
+      "wallMs": 298,
+      "sawRunning": true
+    },
+    {
+      "case": "trick-or-treat-rush: display-only game.screens.winTitle",
+      "verdict": "match",
+      "scenarios": 6,
+      "diverged": 0,
+      "first": null,
+      "explanation": "note",
+      "ms": 286,
+      "wallMs": 333,
+      "sawRunning": true
+    },
+    {
+      "case": "trick-or-treat-rush: display-only game.screens.loseTitle",
+      "verdict": "match",
+      "scenarios": 6,
+      "diverged": 0,
+      "first": null,
+      "explanation": "note",
+      "ms": 304,
+      "wallMs": 349,
+      "sawRunning": true
+    },
+    {
+      "case": "trick-or-treat-rush: display-only game.runtime.kinds[].color",
+      "verdict": "match",
+      "scenarios": 6,
+      "diverged": 0,
+      "first": null,
+      "explanation": "note",
+      "ms": 296,
+      "wallMs": 346,
+      "sawRunning": true
+    },
+    {
+      "case": "trick-or-treat-rush: display-only game.runtime.kinds[].glyph",
+      "verdict": "match",
+      "scenarios": 6,
+      "diverged": 0,
+      "first": null,
+      "explanation": "note",
+      "ms": 258,
+      "wallMs": 296,
+      "sawRunning": true
+    },
+    {
+      "case": "trick-or-treat-rush: display-only game.runtime.kinds[].effect",
+      "verdict": "match",
+      "scenarios": 6,
+      "diverged": 0,
+      "first": null,
+      "explanation": "note",
+      "ms": 253,
+      "wallMs": 299,
+      "sawRunning": true
+    },
+    {
+      "case": "lantern-run: unedited",
+      "verdict": "match",
+      "scenarios": 4,
+      "diverged": 0,
+      "first": null,
+      "explanation": "note",
+      "ms": 138,
+      "wallMs": 180,
+      "sawRunning": true
+    },
+    {
+      "case": "lantern-run: behaviour edit runtime.lives + 1",
+      "verdict": "diverged",
+      "scenarios": 4,
+      "diverged": 4,
+      "first": "frame-jitter.scenario.json @ 0",
+      "explanation": "expected",
+      "ms": 137,
+      "wallMs": 182,
+      "sawRunning": true
+    },
+    {
+      "case": "lantern-run: display-only project.displayName",
+      "verdict": "match",
+      "scenarios": 4,
+      "diverged": 0,
+      "first": null,
+      "explanation": "note",
+      "ms": 129,
+      "wallMs": 165,
+      "sawRunning": true
+    },
+    {
+      "case": "lantern-run: display-only game.palette.primary",
+      "verdict": "match",
+      "scenarios": 4,
+      "diverged": 0,
+      "first": null,
+      "explanation": "note",
+      "ms": 131,
+      "wallMs": 182,
+      "sawRunning": true
+    },
+    {
+      "case": "lantern-run: display-only game.palette.accent",
+      "verdict": "match",
+      "scenarios": 4,
+      "diverged": 0,
+      "first": null,
+      "explanation": "note",
+      "ms": 139,
+      "wallMs": 176,
+      "sawRunning": true
+    },
+    {
+      "case": "lantern-run: display-only game.palette.background",
+      "verdict": "match",
+      "scenarios": 4,
+      "diverged": 0,
+      "first": null,
+      "explanation": "note",
+      "ms": 136,
+      "wallMs": 181,
+      "sawRunning": true
+    },
+    {
+      "case": "lantern-run: display-only game.hud.lifeGlyph",
+      "verdict": "match",
+      "scenarios": 4,
+      "diverged": 0,
+      "first": null,
+      "explanation": "note",
+      "ms": 131,
+      "wallMs": 182,
+      "sawRunning": true
+    },
+    {
+      "case": "lantern-run: display-only game.hud.scoreLabel",
+      "verdict": "match",
+      "scenarios": 4,
+      "diverged": 0,
+      "first": null,
+      "explanation": "note",
+      "ms": 129,
+      "wallMs": 165,
+      "sawRunning": true
+    },
+    {
+      "case": "lantern-run: display-only game.screens.startHint",
+      "verdict": "match",
+      "scenarios": 4,
+      "diverged": 0,
+      "first": null,
+      "explanation": "note",
+      "ms": 128,
+      "wallMs": 165,
+      "sawRunning": true
+    },
+    {
+      "case": "lantern-run: display-only game.screens.winTitle",
+      "verdict": "match",
+      "scenarios": 4,
+      "diverged": 0,
+      "first": null,
+      "explanation": "note",
+      "ms": 131,
+      "wallMs": 182,
+      "sawRunning": true
+    },
+    {
+      "case": "lantern-run: display-only game.screens.loseTitle",
+      "verdict": "match",
+      "scenarios": 4,
+      "diverged": 0,
+      "first": null,
+      "explanation": "note",
+      "ms": 131,
+      "wallMs": 182,
+      "sawRunning": true
+    },
+    {
+      "case": "lantern-run: display-only game.runtime.kinds[].color",
+      "verdict": "match",
+      "scenarios": 4,
+      "diverged": 0,
+      "first": null,
+      "explanation": "note",
+      "ms": 137,
+      "wallMs": 178,
+      "sawRunning": true
+    },
+    {
+      "case": "lantern-run: display-only game.runtime.kinds[].glyph",
+      "verdict": "match",
+      "scenarios": 4,
+      "diverged": 0,
+      "first": null,
+      "explanation": "note",
+      "ms": 132,
+      "wallMs": 180,
+      "sawRunning": true
+    },
+    {
+      "case": "lantern-run: display-only game.runtime.kinds[].effect",
+      "verdict": "match",
+      "scenarios": 4,
+      "diverged": 0,
+      "first": null,
+      "explanation": "note",
+      "ms": 132,
+      "wallMs": 182,
+      "sawRunning": true
+    }
+  ],
+  "checks": [
+    {
+      "name": "the badge starts as not run (it never runs by itself)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "pumpkin-blaster: unedited: MATCH over all 5 goldens, every scenario equal to host CPython",
+      "ok": true,
+      "detail": "match; 0 diverged; explanation note; 1098 ms"
+    },
+    {
+      "name": "pumpkin-blaster: behaviour edit spawners[0].intervalTicks 60 -> 50: DIVERGED over all 5 goldens, every scenario equal to host CPython",
+      "ok": true,
+      "detail": "diverged; 5 diverged, first frame-jitter-60hz.scenario.json at tick 54; explanation expected; 999 ms"
+    },
+    {
+      "name": "pumpkin-blaster: display-only project.displayName: MATCH over all 5 goldens, every scenario equal to host CPython",
+      "ok": true,
+      "detail": "match; 0 diverged; explanation note; 974 ms"
+    },
+    {
+      "name": "pumpkin-blaster: display-only project.displayName: the engine (host) agrees the display-only edit cannot diverge",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "pumpkin-blaster: display-only game.palette.primary: MATCH over all 5 goldens, every scenario equal to host CPython",
+      "ok": true,
+      "detail": "match; 0 diverged; explanation note; 989 ms"
+    },
+    {
+      "name": "pumpkin-blaster: display-only game.palette.primary: the engine (host) agrees the display-only edit cannot diverge",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "pumpkin-blaster: display-only game.palette.accent: MATCH over all 5 goldens, every scenario equal to host CPython",
+      "ok": true,
+      "detail": "match; 0 diverged; explanation note; 974 ms"
+    },
+    {
+      "name": "pumpkin-blaster: display-only game.palette.accent: the engine (host) agrees the display-only edit cannot diverge",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "pumpkin-blaster: display-only game.palette.background: MATCH over all 5 goldens, every scenario equal to host CPython",
+      "ok": true,
+      "detail": "match; 0 diverged; explanation note; 968 ms"
+    },
+    {
+      "name": "pumpkin-blaster: display-only game.palette.background: the engine (host) agrees the display-only edit cannot diverge",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "pumpkin-blaster: display-only game.hud.lifeGlyph: MATCH over all 5 goldens, every scenario equal to host CPython",
+      "ok": true,
+      "detail": "match; 0 diverged; explanation note; 968 ms"
+    },
+    {
+      "name": "pumpkin-blaster: display-only game.hud.lifeGlyph: the engine (host) agrees the display-only edit cannot diverge",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "pumpkin-blaster: display-only game.hud.scoreLabel: MATCH over all 5 goldens, every scenario equal to host CPython",
+      "ok": true,
+      "detail": "match; 0 diverged; explanation note; 980 ms"
+    },
+    {
+      "name": "pumpkin-blaster: display-only game.hud.scoreLabel: the engine (host) agrees the display-only edit cannot diverge",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "pumpkin-blaster: display-only game.screens.startHint: MATCH over all 5 goldens, every scenario equal to host CPython",
+      "ok": true,
+      "detail": "match; 0 diverged; explanation note; 984 ms"
+    },
+    {
+      "name": "pumpkin-blaster: display-only game.screens.startHint: the engine (host) agrees the display-only edit cannot diverge",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "pumpkin-blaster: display-only game.screens.winTitle: MATCH over all 5 goldens, every scenario equal to host CPython",
+      "ok": true,
+      "detail": "match; 0 diverged; explanation note; 997 ms"
+    },
+    {
+      "name": "pumpkin-blaster: display-only game.screens.winTitle: the engine (host) agrees the display-only edit cannot diverge",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "pumpkin-blaster: display-only game.screens.loseTitle: MATCH over all 5 goldens, every scenario equal to host CPython",
+      "ok": true,
+      "detail": "match; 0 diverged; explanation note; 966 ms"
+    },
+    {
+      "name": "pumpkin-blaster: display-only game.screens.loseTitle: the engine (host) agrees the display-only edit cannot diverge",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "pumpkin-blaster: display-only game.runtime.kinds[].color: MATCH over all 5 goldens, every scenario equal to host CPython",
+      "ok": true,
+      "detail": "match; 0 diverged; explanation note; 968 ms"
+    },
+    {
+      "name": "pumpkin-blaster: display-only game.runtime.kinds[].color: the engine (host) agrees the display-only edit cannot diverge",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "pumpkin-blaster: display-only game.runtime.kinds[].glyph: MATCH over all 5 goldens, every scenario equal to host CPython",
+      "ok": true,
+      "detail": "match; 0 diverged; explanation note; 998 ms"
+    },
+    {
+      "name": "pumpkin-blaster: display-only game.runtime.kinds[].glyph: the engine (host) agrees the display-only edit cannot diverge",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "pumpkin-blaster: display-only game.runtime.kinds[].effect: MATCH over all 5 goldens, every scenario equal to host CPython",
+      "ok": true,
+      "detail": "match; 0 diverged; explanation note; 963 ms"
+    },
+    {
+      "name": "pumpkin-blaster: display-only game.runtime.kinds[].effect: the engine (host) agrees the display-only edit cannot diverge",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "trick-or-treat-rush: unedited: MATCH over all 6 goldens, every scenario equal to host CPython",
+      "ok": true,
+      "detail": "match; 0 diverged; explanation note; 260 ms"
+    },
+    {
+      "name": "trick-or-treat-rush: behaviour edit spawners[0].intervalTicks halved: DIVERGED over all 6 goldens, every scenario equal to host CPython",
+      "ok": true,
+      "detail": "diverged; 6 diverged, first candy-chase.scenario.json at tick 30; explanation expected; 331 ms"
+    },
+    {
+      "name": "trick-or-treat-rush: display-only project.displayName: MATCH over all 6 goldens, every scenario equal to host CPython",
+      "ok": true,
+      "detail": "match; 0 diverged; explanation note; 252 ms"
+    },
+    {
+      "name": "trick-or-treat-rush: display-only project.displayName: the engine (host) agrees the display-only edit cannot diverge",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "trick-or-treat-rush: display-only game.palette.primary: MATCH over all 6 goldens, every scenario equal to host CPython",
+      "ok": true,
+      "detail": "match; 0 diverged; explanation note; 251 ms"
+    },
+    {
+      "name": "trick-or-treat-rush: display-only game.palette.primary: the engine (host) agrees the display-only edit cannot diverge",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "trick-or-treat-rush: display-only game.palette.accent: MATCH over all 6 goldens, every scenario equal to host CPython",
+      "ok": true,
+      "detail": "match; 0 diverged; explanation note; 250 ms"
+    },
+    {
+      "name": "trick-or-treat-rush: display-only game.palette.accent: the engine (host) agrees the display-only edit cannot diverge",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "trick-or-treat-rush: display-only game.palette.background: MATCH over all 6 goldens, every scenario equal to host CPython",
+      "ok": true,
+      "detail": "match; 0 diverged; explanation note; 247 ms"
+    },
+    {
+      "name": "trick-or-treat-rush: display-only game.palette.background: the engine (host) agrees the display-only edit cannot diverge",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "trick-or-treat-rush: display-only game.hud.lifeGlyph: MATCH over all 6 goldens, every scenario equal to host CPython",
+      "ok": true,
+      "detail": "match; 0 diverged; explanation note; 258 ms"
+    },
+    {
+      "name": "trick-or-treat-rush: display-only game.hud.lifeGlyph: the engine (host) agrees the display-only edit cannot diverge",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "trick-or-treat-rush: display-only game.hud.scoreLabel: MATCH over all 6 goldens, every scenario equal to host CPython",
+      "ok": true,
+      "detail": "match; 0 diverged; explanation note; 253 ms"
+    },
+    {
+      "name": "trick-or-treat-rush: display-only game.hud.scoreLabel: the engine (host) agrees the display-only edit cannot diverge",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "trick-or-treat-rush: display-only game.screens.startHint: MATCH over all 6 goldens, every scenario equal to host CPython",
+      "ok": true,
+      "detail": "match; 0 diverged; explanation note; 256 ms"
+    },
+    {
+      "name": "trick-or-treat-rush: display-only game.screens.startHint: the engine (host) agrees the display-only edit cannot diverge",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "trick-or-treat-rush: display-only game.screens.winTitle: MATCH over all 6 goldens, every scenario equal to host CPython",
+      "ok": true,
+      "detail": "match; 0 diverged; explanation note; 286 ms"
+    },
+    {
+      "name": "trick-or-treat-rush: display-only game.screens.winTitle: the engine (host) agrees the display-only edit cannot diverge",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "trick-or-treat-rush: display-only game.screens.loseTitle: MATCH over all 6 goldens, every scenario equal to host CPython",
+      "ok": true,
+      "detail": "match; 0 diverged; explanation note; 304 ms"
+    },
+    {
+      "name": "trick-or-treat-rush: display-only game.screens.loseTitle: the engine (host) agrees the display-only edit cannot diverge",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "trick-or-treat-rush: display-only game.runtime.kinds[].color: MATCH over all 6 goldens, every scenario equal to host CPython",
+      "ok": true,
+      "detail": "match; 0 diverged; explanation note; 296 ms"
+    },
+    {
+      "name": "trick-or-treat-rush: display-only game.runtime.kinds[].color: the engine (host) agrees the display-only edit cannot diverge",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "trick-or-treat-rush: display-only game.runtime.kinds[].glyph: MATCH over all 6 goldens, every scenario equal to host CPython",
+      "ok": true,
+      "detail": "match; 0 diverged; explanation note; 258 ms"
+    },
+    {
+      "name": "trick-or-treat-rush: display-only game.runtime.kinds[].glyph: the engine (host) agrees the display-only edit cannot diverge",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "trick-or-treat-rush: display-only game.runtime.kinds[].effect: MATCH over all 6 goldens, every scenario equal to host CPython",
+      "ok": true,
+      "detail": "match; 0 diverged; explanation note; 253 ms"
+    },
+    {
+      "name": "trick-or-treat-rush: display-only game.runtime.kinds[].effect: the engine (host) agrees the display-only edit cannot diverge",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "lantern-run: unedited: MATCH over all 4 goldens, every scenario equal to host CPython",
+      "ok": true,
+      "detail": "match; 0 diverged; explanation note; 138 ms"
+    },
+    {
+      "name": "lantern-run: behaviour edit runtime.lives + 1: DIVERGED over all 4 goldens, every scenario equal to host CPython",
+      "ok": true,
+      "detail": "diverged; 4 diverged, first frame-jitter.scenario.json at tick 0; explanation expected; 137 ms"
+    },
+    {
+      "name": "lantern-run: display-only project.displayName: MATCH over all 4 goldens, every scenario equal to host CPython",
+      "ok": true,
+      "detail": "match; 0 diverged; explanation note; 129 ms"
+    },
+    {
+      "name": "lantern-run: display-only project.displayName: the engine (host) agrees the display-only edit cannot diverge",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "lantern-run: display-only game.palette.primary: MATCH over all 4 goldens, every scenario equal to host CPython",
+      "ok": true,
+      "detail": "match; 0 diverged; explanation note; 131 ms"
+    },
+    {
+      "name": "lantern-run: display-only game.palette.primary: the engine (host) agrees the display-only edit cannot diverge",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "lantern-run: display-only game.palette.accent: MATCH over all 4 goldens, every scenario equal to host CPython",
+      "ok": true,
+      "detail": "match; 0 diverged; explanation note; 139 ms"
+    },
+    {
+      "name": "lantern-run: display-only game.palette.accent: the engine (host) agrees the display-only edit cannot diverge",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "lantern-run: display-only game.palette.background: MATCH over all 4 goldens, every scenario equal to host CPython",
+      "ok": true,
+      "detail": "match; 0 diverged; explanation note; 136 ms"
+    },
+    {
+      "name": "lantern-run: display-only game.palette.background: the engine (host) agrees the display-only edit cannot diverge",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "lantern-run: display-only game.hud.lifeGlyph: MATCH over all 4 goldens, every scenario equal to host CPython",
+      "ok": true,
+      "detail": "match; 0 diverged; explanation note; 131 ms"
+    },
+    {
+      "name": "lantern-run: display-only game.hud.lifeGlyph: the engine (host) agrees the display-only edit cannot diverge",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "lantern-run: display-only game.hud.scoreLabel: MATCH over all 4 goldens, every scenario equal to host CPython",
+      "ok": true,
+      "detail": "match; 0 diverged; explanation note; 129 ms"
+    },
+    {
+      "name": "lantern-run: display-only game.hud.scoreLabel: the engine (host) agrees the display-only edit cannot diverge",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "lantern-run: display-only game.screens.startHint: MATCH over all 4 goldens, every scenario equal to host CPython",
+      "ok": true,
+      "detail": "match; 0 diverged; explanation note; 128 ms"
+    },
+    {
+      "name": "lantern-run: display-only game.screens.startHint: the engine (host) agrees the display-only edit cannot diverge",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "lantern-run: display-only game.screens.winTitle: MATCH over all 4 goldens, every scenario equal to host CPython",
+      "ok": true,
+      "detail": "match; 0 diverged; explanation note; 131 ms"
+    },
+    {
+      "name": "lantern-run: display-only game.screens.winTitle: the engine (host) agrees the display-only edit cannot diverge",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "lantern-run: display-only game.screens.loseTitle: MATCH over all 4 goldens, every scenario equal to host CPython",
+      "ok": true,
+      "detail": "match; 0 diverged; explanation note; 131 ms"
+    },
+    {
+      "name": "lantern-run: display-only game.screens.loseTitle: the engine (host) agrees the display-only edit cannot diverge",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "lantern-run: display-only game.runtime.kinds[].color: MATCH over all 4 goldens, every scenario equal to host CPython",
+      "ok": true,
+      "detail": "match; 0 diverged; explanation note; 137 ms"
+    },
+    {
+      "name": "lantern-run: display-only game.runtime.kinds[].color: the engine (host) agrees the display-only edit cannot diverge",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "lantern-run: display-only game.runtime.kinds[].glyph: MATCH over all 4 goldens, every scenario equal to host CPython",
+      "ok": true,
+      "detail": "match; 0 diverged; explanation note; 132 ms"
+    },
+    {
+      "name": "lantern-run: display-only game.runtime.kinds[].glyph: the engine (host) agrees the display-only edit cannot diverge",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "lantern-run: display-only game.runtime.kinds[].effect: MATCH over all 4 goldens, every scenario equal to host CPython",
+      "ok": true,
+      "detail": "match; 0 diverged; explanation note; 132 ms"
+    },
+    {
+      "name": "lantern-run: display-only game.runtime.kinds[].effect: the engine (host) agrees the display-only edit cannot diverge",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "every behaviour edit used here diverges (each template's badge demonstrably detects a change)",
+      "ok": true,
+      "detail": "diverged, diverged, diverged"
+    },
+    {
+      "name": "Lantern Run's 4 recorded goldens are included",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "progress is shown while a run is in progress",
+      "ok": true,
+      "detail": "truetruetruetruetruetruetruetruetruetruetruetruetruetruetruetruetruetruetruetruetruetruetruetruetruetruetruetruetruetruetruetruetruetruetruetruetruetruetruetruetruetrue"
+    },
+    {
+      "name": "the first divergent scenario and checkpoint are named (frames for a frame-driven scenario, ticks otherwise)",
+      "ok": true,
+      "detail": "First divergence: frame-jitter-60hz, frame 54 (a frame-driven scenario counts frames; the observed tick is the world tick)"
+    },
+    {
+      "name": "an edit marks the result STALE immediately (before validation finishes) and after",
+      "ok": true,
+      "detail": "stale -> stale; run disabled while pending: true"
+    },
+    {
+      "name": "reverting to the exact SHA-256 shows the bound MATCH again (results are keyed by SHA-256)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "an edit during a run stops it between scenarios and the result is STALE",
+      "ok": true,
+      "detail": "2/5 scenarios before the stop"
+    },
+    {
+      "name": "an invalid draft cannot be checked: the button is disabled, start() does nothing, the verdict is not MATCH",
+      "ok": true,
+      "detail": "stale"
+    },
+    {
+      "name": "the engine glue reports an invalid or unparsable draft as invalid, with no comparison",
+      "ok": true,
+      "detail": "1 validation issue(s) | Expecting property name enclosed in double quotes"
+    },
+    {
+      "name": "an engine exception (file outside the goldens, missing file) is an error, never a result",
+      "ok": true,
+      "detail": "ValueError: '/repo/apps/pumpkin-blaster/monstera.spec.json' is not in the subpath of '/repo/spec/scenarios' | LoadError: [io.read] cannot read /repo/spec/scenarios/pumpkin-blaster/missing.scenario.json: No such file or directory"
+    },
+    {
+      "name": "an imported file identical to a template (same canonical SHA-256) gets that template's goldens and MATCHes",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "an edited import keeps project.id 'pumpkin-blaster' but has no known origin: NO GOLDENS, nothing chosen from project.id",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "declaring the origin makes the earlier NO GOLDENS result stale",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "a declared origin runs that template's goldens and is labelled as declared (the lives edit diverges, as expected)",
+      "ok": true,
+      "detail": "Goldens of apps/pumpkin-blaster/monstera.spec.json: declared by you for this imported file. Compare this imported file against the recorded "
+    },
+    {
+      "name": "an import of another project with no declared origin reports NO GOLDENS, not MATCH",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "pumpkin-blaster: native conformance evidence is shown only for an exact SHA-256 match",
+      "ok": true,
+      "detail": "no report for 08c7a90d9fcf; docs/evidence/g3-conformance/pumpkin-blaster.report.json is for c65ebbdda2e8"
+    },
+    {
+      "name": "trick-or-treat-rush: native conformance evidence is shown only for an exact SHA-256 match",
+      "ok": true,
+      "detail": "no report for edcc20006856; docs/evidence/g3-conformance/trick-or-treat-rush.report.json is for 93fb53e06cc4"
+    },
+    {
+      "name": "lantern-run: native conformance evidence is shown only for an exact SHA-256 match",
+      "ok": true,
+      "detail": "no report for cc08da835eab; none for this game"
+    },
+    {
+      "name": "the badge is labelled 'oracle vs recorded goldens' and does not claim native or device results",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "no request leaves the origin",
+      "ok": true,
+      "detail": "all same-origin"
+    },
+    {
+      "name": "no console or page errors",
+      "ok": true,
+      "detail": ""
+    }
+  ]
+}

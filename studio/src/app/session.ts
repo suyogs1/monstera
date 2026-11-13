@@ -1,4 +1,7 @@
+import { BadgeRunner } from "../badge/badge";
 import { DraftStore, type Baseline } from "../draft/store";
+import { PreviewController } from "../preview/controller";
+import { Selection } from "../preview/select";
 import { EngineClient } from "../engine/client";
 import type { TemplateInfo } from "../engine/protocol";
 import { SchemaModel, type Json } from "../schema/schema";
@@ -11,12 +14,21 @@ export type Boot = { phase: "starting" } | { phase: "ready" } | { phase: "failed
 export class Session {
   readonly engine = new EngineClient();
   readonly store: DraftStore;
+  /** Determinism badge: runs only when asked (never per keystroke). */
+  readonly badge: BadgeRunner;
+  /** Live preview: the engine's GameLoop in the worker, one request in flight at a time. */
+  readonly preview: PreviewController;
+  /** Selected kind (click-through between the preview and the Entities editor). Display only, never in the spec. */
+  readonly selection = new Selection();
   schema: SchemaModel | undefined;
   boot: Boot = { phase: "starting" };
   private timer: ReturnType<typeof setTimeout> | undefined;
 
   constructor(storage: Storage | undefined) {
     this.store = new DraftStore(storage);
+    this.badge = new BadgeRunner(this.engine, this.store);
+    this.preview = new PreviewController(this.engine);
+    this.engine.onReply = (fn, bytes, ms) => { if (fn === "preview_frame") this.preview.noteReply(bytes, ms); };
     this.store.subscribe(() => this.scheduleValidation());
   }
 
@@ -39,6 +51,10 @@ export class Session {
       const storedDoc = validation.parsed ? (JSON.parse(stored.docText) as Json) : null;
       if (storedDoc !== null && typeof storedDoc === "object" && !Array.isArray(storedDoc)) {
         this.store.load(storedDoc, stored.baseline, validation);
+        if (stored.baseline.origin === undefined) { // stored before origins were recorded: a template draft keeps its template
+          const t = (await this.templateCanonicals()).find((x) => x.info.id === stored.baseline.templateId);
+          this.store.setOrigin(t?.canonicalText ? { templateId: t.info.id, path: t.info.path, basis: "template", canonicalText: t.canonicalText } : null);
+        }
         this.boot = { phase: "ready" };
         return;
       }
@@ -53,8 +69,35 @@ export class Session {
     const info = this.engine.templates.find((t) => t.id === id);
     if (!info) throw new Error(`unknown template ${id}`);
     const t = await this.engine.template(info.path);
-    const baseline: Baseline = { label: info.id, templateId: info.id, group: info.group, canonicalText: t.canonicalText, sha256: t.sha256 };
+    const baseline: Baseline = { label: info.id, templateId: info.id, group: info.group, canonicalText: t.canonicalText, sha256: t.sha256,
+      origin: t.canonicalText ? { templateId: info.id, path: info.path, basis: "template", canonicalText: t.canonicalText } : null };
     this.store.load(JSON.parse(t.fileText) as Json, baseline, t);
+  }
+
+  private templateCanon: Promise<{ info: TemplateInfo; sha256: string | null; canonicalText: string | null }[]> | undefined;
+
+  /** Engine canonical text and SHA-256 of every bundled template (read once). */
+  templateCanonicals() {
+    this.templateCanon ??= Promise.all(this.engine.templates.map(async (info) => {
+      const t = await this.engine.template(info.path);
+      return { info, sha256: t.sha256, canonicalText: t.canonicalText };
+    }));
+    return this.templateCanon;
+  }
+
+  /** The user states which template an imported draft comes from (or none). Labelled "declared" everywhere. */
+  async declareOrigin(templateId: string | null): Promise<void> {
+    if (templateId === null) { this.store.setOrigin(null); return; }
+    const t = (await this.templateCanonicals()).find((x) => x.info.id === templateId);
+    if (!t?.canonicalText) throw new Error(`unknown template ${templateId}`);
+    this.store.setOrigin({ templateId, path: t.info.path, basis: "declared", canonicalText: t.canonicalText });
+  }
+
+  /** An import's origin is known only when it is exactly a template (same canonical SHA-256); never from project.id. */
+  private async originOfImport(sha256: string | null): Promise<Baseline["origin"]> {
+    if (!sha256) return null;
+    const t = (await this.templateCanonicals()).find((x) => x.sha256 === sha256);
+    return t?.canonicalText ? { templateId: t.info.id, path: t.info.path, basis: "identical", canonicalText: t.canonicalText } : null;
   }
 
   /** Back to the starting point of the current draft (template or imported file). */
@@ -79,7 +122,8 @@ export class Session {
       const kind = top === null ? "null" : Array.isArray(top) ? "an array" : typeof top;
       return { ok: false, message: `a specification is a JSON object, but this file contains ${kind}. Your draft was not changed.` };
     }
-    const baseline: Baseline = { label: fileName, templateId: null, group: "import", canonicalText: v.canonicalText, sha256: v.sha256 };
+    const baseline: Baseline = { label: fileName, templateId: null, group: "import", canonicalText: v.canonicalText, sha256: v.sha256,
+      origin: v.ok ? await this.originOfImport(v.sha256) : null };
     this.store.load(JSON.parse(v.canonicalText) as Json, baseline, v);
     return { ok: true };
   }

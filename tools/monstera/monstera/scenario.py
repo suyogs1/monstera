@@ -27,6 +27,12 @@ RECORDING_CODES = frozenset({"scenario.spec-stale", "scenario.checkpoint-order",
                              "scenario.final-checkpoint"})
 
 
+class StaleScenarios(ValueError):
+    """The project's scenarios are valid but were recorded against a different spec SHA-256. A ValueError like every
+    other `load_for_project` refusal (callers that only catch ValueError behave exactly as before); raised only for
+    this condition, so a caller can tell "the goldens do not apply to this spec" from "a golden is broken"."""
+
+
 @dataclass(frozen=True)
 class Loaded:
     path: Path
@@ -112,18 +118,24 @@ def validate(path: Path, store: SchemaStore) -> tuple[dict[str, Any] | None, lis
     return data, sorted(set(out))
 
 
-def oracle_checkpoints(data: dict[str, Any], store: SchemaStore, ticks: list[int]) -> list[dict[str, Any]]:
-    result, issues = _spec_for(data, store)
-    if result is None or issues:
-        raise ValueError("; ".join(map(str, issues)) or "spec unavailable")
+def checkpoints_for_game(game: dict[str, Any], data: dict[str, Any], ticks: list[int]) -> list[dict[str, Any]]:
+    """Oracle checkpoints of scenario `data` (seed, inputs, frames) against an already validated `game`
+    object. Pure: no file access, no recorded-hash check, so an edited in-memory draft can be run.
+    The caller owns validation of `game` and `data`; `oracle_checkpoints` adds the recorded-spec check."""
     probe = dict(data, checkpoints=[{"tick": t} for t in ticks])
-    game = result.spec["game"]
     cfg = sim.Config(game)
     if data["frames"]["count"] > 0:
         rows = loop.run_frame_scenario(cfg, probe, game["simulation"]["tickRate"], game["simulation"]["maxTicksPerFrame"])
     else:
         rows = sim.run_scenario(cfg, probe)
     return [{"tick": r["tick"], "hash": format(r["hash"], "016x"), "observe": r["observe"]} for r in rows]
+
+
+def oracle_checkpoints(data: dict[str, Any], store: SchemaStore, ticks: list[int]) -> list[dict[str, Any]]:
+    result, issues = _spec_for(data, store)
+    if result is None or issues:
+        raise ValueError("; ".join(map(str, issues)) or "spec unavailable")
+    return checkpoints_for_game(result.spec["game"], data, ticks)
 
 
 def record(path: Path, store: SchemaStore) -> list[Issue]:
@@ -190,7 +202,7 @@ def load_for_project(project_id: str, spec_sha: str, store: SchemaStore) -> list
         if not data["checkpoints"]:
             raise ValueError(f"{path.name}: no checkpoints; run `monstera scenarios record`")
         if data["spec"]["sha256"] != spec_sha:
-            raise ValueError(f"{path.name}: recorded against a different spec; run `monstera scenarios record`")
+            raise StaleScenarios(f"{path.name}: recorded against a different spec; run `monstera scenarios record`")
         # Goldens come only from `monstera scenarios record`: a hand-edited checkpoint must never be embedded.
         found = _checked(path, spec_sha, store)
         if found:

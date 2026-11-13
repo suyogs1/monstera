@@ -1,0 +1,26 @@
+{
+  "verdict": "PASS",
+  "browser": "Chrome 157.0.8103.51",
+  "checks": [
+    {
+      "name": "pumpkin-blaster: edit, validate, preview, inspect, determinism check, export, revert",
+      "ok": true,
+      "detail": "ok edit + validate (lives 5 -> 6, 0ff7370bbaa4); ok preview runs the edit (engine lives match the edit); ok inspect selects the kind (player); ok determinism check (diverged, explanation expected); ok export (edited: goldens omitted) (5 omitted; pumpkin-blaster-native-source.zip); ok revert -> original SHA-256 and MATCH (08c7a90d9fcf)"
+    },
+    {
+      "name": "trick-or-treat-rush: edit, validate, preview, inspect, determinism check, export, revert",
+      "ok": true,
+      "detail": "ok edit + validate (lives 3 -> 4, 37fb0c919cfa); ok preview runs the edit (engine lives match the edit); ok inspect selects the kind (runner); ok determinism check (diverged, explanation expected); ok export (edited: goldens omitted) (6 omitted; trick-or-treat-rush-native-source.zip); ok revert -> original SHA-256 and MATCH (edcc20006856)"
+    },
+    {
+      "name": "lantern-run: edit, validate, preview, inspect, determinism check, export, revert",
+      "ok": true,
+      "detail": "ok edit + validate (lives 3 -> 4, 22598704a098); ok preview runs the edit (engine lives match the edit); ok inspect selects the kind (keeper); ok determinism check (diverged, explanation expected); ok export (edited: goldens omitted) (4 omitted; lantern-run-native-source.zip); ok revert -> original SHA-256 and MATCH (cc08da835eab)"
+    },
+    {
+      "name": "no console or page errors",
+      "ok": true,
+      "detail": ""
+    }
+  ]
+}

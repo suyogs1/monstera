@@ -1,4 +1,4 @@
-import { useEffect, useId, useState } from "react";
+import { useEffect, useId, useState, useSyncExternalStore } from "react";
 import { useSection, useSession } from "../../app/hooks";
 import { goToPath } from "../../app/navigate";
 import { addInitialEntity, addKind, removeInitialEntity, removeKind, renameKind, kindReferences, type KindRef } from "../../draft/ops";
@@ -63,7 +63,8 @@ function Swatch({ index }: { index: number }) {
 }
 
 function KindCard({ index }: { index: number }) {
-  const { store } = useSession();
+  const { store, selection } = useSession();
+  const selected = useSyncExternalStore(selection.subscribe, () => selection.getState().kindId);
   const [, setSection] = useSection();
   const doc = useDoc();
   const id = String(useValue([...RT, "kinds", index, "id"]) ?? "");
@@ -79,6 +80,7 @@ function KindCard({ index }: { index: number }) {
 
   return (
     <Card dataPath={toIssuePath(base)} title={<><Swatch index={index} /> <span className="mono">{id || "(no id)"}</span></>}
+      selected={selected === id && id !== ""} onActivate={() => { if (id) selection.set(id, "editor"); }}
       aside={<span className="muted small">used in {uses} place{uses === 1 ? "" : "s"}</span>}>
       <FieldGrid>
         <KindIdField index={index} />

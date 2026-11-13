@@ -1,0 +1,185 @@
+{
+  "milestone": "G4 M2: live preview, determinism badge, click-through, native source export",
+  "verdict": "PASS",
+  "base": "cb51bd6ff38d3928c8a02d3b4e16116c8454d812",
+  "branch": "g4/m2-studio",
+  "head": "cb51bd6ff38d3928c8a02d3b4e16116c8454d812",
+  "workingTree": "uncommitted M2 change on top of head (this file is written before the commit)",
+  "environment": {
+    "os": "Windows_NT 10.0.26200",
+    "cpu": "Intel(R) Core(TM) 7 240H",
+    "node": "v22.18.0",
+    "python": "Python 3.14.1",
+    "browser": "Chrome 157.0.8103.51",
+    "pyodide": "0.29.5"
+  },
+  "matrix": [
+    {
+      "name": "monstera gates",
+      "command": "git -c alias.monstera=!tools/monstera/bin/monstera monstera gates",
+      "exitCode": 0,
+      "ok": true,
+      "seconds": 82.7,
+      "summary": "PASS  unit-tests: Ran 243 tests in 77.373s | OK (skipped=2) | gates: all passed (33/33)"
+    },
+    {
+      "name": "Studio unit tests (Vitest)",
+      "command": "npx vitest --run",
+      "exitCode": 0,
+      "ok": true,
+      "seconds": 2.5,
+      "summary": "Test Files  12 passed (12) | Tests  115 passed (115)"
+    },
+    {
+      "name": "TypeScript and production build",
+      "command": "npm run build",
+      "exitCode": 0,
+      "ok": true,
+      "seconds": 34.6,
+      "summary": "engine bundle: 105 files; pyodide 0.29.5 | total brotli 4879717 | \u001b[32m✓ built in 174ms\u001b[39m"
+    },
+    {
+      "name": "M1 acceptance (regression)",
+      "command": "node scripts/acceptance.mjs",
+      "exitCode": 0,
+      "ok": true,
+      "seconds": 15.8,
+      "summary": "PASS: 67/67 checks, Chrome 157.0.8103.51"
+    },
+    {
+      "name": "M2 batch 1: engine bundle, 33 goldens, plan parity",
+      "command": "node scripts/m2-batch1.mjs",
+      "exitCode": 0,
+      "ok": true,
+      "seconds": 55.4,
+      "summary": "PASS: 48/48 checks, Chrome 157.0.8103.51"
+    },
+    {
+      "name": "M2 badge acceptance",
+      "command": "node scripts/m2-badge.mjs",
+      "exitCode": 0,
+      "ok": true,
+      "seconds": 54.8,
+      "summary": "PASS: 100/100 checks, Chrome 157.0.8103.51"
+    },
+    {
+      "name": "M2 preview acceptance",
+      "command": "node scripts/m2-preview.mjs",
+      "exitCode": 0,
+      "ok": true,
+      "seconds": 74.4,
+      "summary": "PASS: 57/57 checks, Chrome 157.0.8103.51"
+    },
+    {
+      "name": "M2 click-through acceptance",
+      "command": "node scripts/m2-clickthrough.mjs",
+      "exitCode": 0,
+      "ok": true,
+      "seconds": 20.4,
+      "summary": "PASS: 34/34 checks, Chrome 157.0.8103.51"
+    },
+    {
+      "name": "M2 export acceptance",
+      "command": "node scripts/m2-export.mjs",
+      "exitCode": 0,
+      "ok": true,
+      "seconds": 15.1,
+      "summary": "PASS: 28/28 checks, Chrome 157.0.8103.51"
+    },
+    {
+      "name": "M2 end-to-end (all three templates)",
+      "command": "node scripts/m2-e2e.mjs",
+      "exitCode": 0,
+      "ok": true,
+      "seconds": 8.8,
+      "summary": "PASS: 4/4 checks, Chrome 157.0.8103.51"
+    }
+  ],
+  "evidence": {
+    "m1-regression.json": {
+      "verdict": "PASS",
+      "checks": 67,
+      "failed": 0,
+      "browser": "Chrome 157.0.8103.51"
+    },
+    "batch1.json": {
+      "verdict": "PASS",
+      "checks": 48,
+      "failed": 0,
+      "browser": "Chrome 157.0.8103.51"
+    },
+    "badge.json": {
+      "verdict": "PASS",
+      "checks": 100,
+      "failed": 0,
+      "browser": "Chrome 157.0.8103.51"
+    },
+    "preview.json": {
+      "verdict": "PASS",
+      "checks": 57,
+      "failed": 0,
+      "browser": "Chrome 157.0.8103.51"
+    },
+    "clickthrough.json": {
+      "verdict": "PASS",
+      "checks": 34,
+      "failed": 0,
+      "browser": "Chrome 157.0.8103.51"
+    },
+    "export.json": {
+      "verdict": "PASS",
+      "checks": 28,
+      "failed": 0,
+      "browser": "Chrome 157.0.8103.51"
+    },
+    "e2e.json": {
+      "verdict": "PASS",
+      "checks": 4,
+      "failed": 0,
+      "browser": "Chrome 157.0.8103.51"
+    }
+  },
+  "measurements": {
+    "coldEngineReadyMs": 1739,
+    "firstLoadBrotliMiB": 4.75,
+    "goldenScenarios": {
+      "count": 33,
+      "frameDriven": 7,
+      "checkpoints": 3028,
+      "ticks": 81805
+    },
+    "preview": [
+      {
+        "template": "pumpkin-blaster",
+        "fps": 60,
+        "engineFrameP95Ms": 0.300000000000189,
+        "maxMainThreadGapMs": 21.9,
+        "restartMaxMs": 193
+      },
+      {
+        "template": "trick-or-treat-rush",
+        "fps": 59.9,
+        "engineFrameP95Ms": 0.19999999999953388,
+        "maxMainThreadGapMs": 19.5,
+        "restartMaxMs": 177
+      },
+      {
+        "template": "lantern-run",
+        "fps": 59.8,
+        "engineFrameP95Ms": 0.19999999999953388,
+        "maxMainThreadGapMs": 19.6,
+        "restartMaxMs": 188
+      }
+    ]
+  },
+  "labels": "Studio shows GENERATED only. Nothing in M2 was compiled, run on a simulator or a device by Studio; no native conformance report matches a current template SHA-256 (refresh is a separate pre-M3 task).",
+  "limitations": [
+    "All browser evidence is from one Windows machine on localhost (Chrome via Playwright); no CI or deployed run (M3).",
+    "Committed native conformance reports (docs/evidence/g2-conformance, g3-conformance) were recorded for older spec SHA-256s; Studio shows them as non-matching. Refresh before M3 evidence finalization.",
+    "Edited drafts export with scenarios=[]; the CLI refuses such specs until `monstera scenarios record`; their parity is against generate.plan(..., scenarios=[]), not the CLI.",
+    "Preview touch mapping is approximate (browser pointer events; drags coalesced while the worker is busy); the engine's response is exact (host replays).",
+    "Preview and badge share one Pyodide worker: the preview stutters (frames skipped, never queued) while a badge run holds it.",
+    "The preview's presentation (layout, effects, texts) is a TypeScript copy of the generated Presentation.kt, display only; template changes to it must be mirrored by hand.",
+    "The app-layout ZIP contains exactly the generator-owned files; the hand-maintained spec beside them is exported separately (it is also inside the archive as android/app/src/main/assets/monstera.spec.json)."
+  ]
+}

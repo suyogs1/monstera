@@ -1,0 +1,349 @@
+{
+  "verdict": "PASS",
+  "browser": "Chrome 157.0.8103.51",
+  "engineTimings": {
+    "pyodideMs": 1668.800000011921,
+    "bundleFetchMs": 21.899999976158142,
+    "unpackMs": 10.900000005960464,
+    "importEngineMs": 94.2000000178814,
+    "totalMs": 1795.800000011921,
+    "files": 105
+  },
+  "checks": [
+    {
+      "name": "engine ready within 10000 ms (localhost, cold)",
+      "ok": true,
+      "detail": "1796 ms; 105 files"
+    },
+    {
+      "name": "pumpkin-blaster: valid, and the engine's canonical text equals the committed file byte for byte",
+      "ok": true,
+      "detail": "sha256 08c7a90d9fcfd599c0b5f83743ba339e61f57f1fb10938cf6806d70cda7e0be3"
+    },
+    {
+      "name": "trick-or-treat-rush: valid, and the engine's canonical text equals the committed file byte for byte",
+      "ok": true,
+      "detail": "sha256 edcc2000685684cfc17fcbe3634bb01d2967b7d590cfceabb02a2286eaa79b4c"
+    },
+    {
+      "name": "lantern-run: valid, and the engine's canonical text equals the committed file byte for byte",
+      "ok": true,
+      "detail": "sha256 cc08da835eab0e59b23ddb58e766cd9420e41514124e09b7903438a5fd0d60b1"
+    },
+    {
+      "name": "validate parity with `monstera validate --json`: pumpkin-blaster: unmodified",
+      "ok": true,
+      "detail": "valid, 08c7a90d9fcfd599c0b5f83743ba339e61f57f1fb10938cf6806d70cda7e0be3"
+    },
+    {
+      "name": "validate parity with `monstera validate --json`: trick-or-treat-rush: unmodified",
+      "ok": true,
+      "detail": "valid, edcc2000685684cfc17fcbe3634bb01d2967b7d590cfceabb02a2286eaa79b4c"
+    },
+    {
+      "name": "validate parity with `monstera validate --json`: lantern-run: unmodified",
+      "ok": true,
+      "detail": "valid, cc08da835eab0e59b23ddb58e766cd9420e41514124e09b7903438a5fd0d60b1"
+    },
+    {
+      "name": "validate parity with `monstera validate --json`: lives 5 -> 6 (valid, new hash)",
+      "ok": true,
+      "detail": "valid, 0ff7370bbaa429f25d6ec4de36c71bd7c31868ee200a71fe1c30289dc56a9456"
+    },
+    {
+      "name": "validate parity with `monstera validate --json`: palette.primary low contrast (semantic)",
+      "ok": true,
+      "detail": "1 issue(s): semantic.palette-contrast"
+    },
+    {
+      "name": "validate parity with `monstera validate --json`: tapKind unknown kind (semantic)",
+      "ok": true,
+      "detail": "1 issue(s): semantic.unknown-kind"
+    },
+    {
+      "name": "validate parity with `monstera validate --json`: unknown property (schema)",
+      "ok": true,
+      "detail": "1 issue(s): additionalProperties"
+    },
+    {
+      "name": "validate parity with `monstera validate --json`: wrong type and range (schema)",
+      "ok": true,
+      "detail": "3 issue(s): minimum, minLength, pattern"
+    },
+    {
+      "name": "validate parity with `monstera validate --json`: truncated JSON",
+      "ok": true,
+      "detail": "1 issue(s): json.parse"
+    },
+    {
+      "name": "validate parity with `monstera validate --json`: duplicate key",
+      "ok": true,
+      "detail": "1 issue(s): json.duplicate-key"
+    },
+    {
+      "name": "edit then revert returns the original SHA-256 (R2.2)",
+      "ok": true,
+      "detail": "08c7a90d9fcfd599c0b5f83743ba339e61f57f1fb10938cf6806d70cda7e0be3"
+    },
+    {
+      "name": "Studio starts on an official game and shows the engine's verdict",
+      "ok": true,
+      "detail": "Valid: the engine accepts this specification."
+    },
+    {
+      "name": "Spec view shows the engine's SHA-256 of the canonical specification",
+      "ok": true,
+      "detail": "08c7a90d9fcfd599c0b5f83743ba339e61f57f1fb10938cf6806d70cda7e0be3"
+    },
+    {
+      "name": "export of an unedited template equals the committed file byte for byte",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "template pumpkin-blaster: loads valid and exports the committed file",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "template trick-or-treat-rush: loads valid and exports the committed file",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "template lantern-run: loads valid and exports the committed file",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "Lantern Run is listed apart from the official games and labelled as a Kiro-authored sample",
+      "ok": true,
+      "detail": "Official games: pumpkin-blaster,trick-or-treat-rush | Kiro-authored sample (not an official game): lantern-run"
+    },
+    {
+      "name": "an edit is validated by the engine and changes the SHA-256",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "reverting the edit returns the original SHA-256 (R2.2)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "an invalid edit lists the engine's issues and disables export",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "the draft survives a reload (localStorage) and is re-validated by the engine",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "Reset returns to the template's exact SHA-256",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "importing a spec file loads it and the engine validates it",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "importing a file with a duplicate key is refused and the draft is kept",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "importing JSON null is refused, names the reason and keeps the draft",
+      "ok": true,
+      "detail": "Could not import n.json: a specification is a JSON object, but this file contains null. Your draft was not cha"
+    },
+    {
+      "name": "importing a JSON array is refused, names the reason and keeps the draft",
+      "ok": true,
+      "detail": "Could not import a.json: a specification is a JSON object, but this file contains an array. Your draft was not"
+    },
+    {
+      "name": "importing a file with a UTF-8 byte order mark (as the CLI does) is refused, names the reason and keeps the draft",
+      "ok": true,
+      "detail": "Could not import bom.json: file starts with a UTF-8 byte order mark; save without BOM (line 1, column 1)"
+    },
+    {
+      "name": "importing a file that is not valid UTF-8 is refused, names the reason and keeps the draft",
+      "ok": true,
+      "detail": "Could not import bin.json: the file is not valid UTF-8. Your draft was not changed."
+    },
+    {
+      "name": "every leaf classified editable has a rendered control, and no control is bound to anything else",
+      "ok": true,
+      "detail": "62 editable leaves; missing: none; surplus: none"
+    },
+    {
+      "name": "read-only and engine-managed leaves are shown as read-only values, never as controls",
+      "ok": true,
+      "detail": "specVersion"
+    },
+    {
+      "name": "every control on the Entities page has an accessible name",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "typing 9 units stores raw 589824 and shows the raw value",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "typing 0.1 stores the nearest raw value 6554 (ties away from zero)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "text that is not a number is not applied and is flagged",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "typing the template's own value returns the exact raw integer and original SHA-256",
+      "ok": true,
+      "detail": "7864320 raw"
+    },
+    {
+      "name": "raw display mode shows the stored integer",
+      "ok": true,
+      "detail": "7864320"
+    },
+    {
+      "name": "renaming a kind rewrites its definition and every reference (tapKind, collisions)",
+      "ok": true,
+      "detail": "tapKind=shot"
+    },
+    {
+      "name": "after the cascade the draft is still valid",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "renaming onto an existing id is refused with a message and changes nothing",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "renaming back restores the original SHA-256",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "removing a kind that is still used is blocked and lists where it is used",
+      "ok": true,
+      "detail": "3 references"
+    },
+    {
+      "name": "Add kind appends a complete kind",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "removing the unreferenced kind restores the original SHA-256",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "a semantic engine issue (palette contrast) is shown at its field",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "clicking the issue opens Presentation and focuses the palette control",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "fixing the colour makes the draft valid again with the original SHA-256",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "Overview states the collision rules in words",
+      "ok": true,
+      "detail": "bullet touches pumpkin: score +10; bullet and pumpkin vanish"
+    },
+    {
+      "name": "the World tile opens Gameplay and focuses the world width control",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "the Entity kinds tile opens Entities and focuses the first kind",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "kind pickers carry no identifier-format help text",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "a picker's own description is kept (tap spawns)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "Spawns shows one timeline row per spawner",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "timeline row labels do not overlap spawn marks",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "Developer Integration lists exactly what the repository contains (counts read independently from the files)",
+      "ok": true,
+      "detail": "{\"agents\":[8,8],\"MCP tools\":[6,6],\"steering\":[10,10],\"hooks\":[5,5],\"workflows\":[5,5],\"prompts\":[6,6]}"
+    },
+    {
+      "name": "the inventory is stamped with the commit it was read at",
+      "ok": true,
+      "detail": "cb51bd6"
+    },
+    {
+      "name": "the page states that Studio is not connected to Kiro and shares only the spec file",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "no wording implies a live Kiro connection, status or session",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "handoff prompts name the draft's own spec path and existing MCP tools",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "agent game-author and tool validate_spec appear in the inventory",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "no build button and no chat input exist",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "no request leaves the origin (no backend, no third party)",
+      "ok": true,
+      "detail": "all same-origin"
+    },
+    {
+      "name": "no console or page errors",
+      "ok": true,
+      "detail": ""
+    }
+  ]
+}

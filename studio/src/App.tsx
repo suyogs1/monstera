@@ -2,7 +2,10 @@ import type { ReactElement } from "react";
 import { useDraft, useSection } from "./app/hooks";
 import { usePrefs } from "./app/prefs";
 import { SECTIONS, type SectionId } from "./app/sections";
+import { Preview } from "./preview/Preview";
+import { Determinism } from "./ui/sections/Determinism";
 import { Entities } from "./ui/sections/Entities";
+import { Export } from "./ui/sections/Export";
 import { Gameplay } from "./ui/sections/Gameplay";
 import { Integration } from "./ui/sections/Integration";
 import { Overview } from "./ui/sections/Overview";
@@ -23,6 +26,8 @@ const VIEWS: Partial<Record<SectionId, () => ReactElement>> = {
   spawns: () => <Spawns />,
   presentation: () => <Presentation />,
   spec: () => <SpecView />,
+  determinism: () => <Determinism />,
+  export: () => <Export />,
   integration: () => <Integration />,
 };
 
@@ -61,7 +66,10 @@ export function App() {
         <main id="main" className="main" tabIndex={-1}>
           {doc === null ? <p>Loading…</p> : View ? <View /> : <p className="muted">This section is not available yet.</p>}
         </main>
-        <ValidationPanel setSection={setSection} />
+        <div className="side">
+          {doc !== null && <Preview />}
+          <ValidationPanel setSection={setSection} />
+        </div>
       </div>
       <footer className="footer">
         Static web app. The MONSTERA engine runs in this page; nothing is sent to a server. Studio and Kiro share only the

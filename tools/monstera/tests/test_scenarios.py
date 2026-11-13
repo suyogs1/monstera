@@ -313,3 +313,43 @@ class GenerationEmbedsScenarios(Base):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class InMemoryCheckpoints(Base):
+    """`checkpoints_for_game` runs a scenario against an in-memory game object (an edited draft) without the
+    recorded-hash check. It must agree with the file based path for every committed scenario."""
+
+    def spec_game(self, data: dict) -> dict:
+        return load_path(REPO / data["spec"]["path"])["game"]
+
+    def test_equals_file_based_path_for_every_committed_scenario(self) -> None:
+        files = sorted(scenario.SCENARIOS.rglob(f"*{scenario.SUFFIX}"))
+        self.assertGreaterEqual(len(files), 33)
+        frame_driven = 0
+        for path in files:
+            data = load_path(path)
+            ticks = [c["tick"] for c in data["checkpoints"]]
+            frame_driven += data["frames"]["count"] > 0
+            self.assertEqual(scenario.checkpoints_for_game(self.spec_game(data), data, ticks), data["checkpoints"], path.name)
+            self.assertEqual(scenario.checkpoints_for_game(self.spec_game(data), data, ticks),
+                             scenario.oracle_checkpoints(data, self.store, ticks), path.name)
+        self.assertGreater(frame_driven, 0, "the proof must include frame-driven scenarios")
+
+    def test_edited_game_runs_without_the_recorded_hash_and_diverges(self) -> None:
+        path = scenario.SCENARIOS / "pumpkin-blaster" / sorted(p.name for p in (scenario.SCENARIOS / "pumpkin-blaster").iterdir())[0]
+        data = load_path(path)
+        ticks = [c["tick"] for c in data["checkpoints"]]
+        game = self.spec_game(data)
+        noop = json.loads(json.dumps(game))
+        self.assertEqual(scenario.checkpoints_for_game(noop, data, ticks), data["checkpoints"])
+        edited = json.loads(json.dumps(game))
+        edited["runtime"]["spawners"][0]["intervalTicks"] += 7
+        self.assertNotEqual(scenario.checkpoints_for_game(edited, data, ticks), data["checkpoints"])
+        # the file based path still refuses a spec whose hash differs from the recorded one
+        self.assertIn("scenario.spec-stale", self.codes_after_spec_change(data))
+
+    def codes_after_spec_change(self, data: dict) -> set:
+        stale = dict(data, spec=dict(data["spec"], sha256="0" * 64))
+        with self.assertRaises(ValueError):
+            scenario.oracle_checkpoints(stale, self.store, [data["ticks"]])
+        return {i.code for i in scenario._spec_for(stale, self.store)[1]}

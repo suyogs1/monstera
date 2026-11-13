@@ -9,7 +9,8 @@ interface PyodideLike {
   runPython(code: string): unknown;
   pyimport(name: string): Record<string, (...a: unknown[]) => unknown> & PyProxyLike;
 }
-interface BundleFile { p: string; d: string }
+/** `e: "b"` marks a base64 binary (the Gradle wrapper jar); every other file is UTF-8 text. */
+interface BundleFile { p: string; d: string; e?: "b" }
 interface Bundle { files: BundleFile[]; templates: unknown[] }
 
 let py: PyodideLike | undefined;
@@ -33,7 +34,7 @@ async function init(base: string): Promise<{ timings: EngineTimings; templates: 
     const full = `/repo/${f.p}`;
     const dir = full.slice(0, full.lastIndexOf("/"));
     if (!made.has(dir)) { py.FS.mkdirTree(dir); made.add(dir); }
-    py.FS.writeFile(full, new TextEncoder().encode(f.d));
+    py.FS.writeFile(full, f.e === "b" ? Uint8Array.from(atob(f.d), (c) => c.charCodeAt(0)) : new TextEncoder().encode(f.d));
   }
   const unpackMs = performance.now() - t2;
 

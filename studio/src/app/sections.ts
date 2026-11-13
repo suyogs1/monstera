@@ -1,7 +1,7 @@
 import type { Path } from "../draft/path";
 
 export type SectionId =
-  | "overview" | "platforms" | "gameplay" | "entities" | "rules" | "spawns" | "presentation" | "spec" | "integration";
+  | "overview" | "platforms" | "gameplay" | "entities" | "rules" | "spawns" | "presentation" | "spec" | "determinism" | "export" | "integration";
 
 export interface SectionInfo { id: SectionId; title: string; blurb: string }
 
@@ -14,6 +14,8 @@ export const SECTIONS: SectionInfo[] = [
   { id: "spawns", title: "Spawns & difficulty", blurb: "What appears, how often, and when." },
   { id: "presentation", title: "Presentation", blurb: "Colours, HUD and screen text." },
   { id: "spec", title: "Spec", blurb: "The canonical specification this draft produces." },
+  { id: "determinism", title: "Determinism", blurb: "The engine's oracle against the recorded golden scenarios." },
+  { id: "export", title: "Native source", blurb: "The generated Android and iOS projects, as a ZIP." },
   { id: "integration", title: "Developer Integration", blurb: "How Kiro works on this repository." },
 ];
 

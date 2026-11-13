@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import copy
 import json
+import re
 import unittest
 from pathlib import Path
 
@@ -116,6 +117,25 @@ def visual_variant(spec: dict) -> dict:
     return out
 
 
+DISPLAY_ONLY_GAME = ("palette", "hud", "screens")
+DISPLAY_ONLY_KIND = ("color", "glyph", "effect")
+NOT_READ_GAME = ("genre", "orientation", "targetFps")
+NOT_READ_INPUT = ("scheme",)
+
+
+def strip_unread(game: dict) -> dict:
+    """`game` without any field the oracle must not read (studio/src/badge/classify.ts lists the same fields)."""
+    out = copy.deepcopy(game)
+    for key in DISPLAY_ONLY_GAME + NOT_READ_GAME:
+        del out[key]
+    for key in NOT_READ_INPUT:
+        del out["input"][key]
+    for kind in out["runtime"]["kinds"]:
+        for key in DISPLAY_ONLY_KIND:
+            del kind[key]
+    return out
+
+
 class PresentationCannotReachTheSimulationTests(unittest.TestCase):
     def test_goldens_and_runtime_config_are_independent_of_every_visual_field(self) -> None:
         checked = 0
@@ -138,6 +158,80 @@ class PresentationCannotReachTheSimulationTests(unittest.TestCase):
                 self.assertEqual(got, data["checkpoints"], f"{project}/{path.name}")
                 checked += 1
         self.assertGreaterEqual(checked, 8)
+
+    def test_display_only_and_unread_fields_are_unreachable_by_the_oracle(self) -> None:
+        """Structural proof for the Studio determinism badge (R5.3): every display-only field (palette, HUD, screens,
+        kinds[].color/glyph/effect) and every game field the oracle is not meant to read (genre, orientation, targetFps,
+        input.scheme) is DELETED, and every committed golden of every project, tick- and frame-driven, still produces its
+        recorded checkpoints. The oracle reads the spec only by subscript (no .get, no key iteration), so a read of any
+        deleted field would raise KeyError; project fields (displayName, ...) never reach it, it is given `game` only."""
+        files = sorted(scenario.SCENARIOS.rglob(f"*{scenario.SUFFIX}"))
+        self.assertGreaterEqual(len(files), 33)
+        frame_driven = 0
+        for path in files:
+            data = load_path(path)
+            game = strip_unread(load_path(REPO / data["spec"]["path"])["game"])
+            ticks = [c["tick"] for c in data["checkpoints"]]
+            self.assertEqual(scenario.checkpoints_for_game(game, data, ticks), data["checkpoints"], path.name)
+            frame_driven += data["frames"]["count"] > 0
+        self.assertGreater(frame_driven, 0)
+
+    def test_studio_badge_classification_agrees_with_this_proof(self) -> None:
+        """Drift guard: Studio's badge classifier (studio/src/badge/classify.ts) may call a field display-only or
+        not read only if `strip_unread` deletes it (proven unreachable above), and must call every other game
+        field behaviour. Checked for every leaf of every shipped spec; it fails when either list changes alone."""
+        source = (REPO / "studio" / "src" / "badge" / "classify.ts").read_text(encoding="utf-8")
+        def ts_list(name: str) -> list[str]:
+            block = re.search(rf"const {name} = \[(.*?)\](?: as const)?;", source, re.S)
+            self.assertIsNotNone(block, f"{name} not found in classify.ts")
+            return re.findall(r'"([^"]+)"', block.group(1))
+        display, behaviour = set(ts_list("DISPLAY_ONLY_PATTERNS")), ts_list("BEHAVIOUR_PREFIXES")
+        self.assertTrue(display and behaviour)
+
+        def ts_class(pattern: str) -> str:
+            if pattern in display:
+                return "display"
+            if any(pattern == p or pattern.startswith(p + ".") or pattern.startswith(p + "[") for p in behaviour):
+                return "behaviour"
+            return "other"
+
+        deleted_game = {f"game.{k}" for k in DISPLAY_ONLY_GAME + NOT_READ_GAME} | {f"game.input.{k}" for k in NOT_READ_INPUT}
+        deleted_kind = {f"game.runtime.kinds[].{k}" for k in DISPLAY_ONLY_KIND}
+        self.assertEqual(display - {"project.displayName"},
+                         {p for p in self.leaf_patterns(load(SPECS["pumpkin-blaster"])) if p in deleted_kind
+                          or any(p.startswith(f"game.{k}.") for k in DISPLAY_ONLY_GAME)},
+                         "the Studio display-only list must equal the display-only fields deleted by strip_unread")
+        checked = 0
+        for path in list(SPECS.values()) + [REPO / "spec" / "samples" / "lantern-run" / "monstera.spec.json"]:
+            for pattern in self.leaf_patterns(load(path)):
+                unread = pattern.startswith(("project.", "specVersion")) or pattern in deleted_kind or \
+                    any(pattern == d or pattern.startswith(d + ".") for d in deleted_game)
+                got = ts_class(pattern)
+                self.assertEqual(got != "behaviour", unread, f"{path.parent.name}: {pattern} is '{got}' in classify.ts")
+                checked += 1
+        self.assertGreater(checked, 100)
+
+    @staticmethod
+    def leaf_patterns(value, prefix: str = "") -> set[str]:
+        if isinstance(value, dict):
+            return set().union(*(PresentationCannotReachTheSimulationTests.leaf_patterns(v, f"{prefix}.{k}" if prefix else k)
+                                 for k, v in value.items())) if value else {prefix}
+        if isinstance(value, list):
+            return set().union(*(PresentationCannotReachTheSimulationTests.leaf_patterns(v, prefix + "[]") for v in value)) if value else {prefix}
+        return {prefix}
+
+    def test_the_deletion_proof_detects_a_field_the_oracle_reads(self) -> None:
+        data = load_path(scenario.scenario_files("pumpkin-blaster")[0])
+        for drop in (("runtime", "lives"), ("input", "dragGain"), ("world", "width")):
+            game = strip_unread(load(SPECS["pumpkin-blaster"])["game"])
+            del game[drop[0]][drop[1]]
+            with self.assertRaises(KeyError, msg=drop):
+                scenario.checkpoints_for_game(game, data, [data["ticks"]])
+        frames = next(load_path(p) for p in scenario.scenario_files("pumpkin-blaster") if load_path(p)["frames"]["count"])
+        game = strip_unread(load(SPECS["pumpkin-blaster"])["game"])
+        del game["simulation"]["tickRate"]
+        with self.assertRaises(KeyError):
+            scenario.checkpoints_for_game(game, frames, [frames["ticks"]])
 
     def test_runtime_sources_contain_no_presentation_data(self) -> None:
         spec = load(SPECS["trick-or-treat-rush"])
