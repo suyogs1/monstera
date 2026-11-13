@@ -14,7 +14,7 @@ from mcp.client.stdio import StdioServerParameters, stdio_client
 
 ROOT = Path(__file__).resolve().parents[3]
 SERVER = ROOT / "tools" / "monstera-mcp" / "server.py"
-EXPECTED_TOOLS = {"validate_spec", "generate_project", "inspect_manifest", "get_device_report", "run_conformance"}
+EXPECTED_TOOLS = {"validate_spec", "generate_project", "inspect_manifest", "get_device_report", "run_conformance", "engine_info"}
 
 
 def _payload(result) -> dict:
@@ -36,6 +36,9 @@ async def _session_run():
                     "generate_project", {"spec_path": "spec/samples/monstera-sample/monstera.spec.json"}),
                 "inspect_manifest": await session.call_tool(
                     "inspect_manifest", {"dir": "generated/monstera-sample"}),
+                "engine_info": await session.call_tool("engine_info", {}),
+                "manifest_files": await session.call_tool(
+                    "inspect_manifest", {"dir": "generated/monstera-sample", "files": True}),
                 "get_device_report": await session.call_tool(
                     "get_device_report", {"evidence": "docs/evidence/g1-ios-simulator-ci"}),
                 "run_conformance": await session.call_tool(
@@ -56,12 +59,12 @@ class ProtocolTests(unittest.TestCase):
     def test_server_identity(self) -> None:
         self.assertEqual(self.init.server_info.name, "monstera")
 
-    def test_exactly_the_five_engine_backed_tools(self) -> None:
+    def test_exactly_the_six_engine_backed_tools(self) -> None:
         self.assertEqual({t.name for t in self.listed.tools}, EXPECTED_TOOLS)
 
     def test_read_only_annotations(self) -> None:
         by_name = {t.name: t for t in self.listed.tools}
-        for name in ("validate_spec", "inspect_manifest", "get_device_report"):
+        for name in ("validate_spec", "inspect_manifest", "get_device_report", "engine_info"):
             self.assertTrue(by_name[name].annotations.read_only_hint, name)
         self.assertFalse(by_name["generate_project"].annotations.read_only_hint)
         self.assertFalse(by_name["run_conformance"].annotations.read_only_hint, "it starts builds")
@@ -81,6 +84,14 @@ class ProtocolTests(unittest.TestCase):
         self.assertFalse(gen["written"])
         self.assertTrue(_payload(self.calls["inspect_manifest"])["verify"]["clean"])
         self.assertGreater(_payload(self.calls["get_device_report"])["summary"]["ok"], 0)
+
+    def test_engine_info_and_manifest_files_over_the_protocol(self) -> None:
+        info = _payload(self.calls["engine_info"])
+        self.assertFalse(info["stale"], "a server started by this test matches the repository")
+        self.assertEqual(info["spec_version"], 4)
+        listed = _payload(self.calls["manifest_files"])
+        self.assertEqual(len(listed["files"]), listed["file_count"])
+        self.assertTrue(all(set(f) == {"path", "kind", "source"} for f in listed["files"]))
 
     def test_refusal_is_a_tool_error_with_its_reason(self) -> None:
         refused = self.calls["refused"]

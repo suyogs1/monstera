@@ -49,6 +49,48 @@ class ParityTests(unittest.TestCase):
         self.assertEqual(out["spec"]["sha256"], manifest["spec"]["sha256"])
         self.assertTrue(out["verify"]["clean"])
 
+    def test_inspect_manifest_lists_files_with_kind_and_source_on_request(self) -> None:
+        plain = tools.inspect_manifest("generated/monstera-sample")
+        self.assertNotIn("files", plain)
+        out = tools.inspect_manifest("generated/monstera-sample", files=True)
+        manifest = generate.read_manifest(ROOT / "generated" / "monstera-sample")
+        self.assertEqual(out["files"], [{"path": e["path"], "kind": e["kind"], "source": e["source"]}
+                                        for e in manifest["files"]])
+        by_path = {f["path"]: f for f in out["files"]}
+        presentation = [p for p in by_path if p.endswith("presentation/Presentation.kt")]
+        self.assertEqual(len(presentation), 1)
+        self.assertEqual(by_path[presentation[0]]["kind"], "template")
+        self.assertTrue(by_path[presentation[0]]["source"].endswith("Presentation.kt.tmpl"))
+
+    def test_engine_info_reports_the_engine_and_detects_staleness(self) -> None:
+        info = tools.engine_info()
+        self.assertEqual(info["generator"]["name"], "monstera-generator")
+        self.assertEqual(info["spec_version"], 4)
+        self.assertEqual(info["schema_digests"], tools.store().digests())
+        self.assertFalse(info["stale"])
+        # A schema that changed after this process loaded it makes the report stale.
+        saved = dict(tools._loaded_digests)
+        try:
+            tools._loaded_digests["game.schema.json"] = "0" * 64
+            stale = tools.engine_info()
+            self.assertTrue(stale["stale"])
+            self.assertEqual(stale["schemas_changed_since_start"], ["game.schema.json"])
+            self.assertIn("Reconnect", stale["advice"])
+        finally:
+            tools._loaded_digests.clear()
+            tools._loaded_digests.update(saved)
+        # Engine files edited after the process started do the same.
+        original = tools._STARTED
+        try:
+            tools._STARTED = 0.0
+            self.assertTrue(tools.engine_info()["engine_files_newer_than_start"])
+        finally:
+            tools._STARTED = original
+
+    def test_inspect_manifest_files_stay_confined(self) -> None:
+        with self.assertRaises(tools.ToolError):
+            tools.inspect_manifest("../outside", files=True)
+
     def test_device_report_reads_committed_evidence(self) -> None:
         out = tools.get_device_report(evidence="docs/evidence/g1-ios-simulator-ci")
         self.assertEqual(out["source"], "docs/evidence/g1-ios-simulator-ci/report.json")

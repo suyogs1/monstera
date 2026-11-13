@@ -8,13 +8,14 @@ from __future__ import annotations
 
 import json
 import sys
+import time
 from pathlib import Path
 from typing import Any
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(REPO_ROOT / "tools" / "monstera"))
 
-from monstera import conformance, generate, scenario, targets  # noqa: E402
+from monstera import GENERATOR_NAME, GENERATOR_VERSION, conformance, generate, scenario, targets  # noqa: E402
 from monstera.jsonio import canonical_bytes  # noqa: E402
 from monstera.schema import SchemaStore  # noqa: E402
 from monstera.validate import validate_path, validate_value  # noqa: E402
@@ -39,12 +40,15 @@ class ToolError(ValueError):
 
 
 _store: SchemaStore | None = None
+_loaded_digests: dict[str, str] = {}
+_STARTED = time.time()  # the engine modules above were imported now; a later edit is not in this process
 
 
 def store() -> SchemaStore:
     global _store
     if _store is None:
         _store = SchemaStore.load(REPO_ROOT / "spec" / "schema")
+        _loaded_digests.update(_store.digests())
     return _store
 
 
@@ -157,7 +161,7 @@ def generate_project(spec_path: str, out: str | None = None, write: bool = False
     return response
 
 
-def inspect_manifest(dir: str) -> dict[str, Any]:  # noqa: A002 - matches the tool contract
+def inspect_manifest(dir: str, files: bool = False) -> dict[str, Any]:  # noqa: A002 - matches the tool contract
     root = _confined(dir, ("generated/", "apps/"), "dir")
     try:
         manifest = generate.read_manifest(root)
@@ -169,13 +173,44 @@ def inspect_manifest(dir: str) -> dict[str, Any]:  # noqa: A002 - matches the to
     kinds: dict[str, int] = {}
     for entry in manifest["files"]:
         kinds[entry.get("kind", "?")] = kinds.get(entry.get("kind", "?"), 0) + 1
-    return {
+    response: dict[str, Any] = {
         "generator": manifest.get("generator"), "spec": manifest.get("spec"),
         "layout": manifest.get("layout", "fixture"), "ownedRoots": manifest.get("ownedRoots", ["."]),
         "schemas": manifest.get("schemas"), "toolchain": manifest.get("toolchain"),
         "file_count": len(manifest["files"]), "files_by_kind": dict(sorted(kinds.items())),
         "verify": {"clean": drift.clean, "changed": list(drift.changed), "missing": list(drift.missing),
                    "unexpected": list(drift.unexpected)},
+    }
+    if files:
+        # Why each file exists: its kind (template, model, spec, static, scenarios) and its source
+        # (the template, the schema or the spec it was produced from), exactly as the manifest records them.
+        response["files"] = [{"path": e["path"], "kind": e.get("kind"), "source": e.get("source")}
+                             for e in manifest["files"]]
+    return response
+
+
+def engine_info() -> dict[str, Any]:
+    """Which engine this process is running, and whether the repository has moved on since it started."""
+    loaded_store = store()
+    on_disk = loaded_store.digests()
+    newest = 0.0
+    for pattern in ("monstera/**/*.py", "monstera/**/*.tmpl", "monstera/toolchain.json"):
+        for path in (REPO_ROOT / "tools" / "monstera").glob(pattern):
+            newest = max(newest, path.stat().st_mtime)
+    changed = sorted(name for name in on_disk if on_disk[name] != _loaded_digests.get(name))
+    newer = newest > _STARTED
+    spec_version = loaded_store.documents["monstera.spec.schema.json"]["properties"]["specVersion"]["const"]
+    return {
+        "generator": {"name": GENERATOR_NAME, "version": GENERATOR_VERSION},
+        "spec_version": spec_version,
+        "python": sys.version.split()[0],
+        "started_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime(_STARTED)),
+        "schema_digests": on_disk,
+        "schemas_changed_since_start": changed,
+        "engine_files_newer_than_start": newer,
+        "stale": bool(changed) or newer,
+        "advice": ("This server started before the engine or schemas changed. Reconnect it (MCP Server view) "
+                   "before using its results as evidence." if (changed or newer) else "Matches the repository on disk."),
     }
 
 
@@ -239,5 +274,6 @@ def get_device_report(run_id: str | None = None, evidence: str | None = None,
             "invalid_lines": len(lines) - sum(1 for ln in lines if _valid_result(ln))}
 
 
-__all__ = ["ToolError", "validate_spec", "generate_project", "inspect_manifest", "get_device_report", "run_conformance",
+__all__ = ["ToolError", "validate_spec", "generate_project", "inspect_manifest", "engine_info", "get_device_report",
+           "run_conformance",
            "canonical_bytes"]

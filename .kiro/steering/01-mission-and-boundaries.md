@@ -12,11 +12,17 @@ The same foundation generates the two Skeleton Crew applications, which must be 
 
 ## Phases
 
-G0 toolchain (done) → G1 specification engine (done) → **G1.5 alignment and Kiro foundation
-(current)** → G2 deterministic runtime and conformance → G3 both games → G4 Studio (shell in
-parallel with G2/G3, never delaying G2) → G5 Device Lab, haptics, motion → G6 polish and
-submission. A phase starts only after the previous one is reviewed. **Submission deadline:
+G0 toolchain (done) → G1 specification engine (done) → G1.5 Kiro foundation (done) → G2 deterministic runtime and
+conformance (done) → G3 two games (done) → **G4 MONSTERA Studio and the Kiro-to-MONSTERA workflow (current)** → G5 Device
+Lab, haptics, motion → G6 clean-room regeneration, recording and submission. G4 order: M0 spike (done), visual batch / spec v4
+(done), K0 Kiro authoring (a third game, Lantern Run, made by Kiro without touching the engine), then Studio M1 to M3
+(`.kiro/specs/g4-studio/`). A phase starts only after the previous one is reviewed. **Submission deadline:
 Dec 4, 2026, 2:00 pm PT** (`docs/KIROWEEN-ALIGNMENT-REPORT.md`).
+
+The product has three parts: the **Engine** (skeleton, canonical specs, deterministic runtime, validation, generation,
+conformance), **Studio** (static web app, the engine runs unmodified in the browser) and the **Kiro integration**
+(steering, agents, hooks, MCP tools that let Kiro create and extend native games). The canonical spec file is the only
+contract between them. Studio never pretends to be Kiro and has no Kiro connection.
 
 ## Boundaries
 
