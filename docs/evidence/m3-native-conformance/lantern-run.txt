@@ -1,0 +1,8 @@
+spec cc08da835eab  verdict: PASS
+  oracle  pass     monstera.oracle in-process (compared with its own recording)
+  kotlin  pass     cmd /c gradlew.bat --no-daemon --console=plain cleanTestDebugUnitTest testDebugUnitTest (cwd android) exit 0
+  swift   pass     docker run swift:6.1-noble swift test (package ios/Runtime) exit 0
+  frame-jitter          101 checkpoints  oracle=pass kotlin=pass swift=pass
+  idle-keeper           101 checkpoints  oracle=pass kotlin=pass swift=pass
+  lantern-win           101 checkpoints  oracle=pass kotlin=pass swift=pass
+  swipe-patrol          101 checkpoints  oracle=pass kotlin=pass swift=pass
