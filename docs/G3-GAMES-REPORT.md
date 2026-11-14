@@ -90,3 +90,10 @@ Avoidance in Trick or Treat Rush is checked three ways:
   `monstera scenarios record`.
 - The distance meter is the score from stripes. There is no separate distance observable.
 - Superseded by the visual batch (spec v4, `docs/evidence/g4-visual-batch/`): entities are drawn as glyphs, clipped to the world rectangle, with a HUD bar, effects and start and end cards. Still no artwork files and no sound.
+
+## Update 2026-11-14 (M3 Phase 0): conformance evidence refreshed
+
+The conformance reports in `docs/evidence/g3-conformance/` were recorded against spec hashes `c65ebbdd…` and `93fb53e0…`,
+which predate spec v4 and no longer match the current specs. They are kept unchanged as history. Current three-platform
+conformance for both apps, on the current spec hashes, is in `docs/evidence/m3-native-conformance/` (PASS, 505 and 606
+checkpoints per platform). The text above is not rewritten.

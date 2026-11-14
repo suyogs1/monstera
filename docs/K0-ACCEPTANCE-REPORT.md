@@ -74,3 +74,11 @@ observed from the repository.
 
 **Not done.** No permission was weakened or added. A PreToolUse hook returning `permissionDecision: "ask"` for
 `generate_project` is a possible follow-up, but it was not applied.
+
+## Update 2026-11-14 (M3 Phase 0): durable conformance evidence and CI step
+
+The text above is unchanged. Two limitations it lists have since changed:
+
+- A persisted three-platform conformance report and log for Lantern Run (spec `cc08da83…`, 4 scenarios, 404 checkpoints
+  per platform, PASS) is now in `docs/evidence/m3-native-conformance/`. Label is still GENERATED + CONFORMANCE-TESTED.
+- `.github/workflows/monstera.yml` now has a Lantern Run step in the `conformance` job. It has not yet run on GitHub.

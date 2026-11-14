@@ -181,6 +181,8 @@ jobs:
         run: bash tools/monstera/bin/monstera conformance apps/pumpkin-blaster --swift-image toolchain --report "$RUNNER_TEMP/conformance-pumpkin-blaster.json"
       - name: Conformance, trick-or-treat-rush (oracle, Kotlin JVM, Swift in container)
         run: bash tools/monstera/bin/monstera conformance apps/trick-or-treat-rush --swift-image toolchain --report "$RUNNER_TEMP/conformance-trick-or-treat-rush.json"
+      - name: Conformance, lantern-run (oracle, Kotlin JVM, Swift in container)
+        run: bash tools/monstera/bin/monstera conformance generated/lantern-run --swift-image toolchain --report "$RUNNER_TEMP/conformance-lantern-run.json"
       - name: Upload conformance reports
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
@@ -191,4 +193,5 @@ jobs:
             ${{ runner.temp }}/conformance-lab.json
             ${{ runner.temp }}/conformance-pumpkin-blaster.json
             ${{ runner.temp }}/conformance-trick-or-treat-rush.json
+            ${{ runner.temp }}/conformance-lantern-run.json
           if-no-files-found: warn
