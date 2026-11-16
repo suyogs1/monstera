@@ -15,7 +15,7 @@ const repo = join(studio, "..");
 const dist = join(studio, "dist");
 const evidenceDir = join(repo, "docs", "evidence", "studio-m1");
 const MIME = { ".html": "text/html", ".js": "text/javascript", ".mjs": "text/javascript", ".css": "text/css",
-  ".json": "application/json", ".wasm": "application/wasm", ".zip": "application/zip" };
+  ".json": "application/json", ".wasm": "application/wasm", ".png": "image/png", ".txt": "text/plain", ".jsonl": "application/x-ndjson", ".zip": "application/zip" };
 const LIMITS = { coldInitMs: 10000 };
 
 if (!existsSync(join(dist, "index.html"))) throw new Error("dist/ is missing: run `npm run build` first");

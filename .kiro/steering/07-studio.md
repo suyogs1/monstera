@@ -4,8 +4,7 @@ fileMatchPattern: ["studio/**", ".github/workflows/studio-*", "architecture/MONS
 ---
 # MONSTERA Studio rules
 
-Design: `.kiro/specs/g4-studio/` (requirements, design, tasks). `architecture/MONSTERA-STUDIO.md` is superseded where it
-describes a Railway API, Postgres or build dispatch. Owner agent: `studio`.
+Design: `.kiro/specs/g4-studio/` (requirements, design, tasks). `architecture/MONSTERA-STUDIO.md` describes the implemented static architecture (rewritten in M3-A). Owner agent: `studio`.
 
 - Studio is a **static web app** (Vite, React, TypeScript; Vercel). There is no backend, no account, no server-side secret and
   no build dispatch. The browser never compiles native code.

@@ -6,6 +6,7 @@ import { execFileSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { buildNativeIndex } from "./native-evidence.mjs";
 
 const here = fileURLToPath(new URL(".", import.meta.url));
 const studio = join(here, "..");
@@ -161,3 +162,10 @@ console.log(`native conformance reports: ${conformance.length} (${conformance.ma
 console.log(`inventory @ ${inventory.commit.short}${inventory.commit.dirty ? " (dirty)" : ""}: ${inventory.agents.length} agents, ` +
   `${inventory.mcp.tools.length} MCP tools, ${inventory.hooks.length} hooks, ${inventory.workflows.length} workflows, ` +
   `${inventory.steering.length} steering files, ${inventory.prompts.length} prompts`);
+
+// ------------------------------------------------------------------ committed native build and simulator-launch evidence
+// docs/evidence/m3-native-apps/ evaluated against each canonical spec file (scripts/native-evidence.mjs, fail closed).
+// The evidence files are copied to public/evidence/native-apps/ (git-ignored) so Studio can show and link them.
+const native = buildNativeIndex(repo, join(studio, "public", "evidence", "native-apps"));
+writeFileSync(join(out, "native-apps.json"), JSON.stringify({ commit: inventory.commit.short, ...native }, null, 2) + "\n");
+console.log(`native app evidence: ${native.games.map((g) => `${g.id} ${g.label}`).join(", ")}`);
