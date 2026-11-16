@@ -1,0 +1,87 @@
+# Studio Foundry: tasks
+Status: **DRAFT, none started, awaiting owner approval (2026-11-16).** Requirements `requirements.md`, design `design.md`.
+Base `71c77e4`. Branch `studio/foundry-spec`, lane branches `studio/foundry-<lane>`. Owner agent `studio` (writes only `studio/**`, `.kiro/specs/studio-foundry/**`, new steering and docs). No task edits `tools/monstera/`, `spec/schema/`, templates, `generated/`, generator-owned paths in `apps/`, or `docs/evidence/g6-cleanroom/`.
+Sizes are one-author estimates in working days (S under 0.5, M 0.5 to 1, L 1 to 2), not measurements. Governance (steering 09): batch per lane, run existing scripts, no re-review without new evidence.
+
+## How to read a task
+`Deps` are the tasks that must be merged first. `Lane` groups tasks that can run in parallel with other lanes once their deps are met. `Test` is the independent check: it passes or fails without any other new task being finished (fixtures stand in for missing pieces). `Done label` is the highest verification label the task can honestly claim.
+
+## Phase 0. Shared decisions (serial; everything else waits on 0.3 and 0.4)
+- [ ] 0.1 Owner reviews this spec and records D1 to D8 and the open points (design section 0 and 10). Output: a "Decisions" section appended to `design.md`. Test: each D has an accepted/rejected line. Size S. Deps: none.
+- [ ] 0.2 Steering: amend `07-studio.md` (Studio validates Studio-owned manifests; engine stays authority for the spec), add `11-studio-foundry.md` (status vocabulary, ownership classes, derivation rule, honesty rules). Test: `tools/monstera/bin/monstera gates` Kiro-config check passes; no other steering text changes. Size S. Deps: 0.1.
+- [ ] 0.3 **Manifest schemas v1** in `studio/schemas/` (project, assets, animations, levels, gameplay, integrations, proposal), a TypeScript validator with the engine's discipline (required, no additional properties, unsupported keywords fail at load, integers only), strict JSON reader (duplicate keys, BOM, `__proto__`), canonical serializer, valid and invalid fixtures per schema. Test: vitest; every invalid fixture rejected with path and code; canonical output equals golden files; round-trip stable. Size L. Deps: 0.1. **Blocks 1.2, 2.x, 3.x, 4.x, 5.x, 6.x, 7.x.**
+- [ ] 0.4 **Capability registry** `studio/capabilities.json` (id, module, status, evidence path, limits text, planned-contract-piece) and a test that: every module has an entry, statuses are one of the five, every `implemented` evidence path exists, `planned`/`unsupported` have a reason. A script renders the capability matrix Markdown from it (feeds A11). Test: vitest. Size M. Deps: 0.1. Parallel with 0.3.
+- [ ] 0.5 **Gate E** (2026-11-19): owner decides whether to open the engine track (E1, E2). Output: one line in the scope ledger. Default no. Test: n/a (decision). Size S. Deps: 0.1.
+
+## Phase 1. Foundation (parallel after 0.3 and 0.4)
+- [ ] 1.1 Module registry, hash router with legacy redirects, shell (rail with status dots, top bar, shared validation panel), `ModuleCard` for planned/unsupported. Existing sections re-homed under `designer`, `preview`, `release`, `kiro` without behaviour change. Test: router unit tests (every legacy hash redirects); `npm run smoke` and `npm run acceptance` still pass. Size L. Deps: 0.4. Lane Shell.
+- [ ] 1.2 Project context and persistence: IndexedDB store (projects, manifests, asset blobs), migration from `monstera.studio.draft.v1` (copy, verify, keep old key), undo stack, quota-exceeded and eviction handling, persistent-storage request. Test: fake-IndexedDB unit tests incl. quota error and migration of a saved M3 draft; reload restores identical project. Size L. Deps: 0.3. Lane Shell.
+- [ ] 1.3 Dashboard: project list, create from template or import, rename, duplicate, delete with confirmation, status cards (validation, hash, determinism, evidence, populated modules). Test: component tests plus e2e A3 first half. Size M. Deps: 1.1, 1.2.
+- [ ] 1.4 Cross-reference index and validation aggregator (engine issues + manifest issues + cross-refs, each targeted at a module and field); kind rename cascades and delete blocking extended to manifests. Test: unit tests with fixture projects incl. delete-blocked-with-references. Size M. Deps: 0.3, 1.2.
+- [ ] 1.5 Bundle import/export (project ZIP: spec + pack + assets) with limits, atomic import, zip-slip, duplicate-entry, bomb and ratio checks; byte-identical double export. Test: extends `zip.adversarial.test.ts` with one test per hostile class; double-export equality. Size L. Deps: 0.3, 1.2.
+- [ ] 1.6 Security hardening, independent of everything: extend `scan-secrets.mjs` patterns (design 8.1) with unit tests (findings never print values); add CSP and `nosniff` headers in `studio/vercel.json` after verifying Pyodide loads under them; CI runs the scan on `dist/`, maps and sample exports. Test: scan unit tests with one fixture per pattern; local-preview smoke with CSP header served (Playwright). Size M. Deps: none. **May start today.** Lane Security.
+- [ ] 1.7 Field secret guard (`integrations/secrets.ts`): refuse pasted values matching secret patterns before they enter state. Test: one case per pattern; refused value absent from storage and export. Size S. Deps: 1.6 patterns, 1.2. Lane Security.
+
+## Phase 2. Module lanes (parallel; disjoint folders)
+### Lane A: Assets and sprites
+- [ ] 2.1 Asset sniffing and limits library (`assets/sniff.ts`, `limits.ts`): magic-byte type decision, header-first dimension read, allowlist, limits (5 MiB, 64 MiB, 4096 px, 256 assets). Test: fixtures for each allowed type, SVG, polyglot, truncated, oversized, wrong extension; all fail closed. Size M. Deps: 0.3. Label: browser unit-tested.
+- [ ] 2.2 Asset import, ids (never reused via `nextSeq`), SHA-256, provenance form (license required), library list, filters by category and kind, in-place preview, delete with reference check. Test: component and store tests; deleting a referenced asset blocked; missing license refused. Size L. Deps: 2.1, 1.2, 1.4.
+- [ ] 2.3 Assign asset to a kind (`kindRefs`). Studio preview substitution is **not** built (design risk 2); the kind card shows the linked asset thumbnail only. Test: reference index shows the link; kind delete blocked. Size S. Deps: 2.2. Priority P1.
+- [ ] 3.1 Slicing and timeline library (pure): grid to frames with margin and spacing, bounds checks, frame ops (reorder, duplicate, remove), `frameIndex(tick, tickRate, fps, holds, loop)`. Test: hand-computed cases for `once`, `loop`, `pingpong`, holds, tickRate 30 and 60; grid-out-of-bounds rejected. Size M. Deps: 0.3 only (needs animation schema). Can start in parallel with 2.1.
+- [ ] 3.2 Sheet and animation editors (grid form, frame list, manual rectangle add/move/resize with integer pixels, sequence editor, loop mode), manifest persistence. Test: component tests on the operations; manifest validates; used-frame removal handled. Size L. Deps: 3.1, 2.2.
+- [ ] 3.3 Animation preview player (play, pause, step) using `frameIndex`, canvas draw, `image-rendering: pixelated`. Test: player yields the same frame sequence as 3.1 for a fixed tick range (headless). Size M. Deps: 3.1, 2.2.
+
+### Lane B: Levels
+- [ ] 4.1 Level compiler (pure): levels + base spec -> `initialEntities`, `spawners`; difficulty steps to additional spawners; limit checks; deterministic output. Test: golden compiled outputs; same input twice equals; a compiled fixture for Lantern Run validates with the engine; unsupported shapes rejected with a field path. Size L. Deps: 0.3.
+- [ ] 4.2 Apply path (`derive/apply.ts`): compile, engine validate, bounded oracle run, commit or reject with issues mapped to level fields; pointer-ownership locks in Designer; `inputsSha256` staleness. Test: engine-in-worker test (existing harness): a valid level commits; an invalid one leaves the spec byte-identical; Designer fields locked only while derivation is on. Size L. Deps: 4.1, 1.1, 1.2, 1.4.
+- [ ] 4.3 Level UI: level list (add, duplicate, reorder, delete), placements, waves, difficulty, world preview, spawn timeline, unsupported-control list. Per-level variant compile and validation, export of `derived/levels/<id>/monstera.spec.json`, memory budget measured with 10 levels. Test: e2e A5 incl. running `monstera validate` on the exported variant files. Size L. Deps: 4.2.
+
+### Lane C: Gameplay
+- [ ] 5.1 Gameplay compiler (pure): lives, score, collectibles, enemies to `lives`, `winScore`, `collisions`; collision-pair conflict detection with Designer-owned rows. Test: golden outputs; conflict reported; compiles into a spec that the engine validates and that reproduces an existing sample's collision table when fed that sample's parameters. Size M. Deps: 0.3.
+- [ ] 5.2 Gameplay UI (module forms) and the `Planned` section listing health, power-ups, progression with the missing contract piece; pointer ownership disjoint from levels (test). Test: component tests; the planned section has no inputs. Size M. Deps: 5.1, 4.2 apply path.
+
+### Lane D: Integrations (scaffold and mock only)
+- [ ] 6.1 Integrations manifest module and validation (no production/live enums). Test: fixtures; secret-looking strings refused. Size S. Deps: 0.3.
+- [ ] 6.2 Scaffold emitters (Kotlin, Swift, `SETUP.md`) for Firebase interfaces and stubs and for AdMob placement constants, `AdService`, `MockRewardedAdService`; pure frequency-limit function specified in TS and rendered to both languages. Test: golden emitted text; `MOCK` strings and `IS_MOCK = true` present; no secret pattern in output; frequency function hand-computed cases; emitted files carry the GENERATED header. Label: GENERATED only. Size L. Deps: 6.1.
+- [ ] 6.3 Backend and Monetization UI with permanent scaffold/mock banners; no production option. Test: component tests assert banner and the absence of unit-id inputs; honesty scan (design 8.2) on all emitted UI strings. Size M. Deps: 6.1, 1.1, 1.7.
+
+### Lane E: Pack, Kiro, release, preview
+- [ ] 7.1 Pack layout, exporter and importer, `MONSTERA-STUDIO-MANIFEST.json` (class and SHA-256 per file), write-once handling, deterministic ZIP. Test: double-export byte equality; write-once file edited then re-exported stays; scaffold edited triggers the choice path. Size L. Deps: 0.3, 1.5.
+- [ ] 7.2 `tools/check-drift.sh` and its tests (bash, `set -euo pipefail`, Linux, macOS, Git Bash): unchanged, edited, missing, unknown; exit codes. Test: scripted fixture tree with each case, run in CI on Linux. Size M. Deps: 7.1 manifest format only (fixture manifest is enough).
+- [ ] 7.3 Kiro templates for the export: `.kiro/steering/` (ownership, units, never edit generated, drift commands), `.kiro/specs/<project>/` skeleton, hooks. Test: the exported `.kiro` JSON/Markdown passes the existing `kirocheck` rules on a sample export; contains no secret. Size M. Deps: 7.1.
+- [ ] 7.4 Kiro Development UI: Developer Integration (existing, moved), handoff prompts extended with the pack, Drift view from an imported bundle, proposal inbox (P1). Test: Drift view classification equals `check-drift.sh` output on the same tree; a rejected proposal changes nothing. Size L. Deps: 7.1, 1.1, 0.3.
+- [ ] 8.0 Preview and Device Lab environments table (R11). Test: with the three template hashes shows recorded evidence; with an edited hash shows `no evidence for this hash`; no row can read `passed` without a source record. Size M. Deps: 1.1.
+- [ ] 8.1 Build and Release: completeness check (R13.2), readiness checklist, export with pack. Test: one fixture per error class blocks export; wording test for "store-ready". Size L. Deps: 4.2, 7.1, 2.2.
+
+## Phase 3. Integration and acceptance (after the Nov 28 freeze)
+- [ ] 9.1 Playwright end-to-end over A1 to A7 (create, design, asset, slice, two levels, gameplay modules, scaffold, export, re-import, drift). Existing smoke 17/17 and M1/M2 acceptance rerun unchanged. Output under `docs/evidence/studio-foundry/`. Size L. Deps: all P0 tasks.
+- [ ] 9.2 Regression proof (A9, R14.2): `git diff 71c77e4 -- tools/monstera spec/schema` empty; `monstera gates` green; exported spec `generate --check` and `verify` green; `git diff origin/g6/clean-room-regeneration -- docs/evidence/g6-cleanroom` empty. Size S. Deps: 9.1.
+- [ ] 9.3 Hostile-input suite consolidated (A10) and secret scan over the final `dist/`, maps and exports. Size M. Deps: 1.5, 1.6, 2.1.
+- [ ] 9.4 Independent adversarial review (A13) by an agent or person other than the author, using the workspace `monstera-adversarial-review` workflow, once on the freeze head. Triage file in `docs/evidence/studio-foundry/`. Size M. Deps: 9.1 to 9.3.
+- [ ] 9.5 Docs: rewrite `architecture/MONSTERA-STUDIO.md` status table, generated capability matrix (A11), README section. No claim above its evidence. Size M. Deps: 9.1.
+- [ ] 9.6 Demo script and recording (A12): the first minute states the statuses; shows Designer to Levels to engine validation to oracle to export to the real native app evidence; scaffold and mock labelled on screen. Size M. Deps: 9.1, 9.5.
+
+## Parallelism summary
+| After | Can run at the same time |
+|---|---|
+| Nothing | 0.1, 1.6 |
+| 0.1 | 0.2, 0.3, 0.4, 0.5 |
+| 0.3 and 0.4 | 1.1, 1.2, 1.4, 1.5, 2.1, 3.1, 4.1, 5.1, 6.1, 7.2 (fixture manifest) |
+| 1.1 and 1.2 | 1.3, 2.2, 4.2, 6.3, 7.1, 7.4, 8.0 |
+| 2.2 | 2.3, 3.2, 3.3 |
+| 4.2 | 4.3, 5.2, 8.1 |
+Must wait for shared data-model decisions (0.1, 0.3): every task that stores or reads a manifest. Pure libraries 3.1, 4.1, 5.1 and 2.1 need only their own schema from 0.3 and can be finished before any UI exists.
+
+## Critical path
+0.1, 0.3 (L), 1.2 (L), 4.1 (L), 4.2 (L), 4.3 (L), 8.1 (L), 9.1 (L). About 12 working days of single-author work before 9.x, which fits Nov 17 to Nov 28 only if lanes A to E are parallelised (agents or people) and 1.6, 2.x, 3.x, 6.x run beside it. A single author without parallel agents cannot finish all P0 and P1: apply the cut order in design section 9.
+
+## Scope ledger (record every addition with its deadline cost)
+| Date | Item | Reason | Deadline trade-off | Decision |
+|---|---|---|---|---|
+| 2026-11-16 | Engine track E1 (sprite reference and asset bundling) | Makes Assets and Sprites real natively | 5 to 7 days, new freeze, risk to G6 narrative | Gate E on 2026-11-19, default no |
+| 2026-11-16 | Engine track E2 (extension source roots) | Makes scaffolds compile and mock ad visible | 3 to 4 days | Gate E, default no |
+| 2026-11-16 | Engine track E3 (levels in spec) | Multi-level in the shipped app | Not feasible before the deadline | Post-deadline |
+| 2026-11-16 | `studio/vercel.json` headers (1.6) | Closes the open CSP and `nosniff` note from M3-B | Small; touches deployment config the owner manages | Owner to confirm |
+
+## Evidence rules for this milestone
+Each completed task records the exact command, its result and the environment (`browser`, `oracle`, `jvm`, `swift-test`, `simulator`, `device`). A task that emits Kotlin or Swift text claims GENERATED only. No result is written that was not observed (steering 04). Credit and cost figures are never written (steering 09).
