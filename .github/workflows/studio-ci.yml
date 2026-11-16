@@ -1,0 +1,80 @@
+# Studio only: unit tests, type check, production build, a browser smoke against a local production preview, and a
+# bundle secret scan. Native CI (monstera.yml) ignores this file. The deployed-site smoke is a separate job and never
+# deploys or configures hosting.
+name: studio
+on:
+  push:
+    branches: [main]
+    paths: ["studio/**", "tools/monstera/**", "spec/**", "apps/*/monstera.spec.json", "docs/evidence/m3-native-apps/**", ".kiro/**", "tools/monstera-mcp/**", ".github/workflows/studio-ci.yml"]
+  pull_request:
+    paths: ["studio/**", "tools/monstera/**", "spec/**", "apps/*/monstera.spec.json", "docs/evidence/m3-native-apps/**", ".kiro/**", "tools/monstera-mcp/**", ".github/workflows/studio-ci.yml"]
+  workflow_dispatch:
+permissions:
+  contents: read
+env:
+  NODE_VERSION: "22.18.0"
+  PRODUCTION_URL: https://monstera-phi.vercel.app/
+defaults:
+  run:
+    shell: bash
+    working-directory: studio
+jobs:
+  build-and-smoke:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: studio/package-lock.json
+      - name: Install (lockfile only)
+        run: npm ci
+      - name: Unit tests
+        run: npm test
+      - name: TypeScript check
+        run: npm run typecheck
+      - name: Production build
+        run: npm run build
+      - name: Bundle and source-map secret scan
+        run: npm run scan:secrets
+      - name: Install Playwright Chromium
+        run: npx playwright-core install --with-deps chromium
+      - name: Smoke test against a local production preview
+        run: npm run smoke
+      - name: Upload evidence
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: studio-ci-evidence
+          path: |
+            docs/evidence/studio-m3b/smoke-local-preview.json
+            docs/evidence/studio-m3b/secret-scan.json
+          if-no-files-found: warn
+  deployed-smoke:
+    # Observes the production site as it is. A failure is reported, not repaired: hosting belongs to the owner.
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: studio/package-lock.json
+      - run: npm ci
+      - run: npx playwright-core install --with-deps chromium
+      - name: Smoke test against the deployed site
+        env:
+          SMOKE_URL: ${{ env.PRODUCTION_URL }}
+          SMOKE_LABEL: production
+          SMOKE_REPORT: ${{ runner.temp }}/smoke-production.json
+        run: npm run smoke
+      - name: Upload evidence
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: studio-production-smoke
+          path: ${{ runner.temp }}/smoke-production.json
+          if-no-files-found: warn
