@@ -9,6 +9,7 @@
 // SHA-256, confirmed its bundled specification, and started the fixed-tick runtime. Not verified: gameplay, input,
 // restart, performance, haptics, or any physical device.
 import { createHash } from "node:crypto";
+import zlib from "node:zlib";
 import { copyFileSync, existsSync, mkdirSync, readFileSync, rmSync } from "node:fs";
 import { join } from "node:path";
 
@@ -148,17 +149,63 @@ export function parseAppLog(platform, text, canonicalSha) {
 }
 
 // ------------------------------------------------------------------ screenshot
+const PNG_SIGNATURE = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
+const PNG_MAX_RAW = 1 << 27; // 128 MiB of decompressed pixel data is more than any device screenshot needs
+const PNG_CHANNELS = { 0: [1, [1, 2, 4, 8, 16]], 2: [3, [8, 16]], 3: [1, [1, 2, 4, 8]], 4: [2, [8, 16]], 6: [4, [8, 16]] };
+/**
+ * Strict PNG check: signature, a bounds-checked chunk stream, CRC of every chunk, exactly one IHDR (first, 13 bytes, valid
+ * fields), at least one IDAT (contiguous), exactly one empty IEND as the last chunk with no trailing bytes, and an IDAT stream
+ * that inflates to exactly the size the header implies (non-interlaced). Returns { width, height } or null.
+ */
 export function parsePng(bytes) {
-  if (!bytes || bytes.length < 45) return null;
+  if (!bytes) return null;
   const b = Buffer.from(bytes);
-  if (b.readUInt32BE(0) !== 0x89504e47 || b.readUInt32BE(4) !== 0x0d0a1a0a) return null;
-  if (b.readUInt32BE(8) !== 13 || b.toString("latin1", 12, 16) !== "IHDR") return null;
-  const width = b.readUInt32BE(16), height = b.readUInt32BE(20);
-  if (width < 1 || height < 1) return null;
-  if (b.toString("latin1", b.length - 8, b.length - 4) !== "IEND") return null;
-  return { width, height };
+  if (b.length < 8 + 25 + 12 || !b.subarray(0, 8).equals(PNG_SIGNATURE)) return null;
+  let pos = 8, header = null, sawIend = false, sawPlte = false, idatEnded = false;
+  const idat = [];
+  let idatBytes = 0, first = true;
+  while (pos < b.length) {
+    if (sawIend || pos + 12 > b.length) return null; // data after IEND, or a truncated chunk header
+    const len = b.readUInt32BE(pos);
+    if (len > 0x7fffffff || pos + 12 + len > b.length) return null;
+    const type = b.toString("latin1", pos + 4, pos + 8);
+    if (!/^[A-Za-z]{4}$/.test(type)) return null;
+    const data = b.subarray(pos + 8, pos + 8 + len);
+    if (b.readUInt32BE(pos + 8 + len) !== zlib.crc32(b.subarray(pos + 4, pos + 8 + len))) return null;
+    if (first && type !== "IHDR") return null;
+    first = false;
+    if (type === "IHDR") {
+      if (header || len !== 13) return null;
+      const [width, height] = [data.readUInt32BE(0), data.readUInt32BE(4)];
+      const [depth, color, comp, filter, interlace] = [data[8], data[9], data[10], data[11], data[12]];
+      const spec = PNG_CHANNELS[color];
+      if (!spec || !spec[1].includes(depth) || comp !== 0 || filter !== 0 || (interlace !== 0 && interlace !== 1)) return null;
+      if (width < 1 || height < 1 || width > 0x7fffffff || height > 0x7fffffff) return null;
+      header = { width, height, depth, color, interlace, channels: spec[0] };
+    } else if (type === "IDAT") {
+      if (idatEnded) return null;
+      idat.push(data);
+      idatBytes += len;
+    } else {
+      if (idat.length) idatEnded = true;
+      if (type === "PLTE") { if (sawPlte || idat.length || len === 0 || len % 3 !== 0) return null; sawPlte = true; }
+      if (type === "IEND") { if (len !== 0) return null; sawIend = true; }
+    }
+    pos += 12 + len;
+  }
+  if (!header || !sawIend || idatBytes === 0) return null;
+  if (header.color === 3 && !sawPlte) return null;
+  // Image data: must inflate cleanly. Non-interlaced size is exact; interlaced is only bounded.
+  const rowBytes = Math.ceil((header.width * header.channels * header.depth) / 8);
+  const exact = header.interlace === 0 ? (rowBytes + 1) * header.height : null;
+  if (exact !== null && exact > PNG_MAX_RAW) return null;
+  try {
+    const raw = zlib.inflateSync(Buffer.concat(idat), { maxOutputLength: exact ?? PNG_MAX_RAW });
+    if (exact !== null && raw.length !== exact) return null;
+    if (exact === null && raw.length === 0) return null;
+  } catch { return null; }
+  return { width: header.width, height: header.height };
 }
-
 // ------------------------------------------------------------------ one platform
 /**
  * @param {{platform:"android"|"ios", gameId:string, specSha256:string, report:string|null, results:string|null, logs:string|null, screenshot:Uint8Array|null}} i

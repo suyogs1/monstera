@@ -1,5 +1,6 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
+import zlib from "node:zlib";
 import { describe, expect, it } from "vitest";
 import { buildNativeIndex, evaluatePlatform, GAMES, parseAppLog, parsePng, projectLabel, specSha256 } from "../../scripts/native-evidence.mjs";
 import { matchNativeApps, nativeLabelFor } from "./nativeApps";
@@ -199,5 +200,95 @@ describe("exact current-spec matching", () => {
   it("an edited spec: any change to the canonical bytes changes the hash that evidence is bound to", () => {
     const changed = Buffer.from(specBytes.toString("utf8").replace(/"lives": \d+/, '"lives": 99'));
     expect(specSha256(changed)).not.toBe(pb.specSha256);
+  });
+});
+
+describe("PNG validation", () => {
+  const SIG = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
+  const chunk = (type: string, data: Buffer, crc?: number) => {
+    const head = Buffer.alloc(8);
+    head.writeUInt32BE(data.length, 0);
+    head.write(type, 4, "latin1");
+    const tail = Buffer.alloc(4);
+    tail.writeUInt32BE(crc ?? zlib.crc32(Buffer.concat([head.subarray(4), data])), 0);
+    return Buffer.concat([head, data, tail]);
+  };
+  const ihdr = (w = 2, h = 2) => {
+    const d = Buffer.alloc(13);
+    d.writeUInt32BE(w, 0); d.writeUInt32BE(h, 4);
+    d[8] = 8; d[9] = 6; // 8-bit RGBA
+    return d;
+  };
+  const pixels = (w = 2, h = 2) => zlib.deflateSync(Buffer.alloc((w * 4 + 1) * h, 7));
+  const png = (parts: Buffer[]) => Buffer.concat([SIG, ...parts]);
+  const good = () => [chunk("IHDR", ihdr()), chunk("IDAT", pixels()), chunk("IEND", Buffer.alloc(0))];
+  /** The check this replaces: signature, IHDR length/type, positive dimensions, IEND marker at the end. */
+  const oldParsePng = (b: Buffer) => {
+    if (b.length < 45 || b.readUInt32BE(0) !== 0x89504e47 || b.readUInt32BE(4) !== 0x0d0a1a0a) return null;
+    if (b.readUInt32BE(8) !== 13 || b.toString("latin1", 12, 16) !== "IHDR") return null;
+    const width = b.readUInt32BE(16), height = b.readUInt32BE(20);
+    if (width < 1 || height < 1 || b.toString("latin1", b.length - 8, b.length - 4) !== "IEND") return null;
+    return { width, height };
+  };
+  const badCrc = (c: Buffer) => { const x = Buffer.from(c); x.writeUInt8(x.readUInt8(x.length - 1) ^ 0xff, x.length - 1); return x; };
+  const withScreenshot = (shot: Buffer | null) => evaluatePlatform({ ...load("android"), screenshot: shot });
+
+  it("accepts a well-formed PNG and the committed screenshots", () => {
+    expect(parsePng(png(good()))).toEqual({ width: 2, height: 2 });
+    expect(parsePng(png([good()[0]!, chunk("IDAT", pixels().subarray(0, 4)), chunk("IDAT", pixels().subarray(4)).subarray(0, 0), ...[]]))).toBeNull();
+    for (const p of ["android", "ios"] as const) expect(parsePng(load(p).screenshot)).not.toBeNull();
+  });
+  it("accepts image data split across several IDAT chunks", () => {
+    const z = pixels();
+    expect(parsePng(png([good()[0]!, chunk("IDAT", z.subarray(0, 5)), chunk("IDAT", z.subarray(5)), good()[2]!]))).toEqual({ width: 2, height: 2 });
+  });
+  const invalid: [string, () => Buffer][] = [
+    ["wrong signature", () => Buffer.concat([Buffer.from("\x89PNX\r\n\x1a\n", "latin1"), ...good()])],
+    ["truncated IHDR", () => png(good()).subarray(0, 8 + 8 + 6)],
+    ["truncated file (IEND cut off)", () => png(good()).subarray(0, png(good()).length - 5)],
+    ["wrong IHDR CRC", () => png([badCrc(good()[0]!), good()[1]!, good()[2]!])],
+    ["missing IDAT", () => png([good()[0]!, good()[2]!])],
+    ["wrong IDAT CRC", () => png([good()[0]!, badCrc(good()[1]!), good()[2]!])],
+    ["missing IEND", () => png([good()[0]!, good()[1]!])],
+    ["IEND with data", () => png([good()[0]!, good()[1]!, chunk("IEND", Buffer.from([1]))])],
+    ["wrong IEND CRC", () => png([good()[0]!, good()[1]!, badCrc(good()[2]!)])],
+    ["trailing bytes after IEND", () => Buffer.concat([png(good()), Buffer.from([0])])],
+    ["a second IEND", () => png([...good(), good()[2]!])],
+    ["a second IHDR", () => png([good()[0]!, good()[0]!, good()[1]!, good()[2]!])],
+    ["IHDR not first", () => png([chunk("tEXt", Buffer.from("a\0b")), ...good()])],
+    ["IHDR of the wrong length", () => png([chunk("IHDR", Buffer.concat([ihdr(), Buffer.from([0])])), good()[1]!, good()[2]!])],
+    ["zero width", () => png([chunk("IHDR", ihdr(0, 2)), good()[1]!, good()[2]!])],
+    ["invalid colour type", () => png([chunk("IHDR", Buffer.concat([ihdr().subarray(0, 9), Buffer.from([5, 0, 0, 0])])), good()[1]!, good()[2]!])],
+    ["chunk length beyond the file", () => { const b = png(good()); b.writeUInt32BE(0x7fffffff, 8 + 25 + 0); return b; }],
+    ["IDAT that is not zlib data", () => png([good()[0]!, chunk("IDAT", Buffer.from("not compressed data")), good()[2]!])],
+    ["corrupt image data with a valid CRC", () => { const z = Buffer.from(pixels()); z.writeUInt8(z.readUInt8(z.length - 6) ^ 0xff, z.length - 6); return png([good()[0]!, chunk("IDAT", z), good()[2]!]); }],
+    ["truncated image data with a valid CRC", () => png([good()[0]!, chunk("IDAT", pixels().subarray(0, 8)), good()[2]!])],
+    ["image data of the wrong size for the header", () => png([chunk("IHDR", ihdr(9, 9)), chunk("IDAT", pixels()), good()[2]!])],
+    ["IDAT after another chunk interrupts the data", () => png([good()[0]!, chunk("IDAT", pixels().subarray(0, 4)), chunk("tEXt", Buffer.from("a\0b")), chunk("IDAT", pixels().subarray(4)), good()[2]!])],
+  ];
+  it.each(invalid)("rejects: %s", (_, make) => {
+    expect(parsePng(make())).toBeNull();
+    expect(withScreenshot(make()).label).not.toBe("SIMULATOR-TESTED");
+  });
+  it("the previous check would have accepted these, the strict one does not", () => {
+    const noIdat = png([good()[0]!, good()[2]!]);
+    const crc = png([badCrc(good()[0]!), good()[1]!, good()[2]!]);
+    const corrupt = (() => { const z = Buffer.from(pixels()); z.writeUInt8(z.readUInt8(z.length - 6) ^ 0xff, z.length - 6); return png([good()[0]!, chunk("IDAT", z), good()[2]!]); })();
+    for (const b of [noIdat, crc, corrupt]) {
+      expect(oldParsePng(b)).toEqual({ width: 2, height: 2 });
+    }
+    for (const b of [noIdat, crc, corrupt]) expect(parsePng(b)).toBeNull();
+  });
+  it("an invalid screenshot downgrades an otherwise complete platform to COMPILED, a valid one keeps SIMULATOR-TESTED", () => {
+    const shot = load("android").screenshot as Buffer;
+    expect(withScreenshot(shot).label).toBe("SIMULATOR-TESTED");
+    const truncated = shot.subarray(0, shot.length - 20);
+    const r = withScreenshot(Buffer.from(truncated));
+    expect(r.checks.screenshot.state).toBe("fail");
+    expect(r.label).toBe("COMPILED");
+    const flipped = Buffer.from(shot);
+    const at = Math.floor(flipped.length / 2);
+    flipped.writeUInt8(flipped.readUInt8(at) ^ 0xff, at);
+    expect(withScreenshot(flipped).label).toBe("COMPILED");
   });
 });
