@@ -12,7 +12,7 @@ Raw files in this directory are unedited CI outputs (artifacts `g1-android-43824
 | CI run | `monstera` workflow run `43824361862` (pull_request) |
 | Jobs | spec `133154532025`, mcp `133154532267`, android-generated `133154832476`, conformance `133154832530`, ios-generated `133154832831` |
 
-The commits after `5255763` only add files under `docs/` and `.kiro/specs/g4-studio/`, which the workflow path filter excludes, so they cannot start a run of their own. The tree CI built differs from the PR head only in those files. A manual `workflow_dispatch` run on the final head is recorded in the PR conversation.
+Later commits only add or change files under `docs/` and `.kiro/specs/g4-studio/`; the workflow ran again on them (pull_request and workflow_dispatch). Run IDs and conclusions for the final PR head are recorded in the PR conversation, because a file cannot contain the ID of the run that tests it.
 
 ## Method
 
