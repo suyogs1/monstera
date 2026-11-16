@@ -18,7 +18,7 @@
       "const": 1
     },
     "nextSeq": {
-      "description": "Next sequence number for asset ids. Only grows, so ids are never reused after deletion.",
+      "description": "Next unused asset sequence number. Studio generates ids as asset-NNNN from it and then increases it by one; it never decreases, on deletion or on import. It must exceed the suffix of every generated-form id in the file. Ids of deleted assets are not stored.",
       "type": "integer",
       "minimum": 1,
       "maximum": 100000
@@ -142,10 +142,11 @@
                 "$ref": "#/$defs/text"
               },
               "license": {
-                "description": "SPDX id or proprietary-owned. Required and non-empty.",
+                "description": "An SPDX license identifier or expression (identifiers joined by AND, OR or WITH; LicenseRef-* allowed), or proprietary-owned. Required. Only the shape is checked: Studio does not verify the identifier against the SPDX list, the validity of the license, or that the user owns the asset.",
                 "type": "string",
                 "minLength": 1,
-                "maxLength": 100
+                "maxLength": 100,
+                "pattern": "^(proprietary-owned|[A-Za-z0-9][A-Za-z0-9.+-]*( (AND|OR|WITH) [A-Za-z0-9][A-Za-z0-9.+-]*)*)$"
               },
               "source": {
                 "$ref": "#/$defs/text"

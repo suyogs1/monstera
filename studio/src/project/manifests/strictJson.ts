@@ -6,6 +6,18 @@ export type JsonResult = { ok: true; value: unknown } | { ok: false; issue: Json
 
 export const MAX_JSON_BYTES = 8 * 1024 * 1024;
 export const MAX_DEPTH = 32;
+/** UTF-8 byte length of a JavaScript string (lone surrogates count as U+FFFD, three bytes, as TextEncoder does). Stops early past `limit`. */
+export function utf8Length(s: string, limit = Infinity): number {
+  let n = 0;
+  for (let i = 0; i < s.length && n <= limit; i++) {
+    const c = s.charCodeAt(i);
+    if (c < 0x80) n += 1;
+    else if (c < 0x800) n += 2;
+    else if (c >= 0xd800 && c <= 0xdbff && i + 1 < s.length && s.charCodeAt(i + 1) >= 0xdc00 && s.charCodeAt(i + 1) <= 0xdfff) { n += 4; i++; }
+    else n += 3;
+  }
+  return n;
+}
 const FORBIDDEN_KEYS = new Set(["__proto__", "constructor", "prototype"]);
 
 class Fail extends Error {
@@ -24,7 +36,7 @@ export function decodeUtf8Strict(bytes: Uint8Array): { ok: true; text: string } 
 }
 
 export function parseStrictJson(text: string): JsonResult {
-  if (text.length > MAX_JSON_BYTES) return { ok: false, issue: { code: "too-large", message: `text is larger than ${MAX_JSON_BYTES} characters`, offset: 0 } };
+  if (text.length > MAX_JSON_BYTES || utf8Length(text, MAX_JSON_BYTES) > MAX_JSON_BYTES) return { ok: false, issue: { code: "too-large", message: `text is larger than ${MAX_JSON_BYTES} bytes in UTF-8`, offset: 0 } };
   if (text.charCodeAt(0) === 0xfeff) return { ok: false, issue: { code: "bom", message: "a byte order mark is not allowed", offset: 0 } };
   let i = 0;
   const ws = () => { while (i < text.length && (text[i] === " " || text[i] === "\n" || text[i] === "\r" || text[i] === "\t")) i++; };

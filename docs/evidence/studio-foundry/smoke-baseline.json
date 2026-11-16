@@ -120,7 +120,7 @@
       "encoding": "gzip"
     }
   ],
-  "inventoryStamp": "Inventory built from commit fcfd291 on studio/foundry-spec (source: git). Files read: .kiro/agents .kiro/hooks .kiro/workflows .kiro/steering .kiro/prompts .kiro/settings/mcp.json tools/monstera-mcp/server.py",
+  "inventoryStamp": "Inventory built from commit e66baf8 on studio/foundry-spec (source: git). Files read: .kiro/agents .kiro/hooks .kiro/workflows .kiro/steering .kiro/prompts .kiro/settings/mcp.json tools/monstera-mcp/server.py",
   "cspMode": null,
   "documentHeaders": {
     "x-content-type-options": null,
@@ -128,6 +128,7 @@
     "content-security-policy-report-only": null
   },
   "cspViolations": [],
+  "cspReports": [],
   "problems": [],
   "fatal": null
 }

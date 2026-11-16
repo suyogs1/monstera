@@ -140,7 +140,7 @@ describe("envelope and schema violations", () => {
     expect(mutated("assets", (m) => { m.assets[0].width = 4097; })).toEqual(["maximum@assets.0.width"]);
     expect(mutated("assets", (m) => { m.assets[0].file = "../evil.png"; })).toEqual(["pattern@assets.0.file"]);
     expect(mutated("assets", (m) => { m.assets[0].file = ".hidden"; })).toEqual(["pattern@assets.0.file"]);
-    expect(mutated("assets", (m) => { m.assets[0].provenance.license = ""; })).toEqual(["minLength@assets.0.provenance.license"]);
+    expect(mutated("assets", (m) => { m.assets[0].provenance.license = ""; })).toEqual(["minLength@assets.0.provenance.license", "pattern@assets.0.provenance.license"]);
     expect(mutated("animations", (m) => { m.animations[0].fps = 61; })).toEqual(["maximum@animations.0.fps"]);
     expect(mutated("animations", (m) => { m.animations[0].loop = "bounce"; })).toEqual(["enum@animations.0.loop"]);
     expect(mutated("integrations", (m) => { m.monetization.mode = "production"; })).toEqual(["enum@monetization.mode"]);
@@ -161,7 +161,7 @@ describe("internal checks", () => {
     expect(mutated("levels", (m) => { m.levels[0].waves[1].id = "lanterns"; })).toContain("duplicate-id@levels.0.waves.1.id");
   });
   it("asset consistency and provenance", () => {
-    expect(mutated("assets", (m) => { m.nextSeq = 2; })).toEqual(["seq-too-low@nextSeq"]);
+    expect(mutated("assets", (m) => { m.nextSeq = 2; })).toEqual(["seq-too-low@nextSeq"]); // asset-0002 exists
     expect(mutated("assets", (m) => { m.assets[0].mime = "audio/wav"; })).toContain("kind-mime@assets.0.mime");
     expect(mutated("assets", (m) => { m.assets[1].category = "sprite"; })).toEqual(["kind-category@assets.1.category"]);
     expect(mutated("assets", (m) => { m.assets[0].width = 0; })).toContain("dimensions@assets.0.width");

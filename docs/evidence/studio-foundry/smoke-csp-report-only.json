@@ -77,7 +77,7 @@
     {
       "name": "the document carries nosniff and the report-only Content-Security-Policy header",
       "ok": true,
-      "detail": "{\"x-content-type-options\":\"nosniff\",\"content-security-policy\":null,\"content-security-policy-report-only\":\"default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; style-src-attr 'unsafe-inline'; img-src 'self' blob: data:; media-src 'self' blob:; font-src 'self'; worker-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; report-uri http://127.0.0.1:54062/csp\"}"
+      "detail": "{\"x-content-type-options\":\"nosniff\",\"content-security-policy\":null,\"content-security-policy-report-only\":\"default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; style-src-attr 'unsafe-inline'; img-src 'self' blob: data:; media-src 'self' blob:; font-src 'self'; worker-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; report-uri http://127.0.0.1:50231/csp\"}"
     },
     {
       "name": "no Content-Security-Policy violation (report-only) from the page, the Pyodide worker, WebAssembly or asset loading",
@@ -130,12 +130,12 @@
       "encoding": "gzip"
     }
   ],
-  "inventoryStamp": "Inventory built from commit fcfd291 on studio/foundry-spec (source: git). Files read: .kiro/agents .kiro/hooks .kiro/workflows .kiro/steering .kiro/prompts .kiro/settings/mcp.json tools/monstera-mcp/server.py",
+  "inventoryStamp": "Inventory built from commit e66baf8 on studio/foundry-spec (source: git). Files read: .kiro/agents .kiro/hooks .kiro/workflows .kiro/steering .kiro/prompts .kiro/settings/mcp.json tools/monstera-mcp/server.py",
   "cspMode": "report-only",
   "documentHeaders": {
     "x-content-type-options": "nosniff",
     "content-security-policy": null,
-    "content-security-policy-report-only": "default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; style-src-attr 'unsafe-inline'; img-src 'self' blob: data:; media-src 'self' blob:; font-src 'self'; worker-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; report-uri http://127.0.0.1:54062/csp"
+    "content-security-policy-report-only": "default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; style-src-attr 'unsafe-inline'; img-src 'self' blob: data:; media-src 'self' blob:; font-src 'self'; worker-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; report-uri http://127.0.0.1:50231/csp"
   },
   "cspViolations": [],
   "cspReports": [],

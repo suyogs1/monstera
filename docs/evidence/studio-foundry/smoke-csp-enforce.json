@@ -77,7 +77,7 @@
     {
       "name": "the document carries nosniff and the enforce Content-Security-Policy header",
       "ok": true,
-      "detail": "{\"x-content-type-options\":\"nosniff\",\"content-security-policy\":\"default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; style-src-attr 'unsafe-inline'; img-src 'self' blob: data:; media-src 'self' blob:; font-src 'self'; worker-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; report-uri http://127.0.0.1:54104/csp\",\"content-security-policy-report-only\":null}"
+      "detail": "{\"x-content-type-options\":\"nosniff\",\"content-security-policy\":\"default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; style-src-attr 'unsafe-inline'; img-src 'self' blob: data:; media-src 'self' blob:; font-src 'self'; worker-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; report-uri http://127.0.0.1:50269/csp\",\"content-security-policy-report-only\":null}"
     },
     {
       "name": "no Content-Security-Policy violation (enforce) from the page, the Pyodide worker, WebAssembly or asset loading",
@@ -109,16 +109,16 @@
       "encoding": "gzip"
     },
     {
-      "path": "/pyodide/pyodide.asm.wasm",
+      "path": "/pyodide/python_stdlib.zip",
       "status": 200,
-      "contentType": "application/wasm",
+      "contentType": "application/zip",
       "cacheControl": "no-cache",
       "encoding": null
     },
     {
-      "path": "/pyodide/python_stdlib.zip",
+      "path": "/pyodide/pyodide.asm.wasm",
       "status": 200,
-      "contentType": "application/zip",
+      "contentType": "application/wasm",
       "cacheControl": "no-cache",
       "encoding": null
     },
@@ -130,11 +130,11 @@
       "encoding": "gzip"
     }
   ],
-  "inventoryStamp": "Inventory built from commit fcfd291 on studio/foundry-spec (source: git). Files read: .kiro/agents .kiro/hooks .kiro/workflows .kiro/steering .kiro/prompts .kiro/settings/mcp.json tools/monstera-mcp/server.py",
+  "inventoryStamp": "Inventory built from commit e66baf8 on studio/foundry-spec (source: git). Files read: .kiro/agents .kiro/hooks .kiro/workflows .kiro/steering .kiro/prompts .kiro/settings/mcp.json tools/monstera-mcp/server.py",
   "cspMode": "enforce",
   "documentHeaders": {
     "x-content-type-options": "nosniff",
-    "content-security-policy": "default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; style-src-attr 'unsafe-inline'; img-src 'self' blob: data:; media-src 'self' blob:; font-src 'self'; worker-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; report-uri http://127.0.0.1:54104/csp",
+    "content-security-policy": "default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; style-src-attr 'unsafe-inline'; img-src 'self' blob: data:; media-src 'self' blob:; font-src 'self'; worker-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; report-uri http://127.0.0.1:50269/csp",
     "content-security-policy-report-only": null
   },
   "cspViolations": [],

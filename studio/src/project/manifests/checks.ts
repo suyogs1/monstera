@@ -2,6 +2,8 @@
 // Cross-manifest references (kind ids against the spec, asset ids against the asset list) belong to the project-wide
 // cross-reference index (task 1.4), not here.
 import type { Issue, Path } from "./schema";
+import { assetSeq } from "./assetIds";
+import { parseStrictJson } from "./strictJson";
 import type {
   AnimationsManifest, AssetsManifest, GameplayManifest, IntegrationsManifest, LevelsManifest, ProjectManifest, ProposalManifest,
 } from "./types";
@@ -47,7 +49,11 @@ function assets(m: AssetsManifest): Issue[] {
   const out: Issue[] = [];
   uniqueIds(out, m.assets, ["assets"], "asset");
   sortedBy(out, m.assets, (a) => a.id, ["assets"], "assets");
-  if (m.nextSeq <= m.assets.length) push(out, ["nextSeq"], "seq-too-low", "nextSeq must exceed the number of assets so ids are never reused");
+  // Allocation rule (assetIds.ts): generated ids are asset-<seq>; nextSeq is the next unused number. History of deleted ids is not stored, so only collisions with ids that exist can be detected.
+  m.assets.forEach((a, i) => {
+    const seq = assetSeq(a.id);
+    if (seq !== null && m.nextSeq <= seq) push(out, ["nextSeq"], "seq-too-low", `nextSeq ${m.nextSeq} would reuse or collide with the generated id "${a.id}" (assets[${i}]); it must exceed ${seq}`);
+  });
   const total = m.assets.reduce((n, a) => n + a.bytes, 0);
   if (total > 64 * 1024 * 1024) push(out, ["assets"], "project-too-large", "assets exceed 64 MiB in total");
   m.assets.forEach((a, i) => {
@@ -65,6 +71,7 @@ function assets(m: AssetsManifest): Issue[] {
     }
     sortedUnique(out, a.kindRefs, [...at("kindRefs")], "kindRefs");
     const p = a.provenance;
+    if (p.license.includes("proprietary-owned") && p.license !== "proprietary-owned") push(out, [...at("provenance"), "license"], "license", "proprietary-owned cannot be combined with other license identifiers")
     if (p.origin === "ai-generated" && (p.tool === "" || p.model === "")) push(out, [...at("provenance"), "tool"], "provenance", "AI-generated assets must record the tool and the model");
     if (p.origin !== "ai-generated" && (p.promptSha256 !== "")) push(out, [...at("provenance"), "promptSha256"], "provenance", "a prompt hash applies only to AI-generated assets");
   });
@@ -157,7 +164,10 @@ function proposal(m: ProposalManifest): Issue[] {
     if (o.op === "remove" && o.value !== "") push(out, ["ops", i, "value"], "value", "a remove operation has no value");
     if (o.op !== "remove") {
       if (o.value === "") push(out, ["ops", i, "value"], "value", "add and set need a value");
-      else { try { JSON.parse(o.value); } catch { push(out, ["ops", i, "value"], "value", "the value must be JSON text"); } }
+      else {
+        const r = parseStrictJson(o.value);
+        if (!r.ok) push(out, ["ops", i, "value"], "value", `the value must be strict JSON (${r.issue.code}: ${r.issue.message})`);
+      }
     }
     if (/(^|\/)(__proto__|constructor|prototype)(\/|$)/.test(o.path)) push(out, ["ops", i, "path"], "forbidden-key", "the path names a forbidden key");
   });

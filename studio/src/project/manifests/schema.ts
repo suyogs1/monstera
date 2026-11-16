@@ -21,6 +21,8 @@ export class SchemaLoadError extends Error {}
 
 type Raw = Record<string, unknown>;
 const isObj = (v: unknown): v is Raw => typeof v === "object" && v !== null && !Array.isArray(v);
+/** Own-property test. `in` also finds inherited names such as toString and hasOwnProperty, which must never count as declared. */
+const own = (o: object, k: string): boolean => Object.prototype.hasOwnProperty.call(o, k);
 
 export function compileSchema(schema: unknown): CompiledSchema {
   if (!isObj(schema)) throw new SchemaLoadError("schema must be an object");
@@ -34,7 +36,7 @@ export function compileSchema(schema: unknown): CompiledSchema {
       const m = typeof ref === "string" ? /^#\/\$defs\/([A-Za-z0-9]+)$/.exec(ref) : null;
       if (!m || !m[1]) throw new SchemaLoadError(`${where}: unsupported $ref`);
       const name = m[1];
-      if (!(name in defs)) throw new SchemaLoadError(`${where}: unknown definition "${name}"`);
+      if (!own(defs, name)) throw new SchemaLoadError(`${where}: unknown definition "${name}"`);
       if (resolving.includes(name)) throw new SchemaLoadError(`${where}: recursive definition "${name}"`);
       const hit = cache.get(name);
       if (hit) return hit;
@@ -42,8 +44,8 @@ export function compileSchema(schema: unknown): CompiledSchema {
       cache.set(name, node);
       return node;
     }
-    const node: Node = { order: [], hasConst: "const" in raw };
-    if ("const" in raw) node.const = raw["const"] as Json;
+    const node: Node = { order: [], hasConst: own(raw, "const") };
+    if (own(raw, "const")) node.const = raw["const"] as Json;
     if (raw["type"] !== undefined) {
       if (typeof raw["type"] !== "string" || !TYPES.has(raw["type"])) throw new SchemaLoadError(`${where}: unsupported type`);
       node.type = raw["type"];
@@ -120,7 +122,7 @@ export function validate(value: unknown, schema: CompiledSchema): Issue[] {
       case "object": {
         if (!isObj(v)) { add("type", "must be an object"); return; }
         const props = n.properties ?? {};
-        for (const k of Object.keys(v)) if (!(k in props)) issues.push({ path: [...path, k], code: "additional", message: `unknown property "${k}"` });
+        for (const k of Object.keys(v)) if (!own(props, k)) issues.push({ path: [...path, k], code: "additional", message: `unknown property "${k}"` });
         for (const k of n.order) {
           if (!Object.prototype.hasOwnProperty.call(v, k)) issues.push({ path: [...path, k], code: "required", message: `missing property "${k}"` });
           else walk(v[k], props[k] as Node, [...path, k]);

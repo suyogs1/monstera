@@ -141,16 +141,25 @@ The folder is named `studio-pack`, not `studio`, so it cannot be confused with t
 `projectId` equals `spec.project.id` (checked). `inputsSha256` lets Studio say "derived spec out of date" without recompiling.
 
 ### 3.4 `assets.json`
+Implemented in `studio/schemas/assets.schema.json` and `checks.ts`; id rules in `assetIds.ts`.
 ```json
 { "schema": "monstera.studio.assets", "version": 1, "nextSeq": 3,
-  "assets": [ { "id": "asset-lantern-sheet", "kind": "image", "category": "sprite",
+  "assets": [ { "id": "asset-0001", "kind": "image", "category": "sprite",
       "file": "lantern-sheet.png", "mime": "image/png", "bytes": 18234, "sha256": "<64 hex>",
       "width": 256, "height": 64, "durationMs": 0, "kindRefs": ["lantern"],
       "provenance": { "origin": "user-owned", "author": "A. Author", "license": "proprietary-owned",
                       "source": "drawn by author", "tool": "", "model": "", "promptSha256": "", "acquiredOn": "", "notes": "" } } ] }
 ```
-`kind` is `image` or `audio`. `category`: `sprite`, `background`, `ui`, `sfx`, `music`. `durationMs` is 0 for images. `nextSeq` guarantees ids are not reused after deletion. Files live at `assets/<id>/<file>`; `file` is a basename (`^[A-Za-z0-9._-]{1,64}$`, no path separators, no leading dot).
+`kind` is `image` or `audio`. `category`: `sprite`, `background`, `ui`, `sfx`, `music`. `durationMs` is 0 for images. Files live at `assets/<id>/<file>`; `file` is a bare name (`^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$`, no path separators, no leading dot).
 
+**Asset id allocation rule.**
+- Studio generates ids as `asset-` plus the sequence number zero-padded to four digits (`asset-0007`, `asset-12345`). `nextSeq` is the next unused number. Allocation uses it and increases it by one (`allocateAssetId`). The counter never decreases.
+- Deleting an asset leaves `nextSeq` unchanged (`removeAsset`). Importing a project keeps the stored `nextSeq` as it is; it is never recomputed from the assets present.
+- The validator rejects a manifest whose `nextSeq` is not above the numeric suffix of every generated-form id it contains, so the next allocation cannot collide with an existing asset. The earlier check (`nextSeq` above the number of assets) was replaced because it missed a collision such as `asset-0009` with `nextSeq` 3.
+- Limit, stated plainly: the ids of deleted assets are not stored. A hand-edited `nextSeq` that was lowered but still exceeds every existing suffix cannot be detected, and Studio does not claim to reconstruct that history. Storing deleted ids would need a new manifest field and a version bump; it is not planned.
+- Ids that are not in the generated form (hand-written packs) are allowed and take no part in the counter. `nextSeq` is at most 100000, so the counter stops (`allocateAssetId` throws) rather than produce an invalid manifest.
+
+**License.** `provenance.license` is an SPDX license identifier or expression (identifiers joined by `AND`, `OR` or `WITH`, `LicenseRef-*` allowed) or `proprietary-owned`, which cannot be combined with others. Only the shape is checked. Studio does not verify the identifier against the SPDX list, whether a license is valid for the asset, or that the user owns the asset; `origin` and `license` are declarations by the user.
 ### 3.5 `animations.json`
 ```json
 { "schema": "monstera.studio.animations", "version": 1,
