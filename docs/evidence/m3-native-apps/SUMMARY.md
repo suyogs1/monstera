@@ -42,7 +42,8 @@ Android CI build results: artifact **g1-android-43804610330**. Each game was run
 
 ## Not tested
 - Gameplay: no touch, swipe, fire, game-over or restart on either platform. Android logs show only the launch and the first 60 ticks (`adb` input was not used); iOS `simctl` cannot inject touches. Earlier G3 evidence of interaction predates spec v4.
-- Android emulator is local only; CI does not run an emulator for these apps. Android `stop` leaves no further checks.
+- Android emulator is local only; CI does not run an emulator for these apps.
 - Frame pacing, performance, haptics, physical devices (no PHYSICAL-DEVICE-TESTED label anywhere).
 - iOS simulator OS version was not recorded by the adapter. The Android JVM test output is not archived; only its pass result is stated here.
 - Docs-only commits do not trigger the workflow (`docs/**` is outside its path filter), so the final PR head's CI result is that of the last commit that touched filtered paths.
+
