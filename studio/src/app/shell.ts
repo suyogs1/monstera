@@ -13,9 +13,9 @@ export interface NavItem {
 
 export function navItems(registry: CapabilityRegistry = REGISTRY): NavItem[] {
   return registry.modules.map((m) => ({
-    id: m.id, title: m.title, status: m.status, targetStatus: m.targetStatus, href: moduleHash(m.id),
-    hasViews: sectionsOf(m.id).length > 0,
-    sections: sectionsOf(m.id).map((r) => ({
+    id: m.id, title: m.title, status: m.status, targetStatus: m.targetStatus, href: moduleHash(m.id, registry),
+    hasViews: sectionsOf(m.id, registry).length > 0,
+    sections: sectionsOf(m.id, registry).map((r) => ({
       id: r.id,
       title: r.id === "gameplay" ? "World and input" : (SECTIONS.find((s) => s.id === r.id)?.title ?? r.slug),
       href: sectionHash(r),

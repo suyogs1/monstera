@@ -43,6 +43,11 @@ try {
   check("the rail lists all 11 registry modules in registry order", JSON.stringify(rail.map((r) => r.id)) === JSON.stringify(registry.modules.map((m) => `module-${m.id}`)), JSON.stringify(rail.map((r) => r.id)));
   check("every rail entry carries its registry title and status as text", rail.every((r, i) => r.text.includes(registry.modules[i].title) && r.text.includes(registry.modules[i].status) && r.status === registry.modules[i].status));
 
+  check("each rail entry has a visual status dot as well as the status text", await page.evaluate((mods) => mods.every((m) => {
+    const dot = document.querySelector(`[data-testid="dot-${m.id}"]`);
+    return dot !== null && dot.classList.contains(`dot-${m.status}`) && dot.getAttribute("aria-hidden") === "true" && (dot.textContent ?? "") === "";
+  }), registry.modules));
+  check("the mobile menu toggle is not shown at desktop width", !(await page.locator('[data-testid="nav-toggle"]').isVisible()));
   // Every module opens; planned ones show a card with no editing controls, built ones show a header and the editors.
   for (const m of registry.modules) {
     await page.click(`[data-testid="module-${m.id}"]`);
@@ -74,6 +79,71 @@ try {
   check("Kiro Development opens Developer Integration", (await hash()) === "#/kiro/integration");
   await go("/designer/overview");
   check("the top bar shows the engine's spec hash", /^[0-9a-f]{12}$/.test((await page.locator('[data-testid="topbar-hash"]').textContent()) ?? ""));
+  // ---- mobile navigation at 390 x 844
+  const mobile = await (await browser.newContext({ viewport: { width: 390, height: 844 } })).newPage();
+  const mproblems = [];
+  mobile.on("pageerror", (e) => mproblems.push(`pageerror: ${e.message}`));
+  await mobile.goto(origin, { waitUntil: "load" });
+  await mobile.waitForFunction(() => window.ready === true, null, { timeout: 90000 });
+  const toggle = mobile.locator('[data-testid="nav-toggle"]');
+  const list = mobile.locator('[data-testid="module-list"]');
+  const expanded = () => toggle.getAttribute("aria-expanded");
+  const mhash = () => mobile.evaluate(() => window.location.hash);
+  const overflow = () => mobile.evaluate(() => ({ page: document.documentElement.scrollWidth - window.innerWidth, nav: (() => { const n = document.querySelector("nav.nav"); return n.scrollWidth - n.clientWidth; })() }));
+  const inList = () => mobile.evaluate(() => document.querySelector('[data-testid="module-list"]').contains(document.activeElement));
+
+  check("mobile: the toggle is visible and the menu starts collapsed", (await toggle.isVisible()) && (await expanded()) === "false" && !(await list.isVisible()));
+  check("mobile: the toggle is wired to the list it controls", (await toggle.getAttribute("aria-controls")) === "module-list" && (await list.getAttribute("id")) === "module-list");
+  let o = await overflow();
+  check("mobile: no horizontal overflow from the collapsed shell (navigation and top bar)", o.nav <= 0 && o.page <= 0, JSON.stringify(o));
+
+  await toggle.click();
+  check("mobile: clicking the toggle opens the list with all 11 modules", (await expanded()) === "true" && (await list.isVisible()) && (await list.locator(":scope > li > a").count()) === 11 && (await list.locator(":scope > li > a").evaluateAll((as) => as.every((a) => a.getBoundingClientRect().height > 0))));
+  o = await overflow();
+  check("mobile: no horizontal overflow with the menu open", o.nav <= 0 && o.page <= 0, JSON.stringify(o));
+  await toggle.click();
+  check("mobile: clicking the toggle again closes it and aria-expanded follows", (await expanded()) === "false" && !(await list.isVisible()));
+
+  // a module with no editors: the card
+  await toggle.click();
+  await mobile.click('[data-testid="module-levels"]');
+  await mobile.waitForSelector('[data-testid="module-card"]');
+  check("mobile: choosing a planned module opens its card and closes the menu", (await mhash()) === "#/levels" && (await expanded()) === "false" && !(await list.isVisible()), `${await mhash()} ${await expanded()}`);
+  o = await overflow();
+  check("mobile: no horizontal overflow on a module card", o.nav <= 0 && o.page <= 0, JSON.stringify(o));
+  // a module with editors
+  await toggle.click();
+  await mobile.click('[data-testid="module-release"]');
+  await mobile.waitForSelector('[data-testid="module-header"][data-module="release"]');
+  check("mobile: choosing a built module opens its first view and closes the menu", (await mhash()) === "#/release/export" && (await expanded()) === "false" && !(await list.isVisible()), `${await mhash()} ${await expanded()}`);
+  // Gameplay Systems has its own route
+  await toggle.click();
+  await mobile.click('[data-testid="module-gameplay"]');
+  await mobile.waitForSelector('[data-testid="module-card"][data-module="gameplay"]');
+  check("mobile: the Gameplay Systems entry opens #/gameplay/modules, not the Designer redirect", (await mhash()) === "#/gameplay/modules" && (await expanded()) === "false", await mhash());
+
+  // keyboard
+  await mobile.evaluate(() => document.activeElement instanceof HTMLElement && document.activeElement.blur());
+  await toggle.focus();
+  await mobile.keyboard.press("Tab");
+  check("mobile keyboard: while closed, Tab does not enter the hidden module list", !(await inList()));
+  await toggle.focus();
+  await mobile.keyboard.press("Enter");
+  check("mobile keyboard: Enter on the toggle opens the menu", (await expanded()) === "true" && (await list.isVisible()));
+  await mobile.keyboard.press("Tab");
+  check("mobile keyboard: Tab moves into the module list", await inList());
+  await mobile.keyboard.press("Escape");
+  check("mobile keyboard: Escape closes the menu and returns focus to the toggle", (await expanded()) === "false" && !(await list.isVisible()) && (await toggle.evaluate((el) => el === document.activeElement)));
+  await mobile.keyboard.press("Space");
+  check("mobile keyboard: Space on the toggle opens the menu", (await expanded()) === "true" && (await list.isVisible()));
+  await mobile.keyboard.press("Space");
+  check("mobile keyboard: Space on the toggle closes the menu", (await expanded()) === "false" && !(await list.isVisible()));
+  await mobile.keyboard.press("Enter");
+  await mobile.locator('[data-testid="module-assets"]').focus();
+  await mobile.keyboard.press("Enter");
+  await mobile.waitForSelector('[data-testid="module-card"][data-module="assets"]');
+  check("mobile keyboard: Enter on a module link navigates and closes the menu", (await mhash()) === "#/assets" && (await expanded()) === "false", `${await mhash()} ${await expanded()}`);
+  check("mobile: no page error", mproblems.length === 0, mproblems.join(" | "));
   check("no page error or console error", problems.length === 0, problems.join(" | "));
 } finally {
   await browser.close();

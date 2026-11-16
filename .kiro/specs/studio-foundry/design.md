@@ -93,8 +93,8 @@ Route: `#/<module>[/<section>]`. The existing `sectionFromHash` is replaced by a
 | Preview and Device Lab (`preview`) | Play, Determinism, Environments, Native evidence |
 | Build and Release (`release`) | Completeness, Export, Readiness |
 Legacy redirects: `overview platforms entities rules spawns presentation spec` to `designer/*`; `gameplay` to `designer/world`; `determinism` to `preview/determinism`; `export` to `release/export`; `integration` to `kiro/integration`.
-Shell: left rail (modules, each with a status dot from the registry), top bar (project name, validation state, spec hash), right panel (validation issues, shared). Mobile: rail collapses to a menu.
-The `planned`/`unsupported` modules or sections render a single explanatory card (what is missing, which contract piece it needs) and no form.
+Shell: left rail (modules, each with a status dot and the status word as text, both from the registry; the dot is a secondary visual cue and carries no information the text lacks), top bar (project name, validation state, spec hash), right panel (validation issues, shared). Mobile: the rail collapses to a menu with a toggle (`aria-expanded`, Enter, Space and Escape). The bare hash `#/gameplay` is the legacy redirect to `designer/world`, so the Gameplay Systems card is at `#/gameplay/modules`.
+The `planned`/`unsupported` modules or sections render a single explanatory card (what is missing, which contract piece it needs) and no form. This is enforced by the router and the page renderer from the registry status, not by which sections happen to be mapped: a module the registry calls `planned` or `unsupported` resolves every one of its hashes to its card even if an editor mapping remains.
 
 ## 3. Shared project data model and manifests
 ### 3.1 Pack layout (exported and imported; stored in IndexedDB as the same tree)

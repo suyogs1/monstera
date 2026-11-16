@@ -1,6 +1,7 @@
 import type { ReactElement } from "react";
-import { useState } from "react";
-import { useDraft, useRoute, useSection } from "./app/hooks";
+import { useRef, useState, type KeyboardEvent } from "react";
+import { openSection, useDraft, useRoute } from "./app/hooks";
+import { isEditable } from "./app/router";
 import { navItems } from "./app/shell";
 import { usePrefs } from "./app/prefs";
 import type { SectionId } from "./app/sections";
@@ -15,7 +16,8 @@ import { Platforms } from "./ui/sections/Platforms";
 import { Presentation } from "./ui/sections/Presentation";
 import { Rules } from "./ui/sections/Rules";
 import { Spawns } from "./ui/sections/Spawns";
-import { ModuleCard, ModuleHeader, StatusBadge } from "./ui/ModuleCard";
+import { StatusBadge } from "./ui/ModuleCard";
+import { ModulePage } from "./ui/ModulePage";
 import { SpecView } from "./ui/SpecView";
 import { TopBar } from "./ui/TopBar";
 import { ValidationPanel } from "./ui/ValidationPanel";
@@ -50,19 +52,22 @@ const NAV = navItems();
 
 export function App() {
   const route = useRoute();
-  const [, setSection] = useSection();
   const [menuOpen, setMenuOpen] = useState(false);
+  const toggle = useRef<HTMLButtonElement>(null);
   const { doc } = useDraft();
-  const hasViews = route.kind === "section";
-  const View = route.kind === "section" ? VIEWS[route.sectionId] : undefined;
+  const editors = route.kind === "section" && isEditable(route.module);
+
+  const onNavKey = (e: KeyboardEvent<HTMLElement>) => {
+    if (e.key === "Escape" && menuOpen) { setMenuOpen(false); toggle.current?.focus(); }
+  };
 
   return (
     <div className="app">
       <a className="skip-link" href="#main">Skip to content</a>
       <TopBar />
       <div className="body">
-        <nav className={`nav${menuOpen ? " open" : ""}`} aria-label="Studio modules">
-          <button type="button" className="nav-toggle" aria-expanded={menuOpen} aria-controls="module-list" onClick={() => setMenuOpen(!menuOpen)}>
+        <nav className={`nav${menuOpen ? " open" : ""}`} aria-label="Studio modules" onKeyDown={onNavKey}>
+          <button ref={toggle} type="button" className="nav-toggle" aria-expanded={menuOpen} aria-controls="module-list" data-testid="nav-toggle" onClick={() => setMenuOpen(!menuOpen)}>
             Modules
           </button>
           <ul id="module-list" data-testid="module-list">
@@ -71,6 +76,7 @@ export function App() {
               return (
                 <li key={m.id}>
                   <a href={m.href} aria-current={current ? "page" : undefined} data-testid={`module-${m.id}`} data-status={m.status} onClick={() => setMenuOpen(false)}>
+                    <span className={`dot dot-${m.status}`} data-testid={`dot-${m.id}`} aria-hidden="true" />
                     <span className="nav-title">{m.title}</span>
                     <StatusBadge status={m.status} />
                   </a>
@@ -90,18 +96,11 @@ export function App() {
           <NumberModeToggle />
         </nav>
         <main id="main" className="main" tabIndex={-1}>
-          {route.kind === "card" ? <ModuleCard module={route.module} />
-            : doc === null ? <p>Loading…</p>
-            : (
-              <>
-                <ModuleHeader module={route.module} />
-                {View ? <View /> : <p className="muted">This section is not available yet.</p>}
-              </>
-            )}
+          <ModulePage route={route} loading={doc === null} renderSection={(id) => { const View = VIEWS[id]; return View ? <View /> : null; }} />
         </main>
         <div className="side">
-          {doc !== null && hasViews && <Preview />}
-          <ValidationPanel setSection={setSection} />
+          {doc !== null && editors && <Preview />}
+          <ValidationPanel setSection={openSection} />
         </div>
       </div>
       <footer className="footer">

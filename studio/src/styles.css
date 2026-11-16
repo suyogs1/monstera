@@ -220,3 +220,9 @@ progress { width: 100%; max-width: 30rem; }
   .nav:not(.open) #module-list { display: none; }
   .nav ul { display: grid; }
 }
+
+.dot { flex: none; width: 0.6rem; height: 0.6rem; border-radius: 50%; border: 2px solid var(--muted); box-sizing: border-box; }
+.dot-implemented { background: var(--ok); border-color: var(--ok); }
+.dot-prototype, .dot-mock { background: var(--warn); border-color: var(--warn); }
+.dot-planned, .dot-unsupported { background: transparent; border-style: dashed; }
+.nav .nav-title { flex: 1; }

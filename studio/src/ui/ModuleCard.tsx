@@ -1,4 +1,4 @@
-import type { CapabilityEntry, ModuleId } from "../app/capabilities";
+import { REGISTRY, type CapabilityEntry, type CapabilityRegistry, type ModuleId } from "../app/capabilities";
 import { moduleOf, STATUS_MEANING, unbuilt } from "../app/shell";
 
 /** Status as text first: the colour is only a second cue. */
@@ -17,9 +17,9 @@ function CapabilityRow({ c }: { c: CapabilityEntry }) {
 }
 
 /** Heading block shown at the top of every module: status, target status and what reaches the native apps. All values come from the registry. */
-export function ModuleHeader({ module }: { module: ModuleId }) {
-  const m = moduleOf(module);
-  const rest = unbuilt(module);
+export function ModuleHeader({ module, registry = REGISTRY }: { module: ModuleId; registry?: CapabilityRegistry }) {
+  const m = moduleOf(module, registry);
+  const rest = unbuilt(module, registry);
   return (
     <header className="module-head" data-testid="module-header" data-module={m.id} data-status={m.status} data-native-output={m.nativeOutput}>
       <h1>{m.title}</h1>
@@ -29,7 +29,7 @@ export function ModuleHeader({ module }: { module: ModuleId }) {
         <span>Native output: <StatusBadge status={m.nativeOutput} /></span>
       </p>
       <p className="small muted">{STATUS_MEANING[m.status]} {m.limits}</p>
-      {m.status !== "planned" && rest.length > 0 && (
+      {m.status !== "planned" && m.status !== "unsupported" && rest.length > 0 && (
         <details className="module-limits" data-testid="module-limits">
           <summary>Not available here ({rest.length})</summary>
           <ul className="cap-list">{rest.map((c) => <CapabilityRow key={c.id} c={c} />)}</ul>
@@ -43,12 +43,12 @@ export function ModuleHeader({ module }: { module: ModuleId }) {
  * The page for a module that is not built. It explains what is missing and why, and offers nothing to edit:
  * no forms, no inputs and no buttons, so nothing here can look like a working feature.
  */
-export function ModuleCard({ module }: { module: ModuleId }) {
-  const m = moduleOf(module);
-  const caps = unbuilt(module);
+export function ModuleCard({ module, registry = REGISTRY }: { module: ModuleId; registry?: CapabilityRegistry }) {
+  const m = moduleOf(module, registry);
+  const caps = unbuilt(module, registry);
   return (
     <section className="card module-card" data-testid="module-card" data-module={m.id} aria-labelledby="module-card-h">
-      <ModuleHeader module={module} />
+      <ModuleHeader module={module} registry={registry} />
       <h2 id="module-card-h">Not available yet</h2>
       <p>This module is <strong>{m.status}</strong>. {STATUS_MEANING[m.status]} Nothing on this page can be edited.</p>
       <ul className="cap-list">{caps.map((c) => <CapabilityRow key={c.id} c={c} />)}</ul>
