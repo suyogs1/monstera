@@ -1,6 +1,7 @@
 # MONSTERA Studio architecture
 
-Status: **IMPLEMENTED through M3-A (static app, local-only).** Rewritten for G4 M3-A; it replaces the G1.5 proposal
+Status: **IMPLEMENTED, M3 complete (static app, deployed at https://monstera-phi.vercel.app/).** Rewritten for G4 M3-A and
+updated for M3-B; it replaces the G1.5 proposal
 (Railway API, Postgres, GitHub dispatch, remote build workers), which was never built and is no longer planned.
 Design record: `.kiro/specs/g4-studio/` (requirements, design, tasks). Rules: `.kiro/steering/07-studio.md`.
 
@@ -19,9 +20,11 @@ goldens and packs the generated native Android (Kotlin) and iOS (Swift) source a
 | Native conformance report display (exact spec hash only) | Implemented, verified | M2 badge acceptance |
 | Native app build and simulator-launch evidence panel | Implemented in M3-A | `docs/evidence/studio-m3a/ui-acceptance.json`, `studio/src/badge/nativeApps.test.ts` |
 | Developer Integration (static repository inventory) | Implemented, verified | M1 acceptance |
-| Vercel hosting | **Selected, not deployed** | none |
-| Playwright smoke test in CI | **Planned** (M3), not implemented | none |
-| Secret scan of the bundle in CI, final adversarial review | **Planned** (M3), not done | none |
+| Vercel hosting | **Deployed** by the owner at https://monstera-phi.vercel.app/ (commit `072c54d`); verified live, not configured, by M3-B | `docs/evidence/studio-m3b/smoke-production.json` |
+| Playwright smoke test (`studio/scripts/smoke.mjs`) | Implemented. 17/17 checks pass against a local production preview and against the deployed site | `docs/evidence/studio-m3b/smoke-local-preview.json`, `smoke-production.json` |
+| Studio CI (`.github/workflows/studio-ci.yml`) | Implemented: lockfile install, unit tests, typecheck and production build, secret scan, local-preview smoke. The deployed-site smoke runs in the same workflow but is advisory (`continue-on-error`) | `docs/evidence/studio-m3b/README.md` |
+| Secret scan of the bundle and source maps (`studio/scripts/scan-secrets.mjs`) | Implemented, unit tested, runs in Studio CI. 34 files scanned, no findings; findings never print values | `docs/evidence/studio-m3b/secret-scan.json` |
+| Final adversarial review of Studio M3 | Done by the author of M3-B, not an independent reviewer | `docs/evidence/studio-m3b/ADVERSARIAL-REVIEW.md` |
 | Backend, API, database, accounts, server-side projects | **Not implemented and not planned** | n/a |
 | Native builds triggered from Studio, remote build workers | **Not implemented and not planned** | n/a |
 | Live Kiro connection | **Not implemented and not planned** | n/a |
@@ -135,8 +138,11 @@ and CI and committed.
 - **Evidence integrity.** Evidence is committed to git and reviewed there. Studio checks internal consistency and the
   spec hash binding, but it cannot prove that a committed log was not fabricated; the provenance rules
   (`04-generation-and-provenance.md`) apply to whoever commits it.
-- **Hosting.** Vercel is the selected static host. No deployment exists yet. When it does, response headers (CSP,
-  `Cross-Origin` policies as Pyodide requires) must be decided and verified then; none are claimed now.
+- **Hosting.** Vercel serves the static build at https://monstera-phi.vercel.app/. M3-B verified the live site (17/17 smoke
+  checks, no `.map` files served, bundle secret scan clean) and did not configure it. Open, owner-side hosting improvements,
+  not Studio implementation work: the responses carry no Content-Security-Policy and no `X-Content-Type-Options`, and the
+  Pyodide assets are served with `max-age=0, must-revalidate`. No header hardening is claimed. Any CSP must allow what
+  Pyodide needs and be verified against the smoke test before it is relied on.
 
 ## Explicitly not part of Studio
 
@@ -144,7 +150,16 @@ Railway or any API service, Postgres or any database, authentication, server-sid
 build workers, build buttons, a chatbot, a live Kiro connection, signing apps for users, and shipping Studio inside a
 generated app.
 
-## Remaining M3 work
+## Verification and CI
 
-Vercel deployment, a Playwright smoke test and CI job, a secret scan of the production bundle, and the final adversarial
-review. See `.kiro/specs/g4-studio/tasks.md`.
+`.github/workflows/studio-ci.yml` runs, from `studio/`: `npm ci`, unit tests, the production build with TypeScript check, the
+bundle and source-map secret scan, and the Playwright smoke test against a local `vite preview`. A separate, advisory job runs
+the same smoke test against the deployed site. The smoke test proves load without console or HTTP errors, engine start,
+validation of the three official games to the canonical SHA-256, rejection of an invalid edit, preview frames, the evidence
+binding (shown for the exact hash, dropped after an edit, restored on revert) and same-origin requests only. It does not prove
+gameplay, input, physical devices or browsers other than Chromium. Details: `docs/evidence/studio-m3b/README.md`.
+
+## Remaining work
+
+None for Studio M3. The next milestone is G6 (clean-room regeneration of both games, then a recorded demonstration); see
+`.kiro/specs/g4-studio/tasks.md`, item 5. The hosting header observations above stay with the owner.
