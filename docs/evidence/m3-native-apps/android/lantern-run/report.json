@@ -1,0 +1,8 @@
+[
+{"op":"build","target":"android-emulator","status":"ok","run_id":"m3p1-android-lantern-run","timestamp":"2026-11-16T04:24:02Z","artifact":"device-lab/reports/runs/m3p1-android-lantern-run/android-emulator/app-debug.apk"},
+{"op":"install","target":"android-emulator","status":"ok","run_id":"m3p1-android-lantern-run","timestamp":"2026-11-16T04:29:07Z"},
+{"op":"launch","target":"android-emulator","status":"ok","run_id":"m3p1-android-lantern-run","timestamp":"2026-11-16T04:29:10Z"},
+{"op":"screenshot","target":"android-emulator","status":"ok","run_id":"m3p1-android-lantern-run","timestamp":"2026-11-16T04:29:20Z","artifact":"device-lab/reports/runs/m3p1-android-lantern-run/android-emulator/01-launched.png"},
+{"op":"logs","target":"android-emulator","status":"ok","run_id":"m3p1-android-lantern-run","timestamp":"2026-11-16T04:29:20Z","artifact":"device-lab/reports/runs/m3p1-android-lantern-run/android-emulator/logs.txt"},
+{"op":"stop","target":"android-emulator","status":"ok","run_id":"m3p1-android-lantern-run","timestamp":"2026-11-16T04:29:21Z"}
+]
