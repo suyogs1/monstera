@@ -155,7 +155,8 @@ const PNG_CHANNELS = { 0: [1, [1, 2, 4, 8, 16]], 2: [3, [8, 16]], 3: [1, [1, 2, 
 /**
  * Strict PNG check: signature, a bounds-checked chunk stream, CRC of every chunk, exactly one IHDR (first, 13 bytes, valid
  * fields), at least one IDAT (contiguous), exactly one empty IEND as the last chunk with no trailing bytes, and an IDAT stream
- * that inflates to exactly the size the header implies with a valid filter type (0-4) at the start of every scanline.
+ * that inflates to exactly the size the header implies with a valid filter type (0-4) at the start of every scanline,
+ * and the zlib stream must end exactly at the end of the IDAT data (no trailing bytes).
  * Interlaced images are rejected as unsupported. Returns { width, height } or null.
  */
 export function parsePng(bytes) {
@@ -202,7 +203,10 @@ export function parsePng(bytes) {
   const exact = (rowBytes + 1) * header.height;
   if (exact > PNG_MAX_RAW) return null;
   try {
-    const raw = zlib.inflateSync(Buffer.concat(idat), { maxOutputLength: exact });
+    const compressed = Buffer.concat(idat);
+    // info: true exposes the engine; bytesWritten is how much input the inflater consumed. inflateSync alone accepts trailing bytes.
+    const { buffer: raw, engine } = zlib.inflateSync(compressed, { maxOutputLength: exact, info: true });
+    if (engine.bytesWritten !== compressed.length) return null;
     if (raw.length !== exact) return null;
     for (let row = 0; row < header.height; row++) if (raw[row * (rowBytes + 1)] > 4) return null;
   } catch { return null; }
