@@ -55,7 +55,7 @@ All 11 modules read and write one `ProjectContext` (`project/context.tsx`): the 
 | D7 | No production AdMob ids in Studio; mock and official test configurations only | **ACCEPTED 2026-11-16** | n/a |
 | D8 | Steering `11-studio-foundry.md` created; 07 stays focused on implementation constraints and engine interaction | **APPROVED 2026-11-16, created** | n/a |
 
-Remaining open: the Vercel Root Directory (cannot be read from the repository; needed before any header file is placed), the E1 gate inputs for 2026-11-19 (G6 closure path, basic gameplay status), and remote CI results for tasks 0.3, 1.6 and 0.2.
+Remaining open: the E1 gate inputs for 2026-11-19 (G6 closure path, basic gameplay status), and the manual Vercel report-only deployment of the header policy with the review of its violations (task 1.6). Vercel record (2026-11-16): the Root Directory is confirmed as the repository root, only Studio is hosted, and the deployment headers are not yet deployed.
 Review ownership (decision 2026-11-16): ChatGPT performs an adversarial implementation review against the committed specification and the actual Git diff. Claude may add a separate architectural critique. Both are **LLM reviews**, not independent human reviews, and are recorded as such. The repository owner gives final acceptance.
 
 ## 1. Current versus proposed capability matrix
