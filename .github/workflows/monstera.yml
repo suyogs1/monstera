@@ -59,6 +59,8 @@ jobs:
           echo "fresh manifest sha256 (Linux):"; sha256sum "$RUNNER_TEMP/a/MONSTERA-MANIFEST.json"
       - name: All quality gates (specs, generation, ownership, architecture/CI safety, Kiro config)
         run: bash tools/monstera/bin/monstera gates --skip-tests
+      - name: No project-specific branching in production generator and template code (G6-B)
+        run: python3 tools/clean-room/clean_room.py branching "$RUNNER_TEMP/branching.json" && cat "$RUNNER_TEMP/branching.json"
       - name: Same canonical spec on both platforms
         run: |
           cmp "$OUT/android/app/src/main/assets/monstera.spec.json" "$OUT/ios/Sources/MonsteraSample/Resources/monstera.spec.json"
@@ -76,28 +78,54 @@ jobs:
   android-generated:
     needs: spec
     runs-on: ubuntu-24.04
-    timeout-minutes: 20
+    timeout-minutes: 40
     env:
       RUN_ID: ci-${{ github.run_id }}
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
       - name: Use preinstalled JDK 21
         run: echo "JAVA_HOME=$JAVA_HOME_21_X64" >> "$GITHUB_ENV"
-      # One job for all three projects: they share the template, so one runner and one Gradle cache.
+      # G6-B: the two official games are regenerated from their committed specs into empty directories inside the
+      # checkout (Device Lab adapters resolve DL_APP_DIR against the repository root), verified, and compared with
+      # every committed generator-owned file. Only the fresh trees are built below, never apps/<id>/android.
+      - name: Clean-room regeneration of both official games (generate, verify, compare)
+        run: |
+          for app in apps/pumpkin-blaster apps/trick-or-treat-rush; do
+            echo "::group::$app"
+            bash tools/clean-room/clean-room.sh "$app"
+            echo "::endgroup::"
+          done
+          cat g6-clean-room-reports/*.compare.json
+      # One job for all projects: they share the template, so one runner and one Gradle cache.
       - name: Compile generated Android projects (Device Lab build op)
         run: |
-          for app in generated/monstera-sample apps/pumpkin-blaster apps/trick-or-treat-rush generated/lantern-run; do
+          for app in generated/monstera-sample g6-clean-room/pumpkin-blaster g6-clean-room/trick-or-treat-rush generated/lantern-run; do
             echo "::group::$app"
             RUN_ID="$RUN_ID-$(basename "$app")" DL_APP_DIR="$app/android" bash device-lab/android/adapter.sh build
             echo "::endgroup::"
           done
-      - name: Upload build result
+      # The adapter's build op only runs assembleDebug, so the JVM tests run separately on the fresh projects.
+      - name: JVM unit tests of the freshly generated Android projects
+        run: |
+          for id in pumpkin-blaster trick-or-treat-rush; do
+            echo "::group::$id"
+            (cd "g6-clean-room/$id/android" && ./gradlew testDebugUnitTest --no-daemon)
+            python3 tools/clean-room/clean_room.py junit "g6-clean-room/$id/android/app/build/test-results/testDebugUnitTest" "g6-clean-room-reports/$id.android-junit.json"
+            echo "::endgroup::"
+          done
+          cat g6-clean-room-reports/*.android-junit.json
+      - name: Upload build result and clean-room reports
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: g1-android-${{ github.run_id }}
-          path: device-lab/reports/runs/**/results.jsonl
+          path: |
+            device-lab/reports/runs/**/results.jsonl
+            g6-clean-room-reports/
           if-no-files-found: warn
+      - name: Remove the fresh generated trees
+        if: always()
+        run: rm -rf g6-clean-room
 
   ios-generated:
     needs: spec
@@ -109,6 +137,15 @@ jobs:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
       - name: Toolchain versions
         run: xcodebuild -version && swift --version
+      # G6-B: only the fresh trees below are built; the committed app trees are proven byte-identical here.
+      - name: Clean-room regeneration of both official games (generate, verify, compare)
+        run: |
+          for app in apps/pumpkin-blaster apps/trick-or-treat-rush; do
+            echo "::group::$app"
+            bash tools/clean-room/clean-room.sh "$app"
+            echo "::endgroup::"
+          done
+          cat g6-clean-room-reports/*.compare.json
       - name: Install xtool ${{ env.XTOOL_VERSION }}
         timeout-minutes: 5
         run: |
@@ -135,8 +172,9 @@ jobs:
             echo "::group::$app"
             export RUN_ID="$BASE_RUN_ID-$(basename "$app")" DL_APP_DIR="$app/ios" DL_APP_PRODUCT="$product" DL_APP_BUNDLE_ID="$bundle"
             bash $A build
-            swift test --package-path "$app/ios/Runtime"
-            swift test --package-path "$app/ios/Presentation"
+            mkdir -p g6-clean-room-reports
+            swift test --package-path "$app/ios/Runtime" 2>&1 | tee "g6-clean-room-reports/$(basename "$app").swift-runtime.log"
+            swift test --package-path "$app/ios/Presentation" 2>&1 | tee "g6-clean-room-reports/$(basename "$app").swift-presentation.log"
             bash $A install
             bash $A launch
             sleep 5
@@ -153,8 +191,8 @@ jobs:
             echo "::endgroup::"
           done 3<<'EOF'
           generated/monstera-sample MonsteraSample app.monstera.sample spec/samples/monstera-sample/monstera.spec.json
-          apps/pumpkin-blaster PumpkinBlaster app.monstera.pumpkinblaster apps/pumpkin-blaster/monstera.spec.json
-          apps/trick-or-treat-rush TrickOrTreatRush app.monstera.trickortreatrush apps/trick-or-treat-rush/monstera.spec.json
+          g6-clean-room/pumpkin-blaster PumpkinBlaster app.monstera.pumpkinblaster apps/pumpkin-blaster/monstera.spec.json
+          g6-clean-room/trick-or-treat-rush TrickOrTreatRush app.monstera.trickortreatrush apps/trick-or-treat-rush/monstera.spec.json
           generated/lantern-run LanternRun app.monstera.lanternrun spec/samples/lantern-run/monstera.spec.json
           EOF
       - name: Upload Device Lab run (evidence only, no .app)
@@ -166,7 +204,11 @@ jobs:
             device-lab/reports/runs/
             !device-lab/reports/runs/**/*.app/
             !device-lab/reports/runs/**/*.app/**
+            g6-clean-room-reports/
           if-no-files-found: warn
+      - name: Remove the fresh generated trees
+        if: always()
+        run: rm -rf g6-clean-room
   conformance:
     needs: spec
     runs-on: ubuntu-24.04

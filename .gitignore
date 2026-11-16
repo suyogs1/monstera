@@ -38,3 +38,7 @@ __pycache__/
 
 # Kiro workflow scratch output (curated evidence is copied to docs/evidence/)
 .kiro/workflow-output/
+
+# G6-B clean-room scratch (fresh generated trees and reports; evidence is copied to docs/evidence/g6-cleanroom/)
+g6-clean-room/
+g6-clean-room-reports/
