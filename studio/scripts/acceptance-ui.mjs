@@ -264,8 +264,11 @@ export default async function ui({ page, origin, check, committed, TEMPLATES }) 
   const notice = await text('[data-testid="integration-notice"]');
   check("the page states that Studio is not connected to Kiro and shares only the spec file",
     notice.includes("Studio is not connected to Kiro") && notice.includes("only thing the two share is the specification file"));
-  // The module header above the section (task 1.1) is registry text, covered by the registry wording test; this check reads the section itself.
-  const pageText = (await page.evaluate(() => { const h = document.querySelector('[data-testid="module-header"]'); const was = h.style.display; h.style.display = "none"; const s = document.querySelector("main").innerText; h.style.display = was; return s; })).replace("Studio is not connected to Kiro", "");
+  // The module header (task 1.1) is registry text: it must carry the explicit disclaimer. The wording scan below reads the
+  // Developer Integration component itself, selected by its own test id, and is not told to ignore any word.
+  const headerText = await text('[data-testid="module-header"]');
+  check("the registry-sourced module header says there is no Kiro connection", headerText.includes("There is no Kiro connection."), headerText);
+  const pageText = (await page.locator('[data-testid="integration"]').innerText()).replace("Studio is not connected to Kiro", "");
   check("no wording implies a live Kiro connection, status or session", !/connect|online|live |synced|session active/i.test(pageText.replace(/Kiro sessions/g, "").replace(/cannot see Kiro\s+sessions/g, "")), "");
   const prompts = await page.locator(".prompt pre").allTextContents();
   check("handoff prompts name the draft's own spec path and existing MCP tools", prompts.length === 2 && prompts.every((p) => p.includes("spec/samples/pumpkin-blaster/monstera.spec.json")) && prompts[0].includes("validate_spec"));
