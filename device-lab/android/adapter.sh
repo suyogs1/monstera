@@ -48,7 +48,9 @@ case "$op" in
   logs)
     dl_require logs DL_APP_LOG_TAG
     f="$DL_OUT/logs.txt"
-    "$ADB" logcat -d -v time "$LOG_TAG:I" AndroidRuntime:E ActivityTaskManager:I '*:S' > "$f"
+    # DL_APP_LOG_TAG may list several tags separated by spaces (generated apps log under MonsteraSpec and MonsteraRuntime).
+    tag_filters=(); for tag in $LOG_TAG; do tag_filters+=("$tag:I"); done
+    "$ADB" logcat -d -v time "${tag_filters[@]}" AndroidRuntime:E ActivityTaskManager:I '*:S' > "$f"
     dl_result logs ok "$f" ;;
   test)
     dl_unsupported test "no automated tests in Phase 0 hello world" ;;

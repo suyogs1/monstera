@@ -1,0 +1,8 @@
+--------- beginning of system
+11-16 09:55:35.426 W/ActivityTaskManager(  776): callingPackage for (uid=2000, pid=4929) has no WPC
+11-16 09:55:35.505 I/ActivityTaskManager(  776): START u0 {flg=0x10000000 xflg=0x5 cmp=app.monstera.pumpkinblaster/.MainActivity} with LAUNCH_MULTIPLE from uid 2000 (com.android.shell) (BAL_ALLOW_PERMISSION) result code=0
+11-16 09:55:36.112 I/ActivityTaskManager(  776): Config changes=20000480 {1.0 310mcc260mnc [en_US] ldltr sw448dp w997dp h448dp 480dpi nrml long compactNeeded land finger qwerty/v/v dpad/v winConfig={ mBounds=Rect(0, 0 - 2992, 1344) mAppBounds=Rect(0, 0 - 2992, 1344) mMaxBounds=Rect(0, 0 - 2992, 1344) mDisplayRotation=ROTATION_90 mWindowingMode=fullscreen mActivityType=undefined mAlwaysOnTop=undefined mRotation=ROTATION_90} as.3 s.64 fontWeightAdjustment=0}
+--------- beginning of main
+11-16 09:55:37.119 I/MonsteraSpec( 4962): spec sha256=08c7a90d9fcfd599c0b5f83743ba339e61f57f1fb10938cf6806d70cda7e0be3 bundledMatches=true
+11-16 09:55:37.580 I/ActivityTaskManager(  776): Displayed app.monstera.pumpkinblaster/.MainActivity for user 0: +2s152ms
+11-16 09:55:38.600 I/MonsteraRuntime( 4962): runtime ticks=60 hash=554a3714eb3e313f seed=1794803137054

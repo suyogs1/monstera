@@ -86,7 +86,7 @@ jobs:
       # One job for all three projects: they share the template, so one runner and one Gradle cache.
       - name: Compile generated Android projects (Device Lab build op)
         run: |
-          for app in generated/monstera-sample apps/pumpkin-blaster apps/trick-or-treat-rush; do
+          for app in generated/monstera-sample apps/pumpkin-blaster apps/trick-or-treat-rush generated/lantern-run; do
             echo "::group::$app"
             RUN_ID="$RUN_ID-$(basename "$app")" DL_APP_DIR="$app/android" bash device-lab/android/adapter.sh build
             echo "::endgroup::"
@@ -131,7 +131,7 @@ jobs:
           A=device-lab/ios/adapter.sh
           BASE_RUN_ID="$RUN_ID"
           # fd 3, not stdin: swift and simctl read stdin and would swallow the remaining lines.
-          while read -r -u 3 app product bundle; do
+          while read -r -u 3 app product bundle spec; do
             echo "::group::$app"
             export RUN_ID="$BASE_RUN_ID-$(basename "$app")" DL_APP_DIR="$app/ios" DL_APP_PRODUCT="$product" DL_APP_BUNDLE_ID="$bundle"
             bash $A build
@@ -146,13 +146,16 @@ jobs:
             bash $A report
             log="device-lab/reports/runs/$RUN_ID/ios-simulator/logs.txt"
             grep -E "bundledMatches=true decodedMatches=true" "$log"
+            # The hash the app logged is the hash of the canonical spec file, not only its own bundled copy.
+            grep -F "spec sha256=$(shasum -a 256 "$spec" | cut -d' ' -f1) " "$log"
             # The fixed-tick GameLoop ran in the simulator: at least 60 ticks within the 5 s wait.
             grep -E "runtime ticks=[0-9]+ hash=[0-9a-f]{16} seed=" "$log"
             echo "::endgroup::"
           done 3<<'EOF'
-          generated/monstera-sample MonsteraSample app.monstera.sample
-          apps/pumpkin-blaster PumpkinBlaster app.monstera.pumpkinblaster
-          apps/trick-or-treat-rush TrickOrTreatRush app.monstera.trickortreatrush
+          generated/monstera-sample MonsteraSample app.monstera.sample spec/samples/monstera-sample/monstera.spec.json
+          apps/pumpkin-blaster PumpkinBlaster app.monstera.pumpkinblaster apps/pumpkin-blaster/monstera.spec.json
+          apps/trick-or-treat-rush TrickOrTreatRush app.monstera.trickortreatrush apps/trick-or-treat-rush/monstera.spec.json
+          generated/lantern-run LanternRun app.monstera.lanternrun spec/samples/lantern-run/monstera.spec.json
           EOF
       - name: Upload Device Lab run (evidence only, no .app)
         if: always()
@@ -162,6 +165,7 @@ jobs:
           path: |
             device-lab/reports/runs/
             !device-lab/reports/runs/**/*.app/
+            !device-lab/reports/runs/**/*.app/**
           if-no-files-found: warn
   conformance:
     needs: spec

@@ -1,0 +1,8 @@
+--------- beginning of system
+11-16 09:58:05.820 W/ActivityTaskManager(  776): callingPackage for (uid=2000, pid=5347) has no WPC
+11-16 09:58:05.943 I/ActivityTaskManager(  776): START u0 {flg=0x10000000 xflg=0x5 cmp=app.monstera.trickortreatrush/.MainActivity} with LAUNCH_MULTIPLE from uid 2000 (com.android.shell) (BAL_ALLOW_PERMISSION) result code=0
+--------- beginning of main
+11-16 09:58:08.041 I/MonsteraSpec( 5359): spec sha256=edcc2000685684cfc17fcbe3634bb01d2967b7d590cfceabb02a2286eaa79b4c bundledMatches=true
+11-16 09:58:09.296 I/ActivityTaskManager(  776): Displayed app.monstera.trickortreatrush/.MainActivity for user 0: +3s455ms
+11-16 09:58:10.388 I/MonsteraRuntime( 5359): runtime ticks=60 hash=b7f768696101e2e5 seed=1794803287842
+11-16 09:58:12.605 I/ActivityTaskManager(  776): Activity reported stop, but no longer stopping: ActivityRecord{201947385 u0 com.google.android.apps.nexuslauncher/.NexusLauncherActivity t2} STOPPED

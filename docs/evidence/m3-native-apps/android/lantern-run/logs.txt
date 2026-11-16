@@ -1,0 +1,7 @@
+--------- beginning of system
+11-16 09:58:37.779 W/ActivityTaskManager(  776): callingPackage for (uid=2000, pid=5538) has no WPC
+11-16 09:58:37.915 I/ActivityTaskManager(  776): START u0 {flg=0x10000000 xflg=0x5 cmp=app.monstera.lanternrun/.MainActivity} with LAUNCH_MULTIPLE from uid 2000 (com.android.shell) (BAL_ALLOW_PERMISSION) result code=0
+--------- beginning of main
+11-16 09:58:39.628 I/MonsteraSpec( 5546): spec sha256=cc08da835eab0e59b23ddb58e766cd9420e41514124e09b7903438a5fd0d60b1 bundledMatches=true
+11-16 09:58:40.540 I/ActivityTaskManager(  776): Displayed app.monstera.lanternrun/.MainActivity for user 0: +2s776ms
+11-16 09:58:41.703 I/MonsteraRuntime( 5546): runtime ticks=60 hash=bac17cc0c5c21e9f seed=1794803319539

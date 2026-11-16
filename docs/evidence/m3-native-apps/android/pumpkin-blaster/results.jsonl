@@ -1,0 +1,7 @@
+{"op":"build","target":"android-emulator","status":"ok","run_id":"m3p1-android-pumpkin-blaster","timestamp":"2026-11-16T04:22:24Z","artifact":"device-lab/reports/runs/m3p1-android-pumpkin-blaster/android-emulator/app-debug.apk"}
+{"op":"install","target":"android-emulator","status":"ok","run_id":"m3p1-android-pumpkin-blaster","timestamp":"2026-11-16T04:26:05Z"}
+{"op":"launch","target":"android-emulator","status":"ok","run_id":"m3p1-android-pumpkin-blaster","timestamp":"2026-11-16T04:26:07Z"}
+{"op":"screenshot","target":"android-emulator","status":"ok","run_id":"m3p1-android-pumpkin-blaster","timestamp":"2026-11-16T04:26:17Z","artifact":"device-lab/reports/runs/m3p1-android-pumpkin-blaster/android-emulator/01-launched.png"}
+{"op":"logs","target":"android-emulator","status":"ok","run_id":"m3p1-android-pumpkin-blaster","timestamp":"2026-11-16T04:26:17Z","artifact":"device-lab/reports/runs/m3p1-android-pumpkin-blaster/android-emulator/logs.txt"}
+{"op":"stop","target":"android-emulator","status":"ok","run_id":"m3p1-android-pumpkin-blaster","timestamp":"2026-11-16T04:26:17Z"}
+{"op":"report","target":"android-emulator","status":"ok","run_id":"m3p1-android-pumpkin-blaster","timestamp":"2026-11-16T04:26:18Z","artifact":"device-lab/reports/runs/m3p1-android-pumpkin-blaster/android-emulator/report.json"}
