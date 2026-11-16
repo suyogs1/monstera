@@ -1,0 +1,8 @@
+[
+{"op":"build","target":"ios-simulator","status":"ok","run_id":"ci-43804610330-lantern-run","timestamp":"2026-11-16T04:39:02Z","artifact":"device-lab/reports/runs/ci-43804610330-lantern-run/ios-simulator/LanternRun.app"},
+{"op":"install","target":"ios-simulator","status":"ok","run_id":"ci-43804610330-lantern-run","timestamp":"2026-11-16T04:39:46Z"},
+{"op":"launch","target":"ios-simulator","status":"ok","run_id":"ci-43804610330-lantern-run","timestamp":"2026-11-16T04:39:50Z"},
+{"op":"screenshot","target":"ios-simulator","status":"ok","run_id":"ci-43804610330-lantern-run","timestamp":"2026-11-16T04:39:56Z","artifact":"device-lab/reports/runs/ci-43804610330-lantern-run/ios-simulator/01-launched.png"},
+{"op":"logs","target":"ios-simulator","status":"ok","run_id":"ci-43804610330-lantern-run","timestamp":"2026-11-16T04:39:57Z","artifact":"device-lab/reports/runs/ci-43804610330-lantern-run/ios-simulator/logs.txt"},
+{"op":"stop","target":"ios-simulator","status":"ok","run_id":"ci-43804610330-lantern-run","timestamp":"2026-11-16T04:39:58Z"}
+]

@@ -1,0 +1,8 @@
+[
+{"op":"build","target":"ios-simulator","status":"ok","run_id":"ci-43804610330-trick-or-treat-rush","timestamp":"2026-11-16T04:37:44Z","artifact":"device-lab/reports/runs/ci-43804610330-trick-or-treat-rush/ios-simulator/TrickOrTreatRush.app"},
+{"op":"install","target":"ios-simulator","status":"ok","run_id":"ci-43804610330-trick-or-treat-rush","timestamp":"2026-11-16T04:38:34Z"},
+{"op":"launch","target":"ios-simulator","status":"ok","run_id":"ci-43804610330-trick-or-treat-rush","timestamp":"2026-11-16T04:38:37Z"},
+{"op":"screenshot","target":"ios-simulator","status":"ok","run_id":"ci-43804610330-trick-or-treat-rush","timestamp":"2026-11-16T04:38:44Z","artifact":"device-lab/reports/runs/ci-43804610330-trick-or-treat-rush/ios-simulator/01-launched.png"},
+{"op":"logs","target":"ios-simulator","status":"ok","run_id":"ci-43804610330-trick-or-treat-rush","timestamp":"2026-11-16T04:38:46Z","artifact":"device-lab/reports/runs/ci-43804610330-trick-or-treat-rush/ios-simulator/logs.txt"},
+{"op":"stop","target":"ios-simulator","status":"ok","run_id":"ci-43804610330-trick-or-treat-rush","timestamp":"2026-11-16T04:38:46Z"}
+]
