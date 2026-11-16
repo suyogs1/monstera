@@ -155,7 +155,8 @@ const PNG_CHANNELS = { 0: [1, [1, 2, 4, 8, 16]], 2: [3, [8, 16]], 3: [1, [1, 2, 
 /**
  * Strict PNG check: signature, a bounds-checked chunk stream, CRC of every chunk, exactly one IHDR (first, 13 bytes, valid
  * fields), at least one IDAT (contiguous), exactly one empty IEND as the last chunk with no trailing bytes, and an IDAT stream
- * that inflates to exactly the size the header implies (non-interlaced). Returns { width, height } or null.
+ * that inflates to exactly the size the header implies with a valid filter type (0-4) at the start of every scanline.
+ * Interlaced images are rejected as unsupported. Returns { width, height } or null.
  */
 export function parsePng(bytes) {
   if (!bytes) return null;
@@ -179,7 +180,7 @@ export function parsePng(bytes) {
       const [width, height] = [data.readUInt32BE(0), data.readUInt32BE(4)];
       const [depth, color, comp, filter, interlace] = [data[8], data[9], data[10], data[11], data[12]];
       const spec = PNG_CHANNELS[color];
-      if (!spec || !spec[1].includes(depth) || comp !== 0 || filter !== 0 || (interlace !== 0 && interlace !== 1)) return null;
+      if (!spec || !spec[1].includes(depth) || comp !== 0 || filter !== 0 || interlace !== 0) return null; // Adam7 (interlace 1) is unsupported: its per-pass scanlines are not validated here
       if (width < 1 || height < 1 || width > 0x7fffffff || height > 0x7fffffff) return null;
       header = { width, height, depth, color, interlace, channels: spec[0] };
     } else if (type === "IDAT") {
@@ -195,14 +196,15 @@ export function parsePng(bytes) {
   }
   if (!header || !sawIend || idatBytes === 0) return null;
   if (header.color === 3 && !sawPlte) return null;
-  // Image data: must inflate cleanly. Non-interlaced size is exact; interlaced is only bounded.
+  // Image data: must inflate to exactly (1 + row bytes) x height, and every scanline starts with a valid filter type (0-4).
+  // Pixels are not reconstructed.
   const rowBytes = Math.ceil((header.width * header.channels * header.depth) / 8);
-  const exact = header.interlace === 0 ? (rowBytes + 1) * header.height : null;
-  if (exact !== null && exact > PNG_MAX_RAW) return null;
+  const exact = (rowBytes + 1) * header.height;
+  if (exact > PNG_MAX_RAW) return null;
   try {
-    const raw = zlib.inflateSync(Buffer.concat(idat), { maxOutputLength: exact ?? PNG_MAX_RAW });
-    if (exact !== null && raw.length !== exact) return null;
-    if (exact === null && raw.length === 0) return null;
+    const raw = zlib.inflateSync(Buffer.concat(idat), { maxOutputLength: exact });
+    if (raw.length !== exact) return null;
+    for (let row = 0; row < header.height; row++) if (raw[row * (rowBytes + 1)] > 4) return null;
   } catch { return null; }
   return { width: header.width, height: header.height };
 }

@@ -213,13 +213,16 @@ describe("PNG validation", () => {
     tail.writeUInt32BE(crc ?? zlib.crc32(Buffer.concat([head.subarray(4), data])), 0);
     return Buffer.concat([head, data, tail]);
   };
-  const ihdr = (w = 2, h = 2) => {
+  const ihdr = (w = 2, h = 2, interlace = 0) => {
     const d = Buffer.alloc(13);
     d.writeUInt32BE(w, 0); d.writeUInt32BE(h, 4);
-    d[8] = 8; d[9] = 6; // 8-bit RGBA
+    d.writeUInt8(8, 8); d.writeUInt8(6, 9); d.writeUInt8(interlace, 12); // 8-bit RGBA
     return d;
   };
-  const pixels = (w = 2, h = 2) => zlib.deflateSync(Buffer.alloc((w * 4 + 1) * h, 7));
+  /** Scanlines of (filter byte, then pixel bytes). Pixel data is kept apart from the filter selector. */
+  const scanlines = (w = 2, h = 2, filters: number[] = [0]) => Buffer.concat(Array.from({ length: h }, (_, y) =>
+    Buffer.concat([Buffer.from([filters[y % filters.length] ?? 0]), Buffer.alloc(w * 4, 7)])));
+  const pixels = (w = 2, h = 2, filters: number[] = [0]) => zlib.deflateSync(scanlines(w, h, filters));
   const png = (parts: Buffer[]) => Buffer.concat([SIG, ...parts]);
   const good = () => [chunk("IHDR", ihdr()), chunk("IDAT", pixels()), chunk("IEND", Buffer.alloc(0))];
   /** The check this replaces: signature, IHDR length/type, positive dimensions, IEND marker at the end. */
@@ -242,7 +245,18 @@ describe("PNG validation", () => {
     const z = pixels();
     expect(parsePng(png([good()[0]!, chunk("IDAT", z.subarray(0, 5)), chunk("IDAT", z.subarray(5)), good()[2]!]))).toEqual({ width: 2, height: 2 });
   });
+  const withFilters = (w: number, h: number, filters: number[]) => png([chunk("IHDR", ihdr(w, h)), chunk("IDAT", pixels(w, h, filters)), good()[2]!]);
+  it.each([0, 1, 2, 3, 4])("accepts scanline filter type %i", (ft) => {
+    expect(parsePng(withFilters(2, 2, [ft]))).toEqual({ width: 2, height: 2 });
+  });
+  it("accepts a different valid filter type on every scanline", () => {
+    expect(parsePng(withFilters(3, 5, [0, 1, 2, 3, 4]))).toEqual({ width: 3, height: 5 });
+  });
   const invalid: [string, () => Buffer][] = [
+    ["scanline filter type 5", () => withFilters(2, 2, [5])],
+    ["scanline filter type 255", () => withFilters(2, 2, [255])],
+    ["an invalid filter type on only the last scanline", () => withFilters(2, 4, [0, 1, 2, 7])],
+    ["interlaced (Adam7) images, unsupported", () => png([chunk("IHDR", ihdr(2, 2, 1)), chunk("IDAT", pixels()), good()[2]!])],
     ["wrong signature", () => Buffer.concat([Buffer.from("\x89PNX\r\n\x1a\n", "latin1"), ...good()])],
     ["truncated IHDR", () => png(good()).subarray(0, 8 + 8 + 6)],
     ["truncated file (IEND cut off)", () => png(good()).subarray(0, png(good()).length - 5)],
