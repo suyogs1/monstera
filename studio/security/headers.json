@@ -1,0 +1,22 @@
+{
+  "schema": "monstera.studio.headers",
+  "version": 1,
+  "note": "Source of truth for the Studio response headers. Not a Vercel file: copy the output of `node scripts/headers.mjs --vercel` to the Root Directory of the Vercel project once the owner has confirmed it. mode is the deployed state. It moves to enforce only after the policy is proven (see .kiro/specs/studio-foundry/design.md 8.1).",
+  "mode": "report-only",
+  "nosniff": "nosniff",
+  "directives": {
+    "default-src": ["'self'"],
+    "script-src": ["'self'", "'wasm-unsafe-eval'"],
+    "style-src": ["'self'"],
+    "style-src-attr": ["'unsafe-inline'"],
+    "img-src": ["'self'", "blob:", "data:"],
+    "media-src": ["'self'", "blob:"],
+    "font-src": ["'self'"],
+    "worker-src": ["'self'"],
+    "connect-src": ["'self'"],
+    "object-src": ["'none'"],
+    "base-uri": ["'self'"],
+    "form-action": ["'self'"],
+    "frame-ancestors": ["'none'"]
+  }
+}

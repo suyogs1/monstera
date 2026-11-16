@@ -37,10 +37,18 @@ jobs:
         run: npm run build
       - name: Bundle and source-map secret scan
         run: npm run scan:secrets
+      - name: Secret scan of manifest schemas, header policy and manifest fixtures
+        run: npm run scan:sources
       - name: Install Playwright Chromium
         run: npx playwright-core install --with-deps chromium
       - name: Smoke test against a local production preview
         run: npm run smoke
+      - name: Shell check (legacy redirects, registry-driven rail, cards without controls)
+        run: npm run shell
+      - name: Smoke test under the header policy (CSP report-only, then enforced)
+        run: |
+          SMOKE_CSP=report-only SMOKE_REPORT="$RUNNER_TEMP/smoke-csp-report-only.json" node scripts/smoke.mjs
+          SMOKE_CSP=enforce SMOKE_REPORT="$RUNNER_TEMP/smoke-csp-enforce.json" node scripts/smoke.mjs
       - name: Upload evidence
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
@@ -49,6 +57,8 @@ jobs:
           path: |
             docs/evidence/studio-m3b/smoke-local-preview.json
             docs/evidence/studio-m3b/secret-scan.json
+            ${{ runner.temp }}/smoke-csp-report-only.json
+            ${{ runner.temp }}/smoke-csp-enforce.json
           if-no-files-found: warn
   deployed-smoke:
     # Observes the production site as it is. A failure is reported, not repaired: hosting belongs to the owner.

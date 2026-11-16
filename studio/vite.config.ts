@@ -6,5 +6,5 @@ export default defineConfig({
   base: "./",
   plugins: [react()],
   worker: { format: "es" },
-  test: { environment: "node", include: ["src/**/*.test.ts"] },
+  test: { environment: "node", include: ["src/**/*.test.ts", "src/**/*.test.tsx"] },
 });

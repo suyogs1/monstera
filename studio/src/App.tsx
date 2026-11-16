@@ -1,7 +1,10 @@
 import type { ReactElement } from "react";
-import { useDraft, useSection } from "./app/hooks";
+import { useRef, useState, type KeyboardEvent } from "react";
+import { openSection, useDraft, useRoute } from "./app/hooks";
+import { isEditable } from "./app/router";
+import { navItems } from "./app/shell";
 import { usePrefs } from "./app/prefs";
-import { SECTIONS, type SectionId } from "./app/sections";
+import type { SectionId } from "./app/sections";
 import { Preview } from "./preview/Preview";
 import { Determinism } from "./ui/sections/Determinism";
 import { Entities } from "./ui/sections/Entities";
@@ -13,6 +16,8 @@ import { Platforms } from "./ui/sections/Platforms";
 import { Presentation } from "./ui/sections/Presentation";
 import { Rules } from "./ui/sections/Rules";
 import { Spawns } from "./ui/sections/Spawns";
+import { StatusBadge } from "./ui/ModuleCard";
+import { ModulePage } from "./ui/ModulePage";
 import { SpecView } from "./ui/SpecView";
 import { TopBar } from "./ui/TopBar";
 import { ValidationPanel } from "./ui/ValidationPanel";
@@ -43,32 +48,59 @@ function NumberModeToggle() {
   );
 }
 
+const NAV = navItems();
+
 export function App() {
-  const [section, setSection] = useSection();
+  const route = useRoute();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const toggle = useRef<HTMLButtonElement>(null);
   const { doc } = useDraft();
-  const View = VIEWS[section];
+  const editors = route.kind === "section" && isEditable(route.module);
+
+  const onNavKey = (e: KeyboardEvent<HTMLElement>) => {
+    if (e.key === "Escape" && menuOpen) { setMenuOpen(false); toggle.current?.focus(); }
+  };
 
   return (
     <div className="app">
       <a className="skip-link" href="#main">Skip to content</a>
       <TopBar />
       <div className="body">
-        <nav className="nav" aria-label="Project Brain sections">
-          <ul>
-            {SECTIONS.map((s) => (
-              <li key={s.id}>
-                <a href={`#/${s.id}`} aria-current={s.id === section ? "page" : undefined} data-testid={`nav-${s.id}`}>{s.title}</a>
-              </li>
-            ))}
+        <nav className={`nav${menuOpen ? " open" : ""}`} aria-label="Studio modules" onKeyDown={onNavKey}>
+          <button ref={toggle} type="button" className="nav-toggle" aria-expanded={menuOpen} aria-controls="module-list" data-testid="nav-toggle" onClick={() => setMenuOpen(!menuOpen)}>
+            Modules
+          </button>
+          <ul id="module-list" data-testid="module-list">
+            {NAV.map((m) => {
+              const current = route.module === m.id;
+              return (
+                <li key={m.id}>
+                  <a href={m.href} aria-current={current ? "page" : undefined} data-testid={`module-${m.id}`} data-status={m.status} onClick={() => setMenuOpen(false)}>
+                    <span className={`dot dot-${m.status}`} data-testid={`dot-${m.id}`} aria-hidden="true" />
+                    <span className="nav-title">{m.title}</span>
+                    <StatusBadge status={m.status} />
+                  </a>
+                  {current && m.sections.length > 0 && (
+                    <ul className="subnav" aria-label={`${m.title} sections`}>
+                      {m.sections.map((s) => (
+                        <li key={s.id}>
+                          <a href={s.href} aria-current={route.kind === "section" && route.sectionId === s.id ? "page" : undefined} data-testid={`nav-${s.id}`} onClick={() => setMenuOpen(false)}>{s.title}</a>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </li>
+              );
+            })}
           </ul>
           <NumberModeToggle />
         </nav>
         <main id="main" className="main" tabIndex={-1}>
-          {doc === null ? <p>Loading…</p> : View ? <View /> : <p className="muted">This section is not available yet.</p>}
+          <ModulePage route={route} loading={doc === null} renderSection={(id) => { const View = VIEWS[id]; return View ? <View /> : null; }} />
         </main>
         <div className="side">
-          {doc !== null && <Preview />}
-          <ValidationPanel setSection={setSection} />
+          {doc !== null && editors && <Preview />}
+          <ValidationPanel setSection={openSection} />
         </div>
       </div>
       <footer className="footer">

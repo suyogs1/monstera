@@ -82,7 +82,7 @@ for (const id of TEMPLATES) {
   if (target) {
     const cx = target.visible.x + target.visible.w / 2, cy = target.visible.y + target.visible.h / 2;
     await page.mouse.click(canvas.x + cx, canvas.y + cy);
-    await page.waitForFunction(() => window.location.hash === "#/entities");
+    await page.waitForFunction(() => window.location.hash === "#/designer/entities");
     await page.waitForFunction((k) => document.activeElement?.closest('[data-path^="$.game.runtime.kinds["]') !== null && window.session.selection.getState().kindId === k, target.kind, { timeout: 5000 }).catch(() => {});
     const focused = await page.evaluate(() => {
       const card = document.activeElement?.closest('[data-path^="$.game.runtime.kinds["]');
@@ -112,7 +112,7 @@ for (const id of TEMPLATES) {
   for (let y = world.y + 4; y < world.y + world.h && !empty; y += 6) for (let x = world.x + 4; x < world.x + world.w && !empty; x += 6) if (topmostAt(x, y) === null) empty = { x, y };
   await page.mouse.click(canvas.x + empty.x, canvas.y + empty.y);
   const emptyNote = await page.locator('[data-testid="preview-selection"]').textContent();
-  check(`${id}: clicking empty world space clears the selection and does not navigate`, (await selected()) === null && (await page.evaluate(() => window.location.hash)) === "#/overview" && emptyNote.includes("No entity there"), emptyNote.trim());
+  check(`${id}: clicking empty world space clears the selection and does not navigate`, (await selected()) === null && (await page.evaluate(() => window.location.hash)) === "#/designer/overview" && emptyNote.includes("No entity there"), emptyNote.trim());
   await page.mouse.click(canvas.x + canvas.width / 2, canvas.y + Math.max(2, world.y / 2)); // the HUD bar
   check(`${id}: clicking the HUD (outside the world rectangle) selects nothing`, (await selected()) === null);
   const hiddenOnly = (await page.evaluate(() => window.previewDebug.boxes())).filter((b) => !b.visible).length;

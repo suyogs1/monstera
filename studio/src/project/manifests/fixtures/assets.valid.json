@@ -1,0 +1,57 @@
+{
+  "schema": "monstera.studio.assets",
+  "version": 1,
+  "nextSeq": 3,
+  "assets": [
+    {
+      "id": "asset-0001",
+      "kind": "image",
+      "category": "sprite",
+      "file": "lantern-sheet.png",
+      "mime": "image/png",
+      "bytes": 18234,
+      "sha256": "75b08260bd2aefc193805b0b7c484632ae04aa29cc61d75802b21ea2ac1df2e0",
+      "width": 256,
+      "height": 64,
+      "durationMs": 0,
+      "kindRefs": [
+        "lantern"
+      ],
+      "provenance": {
+        "origin": "user-owned",
+        "author": "Fixture Author",
+        "license": "proprietary-owned",
+        "source": "drawn for the fixture",
+        "tool": "",
+        "model": "",
+        "promptSha256": "",
+        "acquiredOn": "2026-11-16",
+        "notes": ""
+      }
+    },
+    {
+      "id": "asset-0002",
+      "kind": "audio",
+      "category": "sfx",
+      "file": "pickup.wav",
+      "mime": "audio/wav",
+      "bytes": 4410,
+      "sha256": "675bbdc64760a3bf3bbdc70f67819ddc54c4bb166356e80a40dc6c61413bd9d9",
+      "width": 0,
+      "height": 0,
+      "durationMs": 250,
+      "kindRefs": [],
+      "provenance": {
+        "origin": "ai-generated",
+        "author": "Fixture Author",
+        "license": "proprietary-owned",
+        "source": "drawn for the fixture",
+        "tool": "fixture-tool",
+        "model": "fixture-model",
+        "promptSha256": "194713ad972b9125a463802fa203cc68e814e7b681bece09a1975df5efd0fa11",
+        "acquiredOn": "2026-11-16",
+        "notes": ""
+      }
+    }
+  ]
+}

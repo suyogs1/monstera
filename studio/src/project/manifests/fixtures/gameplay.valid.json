@@ -1,0 +1,29 @@
+{
+  "schema": "monstera.studio.gameplay",
+  "version": 1,
+  "lives": {
+    "start": 3
+  },
+  "score": {
+    "winScore": 150
+  },
+  "collectibles": [
+    {
+      "id": "lantern-pickup",
+      "kind": "lantern",
+      "collectorKind": "keeper",
+      "points": 10,
+      "despawn": true
+    }
+  ],
+  "enemies": [
+    {
+      "id": "wisp-hit",
+      "kind": "wisp",
+      "targetKind": "keeper",
+      "livesLost": 1,
+      "despawnEnemy": true
+    }
+  ],
+  "planned": []
+}

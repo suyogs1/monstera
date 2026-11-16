@@ -1,0 +1,222 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "StudioLevels",
+  "description": "Levels as structured data: placements, spawn waves and difficulty steps. No scripting. Quantities are the spec's Q16.16 raw integers. Only the active level compiles into the native spec.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "version",
+    "levels"
+  ],
+  "properties": {
+    "schema": {
+      "const": "monstera.studio.levels"
+    },
+    "version": {
+      "const": 1
+    },
+    "levels": {
+      "type": "array",
+      "maxItems": 32,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "name",
+          "order",
+          "placements",
+          "waves",
+          "difficulty"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "#/$defs/id"
+          },
+          "name": {
+            "description": "Display name.",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 60
+          },
+          "order": {
+            "description": "Position in the level list; unique.",
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000
+          },
+          "placements": {
+            "type": "array",
+            "maxItems": 64,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "id",
+                "kind",
+                "x",
+                "y",
+                "vx",
+                "vy",
+                "controlled"
+              ],
+              "properties": {
+                "id": {
+                  "$ref": "#/$defs/id"
+                },
+                "kind": {
+                  "$ref": "#/$defs/kindId"
+                },
+                "x": {
+                  "$ref": "#/$defs/fixed"
+                },
+                "y": {
+                  "$ref": "#/$defs/fixed"
+                },
+                "vx": {
+                  "$ref": "#/$defs/fixed"
+                },
+                "vy": {
+                  "$ref": "#/$defs/fixed"
+                },
+                "controlled": {
+                  "description": "Receives drag and swipe input.",
+                  "type": "boolean"
+                }
+              }
+            }
+          },
+          "waves": {
+            "type": "array",
+            "maxItems": 32,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "id",
+                "stream",
+                "kind",
+                "startTick",
+                "intervalTicks",
+                "xMin",
+                "xMax",
+                "yMin",
+                "yMax",
+                "vx",
+                "vy"
+              ],
+              "properties": {
+                "id": {
+                  "$ref": "#/$defs/id"
+                },
+                "stream": {
+                  "description": "Named PRNG stream, unique across the level's waves and difficulty steps.",
+                  "$ref": "#/$defs/kindId"
+                },
+                "kind": {
+                  "$ref": "#/$defs/kindId"
+                },
+                "startTick": {
+                  "$ref": "#/$defs/tick"
+                },
+                "intervalTicks": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 1000000
+                },
+                "xMin": {
+                  "$ref": "#/$defs/fixed"
+                },
+                "xMax": {
+                  "$ref": "#/$defs/fixed"
+                },
+                "yMin": {
+                  "$ref": "#/$defs/fixed"
+                },
+                "yMax": {
+                  "$ref": "#/$defs/fixed"
+                },
+                "vx": {
+                  "$ref": "#/$defs/fixed"
+                },
+                "vy": {
+                  "$ref": "#/$defs/fixed"
+                }
+              }
+            }
+          },
+          "difficulty": {
+            "description": "Each step becomes a later-starting spawner that reuses the wave's kind and ranges.",
+            "type": "array",
+            "maxItems": 32,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "id",
+                "waveId",
+                "stream",
+                "atTick",
+                "intervalTicks",
+                "vx",
+                "vy"
+              ],
+              "properties": {
+                "id": {
+                  "$ref": "#/$defs/id"
+                },
+                "waveId": {
+                  "$ref": "#/$defs/id"
+                },
+                "stream": {
+                  "$ref": "#/$defs/kindId"
+                },
+                "atTick": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 1000000
+                },
+                "intervalTicks": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 1000000
+                },
+                "vx": {
+                  "$ref": "#/$defs/fixed"
+                },
+                "vy": {
+                  "$ref": "#/$defs/fixed"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "id": {
+      "description": "Stable identifier: a letter, then letters, digits or hyphens (2 to 32 characters). Never reused.",
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]{1,31}$"
+    },
+    "kindId": {
+      "description": "A spec kind or stream id (same pattern as the canonical spec's kindId).",
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]{0,31}$"
+    },
+    "fixed": {
+      "description": "Q16.16 raw integer, the spec's fixed quantity (1.0 = 65536).",
+      "type": "integer",
+      "minimum": -2147483648,
+      "maximum": 2147483647
+    },
+    "tick": {
+      "description": "Simulation tick count.",
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 1000000
+    }
+  }
+}

@@ -1,0 +1,144 @@
+{
+  "label": "local-preview-csp-enforce",
+  "target": "local vite preview of studio/dist",
+  "scope": "load, engine start, validation, template switching, preview frames, evidence binding. No gameplay or input was exercised; no physical device was used.",
+  "verdict": "PASS",
+  "checks": [
+    {
+      "name": "the page loads with HTTP 200",
+      "ok": true,
+      "detail": "200"
+    },
+    {
+      "name": "the engine starts (Pyodide worker ready, no startup failure shown)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "the Python engine validates the default game",
+      "ok": true,
+      "detail": "Valid: the engine accepts this specification."
+    },
+    {
+      "name": "template pumpkin-blaster validates and the engine hash equals the committed spec's canonical SHA-256",
+      "ok": true,
+      "detail": "Valid: the engine accepts this specification."
+    },
+    {
+      "name": "template trick-or-treat-rush validates and the engine hash equals the committed spec's canonical SHA-256",
+      "ok": true,
+      "detail": "Valid: the engine accepts this specification."
+    },
+    {
+      "name": "template lantern-run validates and the engine hash equals the committed spec's canonical SHA-256",
+      "ok": true,
+      "detail": "Valid: the engine accepts this specification."
+    },
+    {
+      "name": "an invalid edit is rejected by the engine with listed issues",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "reverting the edit restores the original engine hash",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "the preview is running and the engine is producing frames",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "the preview canvas shows a drawn scene (at least 3 distinct colours)",
+      "ok": true,
+      "detail": "8 colours sampled"
+    },
+    {
+      "name": "the unedited official game shows its committed native evidence",
+      "ok": true,
+      "detail": "SIMULATOR-TESTED,SIMULATOR-TESTED"
+    },
+    {
+      "name": "the evidence links resolve",
+      "ok": true,
+      "detail": "200,200,200,200,200,200,200,200"
+    },
+    {
+      "name": "after a spec edit the evidence status is removed (GENERATED, no platform cards)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "editing back to the original hash restores the evidence",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "the document carries nosniff and the enforce Content-Security-Policy header",
+      "ok": true,
+      "detail": "{\"x-content-type-options\":\"nosniff\",\"content-security-policy\":\"default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; style-src-attr 'unsafe-inline'; img-src 'self' blob: data:; media-src 'self' blob:; font-src 'self'; worker-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; report-uri http://127.0.0.1:50269/csp\",\"content-security-policy-report-only\":null}"
+    },
+    {
+      "name": "no Content-Security-Policy violation (enforce) from the page, the Pyodide worker, WebAssembly or asset loading",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "no page errors, console errors, failed requests or HTTP errors during the run",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "every request stays on the Studio origin (no backend or third-party calls)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "the Pyodide WebAssembly file is served as application/wasm",
+      "ok": true,
+      "detail": "application/wasm"
+    }
+  ],
+  "pyodideAssets": [
+    {
+      "path": "/pyodide/pyodide.mjs",
+      "status": 200,
+      "contentType": "text/javascript",
+      "cacheControl": "no-cache",
+      "encoding": "gzip"
+    },
+    {
+      "path": "/pyodide/python_stdlib.zip",
+      "status": 200,
+      "contentType": "application/zip",
+      "cacheControl": "no-cache",
+      "encoding": null
+    },
+    {
+      "path": "/pyodide/pyodide.asm.wasm",
+      "status": 200,
+      "contentType": "application/wasm",
+      "cacheControl": "no-cache",
+      "encoding": null
+    },
+    {
+      "path": "/pyodide/pyodide-lock.json",
+      "status": 200,
+      "contentType": "application/json",
+      "cacheControl": "no-cache",
+      "encoding": "gzip"
+    }
+  ],
+  "inventoryStamp": "Inventory built from commit e66baf8 on studio/foundry-spec (source: git). Files read: .kiro/agents .kiro/hooks .kiro/workflows .kiro/steering .kiro/prompts .kiro/settings/mcp.json tools/monstera-mcp/server.py",
+  "cspMode": "enforce",
+  "documentHeaders": {
+    "x-content-type-options": "nosniff",
+    "content-security-policy": "default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; style-src-attr 'unsafe-inline'; img-src 'self' blob: data:; media-src 'self' blob:; font-src 'self'; worker-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; report-uri http://127.0.0.1:50269/csp",
+    "content-security-policy-report-only": null
+  },
+  "cspViolations": [],
+  "cspReports": [],
+  "problems": [],
+  "fatal": null
+}

@@ -7,27 +7,53 @@
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { createServer } from "node:http";
 import { chromium } from "playwright-core";
 import { preview } from "vite";
 import { GAMES, specSha256 } from "./native-evidence.mjs";
+import { loadPolicy, resolveHeaders } from "./headers.mjs";
 
 const studio = join(dirname(fileURLToPath(import.meta.url)), "..");
 const repo = join(studio, "..");
 const remote = process.env.SMOKE_URL || null;
-const label = process.env.SMOKE_LABEL || (remote ? "deployed" : "local-preview");
+// SMOKE_CSP=report-only|enforce serves the local preview with the header policy from security/headers.json and checks for violations.
+const cspMode = process.env.SMOKE_CSP || null;
+if (cspMode && !["report-only", "enforce"].includes(cspMode)) throw new Error("SMOKE_CSP must be report-only or enforce");
+if (cspMode && remote) throw new Error("SMOKE_CSP applies to the local preview only; a deployed site sends its own headers");
+const label = process.env.SMOKE_LABEL || (remote ? "deployed" : cspMode ? `local-preview-csp-${cspMode}` : "local-preview");
 const reportPath = resolve(process.env.SMOKE_REPORT || join(repo, "docs", "evidence", "studio-m3b", `smoke-${label}.json`));
 const OFFICIAL = "pumpkin-blaster";
 const expectedSha = Object.fromEntries(GAMES.map((g) => [g.id, specSha256(readFileSync(join(repo, g.specPath)))]));
 
+// Violation collector (local CSP runs only). Chromium posts report-only and enforced violations from the page, the worker
+// and WebAssembly compilation here through report-uri, so nothing depends on console output. The production policy has no
+// report-uri: a static site has no collector and nothing may leave the origin.
+const reports = [];
+let collector = null;
+if (cspMode) {
+  collector = createServer((req, res) => {
+    let body = "";
+    req.on("data", (c) => { body += c; });
+    req.on("end", () => {
+      try { const j = JSON.parse(body); const r = j["csp-report"] ?? j; reports.push(`${r["violated-directive"] ?? r.effectiveDirective} ${r["blocked-uri"] ?? r.blockedURL ?? ""}`.slice(0, 200)); }
+      catch { reports.push("unparseable report"); }
+      res.writeHead(204).end();
+    });
+  });
+  await new Promise((r) => collector.listen(0, "127.0.0.1", r));
+}
 let server = null;
 let origin = remote;
 if (!remote) {
-  server = await preview({ root: studio, preview: { port: 0, host: "127.0.0.1", strictPort: false, open: false } });
+  const headers = cspMode ? Object.fromEntries(resolveHeaders(loadPolicy(process.env.SMOKE_CSP_POLICY || undefined), cspMode).map((h) => [h.key, h.key.startsWith("Content-Security-Policy") ? `${h.value}; report-uri http://127.0.0.1:${collector.address().port}/csp` : h.value])) : undefined;
+  server = await preview({ root: studio, preview: { port: 0, host: "127.0.0.1", strictPort: false, open: false, ...(headers ? { headers } : {}) } });
   origin = server.resolvedUrls.local[0];
 }
 const checks = [];
 const check = (name, ok, detail = "") => { checks.push({ name, ok: Boolean(ok), detail: String(detail) }); console.log(`${ok ? "PASS" : "FAIL"}  ${name}${ok || !detail ? "" : `: ${detail}`}`); };
 const problems = [];
+const cspViolations = [];
+let documentHeaders = null;
 const assets = [];
 let browser = null;
 let fatal = null;
@@ -37,11 +63,13 @@ try {
   const page = await context.newPage();
   const base = new URL(origin).origin;
   page.on("pageerror", (e) => problems.push(`pageerror: ${e.message}`));
-  page.on("console", (m) => { if (m.type() === "error") problems.push(`console.error: ${m.text()}`); });
+  page.on("console", (m) => { if (m.type() === "error") problems.push(`console.error: ${m.text()}`); if (/Content Security Policy|\[Report Only\]/i.test(m.text())) cspViolations.push(m.text().slice(0, 200)); });
+  await page.addInitScript(() => { document.addEventListener("securitypolicyviolation", (e) => { (window.__csp ??= []).push(`${e.violatedDirective} ${e.blockedURI}`); }); });
   page.on("requestfailed", (r) => problems.push(`request failed: ${r.url()} ${r.failure()?.errorText ?? ""}`));
   const foreign = new Set();
   page.on("response", (r) => {
     const u = new URL(r.url());
+    if (collector && u.origin === `http://127.0.0.1:${collector.address().port}`) return; // the local CSP report collector, not an app request
     if (u.origin !== base) { foreign.add(u.origin); return; }
     if (r.status() >= 400) problems.push(`HTTP ${r.status()}: ${u.pathname}`);
     if (/\.(wasm|zip|json|mjs)$/.test(u.pathname) && u.pathname.includes("pyodide")) {
@@ -58,6 +86,7 @@ try {
 
   // ---- load and engine start
   const res = await page.goto(origin, { waitUntil: "load" });
+  documentHeaders = res ? { "x-content-type-options": res.headers()["x-content-type-options"] ?? null, "content-security-policy": res.headers()["content-security-policy"] ?? null, "content-security-policy-report-only": res.headers()["content-security-policy-report-only"] ?? null } : null;
   check("the page loads with HTTP 200", res?.status() === 200, res?.status());
   await page.waitForFunction(() => window.ready === true, null, { timeout: 90000 });
   await settled();
@@ -119,6 +148,12 @@ try {
 
   // ---- page health
   const stamp = await (async () => { await open("integration"); return text('[data-testid="inventory-stamp"]'); })();
+  if (cspMode) {
+    await page.waitForTimeout(1000); // let the browser deliver queued reports
+    const pageHits = [...(await page.evaluate(() => window.__csp ?? [])), ...reports];
+    check(`the document carries nosniff and the ${cspMode} Content-Security-Policy header`, documentHeaders?.["x-content-type-options"] === "nosniff" && Boolean(documentHeaders?.[cspMode === "enforce" ? "content-security-policy" : "content-security-policy-report-only"]), JSON.stringify(documentHeaders));
+    check(`no Content-Security-Policy violation (${cspMode}) from the page, the Pyodide worker, WebAssembly or asset loading`, pageHits.length === 0 && cspViolations.length === 0, [...pageHits, ...cspViolations].slice(0, 5).join(" | "));
+  }
   check("no page errors, console errors, failed requests or HTTP errors during the run", problems.length === 0, problems.slice(0, 5).join(" | "));
   check("every request stays on the Studio origin (no backend or third-party calls)", foreign.size === 0, [...foreign].join(","));
   const wasm = assets.find((a) => a.path.endsWith(".wasm"));
@@ -130,6 +165,7 @@ try {
 } finally {
   await browser?.close();
   await server?.close();
+  collector?.close();
 }
 const failed = checks.filter((c) => !c.ok);
 const report = {
@@ -137,6 +173,7 @@ const report = {
   scope: "load, engine start, validation, template switching, preview frames, evidence binding. No gameplay or input was exercised; no physical device was used.",
   verdict: failed.length === 0 ? "PASS" : "FAIL", checks,
   pyodideAssets: assets, inventoryStamp: typeof inventoryStamp === "string" ? inventoryStamp : null,
+  cspMode, documentHeaders, cspViolations, cspReports: reports,
   problems, fatal: fatal ? String(fatal.message).split("\n")[0] : null,
 };
 mkdirSync(dirname(reportPath), { recursive: true });

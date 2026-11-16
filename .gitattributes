@@ -8,6 +8,12 @@ generated/** text eol=lf
 spec/** text eol=lf
 tools/monstera/** text eol=lf
 tools/monstera-mcp/** text eol=lf
+# Studio manifest schemas, header policy and golden fixtures are compared byte for byte by tests.
+studio/schemas/** text eol=lf
+studio/security/** text eol=lf
+studio/src/project/manifests/fixtures/** text eol=lf
+studio/capabilities.json text eol=lf
+docs/STUDIO-CAPABILITIES.md text eol=lf
 .kiro/** text eol=lf
 
 *.bat text eol=crlf

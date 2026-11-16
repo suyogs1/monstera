@@ -1,0 +1,64 @@
+{
+  "schema": "monstera.studio.animations",
+  "version": 1,
+  "sheets": [
+    {
+      "id": "sheet-lantern",
+      "assetId": "asset-0001",
+      "grid": {
+        "frameWidth": 32,
+        "frameHeight": 32,
+        "columns": 8,
+        "rows": 2,
+        "margin": 0,
+        "spacing": 0
+      },
+      "frames": [
+        {
+          "id": "f0",
+          "x": 0,
+          "y": 0,
+          "w": 32,
+          "h": 32
+        },
+        {
+          "id": "f1",
+          "x": 32,
+          "y": 0,
+          "w": 32,
+          "h": 32
+        },
+        {
+          "id": "f2",
+          "x": 64,
+          "y": 0,
+          "w": 32,
+          "h": 32
+        }
+      ]
+    }
+  ],
+  "animations": [
+    {
+      "id": "lantern-glow",
+      "sheetId": "sheet-lantern",
+      "kindRef": "lantern",
+      "fps": 8,
+      "loop": "pingpong",
+      "sequence": [
+        {
+          "frameId": "f0",
+          "holdFrames": 1
+        },
+        {
+          "frameId": "f1",
+          "holdFrames": 2
+        },
+        {
+          "frameId": "f2",
+          "holdFrames": 1
+        }
+      ]
+    }
+  ]
+}

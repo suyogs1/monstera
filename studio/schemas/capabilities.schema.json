@@ -1,0 +1,202 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "StudioCapabilities",
+  "description": "The Studio capability registry: the status of every module and capability, today and as targeted by the Studio Foundry milestone, and whether it reaches native output.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "version",
+    "modules",
+    "capabilities"
+  ],
+  "properties": {
+    "schema": {
+      "const": "monstera.studio.capabilities"
+    },
+    "version": {
+      "const": 1
+    },
+    "modules": {
+      "type": "array",
+      "maxItems": 11,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "title",
+          "status",
+          "targetStatus",
+          "nativeOutput",
+          "limits"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "enum": [
+              "assets",
+              "backend",
+              "dashboard",
+              "designer",
+              "gameplay",
+              "kiro",
+              "levels",
+              "monetization",
+              "preview",
+              "release",
+              "sprites"
+            ]
+          },
+          "title": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 60
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "implemented",
+              "mock",
+              "planned",
+              "prototype",
+              "unsupported"
+            ]
+          },
+          "targetStatus": {
+            "type": "string",
+            "enum": [
+              "implemented",
+              "mock",
+              "planned",
+              "prototype",
+              "unsupported"
+            ]
+          },
+          "nativeOutput": {
+            "type": "string",
+            "enum": [
+              "compiles to native",
+              "mock",
+              "planned",
+              "scaffold",
+              "studio only"
+            ]
+          },
+          "limits": {
+            "type": "string",
+            "minLength": 10,
+            "maxLength": 500
+          }
+        }
+      }
+    },
+    "capabilities": {
+      "type": "array",
+      "maxItems": 80,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "module",
+          "title",
+          "status",
+          "targetStatus",
+          "nativeOutput",
+          "evidence",
+          "limits",
+          "requires",
+          "designRow"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "#/$defs/id"
+          },
+          "module": {
+            "type": "string",
+            "enum": [
+              "assets",
+              "backend",
+              "dashboard",
+              "designer",
+              "gameplay",
+              "kiro",
+              "levels",
+              "monetization",
+              "preview",
+              "release",
+              "sprites",
+              "shared"
+            ]
+          },
+          "title": {
+            "type": "string",
+            "minLength": 5,
+            "maxLength": 160
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "implemented",
+              "mock",
+              "planned",
+              "prototype",
+              "unsupported"
+            ]
+          },
+          "targetStatus": {
+            "type": "string",
+            "enum": [
+              "implemented",
+              "mock",
+              "planned",
+              "prototype",
+              "unsupported"
+            ]
+          },
+          "nativeOutput": {
+            "type": "string",
+            "enum": [
+              "compiles to native",
+              "mock",
+              "planned",
+              "scaffold",
+              "studio only"
+            ]
+          },
+          "evidence": {
+            "type": "array",
+            "maxItems": 4,
+            "items": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._/-]{0,160}$"
+            }
+          },
+          "limits": {
+            "type": "string",
+            "minLength": 5,
+            "maxLength": 500
+          },
+          "requires": {
+            "description": "What is missing for a planned or unsupported capability; empty otherwise.",
+            "type": "string",
+            "maxLength": 300
+          },
+          "designRow": {
+            "description": "The first cell of the matching row in design.md section 0, or empty.",
+            "type": "string",
+            "maxLength": 120
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "id": {
+      "description": "Lowercase identifier.",
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]{1,39}$"
+    }
+  }
+}

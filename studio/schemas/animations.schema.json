@@ -1,0 +1,205 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "StudioAnimations",
+  "description": "Atlases (sheets) with frame rectangles and animation sequences. Timing is in simulation ticks, integer arithmetic only. Studio-only unless a native sprite contract exists.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "version",
+    "sheets",
+    "animations"
+  ],
+  "properties": {
+    "schema": {
+      "const": "monstera.studio.animations"
+    },
+    "version": {
+      "const": 1
+    },
+    "sheets": {
+      "type": "array",
+      "maxItems": 64,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "assetId",
+          "grid",
+          "frames"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "#/$defs/id"
+          },
+          "assetId": {
+            "$ref": "#/$defs/id"
+          },
+          "grid": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "frameWidth",
+              "frameHeight",
+              "columns",
+              "rows",
+              "margin",
+              "spacing"
+            ],
+            "properties": {
+              "frameWidth": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 4096
+              },
+              "frameHeight": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 4096
+              },
+              "columns": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 256
+              },
+              "rows": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 256
+              },
+              "margin": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 4096
+              },
+              "spacing": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 4096
+              }
+            }
+          },
+          "frames": {
+            "type": "array",
+            "maxItems": 1024,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "id",
+                "x",
+                "y",
+                "w",
+                "h"
+              ],
+              "properties": {
+                "id": {
+                  "$ref": "#/$defs/id"
+                },
+                "x": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 4096
+                },
+                "y": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 4096
+                },
+                "w": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 4096
+                },
+                "h": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 4096
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "animations": {
+      "type": "array",
+      "maxItems": 256,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "sheetId",
+          "kindRef",
+          "fps",
+          "loop",
+          "sequence"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "#/$defs/id"
+          },
+          "sheetId": {
+            "$ref": "#/$defs/id"
+          },
+          "kindRef": {
+            "description": "Spec kind this animation is for, or empty.",
+            "type": "string",
+            "pattern": "^([a-z][a-z0-9-]{0,31})?$"
+          },
+          "fps": {
+            "description": "Frames per second of simulation time.",
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 60
+          },
+          "loop": {
+            "type": "string",
+            "enum": [
+              "loop",
+              "once",
+              "pingpong"
+            ]
+          },
+          "sequence": {
+            "type": "array",
+            "maxItems": 256,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "frameId",
+                "holdFrames"
+              ],
+              "properties": {
+                "frameId": {
+                  "$ref": "#/$defs/id"
+                },
+                "holdFrames": {
+                  "description": "How many animation steps this frame is held.",
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 60
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "id": {
+      "description": "Stable identifier: a letter, then letters, digits or hyphens (2 to 32 characters). Never reused.",
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]{1,31}$"
+    },
+    "kindId": {
+      "description": "A spec kind or stream id (same pattern as the canonical spec's kindId).",
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]{0,31}$"
+    }
+  }
+}

@@ -48,6 +48,9 @@ export function TopBar() {
     URL.revokeObjectURL(url);
   };
 
+  const pending = !validation || validatedRevision !== revision;
+  const verdict = pending ? "checking" : validation.ok ? "valid" : "invalid";
+  const hash = !pending && validation.sha256 ? validation.sha256.slice(0, 12) : null;
   const current = baseline?.templateId ?? "";
   return (
     <header className="topbar">
@@ -58,6 +61,10 @@ export function TopBar() {
           <span className="muted small" data-testid="project-name"> {name ? `· ${name}` : ""} {edited ? "· edited" : ""}</span>
         </div>
       </div>
+      <p className="topbar-state small" data-testid="topbar-state" data-verdict={verdict}>
+        <span className={`status ${verdict === "valid" ? "ok" : verdict === "invalid" ? "bad" : "pending"}`}>Spec: {verdict}</span>
+        <span className="muted">SHA-256 <code data-testid="topbar-hash" title="Canonical SHA-256 computed by the engine">{hash ?? "…"}</code></span>
+      </p>
       <div className="actions">
         <label className="inline">
           <span>Start from</span>
@@ -82,3 +89,4 @@ export function TopBar() {
     </header>
   );
 }
+

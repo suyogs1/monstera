@@ -1,0 +1,43 @@
+{
+  "schema": "monstera.studio.integrations",
+  "version": 1,
+  "backend": {
+    "provider": "firebase",
+    "services": {
+      "analytics": true,
+      "auth": false,
+      "crashlytics": true,
+      "firestore": false,
+      "remoteConfig": false
+    },
+    "status": "scaffold",
+    "configFiles": [
+      "GoogleService-Info.plist",
+      "google-services.json"
+    ]
+  },
+  "monetization": {
+    "provider": "admob",
+    "mode": "mock",
+    "placements": [
+      {
+        "id": "interstitial-lost",
+        "type": "interstitial",
+        "trigger": "game-lost",
+        "minSecondsBetween": 120,
+        "maxPerSession": 3,
+        "rewardKind": "",
+        "rewardAmount": 0
+      },
+      {
+        "id": "rewarded-extra-life",
+        "type": "rewarded",
+        "trigger": "manual",
+        "minSecondsBetween": 0,
+        "maxPerSession": 5,
+        "rewardKind": "life",
+        "rewardAmount": 1
+      }
+    ]
+  }
+}

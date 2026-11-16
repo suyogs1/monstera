@@ -1,0 +1,18 @@
+{
+  "schema": "monstera.studio.proposal",
+  "version": 1,
+  "target": "levels",
+  "summary": "Slow the first wisp wave.",
+  "ops": [
+    {
+      "op": "set",
+      "path": "/levels/0/waves/1/vy",
+      "value": "262144"
+    },
+    {
+      "op": "remove",
+      "path": "/levels/1",
+      "value": ""
+    }
+  ]
+}

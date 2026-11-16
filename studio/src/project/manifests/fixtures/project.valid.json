@@ -1,0 +1,28 @@
+{
+  "schema": "monstera.studio.project",
+  "version": 1,
+  "projectId": "lantern-run",
+  "spec": {
+    "path": "monstera.spec.json",
+    "baseSha256": "cc08da835eab0e59b23ddb58e766cd9420e41514124e09b7903438a5fd0d60b1",
+    "currentSha256": "cc08da835eab0e59b23ddb58e766cd9420e41514124e09b7903438a5fd0d60b1"
+  },
+  "engine": {
+    "gitCommit": "71c77e4000000000000000000000000000000000"
+  },
+  "derivation": {
+    "levels": false,
+    "gameplay": false,
+    "activeLevel": ""
+  },
+  "derived": {
+    "inputsSha256": ""
+  },
+  "modules": [
+    "animations",
+    "assets",
+    "gameplay",
+    "integrations",
+    "levels"
+  ]
+}

@@ -1,0 +1,541 @@
+{
+  "schema": "monstera.studio.capabilities",
+  "version": 1,
+  "modules": [
+    {
+      "id": "dashboard",
+      "title": "Project Dashboard",
+      "status": "planned",
+      "targetStatus": "implemented",
+      "nativeOutput": "studio only",
+      "limits": "Not built. Today there is one draft in the browser (localStorage) and a template picker; no project list, no status cards."
+    },
+    {
+      "id": "designer",
+      "title": "Game Designer",
+      "status": "implemented",
+      "targetStatus": "implemented",
+      "nativeOutput": "compiles to native",
+      "limits": "The canonical v4 spec editors. Field ownership locks for derived modules are not built; with derivation off every field is owned by the Designer."
+    },
+    {
+      "id": "assets",
+      "title": "Asset Studio",
+      "status": "planned",
+      "targetStatus": "prototype",
+      "nativeOutput": "studio only",
+      "limits": "Not built. The manifest schema exists, there is no import or library UI. Assets will not render or play in the native apps (no v4 asset concept; E1 is conditional)."
+    },
+    {
+      "id": "sprites",
+      "title": "Sprite and Animation Editor",
+      "status": "planned",
+      "targetStatus": "prototype",
+      "nativeOutput": "studio only",
+      "limits": "Not built. The animations manifest schema exists. Native rendering needs engine track E1, which is conditional and not started."
+    },
+    {
+      "id": "levels",
+      "title": "Level Studio",
+      "status": "planned",
+      "targetStatus": "prototype",
+      "nativeOutput": "compiles to native",
+      "limits": "Not built. The levels manifest schema exists. When built, only the active level compiles into the native spec; other levels export as standalone spec variants."
+    },
+    {
+      "id": "gameplay",
+      "title": "Gameplay Systems",
+      "status": "planned",
+      "targetStatus": "implemented",
+      "nativeOutput": "compiles to native",
+      "limits": "Not built as a module. Lives, win score and collisions can be edited today under Game Designer. Health, power-ups and progression need contract changes and stay planned."
+    },
+    {
+      "id": "backend",
+      "title": "Backend and Services",
+      "status": "planned",
+      "targetStatus": "mock",
+      "nativeOutput": "scaffold",
+      "limits": "Not built. Will generate scaffold text and mock stubs only. Never a live Firebase connection."
+    },
+    {
+      "id": "monetization",
+      "title": "Monetization",
+      "status": "planned",
+      "targetStatus": "mock",
+      "nativeOutput": "mock",
+      "limits": "Not built. Will support mock and official Google test configurations only. No production ad ids in Studio."
+    },
+    {
+      "id": "kiro",
+      "title": "Kiro Development",
+      "status": "prototype",
+      "targetStatus": "implemented",
+      "nativeOutput": "scaffold",
+      "limits": "Only the static Developer Integration inventory exists. Pack export, ownership manifest, drift check and proposal inbox are not built. There is no Kiro connection."
+    },
+    {
+      "id": "preview",
+      "title": "Preview and Device Lab",
+      "status": "implemented",
+      "targetStatus": "implemented",
+      "nativeOutput": "studio only",
+      "limits": "Browser preview, determinism badge and hash-bound native evidence exist. The environments table is not built. Studio runs no device; it shows committed evidence only."
+    },
+    {
+      "id": "release",
+      "title": "Build and Release",
+      "status": "prototype",
+      "targetStatus": "implemented",
+      "nativeOutput": "compiles to native",
+      "limits": "Only the native source ZIP export exists. Completeness check and release readiness are not built. No signing, upload or store-ready claim."
+    }
+  ],
+  "capabilities": [
+    {
+      "id": "project-dashboard",
+      "module": "dashboard",
+      "title": "Project list, status cards and bundle in and out",
+      "status": "planned",
+      "targetStatus": "implemented",
+      "nativeOutput": "studio only",
+      "evidence": [],
+      "limits": "Not built. One draft and a template picker exist today.",
+      "requires": "Project context and persistence (task 1.2), dashboard UI (task 1.3).",
+      "designRow": ""
+    },
+    {
+      "id": "designer-editing",
+      "module": "designer",
+      "title": "Project Brain editors for the v4 spec with engine validation",
+      "status": "implemented",
+      "targetStatus": "implemented",
+      "nativeOutput": "compiles to native",
+      "evidence": [
+        "docs/evidence/studio-m1/acceptance.json"
+      ],
+      "limits": "Edits the canonical spec directly. Forms follow spec/schema.",
+      "requires": "",
+      "designRow": ""
+    },
+    {
+      "id": "spec-view-and-io",
+      "module": "designer",
+      "title": "Canonical spec view, import and export through the engine serializer",
+      "status": "implemented",
+      "targetStatus": "implemented",
+      "nativeOutput": "compiles to native",
+      "evidence": [
+        "docs/evidence/studio-m1/acceptance.json"
+      ],
+      "limits": "One draft only; refused files leave the draft unchanged.",
+      "requires": "",
+      "designRow": ""
+    },
+    {
+      "id": "field-ownership-locks",
+      "module": "designer",
+      "title": "Read-only fields owned by a derived module",
+      "status": "planned",
+      "targetStatus": "implemented",
+      "nativeOutput": "studio only",
+      "evidence": [],
+      "limits": "Not built.",
+      "requires": "Derivation (levels, gameplay) and the cross-reference index.",
+      "designRow": ""
+    },
+    {
+      "id": "gameplay-core",
+      "module": "gameplay",
+      "title": "Lives, win score, collectibles and enemies compiled into lives, winScore and collisions",
+      "status": "planned",
+      "targetStatus": "implemented",
+      "nativeOutput": "compiles to native",
+      "evidence": [],
+      "limits": "Not built. Opt-in derivation, default off; the derived diff and engine verdict are shown before the spec changes.",
+      "requires": "Gameplay compiler (task 5.1), apply path (task 4.2).",
+      "designRow": "Lives, win score, collectible and enemy collision rows"
+    },
+    {
+      "id": "difficulty-ramp",
+      "module": "gameplay",
+      "title": "Difficulty ramp as later-starting spawners",
+      "status": "planned",
+      "targetStatus": "prototype",
+      "nativeOutput": "compiles to native",
+      "evidence": [],
+      "limits": "Not built. v4 spawners cannot stop or change; a ramp is an extra spawner that starts later.",
+      "requires": "Level compiler (task 4.1).",
+      "designRow": ""
+    },
+    {
+      "id": "gameplay-unbuilt-modules",
+      "module": "gameplay",
+      "title": "Health, power-ups, progression",
+      "status": "planned",
+      "targetStatus": "planned",
+      "nativeOutput": "planned",
+      "evidence": [],
+      "limits": "Designed only. Not buildable on the v4 contract.",
+      "requires": "A timed-state and persistence contract in the engine, which is outside this milestone.",
+      "designRow": "Health, power-ups, progression"
+    },
+    {
+      "id": "level-compile",
+      "module": "levels",
+      "title": "Active level compiled into initial entities and spawners",
+      "status": "planned",
+      "targetStatus": "prototype",
+      "nativeOutput": "compiles to native",
+      "evidence": [],
+      "limits": "Not built. Active level only.",
+      "requires": "Level compiler (task 4.1) and apply path (task 4.2).",
+      "designRow": "Initial placements, spawners, difficulty ramp (as later-starting spawners)"
+    },
+    {
+      "id": "level-variants",
+      "module": "levels",
+      "title": "Other levels exported as standalone spec variants",
+      "status": "planned",
+      "targetStatus": "prototype",
+      "nativeOutput": "studio only",
+      "evidence": [],
+      "limits": "Not built. Variants are not selectable inside the generated app.",
+      "requires": "Level UI (task 4.3).",
+      "designRow": "Other levels"
+    },
+    {
+      "id": "multi-level-in-app",
+      "module": "levels",
+      "title": "Level selection, per-level win rule and wave end inside the native app",
+      "status": "unsupported",
+      "targetStatus": "unsupported",
+      "nativeOutput": "planned",
+      "evidence": [],
+      "limits": "Schema v4 has one runtime and spawners that never stop. Engine track E3, outside hackathon scope.",
+      "requires": "Engine and schema change after G6 closure.",
+      "designRow": ""
+    },
+    {
+      "id": "asset-library",
+      "module": "assets",
+      "title": "Import, library and provenance of images and audio",
+      "status": "planned",
+      "targetStatus": "prototype",
+      "nativeOutput": "studio only",
+      "evidence": [],
+      "limits": "Not built. Studio-only: the native apps do not render or play assets.",
+      "requires": "Asset import and store (tasks 2.1 and 2.2).",
+      "designRow": "Images, audio, provenance"
+    },
+    {
+      "id": "asset-native-use",
+      "module": "assets",
+      "title": "Assets rendered or played inside the generated apps",
+      "status": "planned",
+      "targetStatus": "planned",
+      "nativeOutput": "planned",
+      "evidence": [],
+      "limits": "Conditional on engine track E1 (gate 2026-11-19); not started.",
+      "requires": "Engine track E1 and the G6 closure.",
+      "designRow": ""
+    },
+    {
+      "id": "sprite-atlas",
+      "module": "sprites",
+      "title": "Atlas slicing, frames and animation sequences with a tick-based preview",
+      "status": "planned",
+      "targetStatus": "prototype",
+      "nativeOutput": "studio only",
+      "evidence": [],
+      "limits": "Not built. Studio preview and export only.",
+      "requires": "Slicing and timeline library (task 3.1) and editors (tasks 3.2 and 3.3).",
+      "designRow": "Atlas slicing, frames, animation sequences"
+    },
+    {
+      "id": "sprite-native-rendering",
+      "module": "sprites",
+      "title": "Sprite sheets and animations rendered inside the generated apps",
+      "status": "planned",
+      "targetStatus": "planned",
+      "nativeOutput": "planned",
+      "evidence": [],
+      "limits": "Conditional on engine track E1 (one atlas, one or two sequences, both platforms); not started.",
+      "requires": "Engine track E1 and the G6 closure.",
+      "designRow": ""
+    },
+    {
+      "id": "integrations-scaffold",
+      "module": "backend",
+      "title": "Firebase and AdMob scaffold text and setup instructions",
+      "status": "planned",
+      "targetStatus": "prototype",
+      "nativeOutput": "scaffold",
+      "evidence": [],
+      "limits": "Not built. Scaffold text is exported, not compiled into the app. Not a live backend.",
+      "requires": "Integrations manifest and emitters (tasks 6.1 and 6.2).",
+      "designRow": "Firebase interfaces and stubs, AdMob placements and mock rewarded ad"
+    },
+    {
+      "id": "firebase-live",
+      "module": "backend",
+      "title": "Live Firebase connection, account or resource creation from Studio",
+      "status": "unsupported",
+      "targetStatus": "unsupported",
+      "nativeOutput": "planned",
+      "evidence": [],
+      "limits": "Studio is static: no backend, no credentials, no network call to third parties.",
+      "requires": "A server and a credential model, which are not part of Studio.",
+      "designRow": ""
+    },
+    {
+      "id": "admob-mock",
+      "module": "monetization",
+      "title": "Placement configuration, frequency rules and a labelled mock rewarded ad",
+      "status": "planned",
+      "targetStatus": "mock",
+      "nativeOutput": "mock",
+      "evidence": [],
+      "limits": "Not built. Mock and official test configurations only. Not compiled into the app unless engine track E2 is approved.",
+      "requires": "Integrations manifest and emitters (tasks 6.1 to 6.3).",
+      "designRow": ""
+    },
+    {
+      "id": "admob-production",
+      "module": "monetization",
+      "title": "Production AdMob ids in Studio",
+      "status": "unsupported",
+      "targetStatus": "unsupported",
+      "nativeOutput": "planned",
+      "evidence": [],
+      "limits": "Decision D7: Studio never stores or emits real ad ids; the developer adds them after export, in developer-owned files.",
+      "requires": "Not planned.",
+      "designRow": ""
+    },
+    {
+      "id": "developer-integration",
+      "module": "kiro",
+      "title": "Static inventory of agents, hooks, steering and MCP tools, plus handoff prompts",
+      "status": "implemented",
+      "targetStatus": "implemented",
+      "nativeOutput": "studio only",
+      "evidence": [
+        "docs/evidence/studio-m1/acceptance.json"
+      ],
+      "limits": "A static inventory stamped with the commit. It does not connect to Kiro.",
+      "requires": "",
+      "designRow": ""
+    },
+    {
+      "id": "pack-export-and-drift",
+      "module": "kiro",
+      "title": "Studio pack export with ownership manifest and drift-check script",
+      "status": "planned",
+      "targetStatus": "implemented",
+      "nativeOutput": "scaffold",
+      "evidence": [],
+      "limits": "Not built. Extension roots are written once and are not compiled into the app.",
+      "requires": "Pack layout and exporter (tasks 7.1 and 7.2).",
+      "designRow": ""
+    },
+    {
+      "id": "proposal-inbox",
+      "module": "kiro",
+      "title": "Review and apply an externally produced proposal",
+      "status": "planned",
+      "targetStatus": "prototype",
+      "nativeOutput": "studio only",
+      "evidence": [],
+      "limits": "Not built. Proposals are data, validated and applied only on user acceptance.",
+      "requires": "Proposal schema (done), apply path (task 4.2) and UI (task 7.4).",
+      "designRow": ""
+    },
+    {
+      "id": "ai-browser-calls",
+      "module": "kiro",
+      "title": "Direct AI provider calls from the browser",
+      "status": "unsupported",
+      "targetStatus": "unsupported",
+      "nativeOutput": "planned",
+      "evidence": [],
+      "limits": "Decision D6: no provider calls and no keys in the browser during this milestone.",
+      "requires": "A server that holds keys; not part of Studio.",
+      "designRow": ""
+    },
+    {
+      "id": "ai-provider-architecture",
+      "module": "kiro",
+      "title": "Secure replaceable AI provider architecture",
+      "status": "planned",
+      "targetStatus": "planned",
+      "nativeOutput": "planned",
+      "evidence": [],
+      "limits": "Roadmap only. Interface sketched in design section 8.3; no implementation.",
+      "requires": "A server that holds keys and a provider interface.",
+      "designRow": ""
+    },
+    {
+      "id": "browser-preview",
+      "module": "preview",
+      "title": "Interactive preview driven by the unmodified engine",
+      "status": "implemented",
+      "targetStatus": "implemented",
+      "nativeOutput": "studio only",
+      "evidence": [
+        "docs/evidence/studio-m2/acceptance.json"
+      ],
+      "limits": "Browser environment. The preview drawing code mirrors the presentation modules for display only.",
+      "requires": "",
+      "designRow": ""
+    },
+    {
+      "id": "determinism-badge",
+      "module": "preview",
+      "title": "Oracle against the recorded golden scenarios for the exact spec",
+      "status": "implemented",
+      "targetStatus": "implemented",
+      "nativeOutput": "studio only",
+      "evidence": [
+        "docs/evidence/studio-m2/acceptance.json"
+      ],
+      "limits": "Oracle environment inside the browser worker; says nothing about devices.",
+      "requires": "",
+      "designRow": ""
+    },
+    {
+      "id": "native-evidence-panel",
+      "module": "preview",
+      "title": "Committed native build and simulator evidence bound to the exact spec SHA-256",
+      "status": "implemented",
+      "targetStatus": "implemented",
+      "nativeOutput": "studio only",
+      "evidence": [
+        "docs/evidence/studio-m3a/ui-acceptance.json"
+      ],
+      "limits": "Shows committed evidence only; an edited spec shows no evidence.",
+      "requires": "",
+      "designRow": ""
+    },
+    {
+      "id": "environments-table",
+      "module": "preview",
+      "title": "Table of checks by environment (browser, oracle, jvm, swift-test, simulator, device)",
+      "status": "planned",
+      "targetStatus": "implemented",
+      "nativeOutput": "studio only",
+      "evidence": [],
+      "limits": "Not built.",
+      "requires": "Evidence indexes already built into Studio (task 8.0).",
+      "designRow": ""
+    },
+    {
+      "id": "device-testing",
+      "module": "preview",
+      "title": "Running tests on emulators, simulators or physical devices from Studio",
+      "status": "unsupported",
+      "targetStatus": "unsupported",
+      "nativeOutput": "planned",
+      "evidence": [],
+      "limits": "Studio is static and runs no device. Device Lab (G5) scripts produce evidence outside Studio.",
+      "requires": "Not planned in Studio.",
+      "designRow": ""
+    },
+    {
+      "id": "source-zip",
+      "module": "release",
+      "title": "Native source ZIP generated by the engine in the browser",
+      "status": "implemented",
+      "targetStatus": "implemented",
+      "nativeOutput": "compiles to native",
+      "evidence": [
+        "docs/evidence/studio-m2/acceptance.json"
+      ],
+      "limits": "Source only. Nothing is compiled by Studio.",
+      "requires": "",
+      "designRow": ""
+    },
+    {
+      "id": "completeness-and-readiness",
+      "module": "release",
+      "title": "Completeness check and release-readiness checklist",
+      "status": "planned",
+      "targetStatus": "implemented",
+      "nativeOutput": "studio only",
+      "evidence": [],
+      "limits": "Not built. It will never claim store readiness.",
+      "requires": "Tasks 8.1 and the cross-reference index (task 1.4).",
+      "designRow": ""
+    },
+    {
+      "id": "store-release",
+      "module": "release",
+      "title": "Signing, store upload or a store-ready claim",
+      "status": "unsupported",
+      "targetStatus": "unsupported",
+      "nativeOutput": "planned",
+      "evidence": [],
+      "limits": "Out of scope: no signing, no upload, no store-ready claim without evidence.",
+      "requires": "Not planned.",
+      "designRow": ""
+    },
+    {
+      "id": "project-identity",
+      "module": "shared",
+      "title": "Project identity, module list and derivation switches (project manifest)",
+      "status": "prototype",
+      "targetStatus": "implemented",
+      "nativeOutput": "studio only",
+      "evidence": [
+        "studio/src/project/manifests/manifests.test.ts"
+      ],
+      "limits": "Schema and validation only; no UI or storage uses it yet.",
+      "requires": "",
+      "designRow": "Project identity, module list, derivation switches"
+    },
+    {
+      "id": "manifest-schemas",
+      "module": "shared",
+      "title": "Versioned sidecar manifest schemas with strict TypeScript validation",
+      "status": "implemented",
+      "targetStatus": "implemented",
+      "nativeOutput": "studio only",
+      "evidence": [
+        "studio/src/project/manifests/manifests.test.ts",
+        "studio/src/project/manifests/hardening.test.ts"
+      ],
+      "limits": "Validates Studio-owned manifests only. The engine validates the spec. Cross-manifest references are task 1.4.",
+      "requires": "",
+      "designRow": ""
+    },
+    {
+      "id": "secret-scan",
+      "module": "shared",
+      "title": "Bundle, source-map and source scan for credential-shaped strings",
+      "status": "implemented",
+      "targetStatus": "implemented",
+      "nativeOutput": "studio only",
+      "evidence": [
+        "docs/evidence/studio-foundry/secret-scan-dist.json",
+        "docs/evidence/studio-foundry/secret-scan-sources.json"
+      ],
+      "limits": "Pattern based; findings never print values.",
+      "requires": "",
+      "designRow": ""
+    },
+    {
+      "id": "security-headers",
+      "module": "shared",
+      "title": "nosniff and a Content-Security-Policy, report-only first",
+      "status": "prototype",
+      "targetStatus": "implemented",
+      "nativeOutput": "studio only",
+      "evidence": [
+        "docs/evidence/studio-foundry/smoke-csp-report-only.json",
+        "docs/evidence/studio-foundry/smoke-csp-enforce.json"
+      ],
+      "limits": "Verified on a local preview of the built site only. Not deployed: the live site sends neither header until the Vercel Root Directory is confirmed and a report-only deployment is reviewed.",
+      "requires": "",
+      "designRow": ""
+    }
+  ]
+}
