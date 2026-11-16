@@ -1,0 +1,20 @@
+{
+  "check": "clean-room generator-owned tree equals committed tree",
+  "contentDiffers": [],
+  "extraInFresh": [],
+  "freshFileCount": 48,
+  "manifestHashMismatches": [],
+  "manifestListedFiles": 47,
+  "manifestSha256Committed": "fd2331dc0b5043acf08c2c64f813da62f77e555f0094606788bcb095bfa9f8a1",
+  "manifestSha256Fresh": "fd2331dc0b5043acf08c2c64f813da62f77e555f0094606788bcb095bfa9f8a1",
+  "manifestsEqual": true,
+  "missingInFresh": [],
+  "modeDiffers": [],
+  "ownedFilesCompared": 48,
+  "problems": [],
+  "projectId": "pumpkin-blaster",
+  "specPath": "apps/pumpkin-blaster/monstera.spec.json",
+  "specSha256": "08c7a90d9fcfd599c0b5f83743ba339e61f57f1fb10938cf6806d70cda7e0be3",
+  "specShaMatchesManifest": true,
+  "verdict": "PASS"
+}
