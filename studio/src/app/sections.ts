@@ -32,8 +32,3 @@ export function sectionForPath(path: Path): SectionId {
   if (path[0] === "game") return "gameplay";
   return "overview";
 }
-
-export function sectionFromHash(hash: string): SectionId {
-  const id = hash.replace(/^#\/?/, "");
-  return SECTIONS.some((s) => s.id === id) ? (id as SectionId) : "overview";
-}

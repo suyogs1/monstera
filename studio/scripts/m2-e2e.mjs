@@ -65,7 +65,7 @@ for (const id of TEMPLATES) {
   const box = (await page.evaluate(() => window.previewDebug.boxes())).find((b) => b.visible);
   const canvas = await page.locator('[data-testid="preview-canvas"]').boundingBox();
   await page.mouse.click(canvas.x + box.visible.x + box.visible.w / 2, canvas.y + box.visible.y + box.visible.h / 2);
-  await page.waitForFunction(() => window.location.hash === "#/entities");
+  await page.waitForFunction(() => window.location.hash === "#/designer/entities");
   steps.push(["inspect selects the kind", (await page.evaluate(() => window.session.selection.getState().kindId)) !== null, await page.evaluate(() => window.session.selection.getState().kindId)]);
   await page.click('[data-testid="preview-inspect"]');
 
