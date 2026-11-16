@@ -7,9 +7,9 @@ on:
   # every job (including the macOS one).
   push:
     branches: [main]
-    paths: ["spec/**", "tools/monstera/**", "tools/monstera-mcp/**", "generated/**", "apps/**", "device-lab/**", ".kiro/**", ".github/workflows/**"]
+    paths: ["spec/**", "tools/monstera/**", "tools/monstera-mcp/**", "generated/**", "apps/**", "device-lab/**", ".kiro/**", ".github/workflows/**", "!.github/workflows/studio-ci.yml", "!.kiro/specs/g4-studio/**"]
   pull_request:
-    paths: ["spec/**", "tools/monstera/**", "tools/monstera-mcp/**", "generated/**", "apps/**", "device-lab/**", ".kiro/**", ".github/workflows/**"]
+    paths: ["spec/**", "tools/monstera/**", "tools/monstera-mcp/**", "generated/**", "apps/**", "device-lab/**", ".kiro/**", ".github/workflows/**", "!.github/workflows/studio-ci.yml", "!.kiro/specs/g4-studio/**"]
   workflow_dispatch:
 
 permissions:

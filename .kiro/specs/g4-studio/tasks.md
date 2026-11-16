@@ -11,10 +11,10 @@ Order: M0 spike, bounded G3 visual batch with schema freeze, M1 editor, M2 previ
   - [x] 4.2 Phase 1 native build and simulator-launch evidence, three games on both platforms (`docs/evidence/m3-native-apps/`, PR #11)
   - [x] 4.3 M3-A: Studio native evidence panel bound to the exact spec SHA-256 (`studio/scripts/native-evidence.mjs`, `studio/src/ui/sections/NativeApps.tsx`; acceptance `docs/evidence/studio-m3a/ui-acceptance.json`; unit tests `studio/src/badge/nativeApps.test.ts`). Accepted on the stacked branch `m3/studio-evidence-panel` (on top of PR #11)
   - [x] 4.4 M3-A: rewrite `architecture/MONSTERA-STUDIO.md` to the implemented static Pyodide architecture
-  - [ ] 4.5 Vercel deployment (selected hosting, not yet deployed; decide response headers then)
-  - [ ] 4.6 Playwright smoke test and CI job
-  - [ ] 4.7 Bundle secret scan in CI (a one-off manual grep of `dist/` found nothing in M3-A; not yet automated)
-  - [ ] 4.8 One final adversarial review of Studio M3
+  - [x] 4.5 Vercel deployment: done by the owner at https://monstera-phi.vercel.app/ (commit `072c54d`). Verified live, not configured, by M3-B (`docs/evidence/studio-m3b/smoke-production.json`). Response headers still open for the owner: no CSP or `X-Content-Type-Options`, and Pyodide assets are `max-age=0, must-revalidate`
+  - [x] 4.6 M3-B: Playwright smoke (`studio/scripts/smoke.mjs`, existing `playwright-core`) and CI workflow `.github/workflows/studio-ci.yml` (unit tests, typecheck, build, local-preview smoke, separate deployed-site smoke). Evidence `docs/evidence/studio-m3b/`
+  - [x] 4.7 M3-B: bundle and source-map secret scan (`studio/scripts/scan-secrets.mjs`, unit tested, runs in `studio-ci.yml`; findings never print values)
+  - [x] 4.8 Final adversarial review of Studio M3 by the author of M3-B (not an independent reviewer): `docs/evidence/studio-m3b/ADVERSARIAL-REVIEW.md`
 
 Notes (2026-11-12): M0 passed. Details and measurements are in `docs/evidence/studio-spike/spike-result.json`.
 - [ ] 5. G6 clean-room regeneration and recording milestone (after the MONSTERA framework is complete): (a) final framework and specification freeze, no open schema or template change; (b) generate both games fresh from the same skeleton into empty directories, from the two committed specs only; (c) Android and iOS source and build verification (Gradle, `swift test`, xtool or Xcode build, CI green on the head); (d) recorded demonstration of Studio, then generated source, then both native games running; (e) evidence that no game-specific generator or template change was needed: diff of `tools/monstera/` and `spec/schema/` between the freeze commit and the regeneration, generated trees equal to the manifests, and no `if (game)` branches in templates [R6, R8]
