@@ -1,0 +1,93 @@
+{
+  "schema": "monstera.studio.levels",
+  "version": 1,
+  "levels": [
+    {
+      "id": "level-1",
+      "name": "Dusk",
+      "order": 1,
+      "placements": [
+        {
+          "id": "keeper-start",
+          "kind": "keeper",
+          "x": 32112640,
+          "y": 98304000,
+          "vx": 0,
+          "vy": 0,
+          "controlled": true
+        }
+      ],
+      "waves": [
+        {
+          "id": "lanterns",
+          "stream": "lanterns",
+          "kind": "lantern",
+          "startTick": 30,
+          "intervalTicks": 90,
+          "xMin": 0,
+          "xMax": 65536000,
+          "yMin": -6553600,
+          "yMax": -5242880,
+          "vx": 0,
+          "vy": 262144
+        },
+        {
+          "id": "wisps",
+          "stream": "wisps",
+          "kind": "wisp",
+          "startTick": 180,
+          "intervalTicks": 150,
+          "xMin": 0,
+          "xMax": 64487424,
+          "yMin": -7864320,
+          "yMax": -6553600,
+          "vx": 0,
+          "vy": 327680
+        }
+      ],
+      "difficulty": [
+        {
+          "id": "wisps-late",
+          "waveId": "wisps",
+          "stream": "wisps-late",
+          "atTick": 1200,
+          "intervalTicks": 100,
+          "vx": 0,
+          "vy": 458752
+        }
+      ]
+    },
+    {
+      "id": "level-2",
+      "name": "Midnight",
+      "order": 2,
+      "placements": [
+        {
+          "id": "keeper-start",
+          "kind": "keeper",
+          "x": 32112640,
+          "y": 98304000,
+          "vx": 0,
+          "vy": 0,
+          "controlled": true
+        }
+      ],
+      "waves": [
+        {
+          "id": "wisps",
+          "stream": "wisps",
+          "kind": "wisp",
+          "startTick": 60,
+          "intervalTicks": 90,
+          "xMin": 0,
+          "xMax": 64487424,
+          "yMin": -7864320,
+          "yMax": -6553600,
+          "vx": 0,
+          "vy": 393216
+        }
+      ],
+      "difficulty": []
+    }
+  ]
+}

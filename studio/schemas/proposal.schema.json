@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "StudioProposal",
+  "description": "A change proposed by someone else (for example Kiro). Data only: validated, shown as a diff and applied only when the user accepts it.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "version",
+    "target",
+    "summary",
+    "ops"
+  ],
+  "properties": {
+    "schema": {
+      "const": "monstera.studio.proposal"
+    },
+    "version": {
+      "const": 1
+    },
+    "target": {
+      "type": "string",
+      "enum": [
+        "animations",
+        "assets-metadata",
+        "gameplay",
+        "levels",
+        "spec"
+      ]
+    },
+    "summary": {
+      "description": "What the proposal does, for the reviewer.",
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 500
+    },
+    "ops": {
+      "type": "array",
+      "maxItems": 200,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "op",
+          "path",
+          "value"
+        ],
+        "properties": {
+          "op": {
+            "type": "string",
+            "enum": [
+              "add",
+              "remove",
+              "set"
+            ]
+          },
+          "path": {
+            "description": "JSON pointer into the target document.",
+            "type": "string",
+            "pattern": "^(/[^/]*)*$",
+            "maxLength": 300
+          },
+          "value": {
+            "description": "JSON text of the value for add and set, empty for remove.",
+            "type": "string",
+            "maxLength": 20000
+          }
+        }
+      }
+    }
+  },
+  "$defs": {}
+}

@@ -1,0 +1,136 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "StudioProject",
+  "description": "Studio project identity and bindings. The canonical spec stays the contract with the engine; this file records which spec it was authored against and which modules are in use.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "version",
+    "projectId",
+    "spec",
+    "engine",
+    "derivation",
+    "derived",
+    "modules"
+  ],
+  "properties": {
+    "schema": {
+      "const": "monstera.studio.project"
+    },
+    "version": {
+      "const": 1
+    },
+    "projectId": {
+      "description": "Equals project.id in monstera.spec.json.",
+      "$ref": "#/$defs/slug"
+    },
+    "spec": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "baseSha256",
+        "currentSha256"
+      ],
+      "properties": {
+        "path": {
+          "const": "monstera.spec.json"
+        },
+        "baseSha256": {
+          "description": "SHA-256 of the spec before any derivation.",
+          "$ref": "#/$defs/sha256"
+        },
+        "currentSha256": {
+          "description": "SHA-256 of the spec as last written.",
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "engine": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "gitCommit"
+      ],
+      "properties": {
+        "gitCommit": {
+          "description": "Git commit of the engine bundled in the Studio build that last wrote this project.",
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        }
+      }
+    },
+    "derivation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "levels",
+        "gameplay",
+        "activeLevel"
+      ],
+      "properties": {
+        "levels": {
+          "description": "When true, the active level is compiled into runtime.initialEntities and runtime.spawners.",
+          "type": "boolean"
+        },
+        "gameplay": {
+          "description": "When true, gameplay modules are compiled into runtime.lives, winScore and collisions.",
+          "type": "boolean"
+        },
+        "activeLevel": {
+          "description": "Level compiled into the spec; empty when levels derivation is off.",
+          "type": "string",
+          "pattern": "^([a-z][a-z0-9-]{1,31})?$"
+        }
+      }
+    },
+    "derived": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "inputsSha256"
+      ],
+      "properties": {
+        "inputsSha256": {
+          "description": "SHA-256 over the canonical derivation inputs of the last compile; empty when never compiled.",
+          "$ref": "#/$defs/sha256OrEmpty"
+        }
+      }
+    },
+    "modules": {
+      "description": "Sidecar manifests present, sorted, no duplicates.",
+      "type": "array",
+      "maxItems": 5,
+      "items": {
+        "type": "string",
+        "enum": [
+          "animations",
+          "assets",
+          "gameplay",
+          "integrations",
+          "levels"
+        ]
+      }
+    }
+  },
+  "$defs": {
+    "slug": {
+      "description": "Project slug (same pattern as project.id in the canonical spec).",
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$",
+      "minLength": 3,
+      "maxLength": 40
+    },
+    "sha256": {
+      "description": "Lowercase hex SHA-256.",
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "sha256OrEmpty": {
+      "description": "Lowercase hex SHA-256, or the empty string when not recorded.",
+      "type": "string",
+      "pattern": "^([0-9a-f]{64})?$"
+    }
+  }
+}

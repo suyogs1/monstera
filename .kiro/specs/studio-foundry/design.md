@@ -164,16 +164,16 @@ Frame rectangles are pixel integers inside the image bounds (checked against `as
 `step = floor(tick * fps / tickRate)`; `slot = step mod totalHold` for `loop`, `min(step, totalHold-1)` for `once`, and a triangle wave over `2*totalHold-2` for `pingpong`; the slot maps through cumulative `holdFrames` to a sequence entry. Hand-computed cases are the test oracle (task 3.1).
 
 ### 3.6 `levels.json`
+Implemented in `studio/schemas/levels.schema.json`; the Lantern Run fixture (`studio/src/project/manifests/fixtures/levels.valid.json`) reproduces the spec's initial entity and its three spawners, and a test compares them with `spec/samples/lantern-run/monstera.spec.json`.
 ```json
 { "schema": "monstera.studio.levels", "version": 1,
   "levels": [ { "id": "level-1", "name": "Dusk", "order": 1,
-      "placements": [ { "id": "p1", "kind": "player", "x": 983040, "y": 1900544 } ],
-      "waves": [ { "id": "w1", "kind": "ghost", "startTick": 60, "intervalTicks": 90,
-                   "xMin": 0, "xMax": 1900544, "yMin": 0, "yMax": 0, "vx": 0, "vy": 65536 } ],
-      "difficulty": [ { "id": "d1", "waveId": "w1", "atTick": 1800, "intervalTicks": 60 } ] } ] }
+      "placements": [ { "id": "keeper-start", "kind": "keeper", "x": 32112640, "y": 98304000, "vx": 0, "vy": 0, "controlled": true } ],
+      "waves": [ { "id": "wisps", "stream": "wisps", "kind": "wisp", "startTick": 180, "intervalTicks": 150,
+                   "xMin": 0, "xMax": 64487424, "yMin": -7864320, "yMax": -6553600, "vx": 0, "vy": 327680 } ],
+      "difficulty": [ { "id": "wisps-late", "waveId": "wisps", "stream": "wisps-late", "atTick": 1200, "intervalTicks": 100, "vx": 0, "vy": 458752 } ] } ] }
 ```
-Units are the spec's (raw Q16.16), shown to the user in game units like today. `kind` must exist in the base spec. `difficulty` steps compile to an extra spawner (same kind and ranges as the wave, `startTick = atTick`, new interval) because v4 spawners cannot be changed or stopped. Compile limits: total spawners and initial entities respect the schema maxima; a violation is reported against the level, not the spec.
-
+Units are the spec's (raw Q16.16), shown to the user in game units like today. `stream` is the spawner's named PRNG stream (unique per level across waves and difficulty steps). `kind` must exist in the base spec (checked by the cross-reference index, task 1.4). A `difficulty` step compiles to an extra spawner (same kind and ranges as its wave, `startTick = atTick`, new interval and velocity) because v4 spawners cannot be changed or stopped; the existing `wisps-late` spawner of Lantern Run is that idiom. Compile limits: at most 64 spawners per level, `startTick` and intervals up to 1,000,000, as in the spec schema (a test compares the ranges with `spec/schema/game.schema.json`).
 ### 3.7 `gameplay.json`
 ```json
 { "schema": "monstera.studio.gameplay", "version": 1,

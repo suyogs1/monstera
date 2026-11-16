@@ -37,3 +37,40 @@ describe("secret scan", () => {
     expect(scan(dir).findings.map((f) => f.rule).sort()).toEqual(["source-map-file", "source-map-inline", "source-map-local-path"]);
   });
 });
+
+describe("secret scan: Studio Foundry rules", () => {
+  // Assembled at run time so this file holds none of them.
+  const foundry = {
+    serviceAccount: ['{"ty', 'pe": "service_', 'account"}'].join(""),
+    oauth: ["GOC", "SPX-", "a".repeat(28)].join(""),
+    admobUnit: ["ca-app", "-pub-", "1234567890123456", "/", "1234567890"].join(""),
+    admobApp: ["ca-app", "-pub-", "1234567890123456", "~", "1234567890"].join(""),
+    googleTestUnit: ["ca-app", "-pub-", "3940256099942544", "/", "6300978111"].join(""),
+    openai: ["https://api.", "openai", ".com/v1"].join(""),
+    anthropic: ["api.", "anthropic", ".com"].join(""),
+    gemini: ["generativelanguage", ".googleapis.com"].join(""),
+    googleKey: ["AI", "za", "A".repeat(35)].join(""),
+  };
+  it("finds Firebase service accounts, OAuth client secrets, AdMob ids and AI provider hosts", () => {
+    put("assets/a.js", Object.values(foundry).filter((v) => v !== foundry.googleTestUnit).join(" "));
+    const rules = scan(dir).findings.map((f) => f.rule).sort();
+    expect(rules).toEqual(["admob-id", "ai-provider-host", "google-api-key", "google-oauth-client-secret", "service-account-json"]);
+    const counts = Object.fromEntries(scan(dir).findings.map((f) => [f.rule, f.count]));
+    expect(counts["admob-id"]).toBe(2); // unit id and app id
+    expect(counts["ai-provider-host"]).toBe(3);
+  });
+  it("allows Google's published AdMob test publisher id", () => {
+    put("assets/a.js", foundry.googleTestUnit);
+    expect(scan(dir).findings).toEqual([]);
+  });
+  it("never reports a matched value", () => {
+    put("assets/a.js", Object.values(foundry).join(" "));
+    const printed = JSON.stringify(scan(dir).findings);
+    for (const v of Object.values(foundry)) expect(printed).not.toContain(v);
+  });
+  it("scans plain text and JSON exports, not only scripts", () => {
+    put("setup.md", foundry.admobUnit);
+    put("integrations.json", foundry.serviceAccount);
+    expect(scan(dir).findings.map((f) => `${f.rule}@${f.file}`).sort()).toEqual(["admob-id@setup.md", "service-account-json@integrations.json"]);
+  });
+});

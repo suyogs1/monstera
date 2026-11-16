@@ -1,0 +1,208 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "StudioAssets",
+  "description": "Imported images and audio with stable ids, content hashes and provenance. Bytes live beside this file under assets/<id>/<file>.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "version",
+    "nextSeq",
+    "assets"
+  ],
+  "properties": {
+    "schema": {
+      "const": "monstera.studio.assets"
+    },
+    "version": {
+      "const": 1
+    },
+    "nextSeq": {
+      "description": "Next sequence number for asset ids. Only grows, so ids are never reused after deletion.",
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 100000
+    },
+    "assets": {
+      "type": "array",
+      "maxItems": 256,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "kind",
+          "category",
+          "file",
+          "mime",
+          "bytes",
+          "sha256",
+          "width",
+          "height",
+          "durationMs",
+          "kindRefs",
+          "provenance"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "#/$defs/id"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "audio",
+              "image"
+            ]
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "background",
+              "music",
+              "sfx",
+              "sprite",
+              "ui"
+            ]
+          },
+          "file": {
+            "$ref": "#/$defs/fileName"
+          },
+          "mime": {
+            "type": "string",
+            "enum": [
+              "audio/mpeg",
+              "audio/ogg",
+              "audio/wav",
+              "image/gif",
+              "image/jpeg",
+              "image/png",
+              "image/webp"
+            ]
+          },
+          "bytes": {
+            "description": "At most 5 MiB per file.",
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5242880
+          },
+          "sha256": {
+            "$ref": "#/$defs/sha256"
+          },
+          "width": {
+            "description": "Pixels; 0 for audio.",
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 4096
+          },
+          "height": {
+            "description": "Pixels; 0 for audio.",
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 4096
+          },
+          "durationMs": {
+            "description": "Milliseconds; 0 for images.",
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 3600000
+          },
+          "kindRefs": {
+            "description": "Spec kind ids this asset is linked to, sorted.",
+            "type": "array",
+            "maxItems": 32,
+            "items": {
+              "$ref": "#/$defs/kindId"
+            }
+          },
+          "provenance": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "origin",
+              "author",
+              "license",
+              "source",
+              "tool",
+              "model",
+              "promptSha256",
+              "acquiredOn",
+              "notes"
+            ],
+            "properties": {
+              "origin": {
+                "type": "string",
+                "enum": [
+                  "ai-generated",
+                  "third-party-licensed",
+                  "user-owned"
+                ],
+                "description": "Declared by the user. Studio cannot verify it."
+              },
+              "author": {
+                "$ref": "#/$defs/text"
+              },
+              "license": {
+                "description": "SPDX id or proprietary-owned. Required and non-empty.",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100
+              },
+              "source": {
+                "$ref": "#/$defs/text"
+              },
+              "tool": {
+                "$ref": "#/$defs/text"
+              },
+              "model": {
+                "$ref": "#/$defs/text"
+              },
+              "promptSha256": {
+                "$ref": "#/$defs/sha256OrEmpty"
+              },
+              "acquiredOn": {
+                "description": "User-entered date (YYYY-MM-DD) or empty. Studio never writes timestamps.",
+                "type": "string",
+                "pattern": "^(\\d{4}-\\d{2}-\\d{2})?$"
+              },
+              "notes": {
+                "$ref": "#/$defs/text"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "id": {
+      "description": "Stable identifier: a letter, then letters, digits or hyphens (2 to 32 characters). Never reused.",
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]{1,31}$"
+    },
+    "kindId": {
+      "description": "A spec kind or stream id (same pattern as the canonical spec's kindId).",
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]{0,31}$"
+    },
+    "sha256": {
+      "description": "Lowercase hex SHA-256.",
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "sha256OrEmpty": {
+      "description": "Lowercase hex SHA-256, or the empty string when not recorded.",
+      "type": "string",
+      "pattern": "^([0-9a-f]{64})?$"
+    },
+    "text": {
+      "description": "Free text. Never interpolated into generated code.",
+      "type": "string",
+      "maxLength": 500
+    },
+    "fileName": {
+      "description": "A bare file name. No path separators, no leading dot.",
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$"
+    }
+  }
+}
