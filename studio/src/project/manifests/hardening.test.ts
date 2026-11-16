@@ -3,7 +3,7 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
-import { allocateAssetId, assetSeq, formatAssetId, MAX_ASSET_SEQ, removeAsset } from "./assetIds";
+import { allocateAssetId, assetSeq, formatAssetId, LAST_ASSET_SEQ, removeAsset } from "./assetIds";
 import { compileSchema, validate } from "./schema";
 import { MAX_JSON_BYTES, parseStrictJson, utf8Length } from "./strictJson";
 import { MANIFEST_NAMES, parseManifest, serializeManifest, validateManifest, type AssetsManifest, type Issue, type ManifestName } from "./index";
@@ -206,9 +206,31 @@ describe("P2: asset id allocation rule", () => {
     expect(codes(validateManifest("assets", m))).toEqual([]);
     expect(readFileSync(join(__dirname, "assetIds.ts"), "utf8")).toMatch(/cannot be detected/);
   });
-  it("the counter stops at the schema maximum instead of producing an invalid manifest", () => {
-    const m = base(); m.nextSeq = MAX_ASSET_SEQ;
-    expect(() => allocateAssetId(m)).toThrow(/exhausted/);
+  it("the generated range is 1 to 99999 in the formatter, the reader, the allocator and the schema", () => {
+    expect(LAST_ASSET_SEQ).toBe(99999);
+    const schema = JSON.parse(readFileSync(join(__dirname, "..", "..", "..", "schemas", "assets.schema.json"), "utf8"));
+    expect(schema.properties.nextSeq.minimum).toBe(1);
+    expect(schema.properties.nextSeq.maximum).toBe(LAST_ASSET_SEQ + 1);
+    expect(formatAssetId(1)).toBe("asset-0001");
+    expect(formatAssetId(99999)).toBe("asset-99999");
+    for (const bad of [0, -1, 100000, 1.5, NaN]) expect(() => formatAssetId(bad), String(bad)).toThrow(RangeError);
+    expect(assetSeq("asset-99999")).toBe(99999);
+    for (const id of ["asset-100000", "asset-0000", "asset-00000", "asset-099999"]) expect(assetSeq(id), id).toBeNull();
+  });
+  it("the allocator hands out asset-99999 once, and the resulting manifest is valid and exhausted", () => {
+    const m = base(); m.nextSeq = LAST_ASSET_SEQ;
+    const { id, nextSeq } = allocateAssetId(m);
+    expect(id).toBe("asset-99999");
+    expect(nextSeq).toBe(100000);
+    const template = m.assets[0] as AssetsManifest["assets"][number];
+    const full: AssetsManifest = { ...m, nextSeq, assets: [...m.assets, { ...template, id, file: "last.png", kindRefs: [] }] };
+    expect(codes(validateManifest("assets", full))).toEqual([]);
+    expect(() => allocateAssetId(full)).toThrow(/exhausted/);
+  });
+  it("a recognised id at the top of the range requires a counter above it, and asset-100000 is not a generated id", () => {
+    expect(codes(validateManifest("assets", withIds(["asset-99999"], 99999)))).toEqual(["seq-too-low@nextSeq"]);
+    expect(codes(validateManifest("assets", withIds(["asset-99999"], 100000)))).toEqual([]);
+    expect(codes(validateManifest("assets", withIds(["asset-100000"], 1)))).toEqual([]); // not generated form, takes no part in the counter
   });
 });
 
@@ -228,9 +250,24 @@ describe("P2: provenance license is an SPDX identifier or expression, or proprie
     }
     expect(lic("proprietary-owned OR MIT")).toEqual(["license@assets.0.provenance.license"]);
   });
+  it("supported subset is a flat token sequence: parentheses are rejected, operator words are not identifiers", () => {
+    for (const v of ["(MIT OR Apache-2.0) AND CC0-1.0", "MIT AND (Apache-2.0 OR CC0-1.0)", "((MIT))", "MIT OR (Apache-2.0)"]) expect(lic(v), v).not.toEqual([]);
+    expect(lic("AND")).toEqual(["license@assets.0.provenance.license"]);
+    expect(lic("WITH AND MIT")).toEqual(["license@assets.0.provenance.license"]);
+    expect(lic("MIT AND OR")).toContain("license@assets.0.provenance.license");
+    for (const v of ["MIT AND Apache-2.0 OR CC0-1.0", "DocumentRef-x LicenseRef-y".replace(" ", " OR "), "LGPL-2.1-or-later", "Apache-2.0 WITH LLVM-exception"]) expect(lic(v), v).toEqual([]);
+  });
+  it("limits that the shape check does not cover are accepted and documented, not claimed as checked", () => {
+    expect(lic("NOT-A-REAL-SPDX-ID")).toEqual([]); // not verified against the SPDX list
+    expect(lic("MIT WITH Not-An-Exception")).toEqual([]); // exceptions are not checked
+    expect(lic("mit")).toEqual([]); // case is not normalised
+    const text = readFileSync(join(__dirname, "..", "..", "..", "schemas", "assets.schema.json"), "utf8");
+    expect(text).toMatch(/not an SPDX parser/);
+    expect(text).toMatch(/Parenthesized expressions are not supported/);
+  });
   it("the schema states what Studio does not verify", () => {
     const text = readFileSync(join(__dirname, "..", "..", "..", "schemas", "assets.schema.json"), "utf8");
-    expect(text).toMatch(/does not verify the identifier against the SPDX list/);
-    expect(text).toMatch(/that the user owns the asset/);
+    expect(text).toMatch(/does not verify identifiers against the SPDX list/);
+    expect(text).toMatch(/whether the user owns the asset/);
   });
 });

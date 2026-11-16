@@ -18,7 +18,7 @@
       "const": 1
     },
     "nextSeq": {
-      "description": "Next unused asset sequence number. Studio generates ids as asset-NNNN from it and then increases it by one; it never decreases, on deletion or on import. It must exceed the suffix of every generated-form id in the file. Ids of deleted assets are not stored.",
+      "description": "Next unused asset sequence number. Studio generates ids as asset-NNNN from it and then increases it by one; it never decreases, on deletion or on import. It must exceed the suffix of every generated-form id in the file. Generated ids run asset-0001 to asset-99999, so 1 to 100000 is allowed and 100000 means the counter is used up. Ids of deleted assets are not stored.",
       "type": "integer",
       "minimum": 1,
       "maximum": 100000
@@ -142,7 +142,7 @@
                 "$ref": "#/$defs/text"
               },
               "license": {
-                "description": "An SPDX license identifier or expression (identifiers joined by AND, OR or WITH; LicenseRef-* allowed), or proprietary-owned. Required. Only the shape is checked: Studio does not verify the identifier against the SPDX list, the validity of the license, or that the user owns the asset.",
+                "description": "An SPDX-style license value, or proprietary-owned. Required. Supported subset in version 1: one flat sequence of identifier tokens (letters, digits, dot, plus, hyphen) joined by single spaces and the upper-case operators AND, OR and WITH; an operator word cannot be an identifier; LicenseRef-* and DocumentRef-* are ordinary tokens. Parenthesized expressions are not supported and are rejected. This is a shape check, not an SPDX parser: Studio does not verify identifiers against the SPDX list, check exceptions after WITH, normalize case, or judge whether a license is valid or whether the user owns the asset.",
                 "type": "string",
                 "minLength": 1,
                 "maxLength": 100,

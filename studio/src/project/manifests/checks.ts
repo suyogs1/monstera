@@ -71,6 +71,7 @@ function assets(m: AssetsManifest): Issue[] {
     }
     sortedUnique(out, a.kindRefs, [...at("kindRefs")], "kindRefs");
     const p = a.provenance;
+    p.license.split(" ").forEach((tok, k) => { if (k % 2 === 0 && (tok === "AND" || tok === "OR" || tok === "WITH")) push(out, [...at("provenance"), "license"], "license", `"${tok}" is an operator and cannot be used as an identifier`); });
     if (p.license.includes("proprietary-owned") && p.license !== "proprietary-owned") push(out, [...at("provenance"), "license"], "license", "proprietary-owned cannot be combined with other license identifiers")
     if (p.origin === "ai-generated" && (p.tool === "" || p.model === "")) push(out, [...at("provenance"), "tool"], "provenance", "AI-generated assets must record the tool and the model");
     if (p.origin !== "ai-generated" && (p.promptSha256 !== "")) push(out, [...at("provenance"), "promptSha256"], "provenance", "a prompt hash applies only to AI-generated assets");
