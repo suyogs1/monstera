@@ -20,7 +20,7 @@ Design: `.kiro/specs/g4-studio/` (requirements, design, tasks). `architecture/MO
   TypeScript at runtime with the engine's discipline (every property required, no additional properties, unsupported keywords
   fail at load, integers for game quantities). Studio is the authority for these manifests only.
 - **Compile, then let the engine decide.** A sidecar capability that schema v4 can express is compiled into the v4 spec by a
-  pure function. The unmodified engine then validates and simulates the result; nothing is committed to the spec until it
+  pure function, only on explicit user action (derivation is off by default, and the derived diff and engine verdict are shown before the user accepts). The unmodified engine then validates and simulates the result; nothing is committed to the spec until it
   passes. Studio never re-implements engine rules (collision, scoring, ticks, RNG, spec validation) in TypeScript to predict
   or replace an engine answer. Capabilities v4 cannot express are Studio-only, scaffolding or mock and are labelled as such
   (statuses: implemented, prototype, mock, planned, unsupported). Every module states whether it reaches native output.

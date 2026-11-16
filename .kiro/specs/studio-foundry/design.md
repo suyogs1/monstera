@@ -46,16 +46,16 @@ All 11 modules read and write one `ProjectContext` (`project/context.tsx`): the 
 ### Decisions
 | ID | Decision | Recommendation | If rejected |
 |---|---|---|---|
-| D1 | Two-layer model: Studio pack beside an unchanged v4 spec | **Accepted** (follows from the 2026-11-16 decision to compile sidecars into v4; owner may correct) | No alternative without changing the schema |
+| D1 | Two-layer model: v4 stays authoritative for its supported game semantics, versioned sidecars own the new Studio domains, one project identity, no competing sources of truth | **ACCEPTED 2026-11-16** | n/a |
 | D2 | Studio validates Studio-owned sidecar manifests in TypeScript against versioned schemas in `studio/schemas/`. The engine stays authoritative for the v4 spec, simulation and generation; Studio does not duplicate engine semantics. Steering 07 amended | **APPROVED 2026-11-16** | n/a |
-| D3 | Derivation is opt-in per project and per module, default off. Off equals today's behaviour exactly | **Open** (recommended: accept) | n/a |
-| D4 | Multi-level in the shipped app is not in this milestone; levels export as one spec variant each | **Resolved** by the E3 decision (out of hackathon scope) | n/a |
-| D5 | Engine track: E1 conditional, E2 deferred by default, E3 out of scope. No engine or schema change before G6 is closed. Conditions in section 6 | **CONDITIONAL 2026-11-16**; gate stays 2026-11-19 | See section 6 |
-| D6 | No in-browser AI. Proposal inbox plus manual handoff is the only AI path | **Open** (recommended: accept) | A hosted provider needs a backend: out of scope |
-| D7 | Production ad unit ids are never entered in Studio | **Open** (recommended: accept) | Weaker secret hygiene |
-| D8 | Add steering `11-studio-foundry.md` (ownership classes, status vocabulary, derivation rule) | **Open** (recommended: accept; steering 07 already carries the sidecar and compile rules) | Rules live only in this spec |
+| D3 | Derivation is opt-in per project and per module, default OFF. The user explicitly compiles; Studio shows the derived diff and the engine validation result first; the canonical spec is never mutated silently | **ACCEPTED 2026-11-16** | n/a |
+| D4 | Multi-level in the shipped app is not in this milestone; levels export as one spec variant each | **Resolved** (E3 out of scope, confirmed 2026-11-16) | n/a |
+| D5 | Engine track: E1 conditional (gate 2026-11-19), E2 no by default, E3 out of scope. No frozen engine or schema change before G6 closure. Conditions in section 6 | **CONDITIONAL, gate retained** | See section 6 |
+| D6 | No direct in-browser AI provider calls in this milestone. Proposal inbox plus manual handoff only; external asset import stays possible; secure provider architecture stays on the roadmap (`planned`) | **ACCEPTED 2026-11-16** | A hosted provider needs a backend: out of scope |
+| D7 | No production AdMob ids in Studio; mock and official test configurations only | **ACCEPTED 2026-11-16** | n/a |
+| D8 | Steering `11-studio-foundry.md` created; 07 stays focused on implementation constraints and engine interaction | **APPROVED 2026-11-16, created** | n/a |
 
-Remaining unanswered: **D1** (treated as accepted, please confirm), **D3**, **D6**, **D7**, **D8** (recommended: accept all). Not yet answered and needed before the corresponding tasks: where Vercel's configured Root Directory points (cannot be read from the repository; see 8.1), and the E1 gate inputs below (G6 closure path, basic gameplay status).
+Remaining open: the Vercel Root Directory (cannot be read from the repository; needed before any header file is placed), the E1 gate inputs for 2026-11-19 (G6 closure path, basic gameplay status), and remote CI results for tasks 0.3, 1.6 and 0.2.
 Review ownership (decision 2026-11-16): ChatGPT performs an adversarial implementation review against the committed specification and the actual Git diff. Claude may add a separate architectural critique. Both are **LLM reviews**, not independent human reviews, and are recorded as such. The repository owner gives final acceptance.
 
 ## 1. Current versus proposed capability matrix
@@ -349,4 +349,4 @@ Process: one branch per lane off `studio/foundry-spec`, merged only after its te
 | 16 | Frequency-limit logic in scaffold differs between Kotlin and Swift text | Medium | Low | One TS specification, tested; emitted text is `GENERATED`, not `COMPILED`; stated | Medium |
 | 17 | Validation drift: wrong claims in docs | Medium | Medium | Capability matrix generated from the registry (A11); `monstera gates` kiro-config check | Low |
 
-Open points for the owner: D1, D3, D6, D7, D8; the Vercel Root Directory value; the E1 gate inputs on 2026-11-19. Answered 2026-11-16: D2, D5 (conditional), D4 (by E3), review ownership, header hardening (report-only first).
+Open points for the owner: the Vercel Root Directory value; the E1 gate inputs on 2026-11-19. Answered 2026-11-16: D1 to D8 (D5 conditional), review ownership, header hardening (report-only first).
