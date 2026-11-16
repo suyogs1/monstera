@@ -34,8 +34,8 @@ One Studio workspace in which a developer designs a game, manages assets and ani
 **Studio pack**: the directory of Studio-owned manifests and assets stored next to `monstera.spec.json` (design section 3).
 
 ## 4. Scope rules (apply to every requirement)
-- S1. Only `studio/`, `.kiro/specs/studio-foundry/`, new steering and docs change in the planned work. `tools/monstera/`, `spec/schema/`, templates, `generated/`, `apps/` generator-owned paths and `docs/evidence/g6-cleanroom/` do not change. Anything that needs them is an **engine-track** item (design section 6), not part of the committed plan, and needs an explicit owner decision.
-- S2. The canonical spec stays the only contract with the engine. Studio-owned data is a separate, versioned layer that compiles down to the spec or is exported beside it.
+- S1. No engine, schema or template change before G6 is closed. Only `studio/`, `.kiro/specs/studio-foundry/`, new steering and docs change in the planned work. `tools/monstera/`, `spec/schema/`, templates, `generated/`, `apps/` generator-owned paths and `docs/evidence/g6-cleanroom/` do not change. Anything that needs them is an **engine-track** item (design section 6), not part of the committed plan, and needs an explicit owner decision.
+- S2. The canonical spec stays the only contract with the engine, and the engine stays authoritative for the v4 spec, its validation, deterministic simulation and generation. Studio-owned data is a separate layer of versioned sidecar manifests (project configuration, gameplay, assets and atlases, animations, levels, integrations and monetization) validated by Studio in TypeScript against versioned schemas. Supported capabilities are compiled into the v4 spec, then validated and simulated by the unmodified engine. Studio does not duplicate engine semantics. Capabilities that do not compile are Studio-only, scaffold or mock, and each module states which it is.
 - S3. No secret reaches the bundle, a manifest, the ZIP, Git or a generated binary.
 - S4. No control is shown that does nothing. A feature that is not built appears only as a `planned` or `unsupported` entry in the capability list, not as a button, tab or form.
 - S5. Adding scope records its trade-off against the deadline in `tasks.md` (section "Scope ledger").
@@ -50,6 +50,8 @@ Acceptance criteria:
 3. All modules read and write one project context (one project id, one spec, one set of manifests). Switching modules loses no unsaved edit.
 4. Every module header shows its capability status from the registry. A module whose status is `planned` or `unsupported` renders an explanation and no editing controls.
 5. A test fails if a module has no registry entry, if an `implemented` entry has no existing evidence path, or if a status other than the five above appears.
+6. **One connected product.** All modules use the same project context and project identity (`projectId` equals `spec.project.id`) and the documented manifest contracts. A kind rename or delete is applied or blocked across Designer, Assets, Animations, Levels, Gameplay and Integrations from one cross-reference index. Dashboard, Preview and Build/Release read the same state the editors write.
+7. Every module header shows, next to its status, its **native output**: `compiles to native`, `studio only`, `scaffold`, `mock` or `planned`. A module not connected to generated native output says so in the UI, not only in documentation. A test checks that every registry entry has a native-output value and that the value matches the table in design section 0.
 
 ### R2. Project Dashboard (P0)
 1. Create a project from the three templates or from an imported spec or project bundle; open, rename, duplicate and delete projects held in the browser. Deleting asks for confirmation and names what is lost.
@@ -134,8 +136,8 @@ Acceptance criteria:
 ### R14. Reproducibility, security and non-regression (P0)
 1. Studio output is a pure function of recorded inputs: spec, manifests, asset bytes, engine commit. Exporting twice yields byte-identical ZIPs (sorted entries, fixed timestamps and modes, LF), tested.
 2. No weakening of existing tests: the Python suite, `monstera gates`, goldens and conformance stay unchanged and green. `git diff 71c77e4 -- tools/monstera spec/schema` is empty at the end of the milestone; this is part of the acceptance run.
-3. Studio-owned manifest validation follows the engine's discipline (all properties required, no additional properties, unsupported keywords fail at load, integers only for game quantities) and lives in `studio/` (design decision D2).
-4. Bundle and source-map secret scan runs in CI with the extended pattern set (design section 8) and covers sample projects and exports.
+3. Studio-owned sidecar manifests are validated in TypeScript at runtime against versioned schemas in `studio/schemas/`, following the engine's discipline (all properties required, no additional properties, unsupported keywords fail at load, integers only for game quantities) (D2, approved). Spec validation, simulation and generation always go through the unmodified engine; no engine rule is re-implemented in TypeScript.
+4. Bundle and source-map secret scan runs in CI with the extended pattern set (design section 8) and covers sample projects and exports. Responses carry `X-Content-Type-Options: nosniff`. A Content-Security-Policy is first delivered report-only, verified against Pyodide, Web Workers, WebAssembly and existing asset loading, and enforced only after that is proven. The header file is placed at the Vercel project's configured Root Directory, confirmed first.
 5. Importing hostile input (oversized files, zip-slip paths, duplicate keys, huge dimensions, decompression bombs, prototype-pollution keys such as `__proto__`) fails closed without changing the project. Tests exist per class.
 
 ## 6. Prioritized acceptance criteria (the milestone is accepted when these hold)
@@ -153,7 +155,9 @@ Acceptance criteria:
 | A10 | Hostile-input suite passes (R14.5) | P0 | unit |
 | A11 | Capability matrix in docs equals the registry (generated, not hand-written) | P1 | test |
 | A12 | Recorded demonstration of the full flow, honest about each status | P0 | recording + script |
-| A13 | Independent adversarial review of the milestone, findings triaged | P1 | report |
+| A13 | Adversarial implementation review by ChatGPT against this specification and the actual Git diff, optional architectural critique by Claude, findings triaged; both recorded as LLM reviews, not independent human review. Owner gives final acceptance | P1 | report |
+| A14 | Every module states its native output; the project context is shared (R1.6, R1.7) | P0 | registry test, cross-reference tests |
+| A15 | `nosniff` served; CSP report-only verified for Pyodide, workers, WebAssembly and assets; enforcement only after proof | P1 | header test, Playwright run under the policy |
 
 ## 7. Non-goals
 Real-time collaboration, accounts, server-side project storage, remote builds, signing, store upload, live Firebase or AdMob connection, in-browser AI calls, visual scripting, a full pixel editor, native-code reverse engineering, three-way merge, changing the oracle or the contract, any change to PR #15.

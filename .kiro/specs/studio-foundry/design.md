@@ -17,17 +17,46 @@ The design therefore has **two layers and one compile step**:
 
 This is an honest limit of the milestone, and the UI, the export README and the demo script state it. The alternative (changing the frozen generator now) is the engine track, with its cost in section 6.
 
-### Decisions needing the owner
+### Sidecar manifests, compile rule, and what reaches native (amendment 2026-11-16, D2)
+Studio-owned sidecar manifests (versioned, validated by Studio in TypeScript against schemas in `studio/schemas/`): **project configuration** (`project.json`), **gameplay** (`gameplay.json`), **assets and atlases** (`assets.json`; an atlas is one image plus its frame rectangles, stored as a `sheet` in `animations.json`), **animations** (`animations.json`), **levels** (`levels.json`) and **integrations and monetization** (`integrations.json`).
+Authority split:
+- The **Python engine** is authoritative for the canonical v4 spec: validation, canonical serialization, deterministic simulation (oracle), generation, manifests of generated files. Studio never re-implements these and never predicts an engine answer in TypeScript.
+- **Studio** is authoritative only for the sidecar manifests' own structure (schema, references between manifests, limits, provenance rules).
+- **Compile, then engine decides.** Where v4 can express a sidecar capability, a pure TypeScript function emits a spec patch; the unmodified engine validates it and the oracle simulates it; the spec changes only if both pass. The compiler contains no game rules (no collision, scoring, tick or RNG semantics): it maps fields to fields.
+
+| Capability | Sidecar | Reaches the native apps? | Status | Why |
+|---|---|---|---|---|
+| Lives, win score, collectible and enemy collision rows | gameplay | **Yes**, compiled into `runtime.lives`, `winScore`, `collisions` | implemented | v4 expresses them |
+| Initial placements, spawners, difficulty ramp (as later-starting spawners) | levels | **Yes, active level only**, compiled into `initialEntities`, `spawners` | prototype | v4 spawners cannot stop or count |
+| Other levels | levels | **No.** Exported as standalone spec variants, each valid on its own | prototype | multi-level in the app is E3, out of scope |
+| Images, audio, provenance | assets | **No** (stored, previewed in Studio, exported) | prototype | v4 has no asset concept |
+| Atlas slicing, frames, animation sequences | animations | **No** (Studio preview and export only) unless E1 is approved | prototype | v4 has no sprite concept |
+| Firebase interfaces and stubs, AdMob placements and mock rewarded ad | integrations | **No.** Exported as scaffold text, not compiled into the app | scaffold / mock | needs E2, deferred |
+| Health, power-ups, progression | gameplay (reserved) | No | planned | contract has no timed state or persistence |
+| Project identity, module list, derivation switches | project | No (Studio and export only) | implemented | n/a |
+Every module shows this "Native output" value (`compiles to native`, `studio only`, `scaffold`, `mock`, `planned`) next to its status, from the registry (task 0.4), and the export README repeats the table.
+
+### One connected project (amendment 2026-11-16)
+All 11 modules read and write one `ProjectContext` (`project/context.tsx`): the project identity (`project.json` `projectId`, equal to `spec.project.id`), the spec text, the six manifests, the asset blobs and the derived state. A module never keeps a private copy. Connection points the UI must expose, each tested:
+- Dashboard cards read the same validation, hash, determinism, evidence and manifest state the other modules show.
+- A kind id is the shared key: Designer entities, Assets (`kindRefs`), Animations (`kindRef`), Levels, Gameplay and Integrations triggers all reference it, and rename or delete goes through the one cross-reference index.
+- Backend, Monetization and Release read `integrations.json`; Release reads every module's issues; Kiro Development exports exactly the same state the user sees; Preview reads the compiled spec and its hash.
+- A module with no connection to native output says so in its header (the "Native output" value above), not only in documentation.
+
+### Decisions
 | ID | Decision | Recommendation | If rejected |
 |---|---|---|---|
-| D1 | Two-layer model: Studio pack beside an unchanged v4 spec | Accept | No alternative without changing the schema |
-| D2 | Studio validates its own manifests in TypeScript against Studio-owned JSON Schemas in `studio/schemas/`, with the engine's discipline. Amend steering 07 ("Studio holds no validation logic") to say: engine is authority for the spec; Studio is authority for Studio-owned manifests | Accept | Move manifest validation into the engine: touches `tools/monstera/`, unacceptable now |
-| D3 | Derivation is opt-in per project and per module, default off. Off equals today's behaviour exactly | Accept | n/a |
-| D4 | Multi-level in the shipped app is **not** in this milestone; levels export as one spec variant each | Accept | Needs engine track E1 |
-| D5 | Engine track E1 (sprite reference plus extension source roots) is decided at a gate on 2026-11-19 | Decide at the gate; default **no** | See section 6 |
-| D6 | No in-browser AI. Proposal inbox plus manual handoff is the only AI path | Accept | A hosted provider needs a backend: out of scope |
-| D7 | Production ad unit ids are never entered in Studio | Accept | Weaker secret hygiene, no benefit for the demo |
-| D8 | Add steering `11-studio-foundry.md` (ownership classes, status vocabulary, derivation rule) | Accept | Rules live only in this spec |
+| D1 | Two-layer model: Studio pack beside an unchanged v4 spec | **Accepted** (follows from the 2026-11-16 decision to compile sidecars into v4; owner may correct) | No alternative without changing the schema |
+| D2 | Studio validates Studio-owned sidecar manifests in TypeScript against versioned schemas in `studio/schemas/`. The engine stays authoritative for the v4 spec, simulation and generation; Studio does not duplicate engine semantics. Steering 07 amended | **APPROVED 2026-11-16** | n/a |
+| D3 | Derivation is opt-in per project and per module, default off. Off equals today's behaviour exactly | **Open** (recommended: accept) | n/a |
+| D4 | Multi-level in the shipped app is not in this milestone; levels export as one spec variant each | **Resolved** by the E3 decision (out of hackathon scope) | n/a |
+| D5 | Engine track: E1 conditional, E2 deferred by default, E3 out of scope. No engine or schema change before G6 is closed. Conditions in section 6 | **CONDITIONAL 2026-11-16**; gate stays 2026-11-19 | See section 6 |
+| D6 | No in-browser AI. Proposal inbox plus manual handoff is the only AI path | **Open** (recommended: accept) | A hosted provider needs a backend: out of scope |
+| D7 | Production ad unit ids are never entered in Studio | **Open** (recommended: accept) | Weaker secret hygiene |
+| D8 | Add steering `11-studio-foundry.md` (ownership classes, status vocabulary, derivation rule) | **Open** (recommended: accept; steering 07 already carries the sidecar and compile rules) | Rules live only in this spec |
+
+Remaining unanswered: **D1** (treated as accepted, please confirm), **D3**, **D6**, **D7**, **D8** (recommended: accept all). Not yet answered and needed before the corresponding tasks: where Vercel's configured Root Directory points (cannot be read from the repository; see 8.1), and the E1 gate inputs below (G6 closure path, basic gameplay status).
+Review ownership (decision 2026-11-16): ChatGPT performs an adversarial implementation review against the committed specification and the actual Git diff. Claude may add a separate architectural critique. Both are **LLM reviews**, not independent human reviews, and are recorded as such. The repository owner gives final acceptance.
 
 ## 1. Current versus proposed capability matrix
 `Today` is verified. `Target` is the status when the milestone is accepted. `Native` says whether the capability reaches the generated Kotlin/Swift app in the committed plan (Tier A).
@@ -228,11 +257,17 @@ The scaffold emitters are text generators whose **pure logic functions** (freque
 Verified fact: the generator owns `android/` and `ios/` completely, and the templates have no hook for extra source sets, resources or per-kind sprites. So every item below changes the frozen generator and is **outside the committed plan**.
 | ID | Extension | Minimal shape | Why it matters | Cost, honest estimate | Gate |
 |---|---|---|---|---|---|
-| E1 | `kinds[].sprite` (asset id plus animation id) as presentation data, plus bundling asset files into both apps | Schema v5 additive field (like `glyph`/`effect` in the v4 visual batch), contract section, oracle ignores it, both presentation modules draw it, resources copied by the template | Makes Asset and Sprite modules real in native apps | The v4 visual batch is the precedent: schema, emitters, two presentation modules, goldens re-recorded (checkpoints unchanged), conformance, CI. Estimate 5 to 7 working days for one person | Owner decision on 2026-11-19, a separate branch, a new freeze, and a statement that G6 evidence stays relative to `71c77e4` |
+| E1 (conditional) | `kinds[].sprite` (asset id plus animation id) as presentation data, plus bundling asset files into both apps | Schema v5 additive field (like `glyph`/`effect` in the v4 visual batch), contract section, oracle ignores it, both presentation modules draw it, resources copied by the template | Makes Asset and Sprite modules real in native apps | The v4 visual batch is the precedent: schema, emitters, two presentation modules, goldens re-recorded (checkpoints unchanged), conformance, CI. Estimate 5 to 7 working days for one person | Owner decision on 2026-11-19, a separate branch, a new freeze, and a statement that G6 evidence stays relative to `71c77e4` |
 | E2 | Developer-owned source roots compiled into the app (`extensions/android` as a Gradle source set, `extensions/ios` as a SwiftPM target) | Template change only, no schema change | Makes ad and Firebase scaffolds compile and the mock rewarded ad visible in the app | 3 to 4 days including CI builds on both platforms | Same gate |
 | E3 | Level table in the spec (`levels[]`, active selection, wave end tick, per-level win) | Schema v5, contract, oracle, both runtimes, scenarios, mutants | Multi-level in the shipped app | Not feasible before the deadline | Post-deadline |
+**Decision 2026-11-16.** E1 is conditional, E2 is deferred by default, E3 is outside the hackathon scope. No engine, schema or template change is made before G6 is safely closed. E1 may proceed only if all four hold at the 2026-11-19 gate (or a later recorded gate):
+1. G6 closure has an accepted path (owner sign-off of the freeze and the recorded demonstration are the two open G6 items today; PR #15 stays untouched).
+2. Basic gameplay works on the existing games (the three-game conformance and native evidence on `71c77e4` stay green).
+3. E1 is restricted to **one atlas, sprite references and one or two animation sequences, on both platforms**. Anything larger is cut, not scheduled.
+4. There is time to complete and verify it: implementation, regeneration, conformance (oracle, Kotlin, Swift) and CI green before the feature freeze, or the work does not start.
+E2 stays deferred: no compiled extension roots and no native mock rewarded ad unless a later written decision reverses this. E3 is out of scope. Studio Foundry continues to deliver P0 with Tier A only if E1 does not start.
 Rules if any E item is approved: follow the steering 08 order (contract, oracle with hand-computed tests, scenario, mutant, Kotlin, Swift); no `if (game)` branches; Studio changes are separate tasks that wait for the merged contract (steering 06). The Studio plan in `tasks.md` is written so that E1 or E2 later **adds** native wiring and does not require rework of manifests (the manifests already carry `kindRefs`, `animations.kindRef` and the extension roots).
-Recommendation: do not start E1 or E2 before the P0 Studio criteria (A1 to A7) are green on the feature freeze date; if they are, E2 is the cheaper and more demonstrable choice because it turns the scaffold and the MOCK label into something visible on a simulator.
+Recommendation (revised): E1, under the four conditions above, is the only engine item worth considering, because it makes the Assets and Sprite modules visible in the native apps. It should not start before the P0 Studio criteria A1 to A7 are on track.
 
 ## 7. Data ownership and generated/native boundaries
 | Class | Examples | Who writes | On re-export | Drift reported |
@@ -256,7 +291,7 @@ The existing hook `guard-generated-output` protects `generated/`. The export shi
 | Manifest text fields to export | Injection into generated Kotlin/Swift/Markdown/shell | Identifiers restricted by regex; free text (names, notes) is never interpolated into code, only into Markdown after escaping; code emitters take only ids, enums and integers |
 | Studio bundle | Secret or key in `dist/` | Extended `scan-secrets` patterns: `AIza[0-9A-Za-z_-]{35}`, `-----BEGIN (RSA |EC )?PRIVATE KEY-----`, `"type": "service_account"`, `ca-app-pub-` with a non-test publisher, `AKIA[0-9A-Z]{16}`, `firebase` API-key assignments, provider hostnames of AI APIs; findings never print values; runs on `dist/`, source maps, sample packs and generated exports |
 | User pastes a secret into a field | Secret persisted in IndexedDB or ZIP | `secrets.ts` field guard rejects values matching the same patterns before they enter state; test with each pattern |
-| Browser origin | XSS, third-party script, exfiltration | No third-party script; no outbound request (existing M2 assertion kept); a CSP via `studio/vercel.json` headers: `default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; img-src 'self' blob: data:; media-src 'self' blob:; worker-src 'self' blob:; connect-src 'self'; object-src 'none'; frame-ancestors 'none'`, plus `X-Content-Type-Options: nosniff`. Needs verification that Pyodide loads under it (task 1.6). The deployment itself is the owner's |
+| Browser origin | XSS, third-party script, exfiltration | No third-party script; no outbound request (existing M2 assertion kept). `X-Content-Type-Options: nosniff` is added. The CSP ships first as `Content-Security-Policy-Report-Only`; Pyodide, Web Workers, WebAssembly and existing asset loading are verified under it (task 1.6), and it is switched to enforcing only after that is proven and the deployed report-only run shows no violation. The policy source of truth is `studio/security/headers.json`. It is **not** placed in `studio/vercel.json` by assumption: Vercel's configured Root Directory is not recorded in the repository (no `vercel.json` or `.vercel` exists; M3 docs say only that the owner deployed it), so the file goes at that Root Directory once the owner confirms it. At 2026-11-16 the live site sends no CSP and no `nosniff` (verified with a HEAD request) |
 | Exported native apps | Ad ids, Firebase config in Git or binaries | Studio never writes real ids; export `.gitignore` lists `google-services.json`, `GoogleService-Info.plist`, `*.keystore`, `local.properties`; `SETUP.md` tells the developer to supply files and uses Google's published test ids only after verifying them against Google's current documentation at implementation time |
 | Kiro handoff and proposals | Prompt or proposal carrying instructions that change scope | Proposals are data: operations on named fields only, validated, diffed, user-approved. Handoff prompts are static text. Studio has no Kiro connection and never simulates one (steering 07) |
 | Derived spec | Unvalidated logic reaching the spec | No spec change commits without engine validation and an oracle run; the compiler has no expression language; compile output is deterministic and tested twice |
@@ -310,8 +345,8 @@ Process: one branch per lane off `studio/foundry-spec`, merged only after its te
 | 12 | CSP breaks Pyodide or Vite output | Medium | Low | Task 1.6 verifies under the local preview and the smoke; header file is optional until verified | Low |
 | 13 | Non-determinism in export (ZIP order, timestamps) | Medium | Medium | Sorted entries, fixed mtime and mode, double-export test | Low |
 | 14 | AI-produced content bypasses review | Medium | Medium | Proposals validated and diffed; provenance origin is declared and labelled unverifiable | Medium (declared by user) |
-| 15 | Reviewer independence: the M3 review was by the author | Medium | Medium | Use a different agent or person for task 8.2 and say who | Medium |
+| 15 | Reviewer independence: the M3 review was by the author | Medium | Medium | Reviews are LLM reviews (ChatGPT adversarial, Claude architectural) and are recorded as LLM reviews, never as independent human review; owner gives final acceptance | Medium |
 | 16 | Frequency-limit logic in scaffold differs between Kotlin and Swift text | Medium | Low | One TS specification, tested; emitted text is `GENERATED`, not `COMPILED`; stated | Medium |
 | 17 | Validation drift: wrong claims in docs | Medium | Medium | Capability matrix generated from the registry (A11); `monstera gates` kiro-config check | Low |
 
-Open points for the owner: D1 to D8; whether the Gate E default stays "no"; who performs the independent review; whether a Vercel header change (task 1.6) is allowed within this milestone.
+Open points for the owner: D1, D3, D6, D7, D8; the Vercel Root Directory value; the E1 gate inputs on 2026-11-19. Answered 2026-11-16: D2, D5 (conditional), D4 (by E3), review ownership, header hardening (report-only first).
