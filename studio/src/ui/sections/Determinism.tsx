@@ -2,6 +2,7 @@ import { useMemo, useSyncExternalStore } from "react";
 import { useDraft, useSession } from "../../app/hooks";
 import { verdict, type Verdict } from "../../badge/badge";
 import { summarizeChanges, type ChangeSummary } from "../../badge/classify";
+import { NativeApps } from "./NativeApps";
 import { nativeEvidence, type ConformanceReport } from "../../badge/native";
 import { toIssuePath, type Path } from "../../draft/path";
 import raw from "../../generated/conformance.json";
@@ -177,6 +178,7 @@ export function Determinism() {
       )}
 
       <NativeEvidence sha={view.ok && !pending ? view.sha256 : null} projectId={origin?.templateId ?? null} />
+      <NativeApps sha={view.ok && !pending ? view.sha256 : null} projectId={(draft.doc as { project?: { id?: unknown } } | null)?.project?.id as string | null ?? origin?.templateId ?? null} />
     </section>
   );
 }

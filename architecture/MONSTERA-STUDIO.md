@@ -1,193 +1,150 @@
 # MONSTERA Studio architecture
 
-Status: **PROPOSED (G1.5).** Implementation: shell from G4, started in parallel with G2/G3.
+Status: **IMPLEMENTED through M3-A (static app, local-only).** Rewritten for G4 M3-A; it replaces the G1.5 proposal
+(Railway API, Postgres, GitHub dispatch, remote build workers), which was never built and is no longer planned.
+Design record: `.kiro/specs/g4-studio/` (requirements, design, tasks). Rules: `.kiro/steering/07-studio.md`.
 
-MONSTERA Studio is the user-facing product: a browser-based native mobile game foundry. Users
-configure a game in a visual **Project Brain**, and Studio turns it into a canonical
-`monstera.spec.json`. The existing Python engine generates native Kotlin and Swift projects
-from it, cloud build workers compile and test them, and users download the source and the
-artifacts.
+MONSTERA Studio is a static web app in `studio/`. A user edits a game in the browser (the **Project Brain**), and the
+repository's own Python engine, running in the page, validates the result, previews it, checks determinism against recorded
+goldens and packs the generated native Android (Kotlin) and iOS (Swift) source as a ZIP. Nothing is sent anywhere.
+
+## Status at a glance
+
+| Capability | State | Evidence |
+|---|---|---|
+| Static Vite + React + TypeScript SPA | Implemented | `studio/`, `npm run build` |
+| Engine in a Pyodide 0.29.5 Web Worker | Implemented, verified | M0 spike, M1/M2 acceptance (`docs/evidence/studio-spike/`, `studio-m1/`, `studio-m2/`) |
+| Project Brain editing, validation, canonical Spec view, import/export | Implemented, verified | `docs/evidence/studio-m1/acceptance.json` |
+| Live preview, determinism badge, source ZIP | Implemented, verified | `docs/evidence/studio-m2/acceptance.json` |
+| Native conformance report display (exact spec hash only) | Implemented, verified | M2 badge acceptance |
+| Native app build and simulator-launch evidence panel | Implemented in M3-A | `docs/evidence/studio-m3a/ui-acceptance.json`, `studio/src/badge/nativeApps.test.ts` |
+| Developer Integration (static repository inventory) | Implemented, verified | M1 acceptance |
+| Vercel hosting | **Selected, not deployed** | none |
+| Playwright smoke test in CI | **Planned** (M3), not implemented | none |
+| Secret scan of the bundle in CI, final adversarial review | **Planned** (M3), not done | none |
+| Backend, API, database, accounts, server-side projects | **Not implemented and not planned** | n/a |
+| Native builds triggered from Studio, remote build workers | **Not implemented and not planned** | n/a |
+| Live Kiro connection | **Not implemented and not planned** | n/a |
+| Physical-device testing, gameplay/input/performance evidence | **Not implemented** (Device Lab, G5) | n/a |
 
 ## Non-negotiable rules
 
-1. The canonical `monstera.spec.json` is the single source of truth. Studio state *produces* it;
-   nothing else describes the generated app.
-2. All generation and validation logic lives in `tools/monstera/`. Studio calls it and never
-   reimplements it.
-3. Generated apps are independent native Kotlin/Swift projects. They don't depend on Studio,
-   Kiro, a web view or any cross-platform runtime.
-4. The browser never compiles native code. Builds run only on CI build workers.
-5. Credentials (GitHub token, any future signing material) stay server-side. The frontend
-   bundle and API responses never contain them.
-6. Studio's own stack may be any modern web stack. That freedom stops at `apps/*` and
-   `generated/*` (enforced by `monstera check-architecture`).
+1. The canonical `monstera.spec.json` is the single source of truth. Studio state *produces* it; nothing else describes
+   the generated app. It is also the only thing Studio and Kiro share.
+2. All validation, generation and simulation logic lives in `tools/monstera/`. Studio runs it and never reimplements it.
+   The one deliberate exception is display-only drawing code in the preview (`studio/src/preview/presentation.ts`), which
+   mirrors the generated presentation modules and cannot change simulation results.
+3. Generated apps are independent native Kotlin/Swift projects. They do not depend on Studio, Kiro, a web view or any
+   cross-platform runtime.
+4. The browser never compiles native code and Studio never dispatches a build.
+5. There is no server-side secret because there is no server. The bundle contains no credentials.
+6. Studio's own stack is a modern web stack. That freedom stops at `apps/*` and `generated/*` (`monstera check-architecture`).
 
-## System overview
-
-```
-  Browser                         Vercel                 Railway                      GitHub Actions
-┌───────────────────────┐      ┌──────────────┐      ┌────────────────────────┐     ┌──────────────────────────┐
-│ Studio SPA            │ GET  │ static SPA   │      │ Studio API (Python)    │     │ studio-build.yml         │
-│  Project Brain UI     │◄─────│ (CDN)        │      │  imports tools/monstera│     │  ubuntu: generate,       │
-│  forms + live preview │      └──────────────┘      │  /validate /generate   │     │   gradle, emulator,      │
-│  asset manager        │  HTTPS (JSON, multipart)   │  /builds  /artifacts   │ API │   Device Lab, conformance│
-│  build + report views │──────────────────────────►│  project store         │────►│  macos: xtool build,     │
-│  downloads            │◄──────────────────────────│  job state machine     │◄────│   simulator, Device Lab  │
-└───────────────────────┘   status / reports / zips │  GitHub token (secret) │ runs│  uploads artifacts       │
-                                                     └────────────────────────┘ +art.└──────────────────────────┘
-```
-
-| Component | Technology (proposed) | Responsibility |
-|---|---|---|
-| Studio web | TypeScript, Vite, React; JSON-Schema-driven forms | Project Brain UI, preview, uploads, build monitor, downloads. Static on **Vercel** |
-| Studio API | Python 3.12, ASGI service (e.g. Starlette or FastAPI, pinned), on **Railway** | Imports `tools/monstera` directly; project persistence; build dispatch; artifact proxy |
-| Project store | Railway Postgres (projects, versions, builds) + Railway volume for assets | Durable Project Brain state |
-| Build workers | **GitHub Actions**: Linux (Android build + emulator, conformance, xtool experiments), hosted **macOS** (iOS Simulator) | Reuses the G0/G1 pipelines and the Device Lab adapters |
-
-## Project Brain
-
-The Project Brain is the **structured project workspace and configuration state**, not a
-chatbot. A project is:
+## Runtime architecture
 
 ```
-Project
-  id, name, owner (session/access code)
-  versions[]                 each version = one canonical spec + its SHA-256
-    spec                     canonical monstera.spec.json (validated by the engine)
-    validation               issues[] from the engine (path, rule, message)
-  assets[]                   uploaded files: sha256, role, licence/provenance record
-  builds[]                   one per (version, platform): state, run id, artifacts, Device Lab report
-  conformance[]              per version: cross-platform behavioural result (G2+)
+Browser (static files only)
+  UI thread (React)                      Web Worker (module worker)
+    Project Brain editors                  Pyodide 0.29.5, Python 3.13.2
+    Spec view, validation panel              /repo/tools/monstera/**   engine, unmodified
+    Preview canvas                           /repo/spec/schema/*       schemas
+    Determinism, Native evidence, Export     /repo/apps, /repo/spec/**  templates, samples, goldens
+    Developer Integration                  glue.py: validate / plan / oracle / preview, returns JSON
+  localStorage: one draft                  Messages: JSON text in, JSON out
 ```
 
-The workspace sections map one-to-one onto parts of the canonical spec, so the UI never holds
-configuration the spec can't express:
+- The engine package is placed at its repository-relative path inside Pyodide's virtual file system, so `REPO_ROOT`, template
+  lookup and scenario lookup behave as in the CLI. "Unmodified" means the bundled files equal the repository files byte for
+  byte (LF form, as git stores them).
+- Pyodide is self-hosted and pinned (`pyodide` 0.29.5). Pages make no request outside their own origin; the M2 acceptance
+  asserts this.
+- Validation, canonical serialization, the SHA-256 shown in the Spec view, the preview simulation, the determinism check
+  (oracle against recorded goldens) and the source ZIP (generated Android and iOS projects plus `MONSTERA-MANIFEST.json`) all
+  run in the worker through the engine.
+- Studio holds no configuration that the schema cannot express. Editors are derived from `spec/schema/*.schema.json`; values
+  display in game units while the spec keeps raw Q16.16 integers.
 
-| Studio section | Canonical spec section | Phase |
-|---|---|---|
-| Create project | `project.id`, `displayName`, `identifier`, `version`, `targets` | G4 shell |
-| Application characteristics | `project.platforms.*`, `game.orientation`, `game.targetFps`, `game.palette` | G4 shell |
-| Gameplay and mechanics | `game` mechanics vocabulary (defined in G2/G3) | G4 after G3 schema |
-| Input methods | `game.input` (extended by the G2 input contract) | G4 |
-| Native capabilities | `capabilities` (new: haptics, motion, … defined in G5) | G5 |
-| Assets | `assets` manifest (new in G3) + uploaded files | G4/G3 |
+## Build pipeline
 
-**Forms come from the schema.** The UI renders fields from `spec/schema/*.schema.json`
-(type, enum, min/max, pattern, description), so a schema change is reflected in Studio without
-hand-written form logic for each field. Cross-field (semantic) rules stay in the engine.
+`npm run build` in `studio/`:
 
-**Live validation**: every edit is validated by the engine. Two options, decided in G4:
+1. `scripts/build-engine.mjs` packs the repository engine, schemas, templates and golden scenarios into `public/engine/`
+   and copies the pinned Pyodide runtime into `public/pyodide/` (both git-ignored).
+2. `scripts/build-inventory.mjs` reads the repository and writes git-ignored files under `src/generated/`:
+   the Developer Integration inventory (stamped with the commit), the native conformance report index and the native app
+   evidence index. It also copies the native app evidence files to `public/evidence/native-apps/` (git-ignored).
+3. `tsc --noEmit`, then `vite build` emits `dist/`: static files, relative base (`./`), hostable by any static server.
 
-| Option | How | Trade-off |
-|---|---|---|
-| A (default) | API `POST /validate` (debounced) | Simple, authoritative; one round trip per edit |
-| B | Same stdlib engine running in the browser via Pyodide; the server re-validates before generate/build | Instant and offline; ~10 MB first load. Not duplication: it is the same Python files |
+Everything in `dist/` is derived from the repository at the commit being built. Nothing is typed into the app by hand.
 
-## Request flows
+## Data flow and browser storage
 
-### Configure → validate → save
+- **Draft.** One draft spec lives in memory and in `localStorage` under `monstera.studio.draft.v1` (spec text plus the
+  starting template and its origin). It is restored and re-validated on reload. Nothing is uploaded; clearing site data
+  deletes it. There is no account and no server-side project store.
+- **Import.** A user-selected `monstera.spec.json` is read in the page, parsed with the engine's strict JSON rules and
+  validated. Refused files (duplicate keys, BOM, invalid UTF-8, non-object) leave the draft unchanged.
+- **Export.** The canonical spec (engine serialization) and the source ZIP are generated locally and downloaded. An unedited
+  template exports byte-identically to the committed file; an edited draft exports without recorded goldens.
+- **Kiro.** Kiro reads and writes the same `monstera.spec.json` in the repository through the developer's normal workflow
+  (editor, git, MCP tools). Studio never talks to Kiro. Developer Integration is a static inventory of `.kiro/` and
+  `tools/monstera-mcp/server.py` stamped with the commit it was read at, plus copyable prompts.
 
-1. The UI edits the draft spec. Debounced `POST /api/validate {spec}` → engine `validate_value` → issues.
-2. `POST /api/projects/{id}/versions {spec}` stores a version only if it is valid; the response includes the canonical SHA-256.
+## Native evidence flow
 
-### Generate and download source
+Two separate, read-only evidence displays appear on the Determinism page. They prove different things.
 
-`POST /api/projects/{id}/versions/{sha}/source`:
-1. The API calls the engine `plan()` in memory. Nothing is written to the repository.
-2. The plan's files are streamed as `<project-id>-<sha12>-source.zip`, including
-   `MONSTERA-MANIFEST.json`.
-3. The zip is deterministic (sorted entries, fixed timestamps), so the same spec gives the same bytes.
+1. **Simulation conformance** (`monstera conformance` reports, `docs/evidence/**/*.report.json`): the Kotlin and Swift
+   simulation cores reproduce the oracle's checkpoints.
+2. **Native app build and launch** (`docs/evidence/m3-native-apps/<android|ios>/<game>/`): the generated apps were compiled
+   and launched on an Android emulator and an iOS simulator (Device Lab adapters).
 
-### Build (never in the browser, never on the API host)
+For (2), the build script evaluates each game and platform with `studio/scripts/native-evidence.mjs`, which fails closed:
 
-`POST /api/projects/{id}/versions/{sha}/builds {platforms: ["android","ios"]}`:
-1. The API stores the spec and assets as a **build bundle** and creates a single-use download token.
-2. The API calls GitHub `workflow_dispatch` on `studio-build.yml` with inputs `bundle_url`,
-   `bundle_sha256`, `platforms`, `build_id`. There's no spec payload in the inputs, which have
-   size limits and appear in logs.
-3. Workers download the bundle, check its SHA-256, and run `monstera validate` and `monstera generate`.
-   Then the Device Lab `build` op runs (Gradle on Linux, xtool on macOS), followed by
-   `install`/`launch`/`screenshot`/`logs`/`report` on the emulator/simulator.
-4. Workers upload artifacts: APK, iOS Simulator `.app` zip, Device Lab report, screenshots, conformance result.
-5. The API polls the run (`GET /repos/.../actions/runs/{id}`) and records state transitions:
-   `queued → running → succeeded | failed | cancelled | timed_out`.
-6. The UI polls `GET /api/builds/{id}`. `GET /api/builds/{id}/artifacts/{name}` is proxied by the API,
-   because GitHub artifact downloads need a token.
+- The spec SHA-256 is computed from the canonical spec file (`apps/*/monstera.spec.json`,
+  `spec/samples/lantern-run/monstera.spec.json`), never copied from `SUMMARY.md`.
+- `report.json` and `results.jsonl` must parse, name the right target and game, record each operation once in a plausible
+  order, and agree with each other. Otherwise nothing from them counts.
+- The app's own log lines (Android `MonsteraSpec`/`MonsteraRuntime`, iOS `:spec`/`:runtime`) are parsed strictly. The logged
+  spec hash must equal the canonical hash, the app must confirm its bundled specification (iOS also the decoded one), and
+  the runtime must log ticks from the same process.
+- Each result is shown separately: native compilation, installation and launch, exact specification hash, bundled
+  integrity, runtime observed, screenshot (a valid PNG) and logs.
+- Labels: `COMPILED` needs a successful build bound to the canonical hash by the app's own log. `SIMULATOR-TESTED` also needs
+  successful install, launch, screenshot, log capture and an observed runtime. Anything weaker is `GENERATED`.
+  `PHYSICAL-DEVICE-TESTED` is never derived from this evidence.
+- In the browser, evidence is attached to a draft only when the draft's validated SHA-256 equals the evidence's canonical
+  SHA-256. An edited draft, or an imported file with a different hash, gets no label from it, even for the same project;
+  editing back to the original hash restores it. Same-project evidence for a different hash is described as belonging to an
+  earlier or different specification.
+- The screenshot, `report.json`, `results.jsonl` and `logs.txt` are copied to the static output and linked.
 
-### Inspect results
+**What this evidence does not prove:** Phase 1 verifies build, install, launch and runtime startup only. It does not show
+gameplay, input handling, restart, performance, haptics or physical-device behaviour. The committed APK and `.app` build
+artifacts named in the reports are not stored. Studio cannot produce or refresh this evidence; it is recorded by Device Lab
+and CI and committed.
 
-Studio shows, per build:
-- Device Lab `report.json` lines (op, status, detail).
-- Screenshots.
-- Conformance (G2+).
-- The manifest summary: files, SHA-256, provenance.
+## Trust boundaries and security model
 
-The verification label shown is the highest level with evidence: GENERATED, COMPILED or
-SIMULATOR-TESTED. Studio never shows PHYSICAL-DEVICE-TESTED, because workers have no physical
-devices.
+- **No server, no accounts, no secrets.** The deployed artifact is static files. There is no credential to leak. The bundle
+  contains only repository content and public Pyodide files.
+- **User input** (imported specs, edited fields) is untrusted data. It is parsed as JSON and validated by the engine; it is
+  never evaluated as code. Rendered values go through React (no `dangerouslySetInnerHTML`).
+- **Same-origin only.** The page and worker load nothing from other origins and make no network requests during use.
+- **Local state.** The draft in `localStorage` is readable by scripts on the same origin. Studio holds no sensitive data.
+- **Evidence integrity.** Evidence is committed to git and reviewed there. Studio checks internal consistency and the
+  spec hash binding, but it cannot prove that a committed log was not fabricated; the provenance rules
+  (`04-generation-and-provenance.md`) apply to whoever commits it.
+- **Hosting.** Vercel is the selected static host. No deployment exists yet. When it does, response headers (CSP,
+  `Cross-Origin` policies as Pyodide requires) must be decided and verified then; none are claimed now.
 
-## Downloadable artifacts
+## Explicitly not part of Studio
 
-| Artifact | Producer | Notes |
-|---|---|---|
-| Source zip (Android + iOS + manifest) | API (engine `plan`) | Always available; no build needed |
-| Android debug APK | Linux worker | Installable on any Android device with sideloading enabled |
-| iOS Simulator `.app` (zip) | macOS worker | Runs in Xcode's Simulator only. **A signed iPhone build needs the user's own Apple ID** (xtool or Xcode locally); Studio documents this and does not sign |
-| Device Lab report + screenshots | Workers | Evidence for the result page |
+Railway or any API service, Postgres or any database, authentication, server-side generation, GitHub dispatch, remote
+build workers, build buttons, a chatbot, a live Kiro connection, signing apps for users, and shipping Studio inside a
+generated app.
 
-## API surface (initial)
+## Remaining M3 work
 
-| Method & path | Purpose |
-|---|---|
-| `GET /api/schema` | Schema files (forms are generated from them) |
-| `POST /api/validate` | Engine validation of a draft spec |
-| `GET/POST /api/projects`, `GET /api/projects/{id}` | Project Brain CRUD |
-| `POST /api/projects/{id}/versions` | Store a validated canonical version |
-| `POST /api/projects/{id}/assets` | Upload an asset (type and size checked, hashed) |
-| `POST /api/projects/{id}/versions/{sha}/source` | Deterministic source zip |
-| `POST /api/projects/{id}/versions/{sha}/builds` | Dispatch build workers |
-| `GET /api/builds/{id}`, `GET /api/builds/{id}/artifacts/{name}` | Status, results, proxied downloads |
-| `GET /api/health` | Engine version, schema digests, worker reachability |
-
-## Security
-
-| Threat | Control |
-|---|---|
-| Code injection through spec strings into Kotlin/Swift/XML | Strict schema (patterns, enums, closed objects) plus the engine's escaping in its emitters. It's the same boundary the CLI uses, and adversarial tests already cover it |
-| Malicious assets | Allow-listed types (PNG, WAV/OGG, JSON), size caps, re-encode images, store by SHA-256, never execute |
-| Abuse of macOS build minutes | Access code (shared with judges in the Devpost form), per-session rate limit, global concurrency cap (proposed: 2 builds), build timeout |
-| Token leakage | Fine-grained GitHub token: **Actions read/write on the worker repository only**. Railway secret, never logged or returned |
-| Bundle tampering | Single-use, expiring bundle URL + SHA-256 checked by the worker |
-| Public logs | Workers on a public repo have public logs. Specs are not secret, but users must be told. Option: a private worker repository (see open decisions) |
-| Apple SDK licensing | Workers never transfer Apple SDK material between machines (G0 rule kept); iOS builds run only on macOS |
-| CORS / CSRF | API allows only the Vercel origin; state-changing requests need the session token |
-
-## Deployment validation (before the URL goes into the submission)
-
-The hosting plan is preferred **subject to validation**. Each item must be demonstrated, with evidence in `docs/evidence/studio/`:
-
-1. Vercel serves the SPA from a production URL.
-2. Railway runs the API; `GET /api/health` reports the engine version and schema digests that match `main`.
-3. `POST /api/validate` returns the same issues as the CLI for the fixture cases.
-4. The source zip from the API equals the CLI `generate` output, checked via the manifest SHA-256.
-5. A build dispatched from the hosted Studio produces an APK and a simulator `.app`, with Device Lab reports.
-6. Secrets: the frontend bundle and network responses contain no token (automated grep in CI).
-7. Rate limit and concurrency cap rejects are observed.
-
-## Phasing
-
-| Phase | Studio scope |
-|---|---|
-| G4-shell (parallel with G2) | SPA + API skeleton, schema-driven forms for today's schema, validate, source zip, deploy to Vercel/Railway |
-| G4 (after G3 schema) | Gameplay/mechanics sections, asset manager, build dispatch + results, downloads |
-| G5 | Native capabilities section, Device Lab report views, conformance views |
-| G6 | Polish, access control for judges, final deployment validation |
-
-## Open decisions (G4)
-
-| # | Decision | Proposal |
-|---|---|---|
-| S1 | Live validation: API (A) or Pyodide (B) | A first; B if time allows |
-| S2 | Workers in this public repo or a private worker repo | Public repo for the hackathon (free macOS minutes, auditable), with a visible notice; private repo after |
-| S3 | API framework | Starlette or FastAPI, pinned exactly |
-| S4 | Access control for judges | Shared access code in the Devpost form |
+Vercel deployment, a Playwright smoke test and CI job, a secret scan of the production bundle, and the final adversarial
+review. See `.kiro/specs/g4-studio/tasks.md`.

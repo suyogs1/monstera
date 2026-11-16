@@ -270,7 +270,50 @@ export default async function ui({ page, origin, check, committed, TEMPLATES }) 
   check("handoff prompts name the draft's own spec path and existing MCP tools", prompts.length === 2 && prompts.every((p) => p.includes("spec/samples/pumpkin-blaster/monstera.spec.json")) && prompts[0].includes("validate_spec"));
   check("agent game-author and tool validate_spec appear in the inventory", (await page.locator("main").innerText()).includes("game-author") && (await page.locator('th code:text("validate_spec")').count()) === 1);
 
-  // ---- Studio has no Kiro/chat/build affordances
+  // ---- M3-A: committed native build and simulator-launch evidence, bound to the exact spec SHA-256
+  await page.selectOption('[data-testid="template-select"]', OFFICIAL.id);
+  await settled();
+  await open("determinism");
+  const nativeLabel = (p) => text(`[data-testid="native-app-label-${p}"]`);
+  const nativeOf = (sel) => page.locator('[data-testid="native-apps"]').getAttribute(sel);
+  check("the official template shows SIMULATOR-TESTED native evidence for both platforms",
+    (await nativeOf("data-matched")) === "yes" && (await nativeLabel("android")) === "SIMULATOR-TESTED" && (await nativeLabel("ios")) === "SIMULATOR-TESTED");
+  const rows = await page.$$eval('[data-testid="native-app-android"] tr[data-check]', (r) => r.map((x) => `${x.getAttribute("data-check")}=${x.getAttribute("data-state")}`));
+  check("each platform reports compilation, launch, hash, integrity, runtime, screenshot and logs separately, all verified",
+    rows.length === 7 && rows.every((r) => r.endsWith("=pass")), rows.join(" "));
+  const shot = await page.evaluate(async () => {
+    const img = document.querySelector('[data-testid="native-app-shot-android"]');
+    await img.decode().catch(() => {});
+    return img.naturalWidth;
+  });
+  check("the simulator screenshot is viewable in Studio", shot > 0, `${shot}px wide`);
+  const hrefs = await page.$$eval('[data-testid^="native-app-links-"] a', (a) => a.map((x) => x.href));
+  const statuses = await Promise.all(hrefs.map((h) => page.evaluate(async (u) => (await fetch(u)).status, h)));
+  check("report, results, logs and screenshot links of both platforms resolve", hrefs.length === 8 && statuses.every((s) => s === 200), statuses.join(","));
+  const scope = await text('[data-testid="native-apps"]');
+  check("the panel states that Phase 1 proves launch and runtime startup only and claims no physical device",
+    scope.includes("build, install, launch and runtime startup only") && scope.includes("gameplay, input handling") && scope.includes("No physical device was used, and none is claimed"));
+  await edit(["game", "runtime", "lives"], 9);
+  await open("determinism");
+  check("an edited draft shows no native evidence, GENERATED, and says the evidence is for a different specification",
+    (await nativeOf("data-matched")) === "no" && (await nativeOf("data-label")) === "GENERATED" &&
+    (await page.locator('[data-testid="native-app-android"]').count()) === 0 && (await text('[data-testid="native-apps-none"]')).includes("does not apply to this draft"));
+  await edit(["game", "runtime", "lives"], 5);
+  await open("determinism");
+  check("editing back to the original SHA-256 restores the evidence", (await nativeOf("data-matched")) === "yes");
+  await importFile("lantern.json", committed["lantern-run"]);
+  await settled();
+  await open("determinism");
+  check("an imported file whose canonical SHA-256 matches shows its game's evidence",
+    (await nativeOf("data-matched")) === "yes" && (await text('[data-testid="native-apps-headline"]')).includes("spec/samples/lantern-run/monstera.spec.json"));
+  const lantern = JSON.parse(committed["lantern-run"]);
+  lantern.game.runtime.lives += 1;
+  await importFile("lantern-edited.json", JSON.stringify(lantern, null, 2) + "\n");
+  await settled();
+  await open("determinism");
+  check("an imported file of the same project with a different hash gets no evidence", (await nativeOf("data-matched")) === "no" && (await nativeOf("data-label")) === "GENERATED");
+  await page.selectOption('[data-testid="template-select"]', OFFICIAL.id);
+  await settled();  // ---- Studio has no Kiro/chat/build affordances
   const body = (await page.locator("body").innerText()).toLowerCase();
   check("no build button and no chat input exist", !(await page.locator('button:has-text("Build")').count()) && !(await page.locator("textarea").count()) && !body.includes("ask kiro"));
 }

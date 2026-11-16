@@ -1,7 +1,7 @@
 # G4 design: MONSTERA Studio (static, engine in the browser)
 Status: **APPROVED 2026-11-12. M0 spike done; spec v4 schema FROZEN (visual batch).** (Kiro Spec; not a `monstera.spec.json`.)
 `architecture/MONSTERA-STUDIO.md` (G1.5) is superseded where it describes a Railway API, Postgres,
-GitHub dispatch and server-side builds. It is updated in M3.
+GitHub dispatch and server-side builds. It was rewritten in M3-A to the implemented architecture.
 
 ## Architecture
 ```
@@ -26,6 +26,7 @@ and scenario lookup behave exactly as in the CLI.
   from the repository files at build time, never copied by hand.
 - D6 Studio is never shipped inside generated apps.
 
+- D7 (M3-A) Native app evidence is bound to the exact canonical spec SHA-256, computed from the spec file at build time. A build report has no hash of its own, so `COMPILED` also requires the app's own log of the canonical hash; evidence that cannot be bound fails closed to `GENERATED`. Studio shows evidence read-only and never builds. Rationale: an edited draft must never inherit a template's label.
 ## M0 findings that shape M1 and M2
 1. **Edited drafts have no recorded goldens.** `scenario.load_for_project` and `scenario.check` refuse a
    scenario whose recorded spec hash differs, which is correct for the CLI. For an edited draft, the export
