@@ -25,6 +25,37 @@ Later commits only add or change files under `docs/` and `.kiro/specs/g4-studio/
 
 Both the Android and the iOS job do this on their own runner. The Android and iOS compare reports are byte-identical for each game. The fresh trees are removed at the end of each job. In those two jobs the official games are built only from the fresh trees; the committed `apps/<id>/android|ios` are not built there (they are byte-identical, see below).
 
+## Generation inputs
+
+- The canonical JSON spec (`apps/<id>/monstera.spec.json`) is the primary game definition.
+- `monstera generate` also loads the committed golden scenario files for the project automatically: `cmd_generate` calls `scenario.load_for_project(result.spec["project"]["id"], result.sha256, store)`. That reads `spec/scenarios/<project-id>/*.scenario.json`, validates each against the canonical spec (a stale scenario or one without checkpoints raises an error) and checks the recorded oracle checkpoints before embedding them in the generated native resources. These files are therefore inputs to the generator-owned output.
+- The frozen schema, generator, templates and toolchain are shared infrastructure, identical for both games.
+- The golden scenarios are game-specific data, not game-specific generator or template changes. They were not modified by G6-B.
+
+Reproducibility claim: byte-identical generator-owned output from the same committed inputs (spec, scenarios, schema, generator, templates, toolchain).
+
+SHA-256 of the committed scenario files at the PR head (computed from the git blobs):
+
+Pumpkin Blaster (`spec/scenarios/pumpkin-blaster/`)
+
+| File | SHA-256 |
+|---|---|
+| `frame-jitter-60hz.scenario.json` | `6cc1d0ff2fe9c96474fb280e9b83e7722412dfdc4e8edf4b684aad9976988697` |
+| `idle-defence.scenario.json` | `524db3d94c37df01fd662c521c77fd566e28818c30a32c5967415c1efd4420eb` |
+| `sweep-and-fire.scenario.json` | `f75d7c20882c37286c2615fa62e8c0271d4231809a4479a004058ab1ecfad1e5` |
+| `volley-cap.scenario.json` | `3bf43245e56ee3ed05c7abfd7d72f4bc37b9e28d6f6396278520b316a6552907` |
+| `win-1000.scenario.json` | `2c1d452e294bfebdd0a4c769cd4db4e1ff3ab87504e40d28594dd1c3f8685ad8` |
+
+Trick or Treat Rush (`spec/scenarios/trick-or-treat-rush/`)
+
+| File | SHA-256 |
+|---|---|
+| `candy-chase.scenario.json` | `6435976726e416d62bd6519ad30ecc8e2058ad14c78b07c673c24810513a98f8` |
+| `dodge-run.scenario.json` | `4da764f7fb6b7f6006ac4228747a6b251f380b1ebd1ec75e5c604a95d8d023cb` |
+| `frame-jitter.scenario.json` | `d18c4ff85646740738b8017c48c6356a9ba0e25b71a44210bc098f7260a0e0b1` |
+| `hand-lane-zero.scenario.json` | `c507160acd788e917f74381111f3a3b62dd9f9f265756fb6fe025695c652dbcf` |
+| `idle-run.scenario.json` | `fa981610306961784084a84b72c4875c55211668a095fd7ebea9fcf2d2fba685` |
+| `lane-input-order.scenario.json` | `c04f4607787603e07c587a53bdff94d8a86f6ba77df543c8f4d48481d363c56e` |
 ## Results (all PASS)
 
 | Game | Canonical spec SHA-256 | Fresh manifest SHA-256 (= committed) | Files compared | Differences |
