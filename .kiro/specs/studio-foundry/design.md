@@ -1,5 +1,5 @@
 # Studio Foundry: design
-Status: **DRAFT for owner approval (2026-11-16).** Requirements: `requirements.md`. Tasks: `tasks.md`.
+Status: **ACCEPTED by the owner (2026-11-16), implementation underway.** Decisions D1 to D8 are recorded below. Requirements: `requirements.md`. Tasks: `tasks.md`.
 Everything marked "verified" was read from the repository at `71c77e4`. Everything else is a proposal.
 
 ## 0. The central constraint and the decision it forces
@@ -153,13 +153,13 @@ Implemented in `studio/schemas/assets.schema.json` and `checks.ts`; id rules in 
 `kind` is `image` or `audio`. `category`: `sprite`, `background`, `ui`, `sfx`, `music`. `durationMs` is 0 for images. Files live at `assets/<id>/<file>`; `file` is a bare name (`^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$`, no path separators, no leading dot).
 
 **Asset id allocation rule.**
-- Studio generates ids as `asset-` plus the sequence number zero-padded to four digits (`asset-0007`, `asset-12345`). `nextSeq` is the next unused number. Allocation uses it and increases it by one (`allocateAssetId`). The counter never decreases.
+- Studio generates ids as `asset-` plus the sequence number zero-padded to four digits (`asset-0007`, `asset-12345`), for sequence numbers 1 to 99999 (`asset-0001` to `asset-99999`). `nextSeq` is the next unused number; the schema allows 1 to 100000, and 100000 means the counter is used up. `formatAssetId`, `assetSeq`, `allocateAssetId`, the schema and the tests use this one range (`asset-100000` and `asset-0000` are not generated ids). Allocation uses it and increases it by one (`allocateAssetId`). The counter never decreases.
 - Deleting an asset leaves `nextSeq` unchanged (`removeAsset`). Importing a project keeps the stored `nextSeq` as it is; it is never recomputed from the assets present.
 - The validator rejects a manifest whose `nextSeq` is not above the numeric suffix of every generated-form id it contains, so the next allocation cannot collide with an existing asset. The earlier check (`nextSeq` above the number of assets) was replaced because it missed a collision such as `asset-0009` with `nextSeq` 3.
 - Limit, stated plainly: the ids of deleted assets are not stored. A hand-edited `nextSeq` that was lowered but still exceeds every existing suffix cannot be detected, and Studio does not claim to reconstruct that history. Storing deleted ids would need a new manifest field and a version bump; it is not planned.
-- Ids that are not in the generated form (hand-written packs) are allowed and take no part in the counter. `nextSeq` is at most 100000, so the counter stops (`allocateAssetId` throws) rather than produce an invalid manifest.
+- Ids that are not in the generated form (hand-written packs) are allowed and take no part in the counter. When `nextSeq` is above 99999, `allocateAssetId` throws instead of producing an invalid manifest.
 
-**License.** `provenance.license` is an SPDX license identifier or expression (identifiers joined by `AND`, `OR` or `WITH`, `LicenseRef-*` allowed) or `proprietary-owned`, which cannot be combined with others. Only the shape is checked. Studio does not verify the identifier against the SPDX list, whether a license is valid for the asset, or that the user owns the asset; `origin` and `license` are declarations by the user.
+**License.** `provenance.license` is `proprietary-owned` (which cannot be combined with anything) or an SPDX-style value. The version 1 subset is deliberately small: one flat sequence of identifier tokens (letters, digits, `.`, `+`, `-`) joined by single spaces and the upper-case operators `AND`, `OR`, `WITH`; an operator word cannot be an identifier; `LicenseRef-*` and `DocumentRef-*` are ordinary tokens. **Parenthesized expressions are unsupported in v1 and are rejected**, because supporting them needs a real expression parser and a grammar test suite that this milestone does not justify; a user with a compound expression writes it flat or uses a `LicenseRef-` identifier and describes it in `notes`. This is a shape check, not an SPDX parser: Studio does not verify identifiers against the SPDX list, check the exception after `WITH`, normalize case, judge whether a license is valid for the asset, or verify that the user owns it. `origin` and `license` are declarations by the user.
 ### 3.5 `animations.json`
 ```json
 { "schema": "monstera.studio.animations", "version": 1,
