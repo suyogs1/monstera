@@ -1,11 +1,11 @@
 import { describe, expect, it } from "vitest";
 import type { Baseline } from "../draft/store";
 import { openDb, STORE_META, STORE_PROJECTS, type IdbConnection } from "./idb";
-import { LEGACY_KEY, LEGACY_PROJECT_KEY, MIGRATION_META_KEY, migrateLegacyDraft, type MigrationResult, type MigrationRuntime } from "./migrate";
+import { LEGACY_KEY, LEGACY_PROJECT_KEY, MIGRATION_META_KEY, migrateLegacyDraft, readLegacyDraft, type MigrationResult, type MigrationRuntime } from "./migrate";
 import { MANIFEST_NAMES, serializeManifest } from "./manifests";
-import { sha256Hex, type ProjectRecord } from "./record";
+import { ACTIVE_KEY, buildRecord, sha256Hex, type ProjectRecord } from "./record";
 import { ProjectStore } from "./store";
-import { baseline, manifestsFor, newFactory, pumpkinText, rawAll, rawGet, rawPut, readOnlyStorage, wrapConnection, type Hooks } from "./testkit";
+import { baseline, edited, manifestsFor, newFactory, pumpkinText, rawAll, rawGet, rawPut, readOnlyStorage, wrapConnection, type Hooks } from "./testkit";
 
 const draft = (docText = pumpkinText, b: unknown = baseline, version: unknown = 1): string => JSON.stringify({ version, docText, baseline: b });
 const runtime = (items: Record<string, string>, extra: Partial<Omit<MigrationRuntime, "legacy">> = {}): MigrationRuntime & { legacy: ReturnType<typeof readOnlyStorage> } => ({
@@ -181,8 +181,125 @@ describe("refusal and empty cases", () => {
     expect(await rawAll(factory, STORE_META)).toEqual([]);
   });
 
-  it("a legacy storage that throws on read is treated as no draft", async () => {
+  it("a legacy storage that throws on read is an explicit unreadable outcome, never nothing-to-migrate", async () => {
+    const factory = newFactory();
     const rt = { ...runtime({}), legacy: { getItem: (): string | null => { throw new Error("denied"); } } };
-    expect(await migrateLegacyDraft(await connect(newFactory()), rt)).toEqual({ status: "nothing-to-migrate" });
+    const result = await migrateLegacyDraft(await connect(factory), rt);
+    expect(result.status).toBe("unreadable");
+    expect(result.status === "unreadable" && result.message).toContain("denied");
+    expect(await projects(factory)).toEqual([]);
+    expect(await flag(factory)).toBeUndefined();
+  });
+});
+
+const crashAtFinalTransaction = (log?: string[]): Hooks => ({
+  onCall: (s, m, mode, args) => {
+    if (s === STORE_META && m === "put" && mode === "readwrite" && (args[0] as { key: string }).key === MIGRATION_META_KEY) throw new Error("crash");
+    void log;
+  },
+});
+const active = (f: IDBFactory): Promise<unknown> => rawGet(f, STORE_META, ACTIVE_KEY);
+
+describe("A: a divergent existing migration record is never overwritten", () => {
+  const diverge: [string, (r: ProjectRecord) => Promise<ProjectRecord>][] = [
+    ["name", async (r) => ({ ...r, name: "renamed later" })],
+    ["baseline", async (r) => ({ ...r, baseline: { ...r.baseline, label: "other label" } })],
+    ["spec text (a valid record with another spec)", async (r) => ({ ...(await buildRecord({ ...edited(3, LEGACY_PROJECT_KEY), name: r.name, baseline: r.baseline }, 1, sha256Hex)) })],
+    ["manifest text", async (r) => ({ ...r, manifests: { ...r.manifests, gameplay: r.manifests.gameplay + " " } })],
+    ["unreadable manifest", async (r) => ({ ...r, manifests: { ...r.manifests, gameplay: "{bad" } })],
+    ["extra field", async (r) => ({ ...r, extra: 1 }) as ProjectRecord],
+  ];
+  it.each(diverge)("%s differs, writeSeq stays 1: failed/record-diverged, every stored field unchanged, no flag, no pointer", async (_n, change) => {
+    const factory = newFactory();
+    const rt = runtime({ [LEGACY_KEY]: draft() });
+    await migrateLegacyDraft(await connect(factory, crashAtFinalTransaction()), rt);
+    const original = (await projects(factory))[0] as ProjectRecord;
+    expect(original.writeSeq).toBe(1);
+    const changed = await change(original);
+    expect(changed.writeSeq).toBe(1);
+    await rawPut(factory, STORE_PROJECTS, changed);
+    const stored = await projects(factory);
+    let puts = 0;
+    const result = await migrateLegacyDraft(await connect(factory, { onCall: (s, m, mode) => { if (mode === "readwrite" && m === "put") puts++; void s; } }), rt);
+    expect(result.status === "failed" && result.reason).toBe("record-diverged");
+    expect(result.status === "failed" && result.legacy.specText).toBe(pumpkinText);
+    expect(puts).toBe(0);
+    expect(await projects(factory)).toEqual(stored); // byte for byte, every field
+    expect(JSON.stringify(await projects(factory))).toBe(JSON.stringify(stored));
+    expect(await flag(factory)).toBeUndefined();
+    expect(await active(factory)).toBeUndefined();
+  });
+});
+
+describe("B: activation happens only after verification, together with the flag", () => {
+  it("the record write carries no pointer; flag and pointer are written together in one final transaction", async () => {
+    const factory = newFactory();
+    const txs: string[][] = [];
+    let cur: string[] = [];
+    const hooks: Hooks = {
+      onTransaction: (_n, mode) => { if (mode === "readwrite") { cur = []; txs.push(cur); } },
+      onCall: (s, m, mode, args) => { if (mode === "readwrite") cur.push(`${s}.${m}${m === "put" ? ":" + ((args[0] as { key?: string; projectKey?: string }).key ?? (args[0] as { projectKey?: string }).projectKey) : ""}`); },
+    };
+    expect((await migrateLegacyDraft(await connect(factory, hooks), runtime({ [LEGACY_KEY]: draft() }))).status).toBe("migrated");
+    expect(txs).toEqual([
+      ["projects.get", "projects.put:legacy-draft-v1"],
+      [`meta.put:${MIGRATION_META_KEY}`, `meta.put:${ACTIVE_KEY}`],
+    ]);
+    expect(await active(factory)).toEqual({ key: ACTIVE_KEY, value: LEGACY_PROJECT_KEY });
+  });
+
+  it("a verification failure leaves flag and pointer absent, and an existing pointer unchanged", async () => {
+    const tamper: Hooks = { tamperGet: (s, r, mode) => (s === STORE_PROJECTS && mode === "readonly" ? { ...(r as object), specText: "{}" } : r) };
+    const f1 = newFactory();
+    expect((await migrateLegacyDraft(await connect(f1, tamper), runtime({ [LEGACY_KEY]: draft() }))).status).toBe("failed");
+    expect(await flag(f1)).toBeUndefined();
+    expect(await active(f1)).toBeUndefined();
+    const f2 = newFactory();
+    const pre = { key: ACTIVE_KEY, value: "preexisting" };
+    await rawPut(f2, STORE_META, pre);
+    expect((await migrateLegacyDraft(await connect(f2, tamper), runtime({ [LEGACY_KEY]: draft() }))).status).toBe("failed");
+    expect(await active(f2)).toEqual(pre);
+    expect(await flag(f2)).toBeUndefined();
+  });
+
+  it("a crash between the record write and the final transaction leaves no pointer and no flag", async () => {
+    const factory = newFactory();
+    const first = await migrateLegacyDraft(await connect(factory, crashAtFinalTransaction()), runtime({ [LEGACY_KEY]: draft() }));
+    expect(first.status).toBe("failed");
+    expect((await projects(factory)).length).toBe(1);
+    expect(await active(factory)).toBeUndefined();
+    expect(await flag(factory)).toBeUndefined();
+  });
+
+  it("after the crash the next boot verifies first and only then writes both entries; the project then loads", async () => {
+    const factory = newFactory();
+    await migrateLegacyDraft(await connect(factory, crashAtFinalTransaction()), runtime({ [LEGACY_KEY]: draft() }));
+    const unverified = new ProjectStore({ factory }); // no migration configured: the unverified record is NOT opened as the active project
+    await unverified.open();
+    expect(unverified.getState().status).toBe("unsaved");
+    expect(unverified.getState().project).toBeNull();
+    expect(await active(factory)).toBeUndefined();
+
+    const store = new ProjectStore({ factory, migration: runtime({ [LEGACY_KEY]: draft() }) });
+    await store.open();
+    expect(store.getState().migration).toEqual({ status: "migrated", projectKey: LEGACY_PROJECT_KEY, resumed: true });
+    expect(store.getState().status).toBe("saved");
+    expect(store.getState().project?.specText).toBe(pumpkinText);
+    expect(await active(factory)).toBeDefined();
+    expect(await flag(factory)).toBeDefined();
+  });
+});
+
+describe("readLegacyDraft (pure, read-only, no IndexedDB connection)", () => {
+  const rt = (items: Record<string, string>, extra: Partial<Omit<MigrationRuntime, "legacy">> = {}) => runtime(items, extra);
+  it("recovered / none / refused / unreadable / inputs-unavailable", async () => {
+    const ok = await readLegacyDraft(rt({ [LEGACY_KEY]: draft() }));
+    expect(ok.status === "recovered" && ok.snapshot.specText).toBe(pumpkinText);
+    expect(ok.status === "recovered" && ok.snapshot.projectKey).toBe(LEGACY_PROJECT_KEY);
+    expect(await readLegacyDraft(rt({}))).toEqual({ status: "none" });
+    expect((await readLegacyDraft(rt({ [LEGACY_KEY]: "{not json" }))).status).toBe("refused");
+    expect(await readLegacyDraft({ ...rt({}), legacy: { getItem: () => { throw new Error("denied"); } } })).toMatchObject({ status: "unreadable" });
+    const noInputs = await readLegacyDraft(rt({ [LEGACY_KEY]: draft() }, { defaultManifests: () => { throw new Error("engine commit unknown"); } }));
+    expect(noInputs).toMatchObject({ status: "refused", reason: "inputs-unavailable" });
   });
 });

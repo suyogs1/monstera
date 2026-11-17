@@ -69,6 +69,27 @@ for (const f of files.filter((x) => x.p.startsWith("spec/scenarios/"))) {
   if (!have.has(ref)) throw new Error(`${f.p} references ${ref}, which is not in the bundle`);
 }
 
+// Engine identity: the repository commit whose engine files were just packed (git rev-parse HEAD), not the Kiro
+// inventory stamp. HEAD (not "last commit touching the engine paths") because it needs no history depth, so it is also
+// right in shallow clones, and the bundled files ARE the tree at HEAD. `dirty` is true when any packed input differs
+// from HEAD, so a bundle built from uncommitted engine files never claims a clean commit. Same fallback convention as
+// build-inventory.mjs: no git => VERCEL_GIT_COMMIT_SHA (dirty unknown, recorded as false). Neither => the build fails;
+// there is no placeholder.
+function engineIdentity() {
+  const isSha = (s) => /^[0-9a-f]{40}$/.test(s);
+  let sha = "";
+  try {
+    sha = execFileSync("git", ["rev-parse", "HEAD"], { cwd: repo, stdio: ["ignore", "pipe", "ignore"] }).toString("utf8").trim();
+    const dirty = execFileSync("git", ["status", "--porcelain", "--", ...wanted.map((f) => relative(repo, f).split(sep).join("/"))], { cwd: repo, stdio: ["ignore", "pipe", "ignore"] }).toString("utf8").trim().length > 0;
+    if (!isSha(sha)) throw new Error(`git rev-parse HEAD returned ${JSON.stringify(sha)}`);
+    return { gitCommit: sha, dirty, source: "git" };
+  } catch (e) {
+    const env = (process.env.VERCEL_GIT_COMMIT_SHA ?? "").trim().toLowerCase();
+    if (isSha(env)) return { gitCommit: env, dirty: false, source: "VERCEL_GIT_COMMIT_SHA" };
+    throw new Error(`cannot determine the engine git commit (git: ${e instanceof Error ? e.message : e}; VERCEL_GIT_COMMIT_SHA is not a 40-hex commit). The build refuses to write a placeholder.`);
+  }
+}
+const engine = engineIdentity();
 const outEngine = join(studio, "public", "engine");
 const outPyodide = join(studio, "public", "pyodide");
 rmSync(outEngine, { recursive: true, force: true });
@@ -76,7 +97,7 @@ rmSync(outPyodide, { recursive: true, force: true });
 mkdirSync(outEngine, { recursive: true });
 mkdirSync(outPyodide, { recursive: true });
 
-const bundle = JSON.stringify({ files, templates: TEMPLATES });
+const bundle = JSON.stringify({ engine, files, templates: TEMPLATES });
 writeFileSync(join(outEngine, "engine-bundle.json"), bundle);
 
 const py = join(studio, "node_modules", "pyodide");
@@ -88,6 +109,6 @@ if (version !== "0.29.5") throw new Error(`Pyodide must be 0.29.5 (design D5), f
 const brotli = (b) => brotliCompressSync(b).length;
 const sizes = [["engine-bundle.json", bundle.length, brotli(Buffer.from(bundle))],
   ...runtime.map((n) => { const b = readFileSync(join(outPyodide, n)); return [`pyodide/${n}`, b.length, brotli(b)]; })];
-console.log(`engine bundle: ${files.length} files; pyodide ${version}`);
+console.log(`engine bundle: ${files.length} files; engine commit ${engine.gitCommit.slice(0, 7)}${engine.dirty ? " (dirty)" : ""} via ${engine.source}; pyodide ${version}`);
 for (const [n, raw, br] of sizes) console.log(`  ${n.padEnd(28)} raw ${raw}  brotli ${br}`);
 console.log(`  total brotli ${sizes.reduce((a, s) => a + s[2], 0)}`);

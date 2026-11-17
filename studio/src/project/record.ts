@@ -185,6 +185,7 @@ function checkStored(stored: unknown, expectedSeq: number): WriteOutcome {
   if (typeof f === "number" && Number.isInteger(f) && f > RECORD_FORMAT) return "newer-format";
   const seq = stored["writeSeq"];
   if (f !== RECORD_FORMAT || typeof seq !== "number" || !Number.isInteger(seq)) return "foreign";
+  if (expectedSeq === 0) return "conflict"; // "no record expected": any stored record under this key blocks the write
   return seq === expectedSeq ? "written" : "conflict";
 }
 
@@ -214,9 +215,20 @@ export async function writeRecord(conn: IdbConnection, record: ProjectRecord, ex
 
 // ---------------------------------------------------------------- recovery
 
+/** Recovery data of one record or snapshot. */
 export interface Recovery {
+  /** 1: the project fields only. 2: also a `stored` section (a preserved stored record next to the in-memory project). */
   format: number;
   kind: "monstera.studio.recovery";
+  specText: string | null;
+  baseline: unknown;
+  manifests: Record<string, string>;
+  /** Present (and format is 2) only when an in-memory project is exported while a different stored record is preserved. */
+  stored?: StoredRecovery;
+}
+
+export interface StoredRecovery {
+  projectKey: string | null;
   specText: string | null;
   baseline: unknown;
   manifests: Record<string, string>;
@@ -237,3 +249,13 @@ export function recoveryFromRaw(raw: unknown): Recovery {
   const manifests = Object.fromEntries(Object.keys(m).sort().filter((k) => typeof m[k] === "string").map((k) => [k, m[k] as string]));
   return { format: RECORD_FORMAT, kind: "monstera.studio.recovery", specText: typeof o["specText"] === "string" ? o["specText"] : null, baseline: o["baseline"] ?? null, manifests };
 }
+
+/** The in-memory project first, the preserved stored record under `stored` (format 2). */
+export function recoveryWithStored(s: ProjectSnapshot, storedRaw: unknown): Recovery {
+  const { specText, baseline, manifests } = recoveryFromRaw(storedRaw);
+  const key = isObject(storedRaw) && typeof storedRaw["projectKey"] === "string" ? storedRaw["projectKey"] : null;
+  return { ...recoveryFromSnapshot(s), format: 2, stored: { projectKey: key, specText, baseline, manifests } };
+}
+
+/** Stable text of a stored record's content, writeSeq ignored: two records with equal text hold the same project. */
+export const contentText = (r: ProjectRecord): string => stableText({ ...r, writeSeq: 0 });
