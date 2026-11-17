@@ -217,14 +217,55 @@ export async function writeRecord(conn: IdbConnection, record: ProjectRecord, ex
 
 /** Recovery data of one record or snapshot. */
 export interface Recovery {
-  /** 1: the project fields only. 2: also a `stored` section (a preserved stored record next to the in-memory project). */
+  /**
+   * 1: the project fields only. 2: also a `stored` section (a preserved stored record next to the in-memory project).
+   * 3: the LIVE draft exported by ProjectController while it holds edits ProjectStore has not seen (see RECOVERY_FORMAT_LIVE).
+   * Every older field keeps its meaning in every later format; readers must ignore fields they do not know.
+   */
   format: number;
   kind: "monstera.studio.recovery";
   specText: string | null;
   baseline: unknown;
   manifests: Record<string, string>;
-  /** Present (and format is 2) only when an in-memory project is exported while a different stored record is preserved. */
+  /** Present only when an in-memory project is exported while a different stored record is preserved (formats 2 and 3). */
   stored?: StoredRecovery;
+  /**
+   * Format 3 only. true: `specText` is the engine's canonical text of a spec the engine validated (ok). false: it is the
+   * draft serialized with JSON.stringify because the engine has no validated canonical text for it; it may be invalid.
+   */
+  specTextCanonical?: boolean;
+  /** Format 3 only. What the engine said about the current revision of the draft (never a claim that it was validated). */
+  specValidation?: RecoveryValidation;
+}
+
+export interface RecoveryValidation {
+  /** false when the engine has not answered for the current revision, in which case ok and parsed are null. */
+  checked: boolean;
+  ok: boolean | null;
+  parsed: boolean | null;
+  issueCount: number;
+  /** The first MAX_RECOVERY_ISSUES issues. */
+  issues: { path: string; code: string; message: string }[];
+}
+
+/** Format of a recovery file exported from the live draft (adds specTextCanonical and specValidation to format 2). */
+export const RECOVERY_FORMAT_LIVE = 3;
+export const MAX_RECOVERY_ISSUES = 20;
+
+/** A format 3 recovery of the live in-memory project. `stored` is the preserved stored record, when there is one. */
+export function recoveryFromLive(
+  s: ProjectSnapshot,
+  canonical: boolean,
+  validation: { ok: boolean; parsed: boolean; issues: { path: string; code: string; message: string }[] } | null,
+  stored?: StoredRecovery | null,
+): Recovery {
+  const v: RecoveryValidation = validation === null
+    ? { checked: false, ok: null, parsed: null, issueCount: 0, issues: [] }
+    : {
+      checked: true, ok: validation.ok, parsed: validation.parsed, issueCount: validation.issues.length,
+      issues: validation.issues.slice(0, MAX_RECOVERY_ISSUES).map((i) => ({ path: i.path, code: i.code, message: i.message })),
+    };
+  return { ...recoveryFromSnapshot(s), format: RECOVERY_FORMAT_LIVE, specTextCanonical: canonical, specValidation: v, ...(stored ? { stored } : {}) };
 }
 
 export interface StoredRecovery {

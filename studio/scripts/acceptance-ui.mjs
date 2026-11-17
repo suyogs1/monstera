@@ -1,6 +1,7 @@
 // UI-level acceptance checks, run by acceptance.mjs against the production build.
 // Every check observes the rendered page; edits go through the same store the controls use.
 import { readFileSync } from "node:fs";
+import { activeRecord, indicatorKind, livesOf, resetStudioStorage, storedProjects, waitSaved } from "./storage.mjs";
 
 const OFFICIAL = { id: "pumpkin-blaster", name: "Pumpkin Blaster" };
 
@@ -11,10 +12,16 @@ export default async function ui({ page, origin, check, committed, TEMPLATES }) 
   const open = async (id) => { await page.evaluate((h) => { window.location.hash = h; }, `/${id}`); await page.waitForTimeout(50); };
 
   // ---- shell and validation
-  await page.evaluate(() => localStorage.clear());
-  await page.reload();
+  // Deterministic start: no project, preference or eviction marker from an earlier session (IndexedDB + localStorage).
+  await resetStudioStorage(page);
   await page.waitForFunction(() => window.ready === true);
   await settled();
+  await waitSaved(page);
+  const firstRun = await storedProjects(page);
+  check("after the reset the first boot creates exactly one project in IndexedDB and shows it as saved",
+    firstRun.length === 1 && (await text('[data-testid="persistence-status"]')).startsWith("Project: saved"), `${firstRun.length} record(s)`);
+  check("the spec verdict and the project save state are separate indicators",
+    (await text('[data-testid="topbar-state"]')).startsWith("Spec: valid") && !(await text('[data-testid="topbar-state"]')).includes("saved"));
   check("Studio starts on an official game and shows the engine's verdict", (await text('[data-testid="project-name"]')).includes(OFFICIAL.name) &&
     (await text('[data-testid="validation-status"]')).startsWith("Valid"), await text('[data-testid="validation-status"]'));
 
@@ -60,15 +67,74 @@ export default async function ui({ page, origin, check, committed, TEMPLATES }) 
   check("an invalid edit lists the engine's issues and disables export",
     (await text('[data-testid="validation-status"]')).includes("issue") && (await page.locator('[data-testid="issues"] li').count()) >= 1 &&
     (await page.locator('[data-testid="export-button"]').isDisabled()));
+  // An invalid draft is never shown as Saved, is not written, raises the browser prompt, and stays recoverable.
+  check("an invalid edit is shown as Unsaved with the validation reason, never Saved",
+    (await indicatorKind(page)) === "unsaved" && (await text('[data-testid="persistence-reason"]')).includes("validation errors"), await text('[data-testid="persistence-status"]'));
+  await page.waitForTimeout(900); // longer than the save debounce: still nothing may be written
+  const afterInvalid = await activeRecord(page);
+  check("the invalid draft was not written to IndexedDB (the stored project keeps the last valid lives)", afterInvalid !== null && livesOf(afterInvalid) === 5 && (await indicatorKind(page)) === "unsaved");
+  const unloadPrompt = (await page.evaluate(() => { const e = new Event("beforeunload", { cancelable: true }); window.dispatchEvent(e); return e.defaultPrevented; }));
+  check("closing with an unsaved invalid draft raises the browser prompt", unloadPrompt === true);
+  const [recDl] = await Promise.all([page.waitForEvent("download"), page.click('[data-testid="recovery-export-button"]')]);
+  const recovery = JSON.parse(readFileSync(await recDl.path(), "utf8"));
+  check("Export recovery data preserves the invalid draft, marks it non-canonical and keeps manifests and baseline",
+    recDl.suggestedFilename().startsWith("monstera-recovery-") && recovery.format === 3 && recovery.specTextCanonical === false &&
+    recovery.specValidation?.ok === false && JSON.parse(recovery.specText).game.runtime.lives === 0 &&
+    Object.keys(recovery.manifests).length === 7 && recovery.baseline !== null, `${recDl.suggestedFilename()} format ${recovery.format}`);
   await edit(["game", "runtime", "lives"], 5);
+  await waitSaved(page);
+  check("once the draft is valid again it is saved and the browser prompt is not raised",
+    (await page.evaluate(() => { const e = new Event("beforeunload", { cancelable: true }); window.dispatchEvent(e); return e.defaultPrevented; })) === false);
 
-  // ---- persistence across reload
+  // ---- persistence across reload (IndexedDB)
   await edit(["game", "runtime", "lives"], 7);
+  check("a validated edit is not Saved until the IndexedDB write has committed", (await indicatorKind(page)) !== "saved" || (await activeRecord(page))?.specText.includes("\"lives\": 7"));
+  await waitSaved(page);
+  const committedRecord = await activeRecord(page);
+  check("Saved means the active project's record exists in IndexedDB with the edit", committedRecord !== null && livesOf(committedRecord) === 7);
   await page.reload();
   await page.waitForFunction(() => window.ready === true);
   await settled();
+  await waitSaved(page);
   const restored = await page.evaluate(() => window.session.store.getState().doc.game.runtime.lives);
-  check("the draft survives a reload (localStorage) and is re-validated by the engine", restored === 7 && (await text('[data-testid="project-name"]')).includes("edited"));
+  check("the saved project survives a reload from IndexedDB, shows Saved and is re-validated by the engine", restored === 7 && (await text('[data-testid="project-name"]')).includes("edited") &&
+    livesOf(await activeRecord(page)) === 7);
+  // ---- undo and redo: controls and keyboard (history starts empty after a reload)
+  check("Undo and Redo start disabled after a reload", (await page.locator('[data-testid="undo-button"]').isDisabled()) && (await page.locator('[data-testid="redo-button"]').isDisabled()));
+  await edit(["game", "runtime", "lives"], 8);
+  check("an edit enables Undo", !(await page.locator('[data-testid="undo-button"]').isDisabled()));
+  const livesNow = () => page.evaluate(() => window.session.store.getState().doc.game.runtime.lives);
+  await page.click('[data-testid="undo-button"]');
+  check("Undo restores the previous value and enables Redo", (await livesNow()) === 7 && !(await page.locator('[data-testid="redo-button"]').isDisabled()));
+  await page.click('[data-testid="redo-button"]');
+  check("Redo reapplies the edit", (await livesNow()) === 8);
+  const mod = (await page.evaluate(() => /mac/i.test(navigator.userAgentData?.platform || navigator.platform))) ? "Meta" : "Control";
+  await page.locator('.brand').click();
+  await page.keyboard.press(`${mod}+Z`);
+  check(`${mod}+Z undoes outside a text field`, (await livesNow()) === 7);
+  await page.keyboard.press(`${mod}+Shift+Z`);
+  check(`${mod}+Shift+Z redoes`, (await livesNow()) === 8);
+  await edit(["game", "runtime", "lives"], 7);
+  await waitSaved(page);
+  // ---- simulated quota failure: the write throws QuotaExceededError, the banner appears, nothing is shown as Saved
+  await page.evaluate(() => {
+    window.__put = IDBObjectStore.prototype.put;
+    IDBObjectStore.prototype.put = function () { throw new DOMException("simulated quota", "QuotaExceededError"); };
+  });
+  await edit(["game", "runtime", "lives"], 9);
+  await page.waitForSelector('[data-testid="banner-quota"]', { timeout: 15000 });
+  check("a quota failure shows the storage-full banner, a failed indicator and never Saved",
+    (await indicatorKind(page)) === "failed" && (await text('[data-testid="banner-quota"]')).includes("Browser storage is full") &&
+    (await page.locator('[data-testid="banner-quota"][role="alert"]').count()) === 1, await text('[data-testid="persistence-status"]'));
+  check("the failed write left the stored project at its last committed value", livesOf(await activeRecord(page)) === 7);
+  check("closing after a failed save raises the browser prompt", (await page.evaluate(() => { const e = new Event("beforeunload", { cancelable: true }); window.dispatchEvent(e); return e.defaultPrevented; })) === true);
+  await page.evaluate(() => { IDBObjectStore.prototype.put = window.__put; });
+  await page.click('[data-testid="persist-retry-save"]');
+  await waitSaved(page);
+  check("after space is back, Retry saving stores the edit and the banner goes away",
+    livesOf(await activeRecord(page)) === 9 && (await page.locator('[data-testid="banner-quota"]').count()) === 0);
+  await edit(["game", "runtime", "lives"], 7);
+  await waitSaved(page);
   page.once("dialog", (d) => d.accept());
   await page.click('[data-testid="reset-button"]');
   await page.waitForFunction(() => window.session.store.getState().doc.game.runtime.lives === 5);

@@ -19,6 +19,8 @@ import { Spawns } from "./ui/sections/Spawns";
 import { StatusBadge } from "./ui/ModuleCard";
 import { ModulePage } from "./ui/ModulePage";
 import { SpecView } from "./ui/SpecView";
+import { Guards } from "./ui/Guards";
+import { PersistenceBanner } from "./ui/PersistenceStatus";
 import { TopBar } from "./ui/TopBar";
 import { ValidationPanel } from "./ui/ValidationPanel";
 
@@ -64,7 +66,9 @@ export function App() {
   return (
     <div className="app">
       <a className="skip-link" href="#main">Skip to content</a>
+      <Guards />
       <TopBar />
+      <PersistenceBanner />
       <div className="body">
         <nav className={`nav${menuOpen ? " open" : ""}`} aria-label="Studio modules" onKeyDown={onNavKey}>
           <button ref={toggle} type="button" className="nav-toggle" aria-expanded={menuOpen} aria-controls="module-list" data-testid="nav-toggle" onClick={() => setMenuOpen(!menuOpen)}>

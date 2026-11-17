@@ -7,6 +7,7 @@ import { existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from "no
 import { extname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { chromium } from "playwright-core";
+import { resetStudioStorage } from "./storage.mjs";
 
 const here = fileURLToPath(new URL(".", import.meta.url));
 const studio = join(here, "..");
@@ -31,8 +32,7 @@ const errors = [];
 page.on("pageerror", (e) => errors.push(String(e)));
 page.on("console", (m) => { if (m.type() === "error") errors.push(m.text()); });
 await page.goto(origin + "/");
-await page.evaluate(() => localStorage.clear());
-await page.reload();
+await resetStudioStorage(page); // IndexedDB + localStorage reset, then reload (see storage.mjs)
 await page.waitForFunction(() => window.ready === true, null, { timeout: 60000 });
 
 const checks = [];

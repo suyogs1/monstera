@@ -28,7 +28,7 @@ import type { Json } from "../schema/schema";
 import { History } from "./history";
 import { validateManifest, type ManifestMap, type ManifestName } from "./manifests";
 import { specRuntimeFacts } from "./defaults";
-import { recoveryFromSnapshot, sameValue, sha256Hex, specProjectId, stableText, type ProjectSnapshot, type Sha256 } from "./record";
+import { recoveryFromLive, sameValue, sha256Hex, specProjectId, stableText, type ProjectSnapshot, type Sha256, type StoredRecovery } from "./record";
 import type {
   EstimateResult, LegacyState, PersistenceResult, ProjectStore, ProjectStoreStatus, ReloadResult, StartProjectResult, StoreDetail,
 } from "./store";
@@ -439,16 +439,24 @@ export class ProjectController {
 
   exportRecovery(opts: { stored?: boolean; legacy?: boolean } = {}): string | null {
     if (opts.legacy) return this.deps.legacyRecovery?.() ?? null;
-    const fromStore = this.deps.projects.exportRecovery(opts.stored ? { stored: true } : {});
-    if (fromStore !== null || opts.stored) return fromStore;
-    // Nothing is held by ProjectStore (e.g. the open project could not be handed over): export the live draft as it is.
+    if (opts.stored) return this.deps.projects.exportRecovery({ stored: true });
     const s = this.deps.draft.getState();
+    const live = s.doc !== null && this.manifests !== null && this.projectKey !== null && s.baseline !== null;
+    // Edits ProjectStore has not been given (or has not committed) exist only in the draft: export THEM, never the older
+    // snapshot ProjectStore holds. Otherwise ProjectStore's own recovery (format 1 or 2) is the authority.
+    if (!live || !this.dirty) {
+      const fromStore = this.deps.projects.exportRecovery();
+      if (fromStore !== null || !live) return fromStore;
+    }
     if (s.doc === null || this.manifests === null || this.projectKey === null || s.baseline === null) return null;
     const canonical = this.canonicalOf(s);
-    return stableText(recoveryFromSnapshot({
+    const checked = s.validatedRevision === s.revision ? s.validation : null;
+    const storedText = this.deps.projects.exportRecovery({ stored: true });
+    const stored = storedText === null ? null : (JSON.parse(storedText) as StoredRecovery);
+    return stableText(recoveryFromLive({
       projectKey: this.projectKey, name: this.name ?? s.baseline.label, projectId: specProjectId(canonical ?? "") ?? this.manifests.project.projectId,
       specText: canonical ?? JSON.stringify(s.doc), baseline: s.baseline, manifests: this.manifests,
-    }));
+    }, canonical !== null, checked, stored === null ? null : { projectKey: stored.projectKey, specText: stored.specText, baseline: stored.baseline, manifests: stored.manifests }));
   }
 
   /** Recovery from quarantine / newer record: saves the live project as a NEW project under a fresh key and activates it. */
