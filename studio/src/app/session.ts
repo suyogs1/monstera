@@ -5,7 +5,7 @@ import { Selection } from "../preview/select";
 import { EngineClient } from "../engine/client";
 import type { DraftValidation, TemplateInfo } from "../engine/protocol";
 import { ProjectController, timeoutSchedule, type Schedule } from "../project/controller";
-import { buildDefaultManifestsOrThrow, migrationDefaultManifests, specRuntimeFacts } from "../project/defaults";
+import { buildDefaultManifestsOrThrow, INITIALIZATION_RUNTIME, migrationDefaultManifests, specRuntimeFacts } from "../project/defaults";
 import { LEGACY_KEY, type CanonicalSpec } from "../project/migrate";
 import type { ManifestMap } from "../project/manifests";
 import { sha256Hex, specProjectId, stableText, type ProjectSnapshot } from "../project/record";
@@ -132,26 +132,32 @@ export class Session {
     return { canonicalText: v.canonicalText, sha256: v.sha256, runtime: specRuntimeFacts(v.canonicalText) };
   }
 
-  /** Default manifests of a NEW project from the engine's canonical text. Throws when an input is unknown (never invents one). */
-  private async defaultsFor(v: DraftValidation): Promise<{ projectId: string; manifests: ManifestMap }> {
+  /**
+   * Default manifests of a NEW project from the engine's canonical text. Throws when an input is unknown (never invents one).
+   * A VALIDATED spec supplies its own runtime.lives / runtime.winScore. An invalid one (ok: false) cannot be trusted for
+   * them, so the gameplay manifest is initialized with INITIALIZATION_RUNTIME and marked provisional: the document itself
+   * is untouched, and the controller aligns the gameplay manifest with the validated spec before the first write.
+   */
+  private async defaultsFor(v: DraftValidation): Promise<{ projectId: string; manifests: ManifestMap; provisionalGameplay: boolean }> {
     const canonical = v.canonicalText;
     if (!v.parsed || canonical === null) throw new Error("the engine produced no canonical text for this specification");
     const projectId = specProjectId(canonical);
     if (projectId === null) throw new Error("the specification has no project.id");
     const sha = await sha256Hex(canonical);
     if (v.sha256 !== sha) throw new Error("the engine SHA-256 differs from the SHA-256 of its canonical text");
+    const provisionalGameplay = v.ok !== true;
     const manifests = buildDefaultManifestsOrThrow({
       projectId, specBaseSha256: sha, specCurrentSha256: sha, engine: { gitCommit: this.engine.engine?.gitCommit },
-      runtime: specRuntimeFacts(canonical) ?? { lives: null, winScore: null },
+      runtime: provisionalGameplay ? INITIALIZATION_RUNTIME : specRuntimeFacts(canonical) ?? { lives: null, winScore: null },
     });
-    return { projectId, manifests };
+    return { projectId, manifests, provisionalGameplay };
   }
 
   /** Content of a freshly loaded document becomes a new project (new key; every earlier project record is kept). */
   private async startProjectFrom(doc: Json, baseline: Baseline, v: DraftValidation, name: string): Promise<void> {
-    const { manifests } = await this.defaultsFor(v);
+    const { manifests, provisionalGameplay } = await this.defaultsFor(v);
     const projectKey = this.projects.newProjectKey();
-    const saving = this.project.replaceProject({ projectKey, name, manifests, persist: true }, () => this.store.load(doc, baseline, v));
+    const saving = this.project.replaceProject({ projectKey, name, manifests, persist: true, provisionalGameplay }, () => this.store.load(doc, baseline, v));
     saving.catch(() => undefined); // the store reports save failures through its state
   }
 

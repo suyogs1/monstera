@@ -1,5 +1,7 @@
 // Increment D: Session boot, persistence ownership, canonical text, history and save races, with fake-indexeddb and a fake
 // engine. Event-ordered: the only clock is ManualSchedule (session.testkit.ts); nothing sleeps on wall time.
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { DraftStore } from "../draft/store";
 import { STORE_META, STORE_PROJECTS } from "../project/idb";
@@ -401,6 +403,125 @@ describe("parseable but invalid specs are never persisted or migrated", () => {
   });
 });
 
+// An imported document whose runtime.lives / runtime.winScore break the schema must still open as an editable, unsaved
+// draft with its values intact. The bounds come from the real spec schema; the fake engine answers like the real one.
+describe("imports with schema-invalid runtime.lives / runtime.winScore", () => {
+  type Bound = { minimum: number; maximum: number };
+  const gameSchema = JSON.parse(readFileSync(join(__dirname, "..", "..", "..", "spec", "schema", "game.schema.json"), "utf8")) as unknown;
+  const findBound = (node: unknown, key: string): Bound => {
+    const stack: unknown[] = [node];
+    while (stack.length > 0) {
+      const n = stack.pop();
+      if (typeof n !== "object" || n === null) continue;
+      const props = (n as { properties?: Record<string, Partial<Bound>> }).properties;
+      const b = props?.[key];
+      if (props?.["winScore"] && props["lives"] && typeof b?.minimum === "number" && typeof b.maximum === "number") return { minimum: b.minimum, maximum: b.maximum };
+      stack.push(...Object.values(n));
+    }
+    throw new Error(`no schema bounds for runtime.${key}`);
+  };
+  const LIVES = findBound(gameSchema, "lives");
+  const WIN = findBound(gameSchema, "winScore");
+  type Rt = { game: { runtime: { lives: number; winScore: number } } };
+  const runtimeOf = (t: string): Rt["game"]["runtime"] | null => {
+    try { return (JSON.parse(t) as Rt).game.runtime; } catch { return null; }
+  };
+  const outOfBounds = (t: string): boolean => {
+    const r = runtimeOf(t);
+    if (!r) return false;
+    return r.lives < LIVES.minimum || r.lives > LIVES.maximum || r.winScore < WIN.minimum || r.winScore > WIN.maximum;
+  };
+  const docWith = (lives: number, winScore: number): string => {
+    const d = JSON.parse(pumpkinText) as Rt;
+    d.game.runtime.lives = lives;
+    d.game.runtime.winScore = winScore;
+    return JSON.stringify(d);
+  };
+
+  it("uses the real schema bounds", () => {
+    expect(LIVES).toEqual({ minimum: 1, maximum: 99 });
+    expect(WIN).toEqual({ minimum: 0, maximum: 1000000 });
+  });
+
+  it.each([
+    ["lives below its minimum", LIVES.minimum - 1, 1000],
+    ["lives above its maximum", LIVES.maximum + 1, 1000],
+    ["winScore below its minimum", 5, WIN.minimum - 1],
+    ["winScore above its maximum", 5, WIN.maximum + 1],
+    ["both out of bounds", LIVES.maximum + 1, WIN.minimum - 1],
+  ])("%s: opens as an unsaved draft with its values intact, and saves once corrected", async (_n, badLives, badWin) => {
+    const factory = newFactory();
+    const engine = new FakeEngine();
+    engine.invalid = outOfBounds;
+    const h = await boot({ factory }, engine);
+    const before = await records(factory);
+    const seen: string[] = [];
+    h.session.project.subscribe(() => seen.push(h.session.project.getState().status));
+
+    expect(await h.session.importText(docWith(badLives, badWin), "imported.json")).toEqual({ ok: true });
+    await drain(h);
+    const doc = h.session.store.getState().doc as unknown as Rt;
+    expect(doc.game.runtime).toMatchObject({ lives: badLives, winScore: badWin }); // nothing clamped or replaced
+    expect(h.session.store.getState().baseline?.label).toBe("imported.json");
+    const v = h.session.store.getState().validation;
+    expect(v).toMatchObject({ ok: false, parsed: true });
+    expect(v?.issues.length).toBeGreaterThan(0); // the errors stay visible
+    expect(runtimeOf(v?.canonicalText ?? "")).toMatchObject({ lives: badLives, winScore: badWin });
+    expect(h.session.project.getState()).toMatchObject({ status: "unsaved", gate: "waiting-for-valid-spec", dirty: true, gameplayProvisional: true });
+    expect(await records(factory)).toEqual(before);
+    expect(seen).not.toContain("saved");
+
+    setLives(h, 4); // the user corrects the invalid fields; the engine now says ok
+    setWin(h, 750);
+    await drain(h);
+    expect(h.session.store.getState().validation).toMatchObject({ ok: true });
+    expect(h.session.project.getState()).toMatchObject({ status: "saved", gate: "idle", dirty: false, gameplayProvisional: false });
+    const after = await records(factory);
+    expect(after).toHaveLength(before.length + 1);
+    const rec = after.find((r) => r.name === "imported.json") as ProjectRecord;
+    expect(rec.specText).toBe(h.session.store.getState().validation?.canonicalText);
+    expect(runtimeOf(rec.specText)).toMatchObject({ lives: 4, winScore: 750 });
+    expect(rec.specSha256).toBe(await sha256Hex(rec.specText));
+    expect(projectManifest(rec).spec).toMatchObject({ baseSha256: rec.specSha256, currentSha256: rec.specSha256 });
+    // the stored gameplay manifest agrees with the validated spec, not with any initialization value
+    const g = parseManifest("gameplay", rec.manifests.gameplay);
+    expect(g.ok && g.value).toMatchObject({ lives: { start: 4 }, score: { winScore: 750 }, collectibles: [], enemies: [] });
+    expect(projectManifest(rec).derivation.gameplay).toBe(false);
+  });
+
+  it("a valid import is unchanged: its own runtime values become the gameplay defaults and it saves at once", async () => {
+    const factory = newFactory();
+    const engine = new FakeEngine();
+    engine.invalid = outOfBounds;
+    const h = await boot({ factory }, engine);
+    expect(await h.session.importText(docWith(7, 300), "fine.json")).toEqual({ ok: true });
+    await drain(h);
+    expect(h.session.project.getState()).toMatchObject({ status: "saved", dirty: false });
+    expect(h.session.project.getState().manifests?.gameplay).toMatchObject({ lives: { start: 7 }, score: { winScore: 300 } });
+    const rec = (await records(factory)).find((r) => r.name === "fine.json") as ProjectRecord;
+    const g = parseManifest("gameplay", rec.manifests.gameplay);
+    expect(g.ok && g.value).toMatchObject({ lives: { start: 7 }, score: { winScore: 300 } });
+  });
+
+  it("a gameplay manifest the user committed while the spec was invalid is kept as committed", async () => {
+    const factory = newFactory();
+    const engine = new FakeEngine();
+    engine.invalid = outOfBounds;
+    const h = await boot({ factory }, engine);
+    expect(await h.session.importText(docWith(0, 1000), "imported.json")).toEqual({ ok: true });
+    await drain(h);
+    const m = h.session.project.getState().manifests;
+    if (!m) throw new Error("no manifests");
+    expect(h.session.project.actions.commitManifest("gameplay", { ...m.gameplay, lives: { start: 9 } })).toEqual({ ok: true, changed: true });
+    setLives(h, 4);
+    await drain(h);
+    expect(h.session.project.getState().status).toBe("saved");
+    const rec = (await records(factory)).find((r) => r.name === "imported.json") as ProjectRecord;
+    const g = parseManifest("gameplay", rec.manifests.gameplay);
+    expect(g.ok && g.value.lives.start).toBe(9);
+  });
+});
+
 describe("history: spec and manifests as one snapshot", () => {
   it("undo restores doc and manifests together, redo re-applies both, a new edit clears redo, and the result is persisted", async () => {
     const factory = newFactory();
@@ -518,6 +639,8 @@ describe("history: spec and manifests as one snapshot", () => {
     const noRuntime = JSON.stringify({ project: { id: "x" }, game: {} });
     const r = await h.session.importText(noRuntime, "bad.json");
     expect(r.ok).toBe(false);
+    // the reason is carried into the message (it used to be lost and read only ". Your draft was not changed.")
+    expect(r.ok === false && r.message).toMatch(/^cannot build default manifests: missing runtime\.lives, runtime\.winScore\. Your draft was not changed\.$/);
     expect(h.session.store.getState()).toBe(before);
   });
 });

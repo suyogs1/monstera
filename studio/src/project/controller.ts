@@ -27,6 +27,7 @@ import type { DraftStore } from "../draft/store";
 import type { Json } from "../schema/schema";
 import { History } from "./history";
 import { validateManifest, type ManifestMap, type ManifestName } from "./manifests";
+import { specRuntimeFacts } from "./defaults";
 import { recoveryFromSnapshot, sameValue, sha256Hex, specProjectId, stableText, type ProjectSnapshot, type Sha256 } from "./record";
 import type {
   EstimateResult, LegacyState, PersistenceResult, ProjectStore, ProjectStoreStatus, ReloadResult, StartProjectResult, StoreDetail,
@@ -63,6 +64,11 @@ export interface ProjectViewState {
   gate: SaveGate;
   /** An edit exists that ProjectStore has not been given yet or has not committed. */
   dirty: boolean;
+  /**
+   * The gameplay manifest still holds initialization values (the spec was invalid when the project was created). They
+   * are replaced by the validated spec's runtime values before the first write; a UI must not present them as the spec's.
+   */
+  gameplayProvisional: boolean;
 }
 
 export type CommitResult = { ok: true; changed: boolean } | { ok: false; message: string };
@@ -120,6 +126,12 @@ export class ProjectController {
   private suspended = false;
   private restoring = false;
   private inFlight: Promise<unknown> = Promise.resolve();
+  /**
+   * The gameplay manifest object a project was initialized with while its spec was invalid (Session.defaultsFor), or
+   * null. Compared by IDENTITY: a manifest the user commits is a new object and is never touched; undo back to the
+   * initialization object (structural sharing keeps the reference) is aligned again. Cleared on project replacement.
+   */
+  private provisionalGameplay: ManifestMap["gameplay"] | null = null;
   private view: ProjectViewState;
 
   readonly actions: ProjectActions;
@@ -162,6 +174,7 @@ export class ProjectController {
       hint: st.hint, migration: st.migration, legacy: st.legacy,
       projectKey: this.projectKey, name: this.name, manifests: this.manifests,
       canUndo: this.history.canUndo, canRedo: this.history.canRedo, gate: this.gate, dirty: this.dirty,
+      gameplayProvisional: this.provisionalGameplay !== null && this.manifests?.gameplay === this.provisionalGameplay,
     };
   }
 
@@ -262,17 +275,32 @@ export class ProjectController {
       this.refresh();
       return status();
     }
-    const p = m.project;
+    const aligned = this.alignProvisionalGameplay(m, canonical);
+    if (aligned === null) { this.gate = "waiting-for-valid-spec"; this.refresh(); return status(); }
+    const p = aligned.project;
     const compiled = p.derivation.levels || p.derivation.gameplay;
-    let manifests = m;
+    let manifests = aligned;
     if (p.projectId !== id || (!compiled && (p.spec.baseSha256 !== sha || p.spec.currentSha256 !== sha))) {
-      manifests = { ...m, project: { ...p, projectId: id, spec: compiled ? p.spec : { ...p.spec, baseSha256: sha, currentSha256: sha } } };
-      this.manifests = manifests; // identity/hash follow the spec; not a user edit, so no history entry
+      manifests = { ...aligned, project: { ...p, projectId: id, spec: compiled ? p.spec : { ...p.spec, baseSha256: sha, currentSha256: sha } } };
     }
+    if (manifests !== m) this.manifests = manifests; // identity, hash and provisional gameplay follow the spec; not a user edit, so no history entry
     this.submittedSeq = seq;
     this.gate = "idle";
     this.refresh();
     return this.deps.projects.save({ projectKey: key, name: this.name ?? baseline.label, projectId: id, specText: canonical, baseline, manifests });
+  }
+
+  /**
+   * A gameplay manifest still holding initialization values (identity check) takes runtime.lives / runtime.winScore of
+   * the VALIDATED canonical text before it is written. Only Studio's sidecar manifest changes; the spec is never touched.
+   * Null when those values cannot form a valid gameplay manifest (nothing is written then).
+   */
+  private alignProvisionalGameplay(m: ManifestMap, canonical: string): ManifestMap | null {
+    if (this.provisionalGameplay === null || m.gameplay !== this.provisionalGameplay) return m;
+    const rt = specRuntimeFacts(canonical);
+    if (rt === null || !Number.isInteger(rt.lives) || !Number.isInteger(rt.winScore)) return null;
+    const gameplay: ManifestMap["gameplay"] = { ...m.gameplay, lives: { start: rt.lives as number }, score: { winScore: rt.winScore as number } };
+    return validateManifest("gameplay", gameplay).ok ? { ...m, gameplay } : null;
   }
 
   /** Best-effort: starts the write of a pending edit now (pagehide, visibilitychange, before reload/retry). */
@@ -306,7 +334,7 @@ export class ProjectController {
    * cleared. With persist the new content is submitted at once (new project, import, reset); without it the project is
    * clean (it came from storage). Returns the write's status when persisting.
    */
-  async replaceProject(p: { projectKey: string; name: string; manifests: ManifestMap; persist: boolean }, apply: () => void): Promise<ProjectStoreStatus | null> {
+  async replaceProject(p: { projectKey: string; name: string; manifests: ManifestMap; persist: boolean; provisionalGameplay?: boolean }, apply: () => void): Promise<ProjectStoreStatus | null> {
     this.cancelTimer?.();
     this.cancelTimer = undefined;
     this.suspended = true;
@@ -314,6 +342,7 @@ export class ProjectController {
     this.projectKey = p.projectKey;
     this.name = p.name;
     this.manifests = p.manifests;
+    this.provisionalGameplay = p.provisionalGameplay === true ? p.manifests.gameplay : null;
     this.lastDoc = this.deps.draft.getState().doc;
     this.history.clear();
     if (!p.persist) {
@@ -431,9 +460,11 @@ export class ProjectController {
     }
     const id = specProjectId(canonical) as string;
     const sha = await this.sha256(canonical);
-    const p = this.manifests.project;
+    const aligned = this.alignProvisionalGameplay(this.manifests, canonical);
+    if (aligned === null) return { ok: false, reason: "invalid-snapshot", message: "The gameplay manifest cannot be aligned with the specification, so it cannot be saved as a new project." };
+    const p = aligned.project;
     const compiled = p.derivation.levels || p.derivation.gameplay;
-    const manifests: ManifestMap = { ...this.manifests, project: { ...p, projectId: id, spec: compiled ? p.spec : { ...p.spec, baseSha256: sha, currentSha256: sha } } };
+    const manifests: ManifestMap = { ...aligned, project: { ...p, projectId: id, spec: compiled ? p.spec : { ...p.spec, baseSha256: sha, currentSha256: sha } } };
     const key = this.deps.projects.newProjectKey();
     const r = await this.deps.projects.startNewProject({ projectKey: key, name: this.name ?? s.baseline.label, projectId: id, specText: canonical, baseline: s.baseline, manifests }, opts);
     if (r.ok) {

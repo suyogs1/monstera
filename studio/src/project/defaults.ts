@@ -137,6 +137,13 @@ export function specRuntimeFacts(canonicalText: string): SpecRuntimeFacts | null
   }
 }
 
+/**
+ * Schema-valid gameplay values used ONLY to initialize the Studio gameplay manifest of a project whose spec the engine
+ * has not validated (an invalid import). They are never written into the spec, never persisted as they are: before the
+ * project's first write the controller replaces them with the validated spec's runtime.lives and runtime.winScore.
+ */
+export const INITIALIZATION_RUNTIME = { lives: 1, winScore: 0 } as const;
+
 export interface MigrationDefaultsDeps {
   /** EngineClient.engine (the bundled engine identity); undefined before the engine started. */
   engine: { gitCommit: string } | undefined;
