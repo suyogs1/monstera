@@ -7,6 +7,9 @@
 // Injection: every function takes the IDBFactory as a parameter (default globalThis.indexedDB, read at call time).
 // There is no module-level state.
 //
+// Newer databases: with OpenOptions.allowNewer, a database whose version exceeds DB_VERSION is opened without a version
+// argument (no upgrade runs) and flagged `newerThanSupported`; callers treat it as read-only.
+//
 // Upgrades are additive and idempotent. upgradeDb switches on oldVersion; a future schema version appends a case
 // (see the marker in upgradeDb). Upgrades never delete or overwrite stores or records.
 //
@@ -116,6 +119,8 @@ export interface IdbConnection {
   readonly db: IDBDatabase;
   /** True after close(), after a versionchange, or after the browser closed the connection abnormally. */
   readonly closed: boolean;
+  /** True only when OpenOptions.allowNewer opened an existing database whose version is higher than DB_VERSION. Read-only use only. */
+  readonly newerThanSupported?: boolean;
   close(): void;
 }
 
@@ -126,6 +131,12 @@ export interface OpenOptions {
   readonly onVersionChange?: (event: IDBVersionChangeEvent) => void;
   /** Called at most once when the browser closes the connection abnormally. `closed` is already true. Never called for close(). */
   readonly onClose?: () => void;
+  /**
+   * When the existing database has a HIGHER version than DB_VERSION (VersionError), open it again WITHOUT a version
+   * argument, so no upgrade is requested or run, and mark the connection `newerThanSupported`. Ignored when `version`
+   * is given. The caller must not write to such a connection.
+   */
+  readonly allowNewer?: boolean;
 }
 
 /**
@@ -145,7 +156,18 @@ export function upgradeDb(db: IDBDatabase, oldVersion: number): void {
   }
 }
 
-export function openDb(factory: IDBFactory | null | undefined = globalThis.indexedDB, name: string = DB_NAME, options: OpenOptions = {}): Promise<IdbConnection> {
+export async function openDb(factory: IDBFactory | null | undefined = globalThis.indexedDB, name: string = DB_NAME, options: OpenOptions = {}): Promise<IdbConnection> {
+  try {
+    return await openAt(factory, name, options.version ?? DB_VERSION, options, false);
+  } catch (e) {
+    if (options.allowNewer && options.version === undefined && e instanceof IdbError && e.kind === "version") {
+      return openAt(factory, name, undefined, options, true);
+    }
+    throw e;
+  }
+}
+
+function openAt(factory: IDBFactory | null | undefined, name: string, version: number | undefined, options: OpenOptions, newer: boolean): Promise<IdbConnection> {
   return new Promise<IdbConnection>((resolve, reject) => {
     if (!factory) {
       reject(synthetic("unavailable", "UnavailableError", "IndexedDB is not available in this context"));
@@ -153,7 +175,7 @@ export function openDb(factory: IDBFactory | null | undefined = globalThis.index
     }
     let req: IDBOpenDBRequest;
     try {
-      req = factory.open(name, options.version ?? DB_VERSION);
+      req = version === undefined ? factory.open(name) : factory.open(name, version);
     } catch (e) {
       const c = classifyError(e);
       reject(new IdbError({ ...c, kind: "unavailable" }));
@@ -183,15 +205,16 @@ export function openDb(factory: IDBFactory | null | undefined = globalThis.index
       const db = req.result;
       if (settled) { db.close(); return; }
       settled = true;
-      resolve(makeConnection(db, options.onVersionChange, options.onClose));
+      resolve(makeConnection(db, options.onVersionChange, options.onClose, newer && db.version > DB_VERSION));
     };
   });
 }
 
-function makeConnection(db: IDBDatabase, onVersionChange?: (event: IDBVersionChangeEvent) => void, onClose?: () => void): IdbConnection {
+function makeConnection(db: IDBDatabase, onVersionChange?: (event: IDBVersionChangeEvent) => void, onClose?: () => void, newerThanSupported = false): IdbConnection {
   let closed = false;
   const conn: IdbConnection = {
     db,
+    newerThanSupported,
     get closed() { return closed; },
     close() {
       if (closed) return;

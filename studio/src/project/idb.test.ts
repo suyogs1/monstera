@@ -479,3 +479,52 @@ describe("classifyError", () => {
     expect(classifyError("oops")).toMatchObject({ name: "UnknownError", message: "oops" });
   });
 });
+
+describe("openDb: allowNewer (existing database with a higher version)", () => {
+  async function makeV2(): Promise<IDBFactory> {
+    const factory = new IDBFactory();
+    const db = await rawOpen(factory, 2, (d) => {
+      d.createObjectStore(STORE_PROJECTS, { keyPath: "projectKey" });
+      d.createObjectStore("extra", { keyPath: "id" });
+    });
+    await new Promise<void>((resolve, reject) => {
+      const tx = db.transaction([STORE_PROJECTS, "extra"], "readwrite");
+      tx.objectStore(STORE_PROJECTS).put({ projectKey: "a", n: 7 });
+      tx.objectStore("extra").put({ id: 1, v: "kept" });
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(tx.error);
+    });
+    db.close();
+    return factory;
+  }
+
+  it("still fails with kind 'version' by default", async () => {
+    const factory = await makeV2();
+    expect((await rejection(openDb(factory))).kind).toBe("version");
+  });
+
+  it("opens without an upgrade, flags the connection, reads the data and changes nothing", async () => {
+    const factory = await makeV2();
+    const conn = await openDb(factory, DB_NAME, { allowNewer: true });
+    expect(conn.newerThanSupported).toBe(true);
+    expect(conn.db.version).toBe(2);
+    expect([...conn.db.objectStoreNames].sort()).toEqual(["extra", STORE_PROJECTS]); // no store created or removed
+    const slot = { value: undefined as unknown };
+    await runTransaction(conn, [STORE_PROJECTS], "readonly", (tx) => { const s = tx.store(STORE_PROJECTS).get("a"); Object.defineProperty(slot, "value", { get: () => s.value }); });
+    expect(slot.value).toEqual({ projectKey: "a", n: 7 });
+    conn.close();
+    const check = await rawOpen(factory, 2);
+    expect(check.version).toBe(2);
+    expect([...check.objectStoreNames].sort()).toEqual(["extra", STORE_PROJECTS]);
+    const extra = await new Promise<unknown>((resolve) => { const r = check.transaction("extra").objectStore("extra").getAll(); r.onsuccess = () => resolve(r.result); });
+    expect(extra).toEqual([{ id: 1, v: "kept" }]);
+    check.close();
+  });
+
+  it("does not flag a database at the supported version, and an explicit version wins over allowNewer", async () => {
+    const { conn } = await fresh();
+    expect(conn.newerThanSupported).toBe(false);
+    const factory = await makeV2();
+    expect((await rejection(openDb(factory, DB_NAME, { allowNewer: true, version: 1 }))).kind).toBe("version");
+  });
+});
