@@ -323,6 +323,63 @@ describe("runTransaction", () => {
     expect(out.value).toEqual([]);
   });
 
+  describe("a rejected promise returned by a callback", () => {
+    // Collect process-level unhandled rejections for the duration of one test. Vitest also fails the run on one.
+    async function collectUnhandled(run: () => Promise<void>): Promise<unknown[]> {
+      const seen: unknown[] = [];
+      const listener = (reason: unknown): void => { seen.push(reason); };
+      process.on("unhandledRejection", listener);
+      try {
+        await run();
+        // Unhandled rejections are reported after the microtask queue drains and a macrotask turn has passed.
+        await new Promise<void>((r) => setTimeout(r, 20));
+      } finally {
+        process.off("unhandledRejection", listener);
+      }
+      return seen;
+    }
+
+    it("from work is consumed: async-callback, nothing persisted, no unhandled rejection", async () => {
+      const { conn } = await fresh();
+      const seen = await collectUnhandled(async () => {
+        const err = await rejection(runTransaction(
+          conn, P, "readwrite",
+          // @ts-expect-error async work is rejected by the type
+          (tx) => { tx.store(STORE_PROJECTS).put({ projectKey: "z" }); return Promise.reject(new Error("late failure")); },
+        ));
+        expect(err.kind).toBe("async-callback");
+      });
+      expect(seen).toEqual([]);
+      const out = await runTransaction(conn, P, "readonly", (tx) => tx.store(STORE_PROJECTS).getAll());
+      expect(out.value).toEqual([]);
+    });
+
+    it("from a success callback is consumed: async-callback, nothing persisted, no unhandled rejection", async () => {
+      const { conn } = await fresh();
+      const seen = await collectUnhandled(async () => {
+        const err = await rejection(runTransaction(conn, P, "readwrite", (tx) => {
+          tx.store(STORE_PROJECTS).put({ projectKey: "z" }, () => Promise.reject(new Error("late failure")) as unknown as void);
+        }));
+        expect(err.kind).toBe("async-callback");
+      });
+      expect(seen).toEqual([]);
+      const out = await runTransaction(conn, P, "readonly", (tx) => tx.store(STORE_PROJECTS).getAll());
+      expect(out.value).toEqual([]);
+    });
+
+    it("from a thenable whose then throws is consumed too", async () => {
+      const { conn } = await fresh();
+      const hostile = { then: () => { throw new Error("hostile then"); } };
+      const seen = await collectUnhandled(async () => {
+        const err = await rejection(runTransaction(conn, P, "readwrite", (tx) => {
+          tx.store(STORE_PROJECTS).put({ projectKey: "z" }, () => hostile as unknown as void);
+        }));
+        expect(err.kind).toBe("async-callback");
+      });
+      expect(seen).toEqual([]);
+    });
+  });
+
   it("rejects when work or a success callback throws, and rolls back", async () => {
     const { conn } = await fresh();
     const boom = new Error("boom");

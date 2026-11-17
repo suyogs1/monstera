@@ -247,6 +247,18 @@ function isThenable(v: unknown): boolean {
   return (typeof v === "object" || typeof v === "function") && v !== null && typeof (v as { then?: unknown }).then === "function";
 }
 
+/**
+ * True when a callback returned a thenable, which is a contract violation. The thenable is consumed here (a rejection
+ * handler is attached, never awaited) so a later rejection cannot surface as an unhandled rejection after the
+ * transaction has already failed. Promise.resolve adopts the thenable asynchronously, and a `then` that throws becomes
+ * a handled rejection too. Nothing is awaited, so no asynchronous work can extend the transaction.
+ */
+function consumedThenable(v: unknown): boolean {
+  if (!isThenable(v)) return false;
+  Promise.resolve(v).then(undefined, () => undefined);
+  return true;
+}
+
 class SlotImpl<T> implements Slot<T> {
   settled = false;
   value: T | undefined;
@@ -292,7 +304,7 @@ export function runTransaction<R extends SyncResult>(
     };
     const guard = (fn: () => unknown): void => {
       try {
-        if (isThenable(fn())) fail(synthetic("async-callback", "AsyncCallbackError", "Transaction callbacks must be synchronous"));
+        if (consumedThenable(fn())) fail(synthetic("async-callback", "AsyncCallbackError", "Transaction callbacks must be synchronous"));
       } catch (e) {
         fail(e);
       }
@@ -334,7 +346,7 @@ export function runTransaction<R extends SyncResult>(
 
     try {
       const r = work(wrapper);
-      if (isThenable(r)) fail(synthetic("async-callback", "AsyncCallbackError", "Transaction callbacks must be synchronous"));
+      if (consumedThenable(r)) fail(synthetic("async-callback", "AsyncCallbackError", "Transaction callbacks must be synchronous"));
       else result = r;
     } catch (e) {
       fail(e);
