@@ -73,8 +73,8 @@ for (const f of files.filter((x) => x.p.startsWith("spec/scenarios/"))) {
 // inventory stamp. HEAD (not "last commit touching the engine paths") because it needs no history depth, so it is also
 // right in shallow clones, and the bundled files ARE the tree at HEAD. `dirty` is true when any packed input differs
 // from HEAD, so a bundle built from uncommitted engine files never claims a clean commit. Same fallback convention as
-// build-inventory.mjs: no git => VERCEL_GIT_COMMIT_SHA (dirty unknown, recorded as false). Neither => the build fails;
-// there is no placeholder.
+// build-inventory.mjs: no git => VERCEL_GIT_COMMIT_SHA, where the working tree cannot be inspected, so dirty is null
+// (unknown), never false. Neither => the build fails; there is no placeholder.
 function engineIdentity() {
   const isSha = (s) => /^[0-9a-f]{40}$/.test(s);
   let sha = "";
@@ -85,7 +85,7 @@ function engineIdentity() {
     return { gitCommit: sha, dirty, source: "git" };
   } catch (e) {
     const env = (process.env.VERCEL_GIT_COMMIT_SHA ?? "").trim().toLowerCase();
-    if (isSha(env)) return { gitCommit: env, dirty: false, source: "VERCEL_GIT_COMMIT_SHA" };
+    if (isSha(env)) return { gitCommit: env, dirty: null, source: "VERCEL_GIT_COMMIT_SHA" };
     throw new Error(`cannot determine the engine git commit (git: ${e instanceof Error ? e.message : e}; VERCEL_GIT_COMMIT_SHA is not a 40-hex commit). The build refuses to write a placeholder.`);
   }
 }
@@ -109,6 +109,6 @@ if (version !== "0.29.5") throw new Error(`Pyodide must be 0.29.5 (design D5), f
 const brotli = (b) => brotliCompressSync(b).length;
 const sizes = [["engine-bundle.json", bundle.length, brotli(Buffer.from(bundle))],
   ...runtime.map((n) => { const b = readFileSync(join(outPyodide, n)); return [`pyodide/${n}`, b.length, brotli(b)]; })];
-console.log(`engine bundle: ${files.length} files; engine commit ${engine.gitCommit.slice(0, 7)}${engine.dirty ? " (dirty)" : ""} via ${engine.source}; pyodide ${version}`);
+console.log(`engine bundle: ${files.length} files; engine commit ${engine.gitCommit.slice(0, 7)}${engine.dirty === true ? " (dirty)" : engine.dirty === null ? " (cleanliness not checked)" : ""} via ${engine.source}; pyodide ${version}`);
 for (const [n, raw, br] of sizes) console.log(`  ${n.padEnd(28)} raw ${raw}  brotli ${br}`);
 console.log(`  total brotli ${sizes.reduce((a, s) => a + s[2], 0)}`);

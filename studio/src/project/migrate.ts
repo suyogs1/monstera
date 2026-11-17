@@ -37,10 +37,15 @@ export const MIGRATION_META_KEY = "migration:draft.v1";
 export interface DefaultManifestsContext {
   projectId: string;
   projectName: string;
-  /** SHA-256 of the spec text exactly as it will be stored. */
+  /** The spec text exactly as it will be stored. */
+  specText: string;
+  /** SHA-256 of specText. The project manifest's base and current hash (no derivation has happened). */
   specSha256: string;
   baseline: Baseline;
-  /** baseline.sha256, else the SHA-256 of baseline.canonicalText, else null (unknown: never invented). */
+  /**
+   * Provenance only: baseline.sha256, else the SHA-256 of baseline.canonicalText, else null (never invented). NOT a
+   * project-manifest hash input; it identifies the M3 template/import baseline, which stays in record.baseline.
+   */
   baselineSha256: string | null;
 }
 
@@ -114,7 +119,7 @@ export async function readLegacyDraft(rt: LegacyRuntime): Promise<LegacyRead> {
     const specSha256 = await rt.sha256(docText);
     const name = baseline.label;
     const baselineSha256 = baseline.sha256 ?? (baseline.canonicalText !== null ? await rt.sha256(baseline.canonicalText) : null);
-    const manifests = await rt.defaultManifests({ projectId, projectName: name, specSha256, baseline, baselineSha256 });
+    const manifests = await rt.defaultManifests({ projectId, projectName: name, specText: docText, specSha256, baseline, baselineSha256 });
     return { status: "recovered", raw, snapshot: { projectKey: LEGACY_PROJECT_KEY, name, projectId, specText: docText, baseline, manifests } };
   } catch (e) {
     return { status: "refused", reason: "inputs-unavailable", message: `the earlier draft is valid but its project defaults could not be built (${e instanceof Error ? e.message : "unknown error"})` };

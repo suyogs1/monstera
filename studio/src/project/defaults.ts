@@ -2,13 +2,20 @@
 // engine, no clock, no random. Everything Studio cannot know is an explicit input; a missing or malformed input returns a
 // typed error. Nothing is invented, and nothing is taken from the manifest test fixtures (the Lantern Run samples).
 //
+// Hash semantics. project.spec.baseSha256 is the spec immediately BEFORE Studio derivation and currentSha256 the spec
+// after it. A new or migrated project has had no derivation, so both are SHA-256(current spec text as stored).
+// Baseline.sha256 (the M3 template/import baseline) is provenance only: it stays in record.baseline and is NEVER a
+// project-manifest hash input. Gameplay starts from the validated current spec's runtime.lives and runtime.winScore,
+// supplied by Session from the engine-validated document (this module does not read or validate the spec itself).
+//
 // Runtime inputs Session must supply in Increment D (Session is NOT wired here):
 //   backfillOrigin    Session's existing template-canonical lookup (same rule as startOnce: a draft stored without an
 //                     origin takes the origin of its templateId with basis "template", else null).
-//   defaultManifests  ctx => buildDefaultManifests({ projectId: ctx.projectId, specBaseSha256: ctx.baselineSha256,
-//                     specCurrentSha256: ctx.specSha256 (hash of the canonical current spec text),
-//                     engine: { gitCommit: engineClient.engine.gitCommit } }), unwrapped (throw DefaultManifestsError on
-//                     failure: the migration then refuses the draft as 'inputs-unavailable' and keeps it untouched).
+//   defaultManifests  migrationDefaultManifests({ engine: engineClient.engine, runtimeOf }) where runtimeOf(specText)
+//                     returns { lives, winScore } read from the ENGINE-VALIDATED document (null when the engine rejects
+//                     it). On any failure it throws DefaultManifestsFailure: the migration refuses the draft as
+//                     'inputs-unavailable' and keeps it untouched. The spec text it hashes is the text the record stores;
+//                     Session must store the engine's canonical text for that hash to be the canonical-spec hash.
 //   sha256            sha256Hex (Web Crypto).
 //   legacy            window.localStorage, read through getItem only.
 //   marker            window.localStorage (the eviction hint marker).
@@ -16,15 +23,21 @@
 //   factory           window.indexedDB (IDBFactory).
 import type { Baseline, Origin } from "../draft/store";
 import { MANIFEST_NAMES, validateManifest, type ManifestMap, type ManifestName } from "./manifests";
+import type { DefaultManifestsContext } from "./migrate";
+
+/** runtime.lives and runtime.winScore of the engine-validated current spec. */
+export interface SpecRuntimeFacts { lives: number | null | undefined; winScore: number | null | undefined }
 
 export interface DefaultManifestsInput {
   projectId: string;
-  /** SHA-256 of the spec before any derivation (the baseline). Null when Studio does not know it. */
+  /** SHA-256 of the spec immediately before Studio derivation. Not the M3 baseline hash. Null when unknown. */
   specBaseSha256: string | null;
-  /** SHA-256 of the canonical current spec text. */
+  /** SHA-256 of the current spec text. */
   specCurrentSha256: string | null;
   /** The engine bundled in this Studio build (EngineClient.engine). */
   engine: { gitCommit: string | null | undefined };
+  /** From the validated current spec; never defaulted here. */
+  runtime: SpecRuntimeFacts;
 }
 
 export type DefaultManifestsError =
@@ -50,16 +63,24 @@ const COMMIT = /^[0-9a-f]{40}$/;
 
 /**
  * Valid, project-specific defaults for every manifest. Everything optional is empty or off: derivation is off, so the
- * defaults compile nothing into the spec. gameplay.lives.start is 3 only because the schema requires at least 1; it is inert
- * until gameplay derivation is turned on by the user. `modules` lists the five sidecar manifests that exist in the record.
+ * defaults compile nothing into the spec. Gameplay lives and win score mirror the current spec's runtime values, so the
+ * gameplay manifest agrees with the spec; collectibles and enemies stay empty (collision rows are not converted until a
+ * lossless, previewed mapping exists). `modules` lists the five sidecar manifests that exist in the record.
  */
 export function buildDefaultManifests(input: DefaultManifestsInput): DefaultManifestsResult {
   const missing: string[] = [];
+  const absent = (v: unknown): boolean => v === null || v === undefined;
   if (input.projectId === "") missing.push("projectId");
   if (input.specBaseSha256 === null || input.specBaseSha256 === "") missing.push("specBaseSha256");
   if (input.specCurrentSha256 === null || input.specCurrentSha256 === "") missing.push("specCurrentSha256");
   if (!input.engine.gitCommit) missing.push("engine.gitCommit");
+  if (absent(input.runtime.lives)) missing.push("runtime.lives");
+  if (absent(input.runtime.winScore)) missing.push("runtime.winScore");
   if (missing.length > 0) return { ok: false, error: { code: "missing-input", missing, message: `cannot build default manifests: missing ${missing.join(", ")}` } };
+  for (const f of ["lives", "winScore"] as const) {
+    if (!Number.isInteger(input.runtime[f])) return { ok: false, error: { code: "invalid-input", field: `runtime.${f}`, message: `runtime.${f} is not an integer` } };
+  }
+  const lives = input.runtime.lives as number, winScore = input.runtime.winScore as number;
   const base = input.specBaseSha256 as string, current = input.specCurrentSha256 as string, commit = input.engine.gitCommit as string;
   if (!SHA256.test(base)) return { ok: false, error: { code: "invalid-input", field: "specBaseSha256", message: "specBaseSha256 is not a lowercase hex SHA-256" } };
   if (!SHA256.test(current)) return { ok: false, error: { code: "invalid-input", field: "specCurrentSha256", message: "specCurrentSha256 is not a lowercase hex SHA-256" } };
@@ -79,7 +100,7 @@ export function buildDefaultManifests(input: DefaultManifestsInput): DefaultMani
     assets: { schema: "monstera.studio.assets", version: 1, nextSeq: 1, assets: [] },
     animations: { schema: "monstera.studio.animations", version: 1, sheets: [], animations: [] },
     levels: { schema: "monstera.studio.levels", version: 1, levels: [] },
-    gameplay: { schema: "monstera.studio.gameplay", version: 1, lives: { start: 3 }, score: { winScore: 0 }, collectibles: [], enemies: [], planned: [] },
+    gameplay: { schema: "monstera.studio.gameplay", version: 1, lives: { start: lives }, score: { winScore }, collectibles: [], enemies: [], planned: [] },
     integrations: {
       schema: "monstera.studio.integrations", version: 1,
       backend: { provider: "firebase", services: { analytics: false, auth: false, crashlytics: false, firestore: false, remoteConfig: false }, status: "scaffold", configFiles: [] },
@@ -99,6 +120,27 @@ export function buildDefaultManifestsOrThrow(input: DefaultManifestsInput): Mani
   const r = buildDefaultManifests(input);
   if (!r.ok) throw new DefaultManifestsFailure(r.error);
   return r.manifests;
+}
+
+export interface MigrationDefaultsDeps {
+  /** EngineClient.engine (the bundled engine identity); undefined before the engine started. */
+  engine: { gitCommit: string } | undefined;
+  /** runtime.lives and runtime.winScore of the engine-validated spec text, or null when the engine rejects the text. */
+  runtimeOf: (specText: string) => Promise<SpecRuntimeFacts | null> | SpecRuntimeFacts | null;
+}
+
+/**
+ * The production wiring of MigrationRuntime.defaultManifests. Both project-manifest hashes are the current spec's hash
+ * (no derivation has happened); ctx.baselineSha256 is deliberately unused here. Throws DefaultManifestsFailure.
+ */
+export function migrationDefaultManifests(deps: MigrationDefaultsDeps): (ctx: DefaultManifestsContext) => Promise<ManifestMap> {
+  return async (ctx) => {
+    const runtime = await deps.runtimeOf(ctx.specText);
+    return buildDefaultManifestsOrThrow({
+      projectId: ctx.projectId, specBaseSha256: ctx.specSha256, specCurrentSha256: ctx.specSha256,
+      engine: { gitCommit: deps.engine?.gitCommit }, runtime: runtime ?? { lives: null, winScore: null },
+    });
+  };
 }
 
 // ---------------------------------------------------------------- baseline
