@@ -5,7 +5,7 @@ import { MANIFEST_NAMES, serializeManifest } from "./manifests";
 import { buildRecord, sha256Hex, type ProjectRecord } from "./record";
 import { EVICTION_HINT, MARKER_KEY, mintProjectKey, ProjectStore, type ProjectStoreDeps, type ProjectStoreStatus } from "./store";
 import {
-  baseline, edited, instrumentedOpen, manifestsFor, memoryMarker, newFactory, pumpkinText, rawAll, rawGet, rawOpen, rawPut, readOnlyStorage,
+  baseline, edited, identityCanonicalize, instrumentedOpen, manifestsFor, memoryMarker, newFactory, pumpkinText, rawAll, rawGet, rawOpen, rawPut, readOnlyStorage,
   snapshot, type Hooks,
 } from "./testkit";
 import { LEGACY_KEY } from "./migrate";
@@ -212,7 +212,7 @@ describe("newer formats are read-only and unchanged", () => {
     const before = await rawAll(factory, STORE_PROJECTS);
     const legacy = readOnlyStorage({ [LEGACY_KEY]: "{}" });
     const c = rwCounter();
-    const s = mk(factory, { openConnection: instrumentedOpen(c.hooks), migration: { legacy, defaultManifests: () => manifestsFor("x") } });
+    const s = mk(factory, { openConnection: instrumentedOpen(c.hooks), migration: { legacy, canonicalize: identityCanonicalize, defaultManifests: () => manifestsFor("x") } });
     await s.open();
     expect(s.getState().status).toBe("read-only");
     expect(s.getState().detail.reason).toBe("database-newer");
@@ -416,7 +416,7 @@ describe("migration inside the store", () => {
     const legacy = readOnlyStorage({ [LEGACY_KEY]: draft });
     let tamper = true;
     const s = mk(factory, {
-      migration: { legacy, defaultManifests: ({ projectId }) => manifestsFor(projectId) },
+      migration: { legacy, canonicalize: identityCanonicalize, defaultManifests: ({ projectId }) => manifestsFor(projectId) },
       openConnection: instrumentedOpen({ tamperGet: (st, r, mode) => (tamper && st === STORE_PROJECTS && mode === "readonly" ? { ...(r as object), name: "tampered" } : r) }),
     });
     await s.open();
@@ -443,7 +443,7 @@ describe("migration inside the store", () => {
 
 describe("C: legacy draft recovery when IndexedDB is unavailable", () => {
   const validDraft = JSON.stringify({ version: 1, docText: pumpkinText, baseline });
-  const rt = (legacy: Pick<Storage, "getItem">) => ({ legacy, defaultManifests: ({ projectId }: { projectId: string }) => manifestsFor(projectId) });
+  const rt = (legacy: Pick<Storage, "getItem">) => ({ legacy, canonicalize: identityCanonicalize, defaultManifests: ({ projectId }: { projectId: string }) => manifestsFor(projectId) });
 
   it("a valid legacy draft is kept in memory, never claimed saved, exported, and the legacy key is only read", async () => {
     const legacy = readOnlyStorage({ [LEGACY_KEY]: validDraft });

@@ -5,11 +5,11 @@ import { LEGACY_KEY, LEGACY_PROJECT_KEY, MIGRATION_META_KEY, migrateLegacyDraft,
 import { MANIFEST_NAMES, serializeManifest } from "./manifests";
 import { ACTIVE_KEY, buildRecord, sha256Hex, type ProjectRecord } from "./record";
 import { ProjectStore } from "./store";
-import { baseline, edited, manifestsFor, newFactory, pumpkinText, rawAll, rawGet, rawPut, readOnlyStorage, wrapConnection, type Hooks } from "./testkit";
+import { baseline, edited, identityCanonicalize, manifestsFor, newFactory, pumpkinText, rawAll, rawGet, rawPut, readOnlyStorage, wrapConnection, type Hooks } from "./testkit";
 
 const draft = (docText = pumpkinText, b: unknown = baseline, version: unknown = 1): string => JSON.stringify({ version, docText, baseline: b });
 const runtime = (items: Record<string, string>, extra: Partial<Omit<MigrationRuntime, "legacy">> = {}): MigrationRuntime & { legacy: ReturnType<typeof readOnlyStorage> } => ({
-  legacy: readOnlyStorage(items), defaultManifests: ({ projectId }) => manifestsFor(projectId), sha256: sha256Hex, now: () => 4242, ...extra,
+  legacy: readOnlyStorage(items), defaultManifests: ({ projectId }) => manifestsFor(projectId), canonicalize: identityCanonicalize, sha256: sha256Hex, now: () => 4242, ...extra,
 });
 async function connect(factory: IDBFactory, hooks?: Hooks): Promise<IdbConnection> {
   const c = await openDb(factory);

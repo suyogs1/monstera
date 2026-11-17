@@ -122,6 +122,21 @@ export function buildDefaultManifestsOrThrow(input: DefaultManifestsInput): Mani
   return r.manifests;
 }
 
+/**
+ * runtime.lives and runtime.winScore read from an ENGINE canonical document text (EngineClient.validateDraft().canonicalText).
+ * This only reads the engine's output; it validates nothing. Null when the text is not an object with game.runtime.
+ */
+export function specRuntimeFacts(canonicalText: string): SpecRuntimeFacts | null {
+  try {
+    const doc: unknown = JSON.parse(canonicalText);
+    const rt = (doc as { game?: { runtime?: Record<string, unknown> } } | null)?.game?.runtime;
+    if (typeof rt !== "object" || rt === null) return null;
+    return { lives: rt["lives"] as number | undefined, winScore: rt["winScore"] as number | undefined };
+  } catch {
+    return null;
+  }
+}
+
 export interface MigrationDefaultsDeps {
   /** EngineClient.engine (the bundled engine identity); undefined before the engine started. */
   engine: { gitCommit: string } | undefined;
@@ -135,7 +150,8 @@ export interface MigrationDefaultsDeps {
  */
 export function migrationDefaultManifests(deps: MigrationDefaultsDeps): (ctx: DefaultManifestsContext) => Promise<ManifestMap> {
   return async (ctx) => {
-    const runtime = await deps.runtimeOf(ctx.specText);
+    // ctx.runtime comes from the same engine-validated result as ctx.specText (MigrationRuntime.canonicalize); runtimeOf is the fallback.
+    const runtime = ctx.runtime ?? (await deps.runtimeOf(ctx.specText));
     return buildDefaultManifestsOrThrow({
       projectId: ctx.projectId, specBaseSha256: ctx.specSha256, specCurrentSha256: ctx.specSha256,
       engine: { gitCommit: deps.engine?.gitCommit }, runtime: runtime ?? { lives: null, winScore: null },

@@ -9,7 +9,12 @@
 //   3. Parse it strictly. Corrupt JSON, version !== 1, non-string docText, malformed baseline, a spec without
 //      project.id or default inputs that cannot be supplied => 'refused' with a reason. The legacy value, the database
 //      and the flag stay untouched.
-//   4. Build the record (hash and canonical manifest text first, no transaction open). The optional origin back-fill
+//   4. Canonicalize: the injected `canonicalize` (Session: EngineClient.validateDraft) must supply the engine's canonical
+//      text, its SHA-256 (which must equal sha256(canonicalText), checked here) and the runtime lives/winScore of that
+//      same validated document. The snapshot, the stored specText, the record hash and the project-manifest hashes all
+//      use the CANONICAL text; the legacy docText (TypeScript JSON.stringify output) is never stored or hashed. A draft
+//      that cannot be canonicalized is refused ('canonicalization-failed'): nothing is written, the legacy key stays.
+//      Then build the record (hash and canonical manifest text first, no transaction open). The optional origin back-fill
 //      is injected (Session's rule: a draft stored without origin takes its template's origin); this module imports
 //      neither Session nor React.
 //   5. Write the record with compare-and-swap under the fixed key 'legacy-draft-v1' (one transaction) WITHOUT the
@@ -47,6 +52,15 @@ export interface DefaultManifestsContext {
    * project-manifest hash input; it identifies the M3 template/import baseline, which stays in record.baseline.
    */
   baselineSha256: string | null;
+  /** runtime.lives / winScore read from the SAME engine-validated document as specText (null: the document has none). */
+  runtime: { lives: number | null | undefined; winScore: number | null | undefined } | null;
+}
+
+/** What the engine produced for a legacy draft text. `sha256` is the engine's own hash of `canonicalText`. */
+export interface CanonicalSpec {
+  canonicalText: string;
+  sha256: string;
+  runtime: { lives: number | null | undefined; winScore: number | null | undefined } | null;
 }
 
 export interface MigrationRuntime {
@@ -61,9 +75,14 @@ export interface MigrationRuntime {
   backfillOrigin?: (baseline: Baseline) => Promise<Origin | null>;
   sha256: Sha256;
   now: () => number;
+  /**
+   * Validates docText with the engine and returns its canonical text, SHA-256 and runtime facts; null when the engine
+   * cannot supply them (rejection, engine error). Required: the legacy docText is never stored as the specification.
+   */
+  canonicalize: (docText: string) => Promise<CanonicalSpec | null>;
 }
 
-export type RefusedReason = "corrupt-json" | "unsupported-version" | "bad-doc-text" | "bad-baseline" | "bad-spec" | "inputs-unavailable";
+export type RefusedReason = "corrupt-json" | "unsupported-version" | "bad-doc-text" | "bad-baseline" | "bad-spec" | "inputs-unavailable" | "canonicalization-failed";
 
 export type MigrationResult =
   | { status: "nothing-to-migrate" }
@@ -76,7 +95,7 @@ export type MigrationResult =
 const isObject = (v: unknown): v is Record<string, unknown> => typeof v === "object" && v !== null && !Array.isArray(v);
 
 interface Parsed { docText: string; baseline: Baseline; projectId: string }
-type ParseResult = { ok: true; value: Parsed } | { ok: false; reason: Exclude<RefusedReason, "inputs-unavailable">; message: string };
+type ParseResult = { ok: true; value: Parsed } | { ok: false; reason: Exclude<RefusedReason, "inputs-unavailable" | "canonicalization-failed">; message: string };
 
 function parseLegacy(raw: string): ParseResult {
   let top: unknown;
@@ -92,7 +111,7 @@ function parseLegacy(raw: string): ParseResult {
   return { ok: true, value: { docText, baseline, projectId } };
 }
 
-export type LegacyRuntime = Pick<MigrationRuntime, "legacy" | "defaultManifests" | "backfillOrigin" | "sha256">;
+export type LegacyRuntime = Pick<MigrationRuntime, "legacy" | "defaultManifests" | "backfillOrigin" | "sha256" | "canonicalize">;
 
 export type LegacyRead =
   | { status: "recovered"; raw: string; snapshot: ProjectSnapshot }
@@ -112,15 +131,25 @@ export async function readLegacyDraft(rt: LegacyRuntime): Promise<LegacyRead> {
   if (raw === null || raw === "") return { status: "none" };
   const parsed = parseLegacy(raw);
   if (!parsed.ok) return { status: "refused", reason: parsed.reason, message: parsed.message };
-  const { docText, projectId } = parsed.value;
+  const { docText } = parsed.value;
+  let canon: CanonicalSpec | null;
+  try { canon = await rt.canonicalize(docText); } catch { canon = null; }
+  const noCanon = (why: string): LegacyRead => ({ status: "refused", reason: "canonicalization-failed", message: `the earlier draft could not be canonicalized by the engine (${why}); it was not migrated` });
+  if (canon === null || typeof canon.canonicalText !== "string" || canon.canonicalText === "" || typeof canon.sha256 !== "string" || canon.sha256 === "") {
+    return noCanon("no canonical text or SHA-256");
+  }
+  const projectId = specProjectId(canon.canonicalText);
+  if (projectId === null) return noCanon("the canonical text has no project.id");
   try {
+    if ((await rt.sha256(canon.canonicalText)) !== canon.sha256) return noCanon("the engine SHA-256 differs from the SHA-256 of its canonical text");
     let baseline = parsed.value.baseline;
     if (baseline.origin === undefined && rt.backfillOrigin) baseline = { ...baseline, origin: await rt.backfillOrigin(baseline) };
-    const specSha256 = await rt.sha256(docText);
+    const specText = canon.canonicalText;
+    const specSha256 = canon.sha256; // verified above to equal sha256(specText)
     const name = baseline.label;
     const baselineSha256 = baseline.sha256 ?? (baseline.canonicalText !== null ? await rt.sha256(baseline.canonicalText) : null);
-    const manifests = await rt.defaultManifests({ projectId, projectName: name, specText: docText, specSha256, baseline, baselineSha256 });
-    return { status: "recovered", raw, snapshot: { projectKey: LEGACY_PROJECT_KEY, name, projectId, specText: docText, baseline, manifests } };
+    const manifests = await rt.defaultManifests({ projectId, projectName: name, specText, specSha256, baseline, baselineSha256, runtime: canon.runtime });
+    return { status: "recovered", raw, snapshot: { projectKey: LEGACY_PROJECT_KEY, name, projectId, specText, baseline, manifests } };
   } catch (e) {
     return { status: "refused", reason: "inputs-unavailable", message: `the earlier draft is valid but its project defaults could not be built (${e instanceof Error ? e.message : "unknown error"})` };
   }

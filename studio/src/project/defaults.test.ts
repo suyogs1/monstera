@@ -7,7 +7,7 @@ import { STORE_PROJECTS, openDb } from "./idb";
 import { MANIFEST_NAMES, parseManifest, serializeManifest } from "./manifests";
 import { LEGACY_KEY, LEGACY_PROJECT_KEY, migrateLegacyDraft, readLegacyDraft } from "./migrate";
 import { sha256Hex, type ProjectRecord } from "./record";
-import { baseline, manifestsFor, newFactory, pumpkinText, rawGet, readOnlyStorage } from "./testkit";
+import { baseline, identityCanonicalize, manifestsFor, newFactory, pumpkinText, rawGet, readOnlyStorage } from "./testkit";
 
 const h = (c: string): string => c.repeat(64);
 const input = (over: Partial<DefaultManifestsInput> = {}): DefaultManifestsInput =>
@@ -97,7 +97,7 @@ describe("buildDefaultManifests", () => {
     const raw = JSON.stringify({ version: 1, docText: pumpkinText, baseline });
     const specSha = await sha256Hex(pumpkinText);
     const rt = (gitCommit: string | undefined) => ({
-      legacy: readOnlyStorage({ [LEGACY_KEY]: raw }), sha256: sha256Hex,
+      legacy: readOnlyStorage({ [LEGACY_KEY]: raw }), sha256: sha256Hex, canonicalize: identityCanonicalize,
       defaultManifests: (ctx: { projectId: string; specSha256: string; baselineSha256: string | null }) =>
         buildDefaultManifestsOrThrow({ projectId: ctx.projectId, specBaseSha256: specSha, specCurrentSha256: ctx.specSha256, engine: { gitCommit }, runtime: { lives: 5, winScore: 1000 } }),
     });
@@ -129,7 +129,7 @@ describe("migrationDefaultManifests: production wiring", () => {
       origin: { templateId: id, path: `apps/${id}/monstera.spec.json`, basis: "template", canonicalText: text },
     };
   }
-  const runtime = (raw: string) => ({ legacy: readOnlyStorage({ [LEGACY_KEY]: raw }), sha256: sha256Hex, now: () => 1, defaultManifests: migrationDefaultManifests({ engine, runtimeOf }) });
+  const runtime = (raw: string) => ({ legacy: readOnlyStorage({ [LEGACY_KEY]: raw }), sha256: sha256Hex, now: () => 1, canonicalize: identityCanonicalize, defaultManifests: migrationDefaultManifests({ engine, runtimeOf }) });
 
   it("an edited Pumpkin Blaster draft migrates: base = current = edited spec hash, baseline kept, derivation off", async () => {
     const original = await m3Baseline("pumpkin-blaster", pumpkinText);

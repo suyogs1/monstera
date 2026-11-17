@@ -5,7 +5,11 @@ import { join } from "node:path";
 import type { Baseline } from "../draft/store";
 import { DB_NAME, openDb, type IdbConnection, type OpenOptions } from "./idb";
 import { MANIFEST_NAMES, type ManifestMap } from "./manifests";
-import type { ProjectSnapshot } from "./record";
+import type { CanonicalSpec } from "./migrate";
+import { sha256Hex, type ProjectSnapshot } from "./record";
+
+/** A canonicalize for texts that are already canonical (the engine would return them unchanged); runtime left to runtimeOf. */
+export const identityCanonicalize = async (docText: string): Promise<CanonicalSpec> => ({ canonicalText: docText, sha256: await sha256Hex(docText), runtime: null });
 
 const repo = join(__dirname, "..", "..", "..");
 export const pumpkinText = readFileSync(join(repo, "apps/pumpkin-blaster/monstera.spec.json"), "utf8");

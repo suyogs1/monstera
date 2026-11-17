@@ -37,15 +37,20 @@ export interface DraftState {
 
 type Listener = () => void;
 
-const STORAGE_KEY = "monstera.studio.draft.v1";
+/** What the last notification was about. Valid only while listeners run (set before they are called). */
+export type ChangeKind = "load" | "edit" | "origin" | "validation";
 
-export interface StoredDraft { version: 1; docText: string; baseline: Baseline }
-
+/**
+ * In-memory draft only. Persistence belongs to ProjectStore (src/project/store.ts); this store never touches any
+ * storage. The legacy localStorage key is read, for migration only, by src/project/migrate.ts.
+ */
 export class DraftStore {
   private state: DraftState = { doc: null, baseline: null, revision: 0, validation: null, validatedRevision: -1 };
   private readonly listeners = new Set<Listener>();
-
-  constructor(private readonly storage: Pick<Storage, "getItem" | "setItem" | "removeItem"> | undefined = undefined) {}
+  /** Kind of the change being announced (see ChangeKind). */
+  lastChange: ChangeKind = "load";
+  /** For an "edit" made through set(): the edited path ("a.b.0"), the coalescing key. Undefined for replace(). */
+  editKey: string | undefined;
 
   getState = (): DraftState => this.state;
 
@@ -54,64 +59,45 @@ export class DraftStore {
     return () => this.listeners.delete(l);
   };
 
-  private commit(next: DraftState, persist: boolean): void {
+  private commit(next: DraftState, kind: ChangeKind): void {
     this.state = next;
-    if (persist) this.persist();
+    this.lastChange = kind;
     for (const l of this.listeners) l();
-  }
-
-  private persist(): void {
-    const { doc, baseline } = this.state;
-    if (!this.storage) return;
-    try {
-      if (doc === null || baseline === null) this.storage.removeItem(STORAGE_KEY);
-      else this.storage.setItem(STORAGE_KEY, JSON.stringify({ version: 1, docText: JSON.stringify(doc), baseline } satisfies StoredDraft));
-    } catch {
-      /* storage full or unavailable: the draft just stays in memory */
-    }
   }
 
   /** Replaces the whole document (template load, import, restore). */
   load(doc: Json, baseline: Baseline, validation: DraftValidation | null = null): void {
+    this.editKey = undefined;
     this.commit({
       doc, baseline, revision: this.state.revision + 1,
       validation, validatedRevision: validation ? this.state.revision + 1 : -1,
-    }, true);
+    }, "load");
   }
 
   /** Replaces the document with an edited version of itself. */
   replace(doc: Json): void {
     if (doc === this.state.doc) return;
-    this.commit({ ...this.state, doc, revision: this.state.revision + 1 }, true);
+    this.commit({ ...this.state, doc, revision: this.state.revision + 1 }, "edit");
   }
 
   set(path: Path, value: Json): void {
     if (this.state.doc === null) return;
-    this.replace(setAt(this.state.doc, path, value));
+    const next = setAt(this.state.doc, path, value);
+    this.editKey = path.join(".");
+    try { this.replace(next); } finally { this.editKey = undefined; }
   }
 
   /** Records which template's goldens apply to the current draft (the document itself is unchanged). */
   setOrigin(origin: Origin | null): void {
     if (this.state.baseline === null) return;
-    this.commit({ ...this.state, baseline: { ...this.state.baseline, origin } }, true);
+    this.editKey = undefined;
+    this.commit({ ...this.state, baseline: { ...this.state.baseline, origin } }, "origin");
   }
 
   /** Called by the validation runner. Results for an older revision are dropped. */
   setValidation(revision: number, validation: DraftValidation): void {
     if (revision !== this.state.revision) return;
-    this.commit({ ...this.state, validation, validatedRevision: revision }, false);
-  }
-
-  /** Reads what a previous session stored. The caller must still verify it with the engine. */
-  readStored(): StoredDraft | undefined {
-    if (!this.storage) return undefined;
-    try {
-      const raw = this.storage.getItem(STORAGE_KEY);
-      if (!raw) return undefined;
-      const parsed = JSON.parse(raw) as StoredDraft;
-      return parsed.version === 1 && typeof parsed.docText === "string" ? parsed : undefined;
-    } catch {
-      return undefined;
-    }
+    this.editKey = undefined;
+    this.commit({ ...this.state, validation, validatedRevision: revision }, "validation");
   }
 }
