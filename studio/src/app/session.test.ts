@@ -297,6 +297,110 @@ describe("IndexedDB conflicts and unsaved edits", () => {
   });
 });
 
+// The real engine canonicalizes every document it can parse, valid or not: an invalid one comes back as
+// { ok: false, parsed: true, canonicalText, sha256 }. Canonical text alone must never be treated as a valid spec.
+describe("parseable but invalid specs are never persisted or migrated", () => {
+  type Runtimeish = { game?: { runtime?: { maxEntities?: number } } };
+  const tooMany = (t: string): boolean => {
+    try { return ((JSON.parse(t) as Runtimeish).game?.runtime?.maxEntities ?? 0) > 1024; } catch { return false; } // schema maximum 1024
+  };
+  const invalidEngine = (): FakeEngine => { const e = new FakeEngine(); e.invalid = tooMany; return e; };
+  const invalidDoc = (): string => {
+    const d = JSON.parse(pumpkinText) as { game: { runtime: { maxEntities: number } } };
+    d.game.runtime.maxEntities = 5000;
+    return JSON.stringify(d);
+  };
+  const setMax = (h: Harness, n: number): void => h.session.store.set(["game", "runtime", "maxEntities"], n);
+
+  it("the fake engine answers like the real one: ok false, yet parsed with canonical text and its SHA-256", async () => {
+    const v = await invalidEngine().validateDraft(invalidDoc());
+    expect(v).toMatchObject({ ok: false, parsed: true });
+    expect(v.canonicalText).not.toBeNull();
+    expect(v.sha256).toBe(await sha256Hex(v.canonicalText ?? ""));
+  });
+
+  it("a legacy draft that parses but is invalid is refused: no record, no migration flag, no active pointer", async () => {
+    const factory = newFactory();
+    const raw = legacyRaw(invalidDoc());
+    const legacy = readOnlyStorage({ [LEGACY_KEY]: raw });
+    const h = harness({ factory, legacy, marker: memoryMarker() }, invalidEngine());
+    await h.session.projects.open(); // the migration alone
+    expect(h.session.projects.getState().migration).toMatchObject({ status: "refused", reason: "canonicalization-failed" });
+    expect(await records(factory)).toEqual([]);
+    expect(await flag(factory)).toBeUndefined();
+    expect(await active(factory)).toBeUndefined();
+    expect(JSON.parse(h.session.project.actions.exportRecovery({ legacy: true }) ?? "null")).toMatchObject({ specText: invalidDoc() });
+    await h.session.start();
+    await drain(h);
+    expect((await records(factory)).map((r) => r.projectKey)).not.toContain(LEGACY_PROJECT_KEY);
+    expect(await flag(factory)).toBeUndefined();
+    expect(legacy.getItem(LEGACY_KEY)).toBe(raw);
+    expect(legacy.writes).toEqual([]);
+  });
+
+  it("with IndexedDB unavailable the same draft is not recovered as a valid project either", async () => {
+    const legacy = readOnlyStorage({ [LEGACY_KEY]: legacyRaw(invalidDoc()) });
+    const h = await boot({ factory: null, legacy }, invalidEngine());
+    expect(h.session.project.getState().status).toBe("memory-only");
+    expect(h.session.project.getState().legacy?.status).toBe("refused");
+  });
+
+  it("an edit that makes the spec invalid stays in memory, is never saved, blocks retryOpen, and saves once corrected", async () => {
+    const factory = newFactory();
+    const h = await boot({ factory }, invalidEngine());
+    const before = (await records(factory))[0] as ProjectRecord;
+    const seen: string[] = [];
+    h.session.project.subscribe(() => seen.push(h.session.project.getState().status));
+    setMax(h, 5000);
+    await drain(h);
+    expect(h.session.store.getState().validation).toMatchObject({ ok: false, parsed: true }); // canonical text present
+    expect(h.session.store.getState().validation?.canonicalText).not.toBeNull();
+    expect(h.session.project.getState()).toMatchObject({ status: "unsaved", gate: "waiting-for-valid-spec", dirty: true });
+    expect(seen).not.toContain("saved");
+    expect(await h.session.project.actions.retryOpen()).toMatchObject({ ok: false, reason: "unsaved-invalid-edits" });
+    await h.session.project.flush(); // what pagehide does: it must not hand the invalid edit over either
+    await drain(h);
+    expect(await records(factory)).toEqual([before]); // nothing persisted, byte for byte
+    expect(h.session.project.getState().status).toBe("unsaved");
+    expect(seen).not.toContain("saved");
+
+    setMax(h, 512); // the user corrects the field; the engine now says ok
+    await drain(h);
+    expect(h.session.project.getState()).toMatchObject({ status: "saved", gate: "idle", dirty: false });
+    const [rec] = await records(factory);
+    expect((JSON.parse(rec?.specText ?? "{}") as { game: { runtime: { maxEntities: number } } }).game.runtime.maxEntities).toBe(512);
+    expect(rec?.specText).toBe(h.session.store.getState().validation?.canonicalText);
+    expect(rec?.specSha256).toBe(await sha256Hex(rec?.specText ?? ""));
+    expect(projectManifest(rec as ProjectRecord).spec).toMatchObject({ baseSha256: rec?.specSha256, currentSha256: rec?.specSha256 });
+  });
+
+  it("startNewProject refuses an invalid open project", async () => {
+    const factory = newFactory();
+    const h = await boot({ factory }, invalidEngine());
+    setMax(h, 5000);
+    await drain(h);
+    expect(await h.session.project.actions.startNewProject()).toMatchObject({ ok: false, reason: "invalid-snapshot" });
+    expect(await records(factory)).toHaveLength(1);
+  });
+
+  it("an invalid imported document can be edited in memory but is not saved until it is valid", async () => {
+    const factory = newFactory();
+    const h = await boot({ factory }, invalidEngine());
+    const before = await records(factory);
+    expect(await h.session.importText(invalidDoc(), "broken.json")).toEqual({ ok: true });
+    await drain(h);
+    expect(h.session.store.getState().baseline?.label).toBe("broken.json");
+    expect(h.session.project.getState()).toMatchObject({ status: "unsaved", gate: "waiting-for-valid-spec" });
+    expect(await records(factory)).toEqual(before);
+    setMax(h, 256);
+    await drain(h);
+    expect(h.session.project.getState().status).toBe("saved");
+    const after = await records(factory);
+    expect(after).toHaveLength(before.length + 1);
+    expect(after.some((r) => r.name === "broken.json")).toBe(true);
+  });
+});
+
 describe("history: spec and manifests as one snapshot", () => {
   it("undo restores doc and manifests together, redo re-applies both, a new edit clears redo, and the result is persisted", async () => {
     const factory = newFactory();

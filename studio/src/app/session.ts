@@ -127,7 +127,8 @@ export class Session {
   private async canonicalize(docText: string): Promise<CanonicalSpec | null> {
     let v: DraftValidation;
     try { v = await this.engine.validateDraft(docText); } catch { return null; }
-    if (!v.parsed || v.canonicalText === null || v.sha256 === null) return null;
+    // A document that parses gets canonical text even when it is invalid (ok: false); only a VALID spec may be migrated.
+    if (v.ok !== true || !v.parsed || v.canonicalText === null || v.sha256 === null) return null;
     return { canonicalText: v.canonicalText, sha256: v.sha256, runtime: specRuntimeFacts(v.canonicalText) };
   }
 
@@ -235,7 +236,7 @@ export class Session {
     try {
       await this.startProjectFrom(top, baseline, v, fileName);
     } catch (e) {
-      return { ok: false, message: `. Your draft was not changed.` };
+      return { ok: false, message: `${e instanceof Error ? e.message : "the project could not be created"}. Your draft was not changed.` };
     }
     return { ok: true };
   }

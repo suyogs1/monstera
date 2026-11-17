@@ -24,6 +24,11 @@ export class FakeEngine {
   onReply: EngineClient["onReply"];
   failInit: string | null = null;
   reject: (text: string) => boolean = () => false;
+  /**
+   * Models the real engine's answer for JSON that parses but fails schema or semantic validation: ok false, parsed true,
+   * WITH canonical text and its SHA-256 (validate_draft canonicalizes everything it can parse).
+   */
+  invalid: (text: string) => boolean = () => false;
   validateCalls: string[] = [];
   /** Canonical text overrides by input text (to model an engine whose canonical form differs). */
   override = new Map<string, string>();
@@ -51,7 +56,11 @@ export class FakeEngine {
       return { ok: false, parsed: false, issues: [{ path: "$", code: "json.syntax", message: "not JSON" }], sha256: null, canonicalText: null };
     }
     const canonicalText = this.override.get(text) ?? stableText(parsed);
-    return { ok: true, parsed: true, issues: [], sha256: this.badSha ?? await sha256Hex(canonicalText), canonicalText };
+    const sha256 = this.badSha ?? await sha256Hex(canonicalText);
+    if (this.invalid(text)) {
+      return { ok: false, parsed: true, issues: [{ path: "$", code: "schema.invalid", message: "the document fails schema validation" }], sha256, canonicalText };
+    }
+    return { ok: true, parsed: true, issues: [], sha256, canonicalText };
   }
 
   async template(path: string): Promise<TemplateLoad> {

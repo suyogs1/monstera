@@ -219,9 +219,16 @@ export class ProjectController {
     this.refresh();
   }
 
+  /**
+   * The text that may be persisted: the engine's canonical text of the CURRENT revision, and only when the engine
+   * VALIDATED it (ok). A document that merely parses also gets canonical text from the engine (ok: false, parsed: true);
+   * that is not a valid spec and is never handed to storage.
+   */
   private canonicalOf(s: ReturnType<DraftStore["getState"]>): string | null {
     if (s.validatedRevision !== s.revision) return null;
-    const text = s.validation?.canonicalText ?? null;
+    const v = s.validation;
+    if (v === null || v.ok !== true) return null;
+    const text = v.canonicalText;
     return text !== null && specProjectId(text) !== null ? text : null;
   }
 
