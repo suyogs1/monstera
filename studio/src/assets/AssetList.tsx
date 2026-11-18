@@ -7,9 +7,11 @@ const sizeText = (a: Asset): string => (a.kind === "image" ? `${a.width}×${a.he
  * The asset library: filters (category, kind, linked entity) and one row per asset. Presentational: the container owns the
  * filter, the preview and the actions. `preview` is rendered inside the row of `previewId` only.
  */
-export function AssetList({ assets, filter, kindIds, previewId, preview, onFilter, onPreview, onDelete }: {
+export function AssetList({ assets, filter, kindIds, previewId, preview, onFilter, onPreview, onDelete, onAssign }: {
   assets: readonly Asset[]; filter: LibraryFilter; kindIds: readonly string[]; previewId: string | null; preview: ReactNode;
   onFilter(next: LibraryFilter): void; onPreview(id: string | null): void; onDelete(id: string): void;
+  /** Replaces the kinds linked to one asset (task 2.3). */
+  onAssign?(id: string, kindIds: string[]): void;
 }) {
   const shown = filterAssets(assets, filter);
   return (
@@ -47,6 +49,18 @@ export function AssetList({ assets, filter, kindIds, previewId, preview, onFilte
               </button>
               <button type="button" data-testid={`asset-delete-${a.id}`} aria-label={`Delete ${a.file}`} onClick={() => onDelete(a.id)}>Delete</button>
             </span>
+            {onAssign && (
+              <details className="asset-assign" data-testid={`asset-assign-${a.id}`}>
+                <summary>Linked kinds ({a.kindRefs.length})</summary>
+                {kindIds.length === 0 && <span className="muted small">This game has no kinds yet.</span>}
+                {kindIds.map((k) => (
+                  <label key={k} className="small">
+                    <input type="checkbox" data-testid={`asset-assign-${a.id}-${k}`} checked={a.kindRefs.includes(k)}
+                      onChange={(e) => onAssign(a.id, e.target.checked ? [...a.kindRefs, k] : a.kindRefs.filter((x) => x !== k))} /> {k}
+                  </label>
+                ))}
+              </details>
+            )}
             {previewId === a.id && <div className="asset-preview" data-testid={`asset-preview-pane-${a.id}`}>{preview}</div>}
           </li>
         ))}

@@ -5,6 +5,7 @@ import { addInitialEntity, addKind, removeInitialEntity } from "../../draft/ops"
 import { useProject } from "../../project/context";
 import type { XrefEntry } from "../../project/xref";
 import { getAt, toIssuePath, toPattern, type Path } from "../../draft/path";
+import { KindAssetThumb } from "../../assets/KindAssetThumb";
 import { Card, Field, FieldGrid, KindSelect, useDoc, useFieldInfo, useFieldIssues, useValue, useLockOwner } from "../fields";
 
 const RT: Path = ["game", "runtime"];
@@ -84,7 +85,7 @@ function KindCard({ index }: { index: number }) {
   return (
     <Card dataPath={toIssuePath(base)} title={<><Swatch index={index} /> <span className="mono">{id || "(no id)"}</span></>}
       selected={selected === id && id !== ""} onActivate={() => { if (id) selection.set(id, "editor"); }}
-      aside={<span className="muted small">used in {uses} place{uses === 1 ? "" : "s"}</span>}>
+      aside={<><KindAssetThumb kindId={id} /> <span className="muted small">used in {uses} place{uses === 1 ? "" : "s"}</span></>}>
       <FieldGrid>
         <KindIdField index={index} />
         <Field path={[...base, "width"]} label="Width" />
