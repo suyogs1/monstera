@@ -1,14 +1,16 @@
 import { useEffect, useId, useState, useSyncExternalStore } from "react";
 import { useSection, useSession } from "../../app/hooks";
 import { goToPath } from "../../app/navigate";
-import { addInitialEntity, addKind, removeInitialEntity, removeKind, renameKind, kindReferences, type KindRef } from "../../draft/ops";
+import { addInitialEntity, addKind, removeInitialEntity } from "../../draft/ops";
+import { useProject } from "../../project/context";
+import type { XrefEntry } from "../../project/xref";
 import { getAt, toIssuePath, toPattern, type Path } from "../../draft/path";
 import { Card, Field, FieldGrid, KindSelect, useDoc, useFieldInfo, useFieldIssues, useValue } from "../fields";
 
 const RT: Path = ["game", "runtime"];
 
 function KindIdField({ index }: { index: number }) {
-  const { store } = useSession();
+  const project = useProject();
   const doc = useDoc();
   const path: Path = [...RT, "kinds", index, "id"];
   const value = String(useValue(path) ?? "");
@@ -27,11 +29,11 @@ function KindIdField({ index }: { index: number }) {
       setError(info.description ?? "This is not a valid kind id.");
       return;
     }
-    const r = renameKind(doc, value, text);
+    const r = project.renameKind(value, text);
     if (!r.ok) { setError(r.reason); return; }
-    store.replace(r.doc);
     setError(null);
-    setNote(r.updatedReferences === 0 ? "Renamed." : `Renamed. ${r.updatedReferences} reference${r.updatedReferences === 1 ? "" : "s"} updated.`);
+    const n = r.updated.total;
+    setNote(n === 0 ? "Renamed." : `Renamed. ${n} reference${n === 1 ? "" : "s"} updated.`);
   };
 
   return (
@@ -63,19 +65,20 @@ function Swatch({ index }: { index: number }) {
 }
 
 function KindCard({ index }: { index: number }) {
-  const { store, selection } = useSession();
+  const { selection } = useSession();
+  const project = useProject();
   const selected = useSyncExternalStore(selection.subscribe, () => selection.getState().kindId);
   const [, setSection] = useSection();
   const doc = useDoc();
   const id = String(useValue([...RT, "kinds", index, "id"]) ?? "");
-  const [blocked, setBlocked] = useState<{ reason: string; references: KindRef[] } | null>(null);
-  const uses = doc === null ? 0 : kindReferences(doc, id).length;
+  const [blocked, setBlocked] = useState<{ reason: string; references: readonly XrefEntry[] } | null>(null);
+  const uses = id === "" ? 0 : project.xrefIndex().referencesToKind(id).length;
   const base = [...RT, "kinds", index];
 
   const onRemove = () => {
     if (doc === null) return;
-    const r = removeKind(doc, id);
-    if (r.ok) { store.replace(r.doc); setBlocked(null); } else setBlocked({ reason: r.reason, references: r.references });
+    const r = project.removeKind(id);
+    if (r.ok) setBlocked(null); else setBlocked({ reason: r.reason, references: r.references });
   };
 
   return (
@@ -99,7 +102,9 @@ function KindCard({ index }: { index: number }) {
         <div className="blocked" role="alert">
           <p>{blocked.reason}. Change these first:</p>
           <ul>{blocked.references.map((r) => (
-            <li key={r.path.join(".")}><button type="button" className="link" onClick={() => goToPath(r.path, setSection)}>{r.label}</button></li>
+            <li key={r.pathText}>{r.manifest === "spec"
+            ? <button type="button" className="link" onClick={() => goToPath([...r.path], setSection)}>{r.label}</button>
+            : <span>{r.label} <code>{r.pathText}</code></span>}</li>
           ))}</ul>
         </div>
       )}

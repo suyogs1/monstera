@@ -74,6 +74,7 @@ export class Session {
       draft: this.store, projects: this.projects, schedule: this.schedule, saveDelayMs: deps.saveDelayMs,
       adopt: async (p) => { await this.adopt(p); },
       legacyRecovery: () => this.legacyRecovery(),
+      kindIdPattern: () => this.schema?.field("game.runtime.kinds[].id")?.regex,
     });
     this.badge = new BadgeRunner(this.engine, this.store);
     this.preview = new PreviewController(this.engine);
