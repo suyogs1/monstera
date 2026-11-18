@@ -1,0 +1,11 @@
+{
+  "levelId": "level-2",
+  "initialEntities": [
+    { "kind": "keeper", "x": 32112640, "y": 98304000, "vx": 0, "vy": 0, "controlled": true }
+  ],
+  "spawners": [
+    { "stream": "wisps", "kind": "wisp", "startTick": 60, "intervalTicks": 90, "xMin": 0, "xMax": 64487424, "yMin": -7864320, "yMax": -6553600, "vx": 0, "vy": 393216 }
+  ],
+  "entitySourcePaths": [["levels", 1, "placements", 0]],
+  "spawnerSourcePaths": [["levels", 1, "waves", 0]]
+}

@@ -1,0 +1,13 @@
+{
+  "levelId": "level-1",
+  "initialEntities": [
+    { "kind": "keeper", "x": 32112640, "y": 98304000, "vx": 0, "vy": 0, "controlled": true }
+  ],
+  "spawners": [
+    { "stream": "lanterns", "kind": "lantern", "startTick": 30, "intervalTicks": 90, "xMin": 0, "xMax": 65536000, "yMin": -6553600, "yMax": -5242880, "vx": 0, "vy": 262144 },
+    { "stream": "wisps", "kind": "wisp", "startTick": 180, "intervalTicks": 150, "xMin": 0, "xMax": 64487424, "yMin": -7864320, "yMax": -6553600, "vx": 0, "vy": 327680 },
+    { "stream": "wisps-late", "kind": "wisp", "startTick": 1200, "intervalTicks": 100, "xMin": 0, "xMax": 64487424, "yMin": -7864320, "yMax": -6553600, "vx": 0, "vy": 458752 }
+  ],
+  "entitySourcePaths": [["levels", 0, "placements", 0]],
+  "spawnerSourcePaths": [["levels", 0, "waves", 0], ["levels", 0, "waves", 1], ["levels", 0, "difficulty", 0]]
+}
