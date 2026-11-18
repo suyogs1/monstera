@@ -5,7 +5,7 @@ import { addInitialEntity, addKind, removeInitialEntity } from "../../draft/ops"
 import { useProject } from "../../project/context";
 import type { XrefEntry } from "../../project/xref";
 import { getAt, toIssuePath, toPattern, type Path } from "../../draft/path";
-import { Card, Field, FieldGrid, KindSelect, useDoc, useFieldInfo, useFieldIssues, useValue } from "../fields";
+import { Card, Field, FieldGrid, KindSelect, useDoc, useFieldInfo, useFieldIssues, useValue, useLockOwner } from "../fields";
 
 const RT: Path = ["game", "runtime"];
 
@@ -113,6 +113,7 @@ function KindCard({ index }: { index: number }) {
 }
 
 function StartingEntity({ index }: { index: number }) {
+  const locked = useLockOwner(["game", "runtime", "initialEntities"]) !== null;
   const { store } = useSession();
   const doc = useDoc();
   const base = [...RT, "initialEntities", index];
@@ -127,13 +128,14 @@ function StartingEntity({ index }: { index: number }) {
         <Field path={[...base, "controlled"]} label="Controlled by the player" />
       </FieldGrid>
       <div className="row-actions">
-        <button type="button" className="danger" onClick={() => doc !== null && store.replace(removeInitialEntity(doc, index))}>Remove</button>
+        <button type="button" className="danger" disabled={locked} onClick={() => doc !== null && store.replace(removeInitialEntity(doc, index))}>Remove</button>
       </div>
     </Card>
   );
 }
 
 export function Entities() {
+  const locked = useLockOwner(["game", "runtime", "initialEntities"]) !== null;
   const { store } = useSession();
   const doc = useDoc();
   const kinds = doc === null ? 0 : (Array.isArray(getAt(doc, [...RT, "kinds"])) ? (getAt(doc, [...RT, "kinds"]) as unknown[]).length : 0);
@@ -155,7 +157,7 @@ export function Entities() {
       <h3 className="group">Starting entities ({starts})</h3>
       <p className="muted">What exists when a session begins. At least one is normally the player.</p>
       {Array.from({ length: starts }, (_, i) => <StartingEntity key={i} index={i} />)}
-      <button type="button" onClick={() => { if (doc !== null) store.replace(addInitialEntity(doc)); }}>Add starting entity</button>
+      <button type="button" disabled={locked} onClick={() => { if (doc !== null) store.replace(addInitialEntity(doc)); }}>Add starting entity</button>
     </section>
   );
 }

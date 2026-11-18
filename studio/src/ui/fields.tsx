@@ -9,6 +9,8 @@ import { getAt } from "../draft/path";
 import { kindIds } from "../draft/ops";
 import type { Issue } from "../engine/protocol";
 import type { FieldInfo, Json } from "../schema/schema";
+import { lockedBy, type DerivingModule } from "../derive/ownership";
+import { useDerivation } from "../project/context";
 import { formatUnits, parseUnits, type ParseResult } from "../units/q16";
 
 export function useValue(path: Path): Json | undefined {
@@ -27,6 +29,18 @@ export function useFieldIssues(path: Path): Issue[] {
   return validation.issues.filter((i) => i.path === key);
 }
 
+/** The module that owns `path` while its derivation is on (the control is then read-only), else null. */
+export function useLockOwner(path: Path): DerivingModule | null {
+  return lockedBy(path, useDerivation());
+}
+const LOCK_TEXT: Record<DerivingModule, string> = { levels: "Level Studio", gameplay: "Gameplay Systems" };
+function Lockable({ path, children }: { path: Path; children: ReactNode }) {
+  const owner = useLockOwner(path);
+  if (owner === null) return <>{children}</>;
+  return (
+    <fieldset disabled className="locked" data-locked-by={owner} title={`Derived by ${LOCK_TEXT[owner]}. Turn derivation off to edit here.`}>{children}</fieldset>
+  );
+}
 export function useDoc(): Json | null {
   return useDraft().doc;
 }
@@ -127,7 +141,10 @@ const asText = (n: number) => String(n);
 interface FieldProps { path: Path; label: string; help?: string; wide?: boolean; note?: string }
 
 /** Picks the control from the schema: enum, boolean, colour, text, Q16.16 quantity, integer or number. */
-export function Field({ path, label, help, wide, note }: FieldProps) {
+export function Field(props: FieldProps) {
+  return <Lockable path={props.path}><FieldBody {...props} /></Lockable>;
+}
+function FieldBody({ path, label, help, wide, note }: FieldProps) {
   const { store } = useSession();
   const { mode } = usePrefs();
   const info = useFieldInfo(toPattern(path));
@@ -212,7 +229,10 @@ export function Field({ path, label, help, wide, note }: FieldProps) {
 }
 
 // ------------------------------------------------------------------ kind references
-export function KindSelect({ path, label, help, allowNone, wide }: FieldProps & { allowNone?: boolean }) {
+export function KindSelect(props: FieldProps & { allowNone?: boolean }) {
+  return <Lockable path={props.path}><KindSelectBody {...props} /></Lockable>;
+}
+function KindSelectBody({ path, label, help, allowNone, wide }: FieldProps & { allowNone?: boolean }) {
   const { store } = useSession();
   const info = useFieldInfo(toPattern(path));
   const value = useValue(path);
