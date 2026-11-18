@@ -4,3 +4,4 @@ public/engine/
 public/pyodide/
 src/generated/
 public/evidence/
+.memory/

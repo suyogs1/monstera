@@ -33,6 +33,7 @@ import type {
   EstimateResult, LegacyState, PersistenceResult, ProjectStore, ProjectStoreStatus, ReloadResult, StartProjectResult, StoreDetail,
 } from "./store";
 import type { MigrationResult } from "./migrate";
+import { removeLevel as planLevelRemoval } from "../derive/levelOps";
 import { kindIdCheck, planKindRemoval, planKindRename, type KindRenamePlan } from "./kindOps";
 import { aggregateValidation, type AggregateResult } from "./validation";
 import { XrefCache, type XrefEntry, type XrefIndex } from "./xref";
@@ -78,6 +79,8 @@ export type CommitResult = { ok: true; changed: boolean } | { ok: false; message
 /** A project-wide kind change. Rename is all-or-nothing; remove is refused with every referring place while any exists. */
 export type KindRenameOutcome = { ok: true; changed: boolean; updated: KindRenamePlan["updated"] } | { ok: false; reason: string };
 export type KindRemoveOutcome = { ok: true } | { ok: false; reason: string; references: XrefEntry[] };
+/** A level change. Refusals carry the reason shown to the user and leave the project, the draft and the history untouched. */
+export type LevelOutcome = { ok: true; changed: boolean } | { ok: false; reason: string; references?: XrefEntry[] };
 export type RetryOpenResult = { ok: true } | { ok: false; reason: "unsaved-invalid-edits"; message: string };
 export type ReloadOutcome = ReloadResult | { ok: false; reason: "no-project"; message: string };
 
@@ -105,6 +108,14 @@ export interface ProjectActions {
   commitManifest<N extends ManifestName>(name: N, value: ManifestMap[N], field?: string): CommitResult;
   renameKind(from: string, to: string): KindRenameOutcome;
   removeKind(id: string): KindRemoveOutcome;
+  /** Commits a levels manifest as one history entry (`field` coalesces rapid edits of one field). */
+  setLevels(next: ManifestMap["levels"], field?: string): LevelOutcome;
+  /** Deletes a level unless something (the active level) refers to it. */
+  removeLevel(id: string): LevelOutcome;
+  /** Changes which level derivation compiles. Needs level derivation on and an existing level. */
+  setActiveLevel(id: string): LevelOutcome;
+  /** Turns level derivation on (with `activeLevel`) or off. It never changes the spec: the next Apply does. */
+  setLevelDerivation(on: boolean, activeLevel?: string): LevelOutcome;
   /** The cross-reference index of the current document and manifests (cached until either changes). */
   xrefIndex(): XrefIndex;
   /** Engine + manifest + cross-reference issues of the current project, each targeted at a module and field. */
@@ -166,6 +177,8 @@ export class ProjectController {
       undo: () => this.undo(), redo: () => this.redo(),
       commitManifest: (n, v, f) => this.commitManifest(n, v, f),
       renameKind: (f, t) => this.renameKind(f, t), removeKind: (i) => this.removeKind(i),
+      setLevels: (n, f) => this.setLevels(n, f), removeLevel: (i) => this.removeLevel(i),
+      setActiveLevel: (i) => this.setActiveLevel(i), setLevelDerivation: (o, a) => this.setLevelDerivation(o, a),
       xrefIndex: () => this.xrefIndex(), validateProject: () => this.validateProject(),
       retryOpen: () => this.retryOpen(), retrySave: () => this.retrySave(),
       reloadFromStorage: (o) => this.reloadFromStorage(o), exportRecovery: (o) => this.exportRecovery(o),
@@ -420,6 +433,30 @@ export class ProjectController {
     if (!plan.ok) return plan;
     this.applyProjectChange(doc, plan.doc, this.manifests);
     return { ok: true };
+  }
+  // ------------------------------------------------------------ levels (task 4.3): thin wrappers over the one manifest seam
+  private asLevelOutcome(r: CommitResult): LevelOutcome { return r.ok ? r : { ok: false, reason: r.message }; }
+  setLevels(next: ManifestMap["levels"], field?: string): LevelOutcome { return this.asLevelOutcome(this.commitManifest("levels", next, field)); }
+  removeLevel(id: string): LevelOutcome {
+    const doc = this.deps.draft.getState().doc;
+    if (this.manifests === null || doc === null) return { ok: false, reason: "there is no open project" };
+    const plan = planLevelRemoval(doc, this.manifests, id);
+    return plan.ok ? this.setLevels(plan.levels, "remove") : plan;
+  }
+  setActiveLevel(id: string): LevelOutcome {
+    if (this.manifests === null) return { ok: false, reason: "there is no open project" };
+    const p = this.manifests.project;
+    if (!p.derivation.levels) return { ok: false, reason: "turn level derivation on before choosing the active level" };
+    if (!this.manifests.levels.levels.some((l) => l.id === id)) return { ok: false, reason: `"${id}" is not a level` };
+    return this.asLevelOutcome(this.commitManifest("project", { ...p, derivation: { ...p.derivation, activeLevel: id } }, "activeLevel"));
+  }
+  setLevelDerivation(on: boolean, activeLevel?: string): LevelOutcome {
+    if (this.manifests === null) return { ok: false, reason: "there is no open project" };
+    const p = this.manifests.project;
+    const first = this.manifests.levels.levels[0]?.id ?? "";
+    const active = on ? (activeLevel ?? (this.manifests.levels.levels.some((l) => l.id === p.derivation.activeLevel) ? p.derivation.activeLevel : first)) : "";
+    if (on && !this.manifests.levels.levels.some((l) => l.id === active)) return { ok: false, reason: "add a level before turning level derivation on" };
+    return this.asLevelOutcome(this.commitManifest("project", { ...p, derivation: { ...p.derivation, levels: on, activeLevel: active } }, "derivation"));
   }
   currentState(): ProjectState | null {
     const doc = this.deps.draft.getState().doc;

@@ -31,8 +31,8 @@ const hashesFor = (module: ModuleId): string[] => {
 const cardOf = (module: ModuleId): Route => ({ kind: "card", module });
 
 describe("the module set under test", () => {
-  it("covers the four modules that have editor routes today", () => {
-    expect([...EDITOR_MODULES].sort()).toEqual(["designer", "kiro", "preview", "release"]);
+  it("covers the five modules that have editor routes today", () => {
+    expect([...EDITOR_MODULES].sort()).toEqual(["designer", "kiro", "levels", "preview", "release"]);
   });
 });
 

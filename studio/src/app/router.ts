@@ -22,6 +22,7 @@ export const SECTION_ROUTES: readonly SectionRoute[] = [
   { id: "determinism", module: "preview", slug: "determinism" },
   { id: "export", module: "release", slug: "export" },
   { id: "integration", module: "kiro", slug: "integration" },
+  { id: "levels", module: "levels", slug: "editor" },
 ];
 
 export type Route =

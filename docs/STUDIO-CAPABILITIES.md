@@ -11,7 +11,7 @@ Statuses: `implemented` (works end to end, with a test), `prototype` (bounded su
 | Game Designer | implemented | implemented | compiles to native | The canonical v4 spec editors. Field ownership locks for derived modules are not built; with derivation off every field is owned by the Designer. |
 | Asset Studio | planned | prototype | studio only | Not built. The manifest schema exists, there is no import or library UI. Assets will not render or play in the native apps (no v4 asset concept; E1 is conditional). |
 | Sprite and Animation Editor | planned | prototype | studio only | Not built. The animations manifest schema exists. Native rendering needs engine track E1, which is conditional and not started. |
-| Level Studio | planned | prototype | compiles to native | Not built. The levels manifest schema exists. When built, only the active level compiles into the native spec; other levels export as standalone spec variants. |
+| Level Studio | prototype | prototype | compiles to native | Only the active level compiles into the native spec; other levels are Studio-only variants exported as standalone specs. No wave end, per-level win rule or in-app level selection (see multi-level-in-app). |
 | Gameplay Systems | planned | implemented | compiles to native | Not built as a module. Lives, win score and collisions can be edited today under Game Designer. Health, power-ups and progression need contract changes and stay planned. |
 | Backend and Services | planned | mock | scaffold | Not built. Will generate scaffold text and mock stubs only. Never a live Firebase connection. |
 | Monetization | planned | mock | mock | Not built. Will support mock and official Google test configurations only. No production ad ids in Studio. |
@@ -53,8 +53,8 @@ Statuses: `implemented` (works end to end, with a test), `prototype` (bounded su
 
 | Capability | Now | Target | Native output | Evidence | Limits | Needs |
 |---|---|---|---|---|---|---|
-| Active level compiled into initial entities and spawners | planned | prototype | compiles to native | none | Not built. Active level only. | Level compiler (task 4.1) and apply path (task 4.2). |
-| Other levels exported as standalone spec variants | planned | prototype | studio only | none | Not built. Variants are not selectable inside the generated app. | Level UI (task 4.3). |
+| Active level compiled into initial entities and spawners | prototype | prototype | compiles to native | `studio/src/derive/levels.test.ts`<br>`studio/src/derive/apply.test.ts`<br>`studio/scripts/derive-apply.mjs` | Active level only. Applied through an explicit action that the engine and a bounded oracle run must accept; one undo step. |  |
+| Other levels exported as standalone spec variants | prototype | prototype | studio only | `studio/src/derive/variants.test.ts`<br>`studio/src/export/levelPack.test.ts`<br>`studio/scripts/a5-levels.mjs` | Variants are not selectable inside the generated app. The ZIP holds only studio-pack/derived/levels/<id>/monstera.spec.json; the full Studio pack is a later task. |  |
 | Level selection, per-level win rule and wave end inside the native app | unsupported | unsupported | planned | none | Schema v4 has one runtime and spawners that never stop. Engine track E3, outside hackathon scope. | Engine and schema change after G6 closure. |
 
 ### Gameplay Systems

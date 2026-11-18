@@ -2,27 +2,10 @@ import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "reac
 import { useDraft, useSection, useSession } from "../app/hooks";
 import { goToPath } from "../app/navigate";
 import type { PreviewSnapshot } from "../engine/protocol";
-import { keyEvents, PointerMapper, type Scheme } from "./input";
-import { EffectTracker, Layout, Texts, type Effect, type Tracked } from "./presentation";
+import { keyEvents, PointerMapper } from "./input";
+import { EffectTracker, Layout, Texts, type Tracked } from "./presentation";
 import { entityBox, hitTest, RAW, STRIDE } from "./select";
-
-interface Kind { id: string; color: string; glyph: string; effect: Effect; width: number; height: number }
-interface Display {
-  displayName: string; orientation: "landscape" | "portrait"; worldW: number; worldH: number; scheme: Scheme; swipeSpeed: number;
-  palette: { primary: string; accent: string; background: string }; hud: { lifeGlyph: string; scoreLabel: string };
-  screens: { startHint: string; winTitle: string; loseTitle: string }; kinds: Kind[];
-}
-
-/** Display fields of the running session's spec (the same text the engine was started with). */
-function displayOf(text: string): Display {
-  const d = JSON.parse(text);
-  const g = d.game;
-  return {
-    displayName: d.project.displayName, orientation: g.orientation, worldW: g.world.width, worldH: g.world.height,
-    scheme: g.input.scheme, swipeSpeed: g.input.swipeSpeed, palette: g.palette, hud: g.hud, screens: g.screens,
-    kinds: g.runtime.kinds.map((k: Kind) => ({ id: k.id, color: k.color, glyph: k.glyph, effect: k.effect, width: k.width, height: k.height })),
-  };
-}
+import { displayOf, drawEntityBox, withAlpha, type Display, type Kind } from "./worldDraw";
 
 function tracked(s: PreviewSnapshot, kinds: Kind[]): Tracked[] {
   const out: Tracked[] = [];
@@ -32,11 +15,6 @@ function tracked(s: PreviewSnapshot, kinds: Kind[]): Tracked[] {
     out.push({ id: s.entities[i]!, kind: s.entities[i + 1]!, box: { x: s.entities[i + 2]! / RAW, y: s.entities[i + 3]! / RAW, w: k.width / RAW, h: k.height / RAW } });
   }
   return out;
-}
-
-function withAlpha(hex: string, a: number): string {
-  const n = parseInt(hex.slice(1), 16);
-  return `rgba(${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}, ${Math.max(0, Math.min(1, a))})`;
 }
 
 /** Draws one frame; returns how many visible entities carry the highlight (the selected kind, -1 for none). */
@@ -54,12 +32,8 @@ function draw(ctx: CanvasRenderingContext2D, L: Layout, d: Display, s: PreviewSn
     const box = entityBox(s, i, d.kinds);
     if (!kind || !box || L.visible(box) === null) continue;
     const px = L.toScreen(box);
-    if (kind.glyph === "") { ctx.fillStyle = kind.color; ctx.fillRect(px.x, px.y, px.w, px.h); }
-    else {
-      ctx.font = `${Texts.glyphSize(px)}px system-ui, "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif`;
-      ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillStyle = kind.color;
-      ctx.fillText(kind.glyph, px.x + px.w / 2, px.y + px.h / 2);
-    }
+    drawEntityBox(ctx, kind, px);
+
     if (s.entities[i + 1] === highlight) {
       highlighted++;
       ctx.strokeStyle = "#ffffff"; ctx.lineWidth = 2; ctx.setLineDash([4, 3]);

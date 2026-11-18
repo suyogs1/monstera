@@ -16,9 +16,10 @@ describe("router: legacy hashes (acceptance of task 1.1)", () => {
     overview: "#/designer/overview", platforms: "#/designer/platforms", entities: "#/designer/entities", rules: "#/designer/rules",
     spawns: "#/designer/spawns", presentation: "#/designer/presentation", spec: "#/designer/spec",
     gameplay: "#/designer/world", determinism: "#/preview/determinism", export: "#/release/export", integration: "#/kiro/integration",
+    levels: "#/levels/editor",
   };
 
-  it("lists exactly the eleven legacy section ids", () => {
+  it("lists exactly the twelve legacy section ids", () => {
     expect(SECTIONS.map((s) => s.id).sort()).toEqual(Object.keys(expected).sort());
   });
   it.each(Object.entries(expected))("#/%s redirects to %s", (legacy, target) => {
@@ -57,7 +58,7 @@ describe("router: modules, partial and unknown hashes", () => {
     expect(resolveHash("#/kiro/drift").canonical).toBe("#/kiro/integration");
   });
   it("modules that are not built resolve to a card", () => {
-    for (const id of ["dashboard", "assets", "sprites", "levels", "backend", "monetization"] as const) {
+    for (const id of ["dashboard", "assets", "sprites", "backend", "monetization"] as const) {
       expect(resolveHash(`#/${id}`).route).toEqual({ kind: "card", module: id });
       expect(resolveHash(`#/${id}/anything`).canonical).toBe(`#/${id}`);
     }
@@ -141,7 +142,7 @@ describe("honesty: what may have editors, and what a card says", () => {
   });
   it("a card module's header facts equal the registry", () => {
     const m = moduleOf("levels");
-    expect(m).toMatchObject({ status: "planned", nativeOutput: "compiles to native" });
+    expect(m).toMatchObject({ status: "prototype", nativeOutput: "compiles to native" });
     expect(unbuilt("levels").map((c) => c.id)).toContain("multi-level-in-app");
   });
   it("the card and header components render no editing controls (source check; the browser check is scripts/shell.mjs)", () => {
