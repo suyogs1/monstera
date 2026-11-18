@@ -47,6 +47,8 @@ jobs:
         run: npm run shell
       - name: Level apply path through the real engine worker (task 4.2)
         run: npm run derive:apply
+      - name: A5 Level Studio end to end, including the real monstera validate on every exported variant (task 4.3)
+        run: npm run a5:levels
       - name: Smoke test under the header policy (CSP report-only, then enforced)
         run: |
           SMOKE_CSP=report-only SMOKE_REPORT="$RUNNER_TEMP/smoke-csp-report-only.json" node scripts/smoke.mjs

@@ -37,10 +37,10 @@
     {
       "id": "levels",
       "title": "Level Studio",
-      "status": "planned",
+      "status": "prototype",
       "targetStatus": "prototype",
       "nativeOutput": "compiles to native",
-      "limits": "Not built. The levels manifest schema exists. When built, only the active level compiles into the native spec; other levels export as standalone spec variants."
+      "limits": "Only the active level compiles into the native spec; other levels are Studio-only variants exported as standalone specs. No wave end, per-level win rule or in-app level selection (see multi-level-in-app)."
     },
     {
       "id": "gameplay",
@@ -184,24 +184,24 @@
       "id": "level-compile",
       "module": "levels",
       "title": "Active level compiled into initial entities and spawners",
-      "status": "planned",
+      "status": "prototype",
       "targetStatus": "prototype",
       "nativeOutput": "compiles to native",
-      "evidence": [],
-      "limits": "Not built. Active level only.",
-      "requires": "Level compiler (task 4.1) and apply path (task 4.2).",
+      "evidence": ["studio/src/derive/levels.test.ts", "studio/src/derive/apply.test.ts", "studio/scripts/derive-apply.mjs"],
+      "limits": "Active level only. Applied through an explicit action that the engine and a bounded oracle run must accept; one undo step.",
+      "requires": "",
       "designRow": "Initial placements, spawners, difficulty ramp (as later-starting spawners)"
     },
     {
       "id": "level-variants",
       "module": "levels",
       "title": "Other levels exported as standalone spec variants",
-      "status": "planned",
+      "status": "prototype",
       "targetStatus": "prototype",
       "nativeOutput": "studio only",
-      "evidence": [],
-      "limits": "Not built. Variants are not selectable inside the generated app.",
-      "requires": "Level UI (task 4.3).",
+      "evidence": ["studio/src/derive/variants.test.ts", "studio/src/export/levelPack.test.ts", "studio/scripts/a5-levels.mjs"],
+      "limits": "Variants are not selectable inside the generated app. The ZIP holds only studio-pack/derived/levels/<id>/monstera.spec.json; the full Studio pack is a later task.",
+      "requires": "",
       "designRow": "Other levels"
     },
     {

@@ -49,7 +49,7 @@ export async function derivationState(doc: Json, manifests: ManifestMap, sha: Sh
   return (await inputsSha256(doc, manifests, sha)) === recorded ? "fresh" : "stale";
 }
 /** Maps one engine issue path to the level field that produced it; unmapped issues stay on the spec. */
-function mapEngineIssue(i: { path: string; code: string; message: string }, c: Extract<CompileResult, { ok: true }>, levels: Json): CompileIssue {
+export function mapEngineIssue(i: { path: string; code: string; message: string }, c: Extract<CompileResult, { ok: true }>, levels: Json): CompileIssue {
   const path = parseIssuePath(i.path);
   const unmapped: CompileIssue = { source: "base-spec", path: path ?? [i.path], code: i.code, message: i.message };
   if (!path) return unmapped;
