@@ -19,8 +19,9 @@ describe("router: legacy hashes (acceptance of task 1.1)", () => {
     levels: "#/levels/editor", "gameplay-modules": "#/gameplay/modules", "gameplay-planned": "#/gameplay/planned",
     assets: "#/assets/library",
     sprites: "#/sprites/editor",
+    "dashboard-projects": "#/dashboard/projects", "dashboard-status": "#/dashboard/status",
   };
-  it("lists exactly the sixteen legacy section ids", () => {
+  it("lists exactly the eighteen legacy section ids", () => {
     expect(SECTIONS.map((s) => s.id).sort()).toEqual(Object.keys(expected).sort());
   });
   it.each(Object.entries(expected))("#/%s redirects to %s", (legacy, target) => {
@@ -59,7 +60,7 @@ describe("router: modules, partial and unknown hashes", () => {
     expect(resolveHash("#/kiro/drift").canonical).toBe("#/kiro/integration");
   });
   it("modules that are not built resolve to a card", () => {
-    for (const id of ["dashboard", "backend", "monetization"] as const) {
+    for (const id of ["backend", "monetization"] as const) {
       expect(resolveHash(`#/${id}`).route).toEqual({ kind: "card", module: id });
       expect(resolveHash(`#/${id}/anything`).canonical).toBe(`#/${id}`);
     }

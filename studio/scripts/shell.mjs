@@ -109,9 +109,9 @@ try {
 
   // a module with no editors: the card
   await toggle.click();
-  await mobile.click('[data-testid="module-dashboard"]');
+  await mobile.click('[data-testid="module-backend"]');
   await mobile.waitForSelector('[data-testid="module-card"]');
-  check("mobile: choosing a planned module opens its card and closes the menu", (await mhash()) === "#/dashboard" && (await expanded()) === "false" && !(await list.isVisible()), `${await mhash()} ${await expanded()}`);
+  check("mobile: choosing a planned module opens its card and closes the menu", (await mhash()) === "#/backend" && (await expanded()) === "false" && !(await list.isVisible()), `${await mhash()} ${await expanded()}`);
   o = await overflow();
   check("mobile: no horizontal overflow on a module card", o.nav <= 0 && o.page <= 0, JSON.stringify(o));
   // a module with editors

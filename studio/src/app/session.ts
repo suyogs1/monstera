@@ -186,6 +186,27 @@ export class Session {
     await this.startProjectFrom(doc, baseline, t, name);
   }
 
+  /**
+   * Deletes a stored project. The open project is replaced first (another stored project, else a new one from the first
+   * official template), so a failure leaves the old project untouched, and only then removed with its asset bytes.
+   */
+  async deleteProject(key: string): Promise<{ ok: true } | { ok: false; reason: string }> {
+    if (key !== this.project.getState().projectKey) return this.project.actions.deleteProject(key);
+    const listed = await this.projects.listProjects();
+    if (!listed.ok) return { ok: false, reason: listed.message };
+    const other = listed.entries.find((e) => e.state === "ok" && e.projectKey !== key);
+    if (other) {
+      const opened = await this.project.actions.openProject(other.projectKey, { discardMemory: true });
+      if (!opened.ok) return opened;
+    } else {
+      const first = this.engine.templates.find((t) => t.group === "official") ?? this.engine.templates[0];
+      if (!first) return { ok: false, reason: "The engine lists no template to start a replacement project from." };
+      await this.loadTemplate(first.id);
+      await this.project.whenSettled();
+    }
+    if (this.project.getState().projectKey === key) return { ok: false, reason: "The project could not be replaced, so it was not deleted." };
+    return this.project.actions.deleteProject(key);
+  }
   private templateCanon: Promise<{ info: TemplateInfo; sha256: string | null; canonicalText: string | null }[]> | undefined;
 
   /** Engine canonical text and SHA-256 of every bundled template (read once). */
