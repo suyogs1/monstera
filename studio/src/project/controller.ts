@@ -34,6 +34,8 @@ import type {
 } from "./store";
 import type { MigrationResult } from "./migrate";
 import { removeLevel as planLevelRemoval } from "../derive/levelOps";
+import { planImport, type ImportDeps, type ImportInput } from "../assets/import";
+import { planAssetDelete } from "../assets/library";
 import { kindIdCheck, planKindRemoval, planKindRename, type KindRenamePlan } from "./kindOps";
 import { aggregateValidation, type AggregateResult } from "./validation";
 import { XrefCache, type XrefEntry, type XrefIndex } from "./xref";
@@ -81,6 +83,9 @@ export type KindRenameOutcome = { ok: true; changed: boolean; updated: KindRenam
 export type KindRemoveOutcome = { ok: true } | { ok: false; reason: string; references: XrefEntry[] };
 /** A level change. Refusals carry the reason shown to the user and leave the project, the draft and the history untouched. */
 export type LevelOutcome = { ok: true; changed: boolean } | { ok: false; reason: string; references?: XrefEntry[] };
+/** An asset import or delete. Refusals carry the reason shown to the user and change nothing (no manifest, no stored bytes kept as an asset). */
+export type AssetImportOutcome = { ok: true; id: string; notices: string[]; persisted: boolean } | { ok: false; reason: string };
+export type AssetDeleteOutcome = { ok: true } | { ok: false; reason: string; references: XrefEntry[] };
 export type RetryOpenResult = { ok: true } | { ok: false; reason: "unsaved-invalid-edits"; message: string };
 export type ReloadOutcome = ReloadResult | { ok: false; reason: "no-project"; message: string };
 
@@ -100,6 +105,8 @@ export interface ControllerDeps {
    * model by Session. renameKind validates the NEW id with it; without it every rename to a different id is refused.
    */
   kindIdPattern?: () => string | undefined;
+  /** Browser probes for asset import (image decode, OGG/MP3 duration). Without them only header checks and WAV durations apply. */
+  assetProbes?: ImportDeps;
 }
 
 export interface ProjectActions {
@@ -116,6 +123,12 @@ export interface ProjectActions {
   setActiveLevel(id: string): LevelOutcome;
   /** Turns level derivation on (with `activeLevel`) or off. It never changes the spec: the next Apply does. */
   setLevelDerivation(on: boolean, activeLevel?: string): LevelOutcome;
+  /** Imports one asset (sniffed, limited, hashed, with provenance) as one history entry. Serialized: imports run one at a time. */
+  importAsset(input: ImportInput): Promise<AssetImportOutcome>;
+  /** Deletes an asset unless something refers to it (then lists every reference). The id counter is unchanged. */
+  deleteAsset(id: string): AssetDeleteOutcome;
+  /** The bytes of an asset: from memory, else from storage; null when they are not available. */
+  assetBytes(id: string): Promise<Uint8Array | null>;
   /** The cross-reference index of the current document and manifests (cached until either changes). */
   xrefIndex(): XrefIndex;
   /** Engine + manifest + cross-reference issues of the current project, each targeted at a module and field. */
@@ -161,6 +174,11 @@ export class ProjectController {
    */
   private provisionalGameplay: ManifestMap["gameplay"] | null = null;
   private view: ProjectViewState;
+  /** Asset bytes seen in this session, by asset id. Cleared when the project is replaced. Never part of history. */
+  private blobs = new Map<string, Uint8Array>();
+  /** The highest asset counter this project has reached. Undo restores older manifests; the counter is lifted back to this so an id is never reused. */
+  private seqFloor = 0;
+  private assetQueue: Promise<unknown> = Promise.resolve();
   private readonly xref = new XrefCache();
 
   readonly actions: ProjectActions;
@@ -179,6 +197,7 @@ export class ProjectController {
       renameKind: (f, t) => this.renameKind(f, t), removeKind: (i) => this.removeKind(i),
       setLevels: (n, f) => this.setLevels(n, f), removeLevel: (i) => this.removeLevel(i),
       setActiveLevel: (i) => this.setActiveLevel(i), setLevelDerivation: (o, a) => this.setLevelDerivation(o, a),
+      importAsset: (i) => this.importAsset(i), deleteAsset: (i) => this.deleteAsset(i), assetBytes: (i) => this.assetBytes(i),
       xrefIndex: () => this.xrefIndex(), validateProject: () => this.validateProject(),
       retryOpen: () => this.retryOpen(), retrySave: () => this.retrySave(),
       reloadFromStorage: (o) => this.reloadFromStorage(o), exportRecovery: (o) => this.exportRecovery(o),
@@ -375,6 +394,9 @@ export class ProjectController {
     this.projectKey = p.projectKey;
     this.name = p.name;
     this.manifests = p.manifests;
+    this.blobs = new Map();
+    this.seqFloor = p.manifests.assets.nextSeq;
+    void this.deps.projects.pruneBlobs(p.projectKey, new Set(p.manifests.assets.assets.map((a) => a.id)));
     this.provisionalGameplay = p.provisionalGameplay === true ? p.manifests.gameplay : null;
     this.lastDoc = this.deps.draft.getState().doc;
     this.history.clear();
@@ -405,6 +427,51 @@ export class ProjectController {
     return { ok: true, changed: true };
   }
 
+  // ------------------------------------------------------------ assets (task 2.2)
+  /**
+   * Plans the import (pure), stores the bytes, then commits the manifest through the one manifest seam (validate, history, save).
+   * The bytes are written BEFORE the manifest so a saved manifest never names bytes that were not stored; if the commit is then
+   * refused the bytes stay as an orphan that the next project load prunes. The counter advances with the commit and
+   * `seqFloor` keeps it from going back on undo, so an id is not handed out twice even when its import was undone.
+   */
+  importAsset(input: ImportInput): Promise<AssetImportOutcome> {
+    const run = this.assetQueue.then(() => this.doImportAsset(input));
+    this.assetQueue = run.catch(() => undefined);
+    return run;
+  }
+  private async doImportAsset(input: ImportInput): Promise<AssetImportOutcome> {
+    const start = this.manifests, key = this.projectKey;
+    if (start === null || key === null) return { ok: false, reason: "there is no open project" };
+    const base = { ...start.assets, nextSeq: Math.max(start.assets.nextSeq, this.seqFloor) };
+    const plan = await planImport(base, input, this.deps.assetProbes);
+    if (!plan.ok) return plan;
+    if (this.manifests !== start || this.projectKey !== key) return { ok: false, reason: "the project changed while the file was checked; import it again" };
+    const bytes = input.bytes.slice();
+    const stored = await this.deps.projects.putBlob(key, plan.asset.id, bytes);
+    if (!stored.ok) return { ok: false, reason: stored.message };
+    if (this.manifests !== start || this.projectKey !== key) return { ok: false, reason: "the project changed while the file was stored; import it again" };
+    const r = this.commitManifest("assets", plan.manifest, plan.asset.id);
+    if (!r.ok) return { ok: false, reason: r.message };
+    this.blobs.set(plan.asset.id, bytes);
+    this.seqFloor = plan.manifest.nextSeq;
+    return { ok: true, id: plan.asset.id, notices: plan.notices, persisted: stored.persisted };
+  }
+  deleteAsset(id: string): AssetDeleteOutcome {
+    if (this.manifests === null) return { ok: false, reason: "there is no open project", references: [] };
+    const plan = planAssetDelete(this.manifests.assets, this.xrefIndex(), id);
+    if (!plan.ok) return { ok: false, reason: plan.reason, references: [...plan.references] };
+    const r = this.commitManifest("assets", plan.manifest, `delete-${id}`);
+    return r.ok ? { ok: true } : { ok: false, reason: r.message, references: [] };
+  }
+  async assetBytes(id: string): Promise<Uint8Array | null> {
+    const hit = this.blobs.get(id);
+    if (hit) return hit;
+    const key = this.projectKey;
+    if (key === null || !this.manifests?.assets.assets.some((a) => a.id === id)) return null;
+    const stored = await this.deps.projects.getBlob(key, id);
+    if (stored !== null && this.projectKey === key) this.blobs.set(id, stored);
+    return stored;
+  }
   // ------------------------------------------------------------ cross-references, kind rename and delete
   xrefIndex(): XrefIndex { return this.xref.get(this.deps.draft.getState().doc, this.manifests); }
   validateProject(): AggregateResult {
@@ -492,7 +559,8 @@ export class ProjectController {
     if (target === undefined) return false;
     this.restoring = true;
     try {
-      this.manifests = target.manifests;
+      this.manifests = target.manifests.assets.nextSeq < this.seqFloor
+        ? { ...target.manifests, assets: { ...target.manifests.assets, nextSeq: this.seqFloor } } : target.manifests;
       if (target.doc !== doc) draft.replace(target.doc); // onDraft: lastDoc, markDirty; no history push while restoring
     } finally { this.restoring = false; }
     if (target.doc === doc) this.markDirty(); // manifests only
