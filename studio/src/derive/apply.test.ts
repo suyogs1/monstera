@@ -5,7 +5,7 @@ import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { drain, harness, type Harness } from "../app/session.testkit";
 import { getAt } from "../draft/path";
-import type { DraftValidation, PreviewFrame, PreviewStart } from "../engine/protocol";
+import type { DraftValidation, OracleCheck } from "../engine/protocol";
 import { sameValue, sha256Hex, stableText } from "../project/record";
 import { memoryMarker } from "../project/testkit";
 import { pumpkinDoc, xrefManifests } from "../project/xref.testkit";
@@ -29,21 +29,20 @@ function realValidate(text: string): DraftValidation {
   return { ok: r.valid, parsed: true, issues: r.issues, sha256: r.valid ? "0".repeat(64) : null, canonicalText };
 }
 class Engine implements ApplyEngine {
-  frames = 0; started = 0; failOracle: string | null = null;
+  calls = 0; failOracle: string | null = null;
+  /** Runs while the oracle is "executing" (lets a test edit the project meanwhile). */
+  during: (() => void) | null = null;
   /** When set, the engine answers with these issues instead of the CLI verdict (the CLI is lenient about level content). */
   forceIssues: { path: string; code: string; message: string }[] | null = null;
   async validateDraft(text: string) {
     const v = realValidate(text);
     return this.forceIssues ? { ...v, ok: false, sha256: null, issues: this.forceIssues } : v;
   }
-  async previewStart(): Promise<PreviewStart> {
-    this.started++;
-    if (this.failOracle) return { ok: false, message: this.failOracle };
-    return { ok: true, session: 1, sha256: "", seed: 1, snapshot: { tick: 0, score: 0, lives: 3, ended: false, alpha: 0, ticks: 0, entities: [], ms: 0 } };
-  }
-  async previewFrame(_s: number, _n: number, _e: unknown[]): Promise<PreviewFrame> {
-    this.frames++;
-    return { ok: true, session: 1, snapshot: { tick: this.frames, score: 0, lives: 3, ended: false, alpha: 0, ticks: 1, entities: [], ms: 0 } };
+  async oracleCheck(_text: string, seed: number, ticks: number): Promise<OracleCheck> {
+    this.calls++;
+    this.during?.();
+    if (this.failOracle) return { ok: false, stage: "run", message: this.failOracle };
+    return { ok: true, sha256: "", seed, ticks, ended: false, score: 0, lives: 3, entities: 0, hash: "0".repeat(16), ms: 0 };
   }
 }
 const withDerivation = (activeLevel = "level-1") => {
@@ -58,8 +57,8 @@ describe("planLevelApply", () => {
     const r = await planLevelApply(doc(), withDerivation(), e);
     if (!r.ok) throw new Error(JSON.stringify(r.issues));
     expect(getAt(r.doc, ["game", "runtime", "spawners"])).toHaveLength(r.diff.spawners.after === null ? 0 : (r.diff.spawners.after as unknown[]).length);
-    expect(e.started).toBe(1);
-    expect(e.frames).toBe(ORACLE_TICKS);
+    expect(e.calls).toBe(1);
+    expect(r.oracle.ticks).toBe(ORACLE_TICKS);
     expect(r.manifests.project.derived.inputsSha256).toMatch(/^[0-9a-f]{64}$/);
     expect(r.manifests.project.spec.currentSha256).toBe(r.sha256);
   });
@@ -91,7 +90,7 @@ describe("planLevelApply", () => {
   it("an oracle failure refuses the plan", async () => {
     const e = new Engine();
     e.failOracle = "boom";
-    expect(await planLevelApply(doc(), withDerivation(), e)).toMatchObject({ ok: false, stage: "oracle", issues: [{ code: "oracle-failed", message: "boom" }] });
+    expect(await planLevelApply(doc(), withDerivation(), e)).toMatchObject({ ok: false, stage: "oracle", issues: [{ code: "oracle-failed", message: "run: boom" }] });
   });
 });
 describe("inputsSha256 and staleness", () => {
@@ -164,10 +163,24 @@ describe("applyActiveLevel through the controller", () => {
     const h = await boot();
     const c = h.session.project;
     const slow = new Engine();
-    const orig = slow.previewStart.bind(slow);
-    slow.previewStart = async () => { h.session.store.set(["game", "runtime", "maxEntities"], 127); return orig(); };
+    slow.during = () => { h.session.store.set(["game", "runtime", "maxEntities"], 127); };
     const r = await applyActiveLevel(c, slow);
     expect(r).toMatchObject({ ok: false, issues: [{ code: "changed-meanwhile" }] });
     expect(getAt(h.session.store.getState().doc ?? undefined, ["game", "runtime", "maxEntities"])).toBe(127);
+  });
+  it("refuses to commit when only the levels manifest changed during the oracle, and keeps the newer manifest", async () => {
+    const h = await boot();
+    const c = h.session.project;
+    const before = snap(h);
+    const newer = JSON.parse(JSON.stringify(before.manifests?.levels));
+    newer.levels[0].name = "Edited meanwhile";
+    const slow = new Engine();
+    slow.during = () => { expect(c.actions.commitManifest("levels", newer)).toMatchObject({ ok: true }); };
+    const r = await applyActiveLevel(c, slow);
+    expect(r).toMatchObject({ ok: false, issues: [{ code: "changed-meanwhile" }] });
+    const after = snap(h);
+    expect(after.manifests?.levels.levels[0]?.name).toBe("Edited meanwhile");
+    expect(after.doc).toBe(before.doc);
+    expect(after.manifests?.project.derived.inputsSha256).toBe(before.manifests?.project.derived.inputsSha256);
   });
 });

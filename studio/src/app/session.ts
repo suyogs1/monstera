@@ -1,3 +1,4 @@
+import { applyActiveLevel, type ApplyResult } from "../derive/apply";
 import { BadgeRunner } from "../badge/badge";
 import { DraftStore, type Baseline, type Origin } from "../draft/store";
 import { PreviewController } from "../preview/controller";
@@ -172,6 +173,8 @@ export class Session {
   }
 
   /** A template becomes a new project (history cleared, saved in the background). */
+  /** Compiles the active level into the spec (engine-validated, oracle-checked) and commits it as one undo step, or refuses. */
+  applyActiveLevel(): Promise<ApplyResult> { return applyActiveLevel(this.project, this.engine); }
   async loadTemplate(id: string): Promise<void> {
     const { doc, baseline, t, name } = await this.templateContent(id);
     await this.startProjectFrom(doc, baseline, t, name);

@@ -18,7 +18,7 @@ export type WorkerResponse =
 /** Functions exported by glue.py. Each takes and returns strings (JSON). */
 export type EngineFunction =
   | "info" | "schemas" | "validate_draft" | "template" | "golden_report" | "plan_template" | "badge_scenarios" | "badge_check"
-  | "preview_start" | "preview_frame" | "preview_trace" | "export_plan";
+  | "preview_start" | "preview_frame" | "preview_trace" | "oracle_check" | "export_plan";
 
 export interface ExportFile { path: string; mode: number; size: number; sha256: string; kind: string; data: string }
 export type ExportPlan =
@@ -32,6 +32,10 @@ export interface EngineEvent { type: "press" | "release" | "tap" | "drag" | "swi
 export interface PreviewSnapshot { tick: number; score: number; lives: number; ended: boolean; alpha: number; ticks: number; entities: number[]; ms: number }
 export type PreviewStart = { ok: true; session: number; sha256: string; seed: number; snapshot: PreviewSnapshot } | { ok: false; message: string };
 export type PreviewFrame = { ok: true; session: number; snapshot: PreviewSnapshot } | { ok: false; message: string };
+/** Outcome of a bounded oracle run on a local GameLoop (never the live preview session). */
+export type OracleCheck =
+  | { ok: true; sha256: string; seed: number; ticks: number; ended: boolean; score: number; lives: number; entities: number; hash: string; ms: number }
+  | { ok: false; stage: "load" | "validate" | "run"; message: string };
 export interface PreviewTrace { session: number; seed: number; sha256: string; frames: [number, EngineEvent[]][]; truncated: boolean; tick: number; hash: string }
 
 export interface BadgeScenario {

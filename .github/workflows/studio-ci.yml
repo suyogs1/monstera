@@ -45,6 +45,8 @@ jobs:
         run: npm run smoke
       - name: Shell check (legacy redirects, registry-driven rail, cards without controls)
         run: npm run shell
+      - name: Level apply path through the real engine worker (task 4.2)
+        run: npm run derive:apply
       - name: Smoke test under the header policy (CSP report-only, then enforced)
         run: |
           SMOKE_CSP=report-only SMOKE_REPORT="$RUNNER_TEMP/smoke-csp-report-only.json" node scripts/smoke.mjs

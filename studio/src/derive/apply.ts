@@ -5,20 +5,20 @@
 // controller, which commits only if the draft is still the document the plan was computed from. No game rule lives here:
 // the unmodified engine validates the derived spec and the oracle (preview session) runs it.
 import { getAt, parseIssuePath, setAt, startsWith, type Path } from "../draft/path";
-import type { DraftValidation, EngineEvent, PreviewFrame, PreviewStart } from "../engine/protocol";
+import type { DraftValidation, OracleCheck } from "../engine/protocol";
 import type { ManifestMap } from "../project/manifests";
 import { sha256Hex, stableText, type Sha256 } from "../project/record";
 import type { Json } from "../schema/schema";
 import { compileLevel, type CompileIssue, type CompileResult } from "./levels";
 import { POINTER_OWNERS } from "./ownership";
-/** The oracle run covers this many ticks of the derived spec (about 10 s at 60 ticks per second). */
+/** The oracle run covers this many ticks of the derived spec (10 s at 60 ticks per second). */
 export const ORACLE_TICKS = 600;
 export const ORACLE_SEED = 1;
 /** The engine calls the apply path uses (EngineClient satisfies it). */
 export interface ApplyEngine {
   validateDraft(text: string): Promise<DraftValidation>;
-  previewStart(draftText: string, seed: number): Promise<PreviewStart>;
-  previewFrame(session: number, elapsedNanos: number, events: EngineEvent[]): Promise<PreviewFrame>;
+  /** Bounded run on a local GameLoop; never touches the live preview session. */
+  oracleCheck(draftText: string, seed: number, ticks: number): Promise<OracleCheck>;
 }
 export interface ApplyPlan {
   ok: true;
@@ -28,11 +28,12 @@ export interface ApplyPlan {
   sha256: string;
   /** The derived pointers before and after, for the diff the user sees before accepting. */
   diff: { initialEntities: { before: Json; after: Json }; spawners: { before: Json; after: Json } };
-  oracle: { ticks: number; ms: number };
+  oracle: { ticks: number; ms: number; hash: string };
 }
 export type ApplyRefusal = { ok: false; stage: "precondition" | "compile" | "engine" | "oracle"; issues: CompileIssue[] };
 export type ApplyResult = ApplyPlan | ApplyRefusal;
 const RT: Path = ["game", "runtime"];
+const compiledIndex = (m: ManifestMap): number => Math.max(0, m.levels.levels.findIndex((l) => l.id === m.project.derivation.activeLevel));
 const refuse = (stage: ApplyRefusal["stage"], issues: CompileIssue[]): ApplyRefusal => ({ ok: false, stage, issues });
 /** Hash of everything derivation reads: the levels manifest, the active level and the spec without the owned pointers. */
 export async function inputsSha256(doc: Json, manifests: ManifestMap, sha: Sha256 = sha256Hex): Promise<string> {
@@ -66,21 +67,6 @@ function mapEngineIssue(i: { path: string; code: string; message: string }, c: E
   }
   return unmapped;
 }
-async function oracleRun(engine: ApplyEngine, text: string, tickRate: number): Promise<{ ok: true; ticks: number; ms: number } | { ok: false; message: string }> {
-  const t0 = performance.now();
-  const start = await engine.previewStart(text, ORACLE_SEED);
-  if (!start.ok) return { ok: false, message: start.message };
-  const step = Math.round(1e9 / tickRate);
-  let tick = start.snapshot.tick;
-  for (let n = 0; n < ORACLE_TICKS && tick < ORACLE_TICKS; n++) {
-    const f = await engine.previewFrame(start.session, step, []);
-    if (!f.ok) return { ok: false, message: f.message };
-    if (f.snapshot.tick <= tick) return { ok: false, message: "the oracle did not advance" };
-    tick = f.snapshot.tick;
-    if (f.snapshot.ended) break;
-  }
-  return { ok: true, ticks: tick, ms: performance.now() - t0 };
-}
 /** Compiles the active level into `doc` and checks it with the engine. Pure with respect to the project: nothing is committed. */
 export async function planLevelApply(doc: Json, manifests: ManifestMap, engine: ApplyEngine, sha: Sha256 = sha256Hex): Promise<ApplyResult> {
   const d = manifests.project.derivation;
@@ -99,8 +85,8 @@ export async function planLevelApply(doc: Json, manifests: ManifestMap, engine: 
       : [{ source: "base-spec" as const, path: [], code: "engine-rejected", message: "the engine could not read the derived specification" }];
     return refuse("engine", issues);
   }
-  const run = await oracleRun(engine, verdict.canonicalText, tickRate);
-  if (!run.ok) return refuse("oracle", [{ source: "levels", path: ["levels"], code: "oracle-failed", message: run.message }]);
+  const run = await engine.oracleCheck(verdict.canonicalText, ORACLE_SEED, ORACLE_TICKS);
+  if (!run.ok) return refuse("oracle", [{ source: "levels", path: ["levels", compiledIndex(manifests)], code: "oracle-failed", message: `${run.stage}: ${run.message}` }]);
   const nextDoc = JSON.parse(verdict.canonicalText) as Json;
   const inputs = await inputsSha256(nextDoc, manifests, sha);
   const nextManifests: ManifestMap = {
@@ -113,13 +99,14 @@ export async function planLevelApply(doc: Json, manifests: ManifestMap, engine: 
       initialEntities: { before: getAt(doc, [...RT, "initialEntities"]) ?? null, after: entities },
       spawners: { before: getAt(doc, [...RT, "spawners"]) ?? null, after: spawners },
     },
-    oracle: { ticks: run.ticks, ms: run.ms },
+    oracle: { ticks: run.ticks, ms: run.ms, hash: run.hash },
   };
 }
 /** What applyActiveLevel needs from the project controller. */
 export interface DerivationSink {
   currentState(): { doc: Json; manifests: ManifestMap } | null;
-  commitDerived(expectedDoc: Json, doc: Json, manifests: ManifestMap): { ok: true } | { ok: false; message: string };
+  /** Must commit only while the live document AND manifests are the exact objects `expected` holds. */
+  commitDerived(expected: { doc: Json; manifests: ManifestMap }, doc: Json, manifests: ManifestMap): { ok: true } | { ok: false; message: string };
 }
 /** Plans and, if the plan passes, commits it as one change (one undo step). A rejected plan leaves the project untouched. */
 export async function applyActiveLevel(sink: DerivationSink, engine: ApplyEngine, sha: Sha256 = sha256Hex): Promise<ApplyResult> {
@@ -127,7 +114,7 @@ export async function applyActiveLevel(sink: DerivationSink, engine: ApplyEngine
   if (state === null) return refuse("precondition", [{ source: "request", path: [], code: "no-project", message: "there is no open project" }]);
   const plan = await planLevelApply(state.doc, state.manifests, engine, sha);
   if (!plan.ok) return plan;
-  const done = sink.commitDerived(state.doc, plan.doc, plan.manifests);
+  const done = sink.commitDerived(state, plan.doc, plan.manifests);
   if (!done.ok) return refuse("precondition", [{ source: "request", path: [], code: "changed-meanwhile", message: done.message }]);
   return plan;
 }

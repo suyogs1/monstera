@@ -180,5 +180,30 @@ class PreviewRecoveryTests(unittest.TestCase):
         self.assertEqual(trace["tick"], replay.world.tick)
 
 
+class OracleCheckTests(unittest.TestCase):
+    def test_a_level_oracle_run_leaves_the_live_preview_session_and_trace_untouched(self) -> None:
+        text = text_of(PUMPKIN)
+        session = json.loads(GLUE.preview_start(text, 4242))["session"]
+        for _ in range(4):
+            self.assertTrue(json.loads(GLUE.preview_frame(session, 16_666_667, "[]"))["ok"])
+        before = GLUE.preview_trace()
+        other = json.loads(text_of("spec/samples/lantern-run/monstera.spec.json"))
+        verdict = json.loads(GLUE.oracle_check(json.dumps(other), 1, 600))
+        self.assertTrue(verdict["ok"], verdict)
+        self.assertGreaterEqual(verdict["ticks"], 600)
+        self.assertEqual(GLUE.preview_trace(), before)
+        after = json.loads(GLUE.preview_frame(session, 16_666_667, "[]"))
+        self.assertTrue(after["ok"])
+        self.assertEqual(after["session"], session)
+        self.assertEqual(len(json.loads(GLUE.preview_trace())["frames"]), 5)
+
+    def test_the_oracle_run_is_deterministic_and_reports_refusals(self) -> None:
+        text = text_of(PUMPKIN)
+        a = json.loads(GLUE.oracle_check(text, 7, 300))
+        b = json.loads(GLUE.oracle_check(text, 7, 300))
+        self.assertEqual(a["hash"], b["hash"])
+        self.assertEqual(json.loads(GLUE.oracle_check("{", 1, 10))["stage"], "load")
+        self.assertEqual(json.loads(GLUE.oracle_check("{}", 1, 10))["stage"], "validate")
+
 if __name__ == "__main__":
     unittest.main()

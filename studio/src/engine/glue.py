@@ -269,6 +269,42 @@ def preview_trace() -> str:
                        "truncated": p["truncated"], "tick": w.tick, "hash": format(sim.state_hash(w), "016x")})
 
 
+# ---------------------------------------------------------------- bounded oracle check (level apply path)
+# Runs a candidate spec through the engine's own GameLoop in a LOCAL loop. It never reads or writes `_preview`, so a live
+# preview session and its trace are untouched. No rules live here: the loop and world are the oracle's.
+ORACLE_CHECK_MAX_TICKS = 3600
+
+
+def oracle_check(draft_text: str, seed: int, ticks: int) -> str:
+    """Validates the draft, then steps a fresh GameLoop with no input until the world reaches `ticks` ticks (or ends)."""
+    import time
+    from monstera.oracle import loop
+    try:
+        value = loads_strict(draft_text)
+    except LoadError as exc:
+        return json.dumps({"ok": False, "stage": "load", "message": exc.message})
+    result = validate_value(value, STORE)
+    if not result.ok:
+        return json.dumps({"ok": False, "stage": "validate", "message": f"{len(result.issues)} validation issue(s)"})
+    want = max(1, min(int(ticks), ORACLE_CHECK_MAX_TICKS))
+    game = result.spec["game"]
+    rate = game["simulation"]["tickRate"]
+    t0 = time.perf_counter()
+    try:
+        lp = loop.GameLoop(sim.new_world(sim.Config(game), int(seed)), rate, game["simulation"]["maxTicksPerFrame"])
+        step = -(-1_000_000_000 // rate)  # ceil: every frame is at least one tick
+        frames = 0
+        while lp.world.tick < want and not lp.world.ended and frames < want * 2:
+            lp.frame(step)
+            frames += 1
+    except Exception as exc:
+        return json.dumps({"ok": False, "stage": "run", "message": f"{type(exc).__name__}: {exc}",
+                           "tick": None})
+    w = lp.world
+    return json.dumps({"ok": True, "sha256": result.sha256, "seed": int(seed), "ticks": w.tick, "ended": w.ended,
+                       "score": w.score, "lives": w.lives, "entities": len(w.entities),
+                       "hash": format(sim.state_hash(w), "016x"), "ms": (time.perf_counter() - t0) * 1000})
+
 # ---------------------------------------------------------------- native source export (generate.plan, as the CLI)
 
 def export_plan(draft_text: str, origin_path: str) -> str:

@@ -425,10 +425,10 @@ export class ProjectController {
     const doc = this.deps.draft.getState().doc;
     return this.manifests === null || doc === null ? null : { doc, manifests: this.manifests };
   }
-  commitDerived(expectedDoc: Json, doc: Json, manifests: ManifestMap): CommitResult {
+  commitDerived(expected: ProjectState, doc: Json, manifests: ManifestMap): CommitResult {
     const live = this.deps.draft.getState().doc;
     if (this.manifests === null || live === null) return { ok: false, message: "there is no open project" };
-    if (live !== expectedDoc) return { ok: false, message: "the specification changed while the derived one was checked; apply again" };
+    if (live !== expected.doc || this.manifests !== expected.manifests) return { ok: false, message: "the specification or a manifest changed while the derived one was checked; apply again" };
     this.applyProjectChange(live, doc, manifests);
     return { ok: true, changed: true };
   }
