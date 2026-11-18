@@ -1,6 +1,6 @@
 import type { EngineInfo } from "./engineInfo";
 import type {
-  BadgeCheck, BadgeScenario, DraftValidation, EngineEvent, ExportPlan, EngineFunction, EngineTimings, GoldenRow, PreviewFrame, PreviewStart, PreviewTrace, PlanTemplate, TemplateInfo, TemplateLoad, WorkerRequest, WorkerResponse,
+  BadgeCheck, BadgeScenario, DraftValidation, EngineEvent, ExportPlan, EngineFunction, EngineTimings, GoldenRow, OracleCheck, PreviewFrame, PreviewStart, PreviewTrace, PlanTemplate, TemplateInfo, TemplateLoad, WorkerRequest, WorkerResponse,
 } from "./protocol";
 
 type WithoutId<T> = T extends unknown ? Omit<T, "id"> : never;
@@ -69,6 +69,7 @@ export class EngineClient {
   previewFrame(session: number, elapsedNanos: number, events: EngineEvent[]) {
     return this.call<PreviewFrame>("preview_frame", String(session), String(elapsedNanos), JSON.stringify(events));
   }
+  oracleCheck(draftText: string, seed: number, ticks: number) { return this.call<OracleCheck>("oracle_check", draftText, String(seed), String(ticks)); }
   previewTrace() { return this.call<PreviewTrace | null>("preview_trace"); }
   exportPlan(draftText: string, originPath: string | null) { return this.call<ExportPlan>("export_plan", draftText, originPath ?? ""); }
 }

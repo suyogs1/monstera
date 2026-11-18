@@ -12,6 +12,7 @@
     "test": "vitest --run",
     "smoke": "node scripts/smoke.mjs",
     "shell": "node scripts/shell.mjs",
+    "derive:apply": "node scripts/derive-apply.mjs",
     "scan:secrets": "node scripts/scan-secrets.mjs dist --json ../docs/evidence/studio-m3b/secret-scan.json",
     "capabilities:render": "node scripts/render-capabilities.mjs --write",
     "capabilities:check": "node scripts/render-capabilities.mjs --check",

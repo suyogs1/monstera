@@ -4,7 +4,7 @@ import { addSpawner, removeSpawner } from "../../draft/ops";
 import { getAt, toIssuePath, type Path } from "../../draft/path";
 import type { Json } from "../../schema/schema";
 import { formatUnits } from "../../units/q16";
-import { Card, Field, FieldGrid, KindSelect, useDoc } from "../fields";
+import { Card, Field, FieldGrid, KindSelect, useDoc, useLockOwner } from "../fields";
 
 const RT: Path = ["game", "runtime"];
 const HORIZON_SECONDS = 30;
@@ -44,6 +44,7 @@ function Timeline() {
 }
 
 export function Spawns() {
+  const locked = useLockOwner(["game", "runtime", "spawners"]) !== null;
   const { store } = useSession();
   const doc = useDoc();
   const rate = doc === null ? 0 : Number(getAt(doc, ["game", "simulation", "tickRate"]) ?? 0);
@@ -87,12 +88,12 @@ export function Spawns() {
               <Field path={[...base, "vy"]} label="Vertical (per tick)" note={perSecond(getAt(s, ["vy"]))} />
             </FieldGrid>
             <div className="row-actions">
-              <button type="button" className="danger" onClick={() => doc !== null && store.replace(removeSpawner(doc, i))}>Remove spawner</button>
+              <button type="button" className="danger" disabled={locked} onClick={() => doc !== null && store.replace(removeSpawner(doc, i))}>Remove spawner</button>
             </div>
           </Card>
         );
       })}
-      <button type="button" className="primary" onClick={() => doc !== null && store.replace(addSpawner(doc))}>Add spawner</button>
+      <button type="button" className="primary" disabled={locked} onClick={() => doc !== null && store.replace(addSpawner(doc))}>Add spawner</button>
     </section>
   );
 }

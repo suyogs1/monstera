@@ -2,11 +2,12 @@ import { useSession } from "../../app/hooks";
 import { ruleSentences } from "../../brain/summary";
 import { addCollision, removeCollision } from "../../draft/ops";
 import { getAt, toIssuePath, type Path } from "../../draft/path";
-import { Card, Field, FieldGrid, KindSelect, useDoc } from "../fields";
+import { Card, Field, FieldGrid, KindSelect, useDoc, useLockOwner } from "../fields";
 
 const RT: Path = ["game", "runtime"];
 
 export function Rules() {
+  const locked = useLockOwner(["game", "runtime", "collisions"]) !== null;
   const { store } = useSession();
   const doc = useDoc();
   const rows = doc === null ? [] : (Array.isArray(getAt(doc, [...RT, "collisions"])) ? (getAt(doc, [...RT, "collisions"]) as unknown[]) : []);
@@ -42,12 +43,12 @@ export function Rules() {
               <Field path={[...base, "despawnB"]} label="Second kind vanishes" />
             </FieldGrid>
             <div className="row-actions">
-              <button type="button" className="danger" onClick={() => doc !== null && store.replace(removeCollision(doc, i))}>Remove rule</button>
+              <button type="button" className="danger" disabled={locked} onClick={() => doc !== null && store.replace(removeCollision(doc, i))}>Remove rule</button>
             </div>
           </Card>
         );
       })}
-      <button type="button" className="primary" onClick={() => doc !== null && store.replace(addCollision(doc))}>Add rule</button>
+      <button type="button" className="primary" disabled={locked} onClick={() => doc !== null && store.replace(addCollision(doc))}>Add rule</button>
     </section>
   );
 }
