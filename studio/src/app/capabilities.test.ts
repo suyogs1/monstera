@@ -40,9 +40,9 @@ describe("the committed registry", () => {
     }
   });
   it("reports today's state: modules that are not built are planned, the built ones say what is missing", () => {
-    for (const id of ["dashboard", "sprites", "gameplay", "backend", "monetization"] as const) expect(moduleEntry(id).status, id).toBe("planned");
+    for (const id of ["dashboard", "sprites", "backend", "monetization"] as const) expect(moduleEntry(id).status, id).toBe("planned");
     for (const id of ["designer", "preview"] as const) expect(moduleEntry(id).status, id).toBe("implemented");
-    for (const id of ["kiro", "release", "levels", "assets"] as const) expect(moduleEntry(id).status, id).toBe("prototype");
+    for (const id of ["kiro", "release", "levels", "gameplay", "assets"] as const) expect(moduleEntry(id).status, id).toBe("prototype");
     expect(cap(REGISTRY, "security-headers").status).toBe("prototype");
     expect(cap(REGISTRY, "security-headers").limits).toMatch(/Not deployed/);
   });
@@ -115,9 +115,9 @@ describe("what the consistency check rejects", () => {
     expect(problems(a)).toContain(`evidence-missing@capabilities.${at(a, "designer-editing")}.evidence`);
     const b = copy(); cap(b, "designer-editing").evidence = ["docs/evidence/does-not-exist.json"];
     expect(problems(b)).toContain(`evidence-not-found@capabilities.${at(b, "designer-editing")}.evidence.0`);
-    const c = copy(); cap(c, "gameplay-core").evidence = ["docs/evidence/studio-m1/acceptance.json"];
+    const c = copy(); cap(c, "gameplay-unbuilt-modules").evidence = ["docs/evidence/studio-m1/acceptance.json"];
     expect(problems(c).some((p) => p.startsWith("evidence-unexpected@"))).toBe(true);
-    const d = copy(); cap(d, "gameplay-core").requires = "";
+    const d = copy(); cap(d, "gameplay-unbuilt-modules").requires = "";
     expect(problems(d).some((p) => p.startsWith("requires-missing@"))).toBe(true);
     const e = copy(); cap(e, "designer-editing").requires = "something";
     expect(problems(e).some((p) => p.startsWith("requires-set@"))).toBe(true);

@@ -20,11 +20,15 @@ const withStatus = (module: ModuleId, status: CapabilityStatus): CapabilityRegis
 /** Modules that today have editor routes in SECTION_ROUTES. */
 const EDITOR_MODULES = [...new Set(SECTION_ROUTES.map((r) => r.module))];
 const CONTROL = /<(input|button|select|textarea|form)\b|contenteditable/i;
-/** Every hash that could open an editor of `module`: canonical, legacy ids, bare module, with slugs, with a trailing slash. */
+/**
+ * Every hash that could open an editor of `module`: canonical, legacy ids, bare module, with slugs, with a trailing slash.
+ * A bare module hash that is also a legacy section id (`#/gameplay`) belongs to that legacy section, not to the module.
+ */
 const hashesFor = (module: ModuleId): string[] => {
   const own = SECTION_ROUTES.filter((r) => r.module === module);
+  const bare = SECTIONS.some((s) => s.id === module) ? [] : [`#/${module}`, `#/${module}/`];
   return [
-    `#/${module}`, `#/${module}/`, `#/${module}/unknown`,
+    ...bare, `#/${module}/unknown`,
     ...own.flatMap((r) => [`#/${module}/${r.slug}`, `#/${module}/${r.slug}/`, `#/${r.id}`, `#${r.id}`, r.id]),
   ];
 };
@@ -32,7 +36,7 @@ const cardOf = (module: ModuleId): Route => ({ kind: "card", module });
 
 describe("the module set under test", () => {
   it("covers the six modules that have editor routes today", () => {
-    expect([...EDITOR_MODULES].sort()).toEqual(["assets", "designer", "kiro", "levels", "preview", "release"]);
+    expect([...EDITOR_MODULES].sort()).toEqual(["assets", "designer", "gameplay", "kiro", "levels", "preview", "release"]);
   });
 });
 
@@ -127,21 +131,20 @@ describe("the unchanged registry still shows editors where it should", () => {
 });
 
 describe("the special gameplay routes survive the change", () => {
-  it("#/gameplay stays the legacy redirect and #/gameplay/modules the Gameplay Systems card", () => {
+  it("#/gameplay stays the legacy redirect and #/gameplay/modules the Gameplay Systems editor", () => {
     expect(resolveHash("#/gameplay").canonical).toBe("#/designer/world");
-    expect(resolveHash("#/gameplay/modules").route).toEqual(cardOf("gameplay"));
+    expect(resolveHash("#/gameplay/modules").route).toMatchObject({ kind: "section", module: "gameplay", sectionId: "gameplay-modules" });
     expect(resolveHash("#/gameplay/modules").redirected).toBe(false);
   });
-  it("if the designer is blocked, #/gameplay opens the designer's card and never the Gameplay Systems card", () => {
+  it("if the designer is blocked, #/gameplay opens the designer's card and never the Gameplay Systems editor", () => {
     for (const status of BLOCKED) {
       const registry = withStatus("designer", status);
       expect(resolveHash("#/gameplay", registry).route).toEqual(cardOf("designer"));
-      expect(resolveHash("#/gameplay/modules", registry).route).toEqual(cardOf("gameplay"));
+      expect(resolveHash("#/gameplay/modules", registry).route).toMatchObject({ kind: "section", module: "gameplay" });
     }
   });
-  it("making the gameplay module itself editable would not take over #/gameplay", () => {
-    const registry = withStatus("gameplay", "prototype");
-    expect(resolveHash("#/gameplay", registry).canonical).toBe("#/designer/world");
-    expect(resolveHash("#/gameplay/modules", registry).route).toEqual(cardOf("gameplay")); // no editor routes are mapped to it
+  it("the gameplay module being editable does not take over #/gameplay", () => {
+    expect(resolveHash("#/gameplay").canonical).toBe("#/designer/world");
+    expect(resolveHash("#/gameplay/planned").route).toMatchObject({ kind: "section", module: "gameplay", sectionId: "gameplay-planned" });
   });
 });
