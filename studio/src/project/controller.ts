@@ -33,6 +33,7 @@ import type {
   EstimateResult, LegacyState, PersistenceResult, ProjectStore, ProjectStoreStatus, ReloadResult, StartProjectResult, StoreDetail,
 } from "./store";
 import type { MigrationResult } from "./migrate";
+import { gameplayIssues } from "../derive/gameplayOps";
 import { removeLevel as planLevelRemoval } from "../derive/levelOps";
 import { kindIdCheck, planKindRemoval, planKindRename, type KindRenamePlan } from "./kindOps";
 import { aggregateValidation, type AggregateResult } from "./validation";
@@ -116,6 +117,8 @@ export interface ProjectActions {
   setActiveLevel(id: string): LevelOutcome;
   /** Turns level derivation on (with `activeLevel`) or off. It never changes the spec: the next Apply does. */
   setLevelDerivation(on: boolean, activeLevel?: string): LevelOutcome;
+  /** Turns gameplay derivation on or off. Refused while a module collision row clashes with a Designer-owned row. It never changes the spec: the next Apply does. */
+  setGameplayDerivation(on: boolean): LevelOutcome;
   /** The cross-reference index of the current document and manifests (cached until either changes). */
   xrefIndex(): XrefIndex;
   /** Engine + manifest + cross-reference issues of the current project, each targeted at a module and field. */
@@ -179,6 +182,7 @@ export class ProjectController {
       renameKind: (f, t) => this.renameKind(f, t), removeKind: (i) => this.removeKind(i),
       setLevels: (n, f) => this.setLevels(n, f), removeLevel: (i) => this.removeLevel(i),
       setActiveLevel: (i) => this.setActiveLevel(i), setLevelDerivation: (o, a) => this.setLevelDerivation(o, a),
+      setGameplayDerivation: (o) => this.setGameplayDerivation(o),
       xrefIndex: () => this.xrefIndex(), validateProject: () => this.validateProject(),
       retryOpen: () => this.retryOpen(), retrySave: () => this.retrySave(),
       reloadFromStorage: (o) => this.reloadFromStorage(o), exportRecovery: (o) => this.exportRecovery(o),
@@ -457,6 +461,16 @@ export class ProjectController {
     const active = on ? (activeLevel ?? (this.manifests.levels.levels.some((l) => l.id === p.derivation.activeLevel) ? p.derivation.activeLevel : first)) : "";
     if (on && !this.manifests.levels.levels.some((l) => l.id === active)) return { ok: false, reason: "add a level before turning level derivation on" };
     return this.asLevelOutcome(this.commitManifest("project", { ...p, derivation: { ...p.derivation, levels: on, activeLevel: active } }, "derivation"));
+  }
+  setGameplayDerivation(on: boolean): LevelOutcome {
+    const doc = this.deps.draft.getState().doc;
+    if (this.manifests === null || doc === null) return { ok: false, reason: "there is no open project" };
+    const p = this.manifests.project;
+    if (on) {
+      const clash = gameplayIssues(this.manifests.gameplay, doc, false).find((i) => i.code === "collision-conflict");
+      if (clash) return { ok: false, reason: `${clash.message}. Resolve it before gameplay owns the collision table.` };
+    }
+    return this.asLevelOutcome(this.commitManifest("project", { ...p, derivation: { ...p.derivation, gameplay: on } }, "gameplayDerivation"));
   }
   currentState(): ProjectState | null {
     const doc = this.deps.draft.getState().doc;

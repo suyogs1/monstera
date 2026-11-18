@@ -12,7 +12,7 @@ Statuses: `implemented` (works end to end, with a test), `prototype` (bounded su
 | Asset Studio | planned | prototype | studio only | Not built. The manifest schema exists, there is no import or library UI. Assets will not render or play in the native apps (no v4 asset concept; E1 is conditional). |
 | Sprite and Animation Editor | planned | prototype | studio only | Not built. The animations manifest schema exists. Native rendering needs engine track E1, which is conditional and not started. |
 | Level Studio | prototype | prototype | compiles to native | Only the active level compiles into the native spec; other levels are Studio-only variants exported as standalone specs. No wave end, per-level win rule or in-app level selection (see multi-level-in-app). |
-| Gameplay Systems | planned | implemented | compiles to native | Not built as a module. Lives, win score and collisions can be edited today under Game Designer. Health, power-ups and progression need contract changes and stay planned. |
+| Gameplay Systems | prototype | implemented | compiles to native | Forms for lives, win score, collectibles and enemies. Derivation is off by default; while on, Game Designer shows lives, win score and collisions read-only. Health, power-ups and progression need contract changes and stay planned. |
 | Backend and Services | planned | mock | scaffold | Not built. Will generate scaffold text and mock stubs only. Never a live Firebase connection. |
 | Monetization | planned | mock | mock | Not built. Will support mock and official Google test configurations only. No production ad ids in Studio. |
 | Kiro Development | prototype | implemented | scaffold | Only the static Developer Integration inventory exists. Pack export, ownership manifest, drift check and proposal inbox are not built. There is no Kiro connection. |
@@ -61,7 +61,7 @@ Statuses: `implemented` (works end to end, with a test), `prototype` (bounded su
 
 | Capability | Now | Target | Native output | Evidence | Limits | Needs |
 |---|---|---|---|---|---|---|
-| Lives, win score, collectibles and enemies compiled into lives, winScore and collisions | planned | implemented | compiles to native | none | Not built. Opt-in derivation, default off; the derived diff and engine verdict are shown before the spec changes. | Gameplay compiler (task 5.1), apply path (task 4.2). |
+| Lives, win score, collectibles and enemies compiled into lives, winScore and collisions | prototype | implemented | compiles to native | `studio/src/derive/gameplay.test.ts`<br>`studio/src/derive/gameplayApply.test.ts`<br>`studio/src/gameplay/gameplay.ui.test.tsx` | Opt-in derivation, default off. Review shows the diff and the engine verdict; nothing changes until Apply, as one undo step. Browser-level evidence is not recorded yet. |  |
 | Difficulty ramp as later-starting spawners | planned | prototype | compiles to native | none | Not built. v4 spawners cannot stop or change; a ramp is an extra spawner that starts later. | Level compiler (task 4.1). |
 | Health, power-ups, progression | planned | planned | planned | none | Designed only. Not buildable on the v4 contract. | A timed-state and persistence contract in the engine, which is outside this milestone. |
 

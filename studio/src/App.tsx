@@ -11,6 +11,8 @@ import { Entities } from "./ui/sections/Entities";
 import { Export } from "./ui/sections/Export";
 import { Gameplay } from "./ui/sections/Gameplay";
 import { LevelStudio } from "./levels/LevelStudio";
+import { GameplayModules } from "./gameplay/Modules";
+import { GameplayPlanned } from "./gameplay/Planned";
 import { Integration } from "./ui/sections/Integration";
 import { Overview } from "./ui/sections/Overview";
 import { Platforms } from "./ui/sections/Platforms";
@@ -38,6 +40,8 @@ const VIEWS: Partial<Record<SectionId, () => ReactElement>> = {
   export: () => <Export />,
   integration: () => <Integration />,
   levels: () => <LevelStudio />,
+  "gameplay-modules": () => <GameplayModules />,
+  "gameplay-planned": () => <GameplayPlanned />,
 };
 
 function NumberModeToggle() {
