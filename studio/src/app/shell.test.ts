@@ -18,8 +18,9 @@ describe("router: legacy hashes (acceptance of task 1.1)", () => {
     gameplay: "#/designer/world", determinism: "#/preview/determinism", export: "#/release/export", integration: "#/kiro/integration",
     levels: "#/levels/editor", "gameplay-modules": "#/gameplay/modules", "gameplay-planned": "#/gameplay/planned",
     assets: "#/assets/library",
+    sprites: "#/sprites/editor",
   };
-  it("lists exactly the fifteen legacy section ids", () => {
+  it("lists exactly the sixteen legacy section ids", () => {
     expect(SECTIONS.map((s) => s.id).sort()).toEqual(Object.keys(expected).sort());
   });
   it.each(Object.entries(expected))("#/%s redirects to %s", (legacy, target) => {
@@ -58,7 +59,7 @@ describe("router: modules, partial and unknown hashes", () => {
     expect(resolveHash("#/kiro/drift").canonical).toBe("#/kiro/integration");
   });
   it("modules that are not built resolve to a card", () => {
-    for (const id of ["dashboard", "sprites", "backend", "monetization"] as const) {
+    for (const id of ["dashboard", "backend", "monetization"] as const) {
       expect(resolveHash(`#/${id}`).route).toEqual({ kind: "card", module: id });
       expect(resolveHash(`#/${id}/anything`).canonical).toBe(`#/${id}`);
     }

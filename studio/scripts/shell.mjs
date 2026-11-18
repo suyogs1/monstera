@@ -142,10 +142,10 @@ try {
   await mobile.keyboard.press("Space");
   check("mobile keyboard: Space on the toggle closes the menu", (await expanded()) === "false" && !(await list.isVisible()));
   await mobile.keyboard.press("Enter");
-  await mobile.locator('[data-testid="module-sprites"]').focus();
+  await mobile.locator('[data-testid="module-backend"]').focus();
   await mobile.keyboard.press("Enter");
-  await mobile.waitForSelector('[data-testid="module-card"][data-module="sprites"]');
-  check("mobile keyboard: Enter on a module link navigates and closes the menu", (await mhash()) === "#/sprites" && (await expanded()) === "false", `${await mhash()} ${await expanded()}`);
+  await mobile.waitForSelector('[data-testid="module-card"][data-module="backend"]');
+  check("mobile keyboard: Enter on a module link navigates and closes the menu", (await mhash()) === "#/backend" && (await expanded()) === "false", `${await mhash()} ${await expanded()}`);
   check("mobile: no page error", mproblems.length === 0, mproblems.join(" | "));
   check("no page error or console error", problems.length === 0, problems.join(" | "));
 } finally {
