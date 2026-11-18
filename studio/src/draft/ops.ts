@@ -23,23 +23,35 @@ export function kindIds(doc: Doc): string[] {
   return asArray(doc, [...RT, "kinds"]).map((k) => String(getAt(k, ["id"]) ?? ""));
 }
 
-/** Every place the spec refers to a kind id (not the definition itself). */
-export function kindReferences(doc: Doc, id: string): KindRef[] {
-  const refs: KindRef[] = [];
-  if (getAt(doc, ["game", "input", "tapKind"]) === id) refs.push({ path: ["game", "input", "tapKind"], label: "input: tap spawns" });
-  asArray(doc, [...RT, "initialEntities"]).forEach((e, i) => {
-    if (getAt(e, ["kind"]) === id) refs.push({ path: [...RT, "initialEntities", i, "kind"], label: `starting entity ${i + 1}` });
-  });
-  asArray(doc, [...RT, "spawners"]).forEach((s, i) => {
-    if (getAt(s, ["kind"]) === id) refs.push({ path: [...RT, "spawners", i, "kind"], label: `spawner ${i + 1}` });
-  });
-  asArray(doc, [...RT, "collisions"]).forEach((c, i) => {
-    if (getAt(c, ["a"]) === id) refs.push({ path: [...RT, "collisions", i, "a"], label: `collision ${i + 1} (first kind)` });
-    if (getAt(c, ["b"]) === id) refs.push({ path: [...RT, "collisions", i, "b"], label: `collision ${i + 1} (second kind)` });
+export type SpecRefType = "input.tapKind" | "initialEntity.kind" | "spawner.kind" | "collision.a" | "collision.b";
+export interface SpecKindRef extends KindRef {
+  kindId: string;
+  type: SpecRefType;
+}
+/**
+ * Every reference to a kind id in the spec document, for all kinds, in document order. The single place that knows
+ * which spec fields hold kind ids (the cross-reference index and kindReferences both read it). Empty ids ("no kind",
+ * e.g. tapKind "") are not references.
+ */
+export function specKindReferences(doc: Doc): SpecKindRef[] {
+  const refs: SpecKindRef[] = [];
+  const add = (path: Path, type: SpecRefType, label: string): void => {
+    const v = getAt(doc, path);
+    if (typeof v === "string" && v !== "") refs.push({ path, kindId: v, type, label });
+  };
+  add(["game", "input", "tapKind"], "input.tapKind", "input: tap spawns");
+  asArray(doc, [...RT, "initialEntities"]).forEach((_, i) => add([...RT, "initialEntities", i, "kind"], "initialEntity.kind", `starting entity ${i + 1}`));
+  asArray(doc, [...RT, "spawners"]).forEach((_, i) => add([...RT, "spawners", i, "kind"], "spawner.kind", `spawner ${i + 1}`));
+  asArray(doc, [...RT, "collisions"]).forEach((_, i) => {
+    add([...RT, "collisions", i, "a"], "collision.a", `collision ${i + 1} (first kind)`);
+    add([...RT, "collisions", i, "b"], "collision.b", `collision ${i + 1} (second kind)`);
   });
   return refs;
 }
-
+/** Every place the spec refers to one kind id (not the definition itself). */
+export function kindReferences(doc: Doc, id: string): KindRef[] {
+  return specKindReferences(doc).filter((r) => r.kindId === id).map(({ path, label }) => ({ path, label }));
+}
 export type RenameResult = { ok: true; doc: Doc; updatedReferences: number } | { ok: false; reason: string };
 
 /** Renames a kind and every reference to it in one step. Refuses an id that is already taken or an unknown source. */

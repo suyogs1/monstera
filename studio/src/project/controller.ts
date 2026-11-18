@@ -33,6 +33,9 @@ import type {
   EstimateResult, LegacyState, PersistenceResult, ProjectStore, ProjectStoreStatus, ReloadResult, StartProjectResult, StoreDetail,
 } from "./store";
 import type { MigrationResult } from "./migrate";
+import { kindIdCheck, planKindRemoval, planKindRename, type KindRenamePlan } from "./kindOps";
+import { aggregateValidation, type AggregateResult } from "./validation";
+import { XrefCache, type XrefEntry, type XrefIndex } from "./xref";
 
 export type Schedule = (fn: () => void, ms: number) => () => void;
 export const timeoutSchedule: Schedule = (fn, ms) => {
@@ -72,6 +75,9 @@ export interface ProjectViewState {
 }
 
 export type CommitResult = { ok: true; changed: boolean } | { ok: false; message: string };
+/** A project-wide kind change. Rename is all-or-nothing; remove is refused with every referring place while any exists. */
+export type KindRenameOutcome = { ok: true; changed: boolean; updated: KindRenamePlan["updated"] } | { ok: false; reason: string };
+export type KindRemoveOutcome = { ok: true } | { ok: false; reason: string; references: XrefEntry[] };
 export type RetryOpenResult = { ok: true } | { ok: false; reason: "unsaved-invalid-edits"; message: string };
 export type ReloadOutcome = ReloadResult | { ok: false; reason: "no-project"; message: string };
 
@@ -86,12 +92,23 @@ export interface ControllerDeps {
   now?: () => number;
   /** Exact recovery text of a legacy draft that was refused or unreadable (Session reads it, read-only). */
   legacyRecovery?: () => string | null;
+  /**
+   * The canonical kind-id pattern (the spec schema's game.runtime.kinds[].id `pattern`), read from the engine schema
+   * model by Session. renameKind validates the NEW id with it; without it every rename to a different id is refused.
+   */
+  kindIdPattern?: () => string | undefined;
 }
 
 export interface ProjectActions {
   undo(): boolean;
   redo(): boolean;
   commitManifest<N extends ManifestName>(name: N, value: ManifestMap[N], field?: string): CommitResult;
+  renameKind(from: string, to: string): KindRenameOutcome;
+  removeKind(id: string): KindRemoveOutcome;
+  /** The cross-reference index of the current document and manifests (cached until either changes). */
+  xrefIndex(): XrefIndex;
+  /** Engine + manifest + cross-reference issues of the current project, each targeted at a module and field. */
+  validateProject(): AggregateResult;
   retryOpen(): Promise<RetryOpenResult>;
   retrySave(): Promise<ProjectStoreStatus>;
   reloadFromStorage(opts?: { discardMemory?: boolean }): Promise<ReloadOutcome>;
@@ -133,6 +150,7 @@ export class ProjectController {
    */
   private provisionalGameplay: ManifestMap["gameplay"] | null = null;
   private view: ProjectViewState;
+  private readonly xref = new XrefCache();
 
   readonly actions: ProjectActions;
 
@@ -147,6 +165,8 @@ export class ProjectController {
     this.actions = {
       undo: () => this.undo(), redo: () => this.redo(),
       commitManifest: (n, v, f) => this.commitManifest(n, v, f),
+      renameKind: (f, t) => this.renameKind(f, t), removeKind: (i) => this.removeKind(i),
+      xrefIndex: () => this.xrefIndex(), validateProject: () => this.validateProject(),
       retryOpen: () => this.retryOpen(), retrySave: () => this.retrySave(),
       reloadFromStorage: (o) => this.reloadFromStorage(o), exportRecovery: (o) => this.exportRecovery(o),
       startNewProject: (o) => this.startNewProject(o),
@@ -372,6 +392,46 @@ export class ProjectController {
     return { ok: true, changed: true };
   }
 
+  // ------------------------------------------------------------ cross-references, kind rename and delete
+  xrefIndex(): XrefIndex { return this.xref.get(this.deps.draft.getState().doc, this.manifests); }
+  validateProject(): AggregateResult {
+    const s = this.deps.draft.getState();
+    return aggregateValidation({ engine: s.validatedRevision === s.revision ? s.validation : null, doc: s.doc, manifests: this.manifests, index: this.xrefIndex() });
+  }
+  /**
+   * Renames a kind in the spec and in every manifest that refers to it as ONE change: one history entry (undo restores
+   * spec and manifests together), one save. The plan is computed and every changed manifest validated BEFORE anything
+   * is touched, so a refusal leaves the project, the history and the draft revision exactly as they were.
+   */
+  renameKind(from: string, to: string): KindRenameOutcome {
+    const doc = this.deps.draft.getState().doc;
+    if (this.manifests === null || doc === null) return { ok: false, reason: "there is no open project" };
+    const plan = planKindRename(doc, this.manifests, from, to, kindIdCheck(this.deps.kindIdPattern?.()));
+    if (!plan.ok) return plan;
+    if (plan.doc === doc && plan.manifests === this.manifests) return { ok: true, changed: false, updated: plan.updated };
+    this.applyProjectChange(doc, plan.doc, plan.manifests);
+    return { ok: true, changed: true, updated: plan.updated };
+  }
+  /** Removes a kind definition when nothing in the spec or any manifest refers to it; otherwise changes nothing and lists the references. */
+  removeKind(id: string): KindRemoveOutcome {
+    const doc = this.deps.draft.getState().doc;
+    if (this.manifests === null || doc === null) return { ok: false, reason: "there is no open project", references: [] };
+    const plan = planKindRemoval(doc, this.manifests, id);
+    if (!plan.ok) return plan;
+    this.applyProjectChange(doc, plan.doc, this.manifests);
+    return { ok: true };
+  }
+  /** One history entry for a change to the spec and the manifests together (no coalescing key: each such change stands alone). */
+  private applyProjectChange(doc: Json, nextDoc: Json, nextManifests: ManifestMap): void {
+    if (this.manifests === null) return;
+    this.history.push({ doc, manifests: this.manifests });
+    this.manifests = nextManifests;
+    this.restoring = true; // the history entry above is the only one; onDraft must not push a second
+    try {
+      if (nextDoc !== doc) this.deps.draft.replace(nextDoc);
+    } finally { this.restoring = false; }
+    if (nextDoc === doc) this.markDirty();
+  }
   undo(): boolean { return this.travel("undo"); }
   redo(): boolean { return this.travel("redo"); }
 
