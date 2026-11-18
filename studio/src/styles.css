@@ -237,3 +237,6 @@ progress { width: 100%; max-width: 30rem; }
 .persist-notice.bad { color: var(--bad); }
 kbd { font: inherit; font-size: 0.75em; border: 1px solid var(--line); border-radius: 4px; padding: 0 0.3em; }
 
+.storage-protect { flex-basis: 100%; margin: 0; padding: 0.4rem 0.6rem; border: 1px dashed var(--line); border-radius: 6px; }
+.storage-protect p { margin: 0.3rem 0 0; }
+.storage-protect .bad { color: var(--bad); }

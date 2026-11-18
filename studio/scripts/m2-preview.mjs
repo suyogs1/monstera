@@ -50,7 +50,7 @@ await page.waitForFunction(() => window.ready === true, null, { timeout: 60000 }
 
 const checks = [];
 const check = (name, ok, detail = "") => checks.push({ name, ok: Boolean(ok), detail });
-const settled = () => page.waitForFunction(() => document.querySelector('[data-testid="validation-status"]')?.textContent?.startsWith("Checking") === false, null, { timeout: 15000 });
+const settled = () => page.waitForFunction(() => { const s = window.session?.store.getState(); return s !== undefined && s.validation !== null && s.validatedRevision === s.revision && document.querySelector('[data-testid="validation-status"]')?.textContent?.startsWith("Checking") === false; }, null, { timeout: 15000 });
 const pv = () => page.evaluate(() => ({ st: (({ snapshot, text, ...rest }) => ({ ...rest, tick: snapshot?.tick, ended: snapshot?.ended, entities: snapshot ? snapshot.entities.length / 7 : 0, score: snapshot?.score, lives: snapshot?.lives }))(window.session.preview.getState()), stats: window.session.preview.getStats() }));
 const running = (sha) => page.waitForFunction((s) => { const p = window.session.preview.getState(); return p.status === "running" && (!s || p.sha256 === s) && p.snapshot !== null; }, sha ?? null, { timeout: 15000 });
 const shaNow = () => page.evaluate(() => window.session.store.getState().validation?.sha256);

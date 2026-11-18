@@ -2,7 +2,7 @@
 // They read ProjectViewState only; the controller stays the single source of truth for what is saved. Nothing here
 // decides persistence, it only words what the controller reports.
 import type { ProjectActions, ProjectViewState } from "../project/controller";
-import type { StoreAction } from "../project/store";
+import type { EstimateResult, PersistenceResult, StoreAction } from "../project/store";
 
 export type PersistenceView = Pick<ProjectViewState, "status" | "storeStatus" | "detail" | "hint" | "migration" | "legacy" | "gate" | "dirty" | "projectKey" | "manifests" | "name">;
 
@@ -245,4 +245,60 @@ export function shouldWarnBeforeUnload(v: Pick<ProjectViewState, "status" | "gat
     case "saved": case "loading": case "read-only": case "quarantined": return false;
     default: return true; // saving, unsaved, failed, memory-only, conflict, closed
   }
+}
+
+// ------------------------------------------------------------------ storage protection and site storage estimate
+// Storage protection (navigator.storage.persist) is a request the browser may decline. It is not saving: a project is saved
+// only when the indicator above says so. Wording here never promises that site data cannot be cleared.
+
+export const PROTECT_LABEL = "Protect browser storage";
+export const PROTECT_RETRY_LABEL = "Request again";
+export const PROTECT_EXPLANATION =
+  "Asks the browser to treat Studio's data as persistent. The browser decides whether to grant it. Granting reduces the chance the browser clears Studio's data when storage runs low. It does not stop you or your browser settings from clearing site data, and it is not the same as the project being saved.";
+
+const PROTECT_RESULT: Record<PersistenceResult, string> = {
+  granted: "Granted: the browser will treat Studio's storage as persistent. This lowers the chance of automatic clearing under storage pressure. Site data can still be cleared by you or by browser settings.",
+  "not-granted": "Not granted: the browser declined this request. The browser decides, and it may decide differently later. Studio's data stays in normal storage.",
+  unavailable: "Unavailable: this browser does not offer a persistent-storage request. Nothing was requested.",
+  rejected: "Request failed: the browser rejected or could not complete the request. Nothing changed.",
+};
+
+export interface ProtectionView {
+  buttonLabel: string;
+  /** null until the user has made a request. */
+  result: { outcome: PersistenceResult; ok: boolean; text: string } | null;
+}
+
+/** `last` is the outcome of the user's most recent request, or null when none was made. Only a non-granted outcome relabels the button. */
+export function protectionView(last: PersistenceResult | null): ProtectionView {
+  if (last === null) return { buttonLabel: PROTECT_LABEL, result: null };
+  return { buttonLabel: last === "granted" ? PROTECT_LABEL : PROTECT_RETRY_LABEL, result: { outcome: last, ok: last === "granted", text: PROTECT_RESULT[last] } };
+}
+
+/**
+ * Bytes in decimal (SI) units: 1 KB = 1000 B, 1 MB = 1000 KB, 1 GB = 1000 MB (the browser reports estimates, so exact
+ * binary multiples add nothing). Below 10 of a unit one decimal is shown, otherwise a whole number; rounding is half up.
+ * A value that rounds to 1000 is shown in the next unit. Invalid input (negative, NaN, infinite) gives "unknown".
+ */
+export function formatBytes(bytes: number): string {
+  if (!Number.isFinite(bytes) || bytes < 0) return "unknown";
+  const units = ["B", "KB", "MB", "GB", "TB"];
+  const whole = Math.round(bytes);
+  if (whole < 1000) return `${whole} B`;
+  let u = 1;
+  let shown = roundUnit(bytes / 1000);
+  while (shown >= 1000 && u < units.length - 1) { u++; shown = roundUnit(bytes / 1000 ** u); }
+  return `${shown} ${units[u]}`;
+}
+function roundUnit(x: number): number {
+  return x < 10 ? Math.round(x * 10) / 10 : Math.round(x);
+}
+
+export interface EstimateView { kind: "known" | "unknown"; text: string }
+
+/** Sentence for the origin-wide estimate. It is never a project size. */
+export function estimateView(e: EstimateResult | null): EstimateView {
+  if (e === null) return { kind: "unknown", text: "Site storage: checking…" };
+  if (e === "unknown" || !Number.isFinite(e.usage) || !Number.isFinite(e.quota) || e.usage < 0 || e.quota <= 0) return { kind: "unknown", text: "Site storage: estimate unavailable" };
+  return { kind: "known", text: `Site storage: about ${formatBytes(e.usage)} of ${formatBytes(e.quota)} (browser estimate for this whole site, not just this project)` };
 }

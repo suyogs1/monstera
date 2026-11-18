@@ -44,7 +44,7 @@ export function storedProjects(page) {
         const db = open.result;
         const q = db.transaction("projects", "readonly").objectStore("projects").getAll();
         q.onerror = () => { db.close(); reject(q.error); };
-        q.onsuccess = () => { db.close(); resolve(q.result.map((r) => ({ projectKey: r.projectKey, name: r.name, projectId: r.projectId, specText: r.specText }))); };
+        q.onsuccess = () => { db.close(); resolve(q.result.map((r) => ({ projectKey: r.projectKey, name: r.name, projectId: r.projectId, specText: r.specText, specSha256: r.specSha256 }))); };
       };
     });
   }, DB);
@@ -61,3 +61,24 @@ export async function activeRecord(page) {
   const key = await page.evaluate(() => window.session.project.getState().projectKey);
   return (await storedProjects(page)).find((r) => r.projectKey === key) ?? null;
 }
+
+/** Every entry of the 'meta' store (active-project pointer, migration flag), read straight from IndexedDB; [] when the database is absent. */
+export function storedMeta(page) {
+  return page.evaluate(async (name) => {
+    const dbs = indexedDB.databases ? await indexedDB.databases() : [{ name }];
+    if (!dbs.some((d) => d.name === name)) return [];
+    return await new Promise((resolve, reject) => {
+      const open = indexedDB.open(name);
+      open.onerror = () => reject(open.error);
+      open.onsuccess = () => {
+        const db = open.result;
+        const q = db.transaction("meta", "readonly").objectStore("meta").getAll();
+        q.onerror = () => { db.close(); reject(q.error); };
+        q.onsuccess = () => { db.close(); resolve(q.result); };
+      };
+    });
+  }, DB);
+}
+
+/** Whether the IndexedDB database exists at all (never creates it). */
+export const studioDbExists = (page) => page.evaluate(async (name) => (await indexedDB.databases()).some((d) => d.name === name), DB);

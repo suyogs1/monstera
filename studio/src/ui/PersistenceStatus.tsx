@@ -1,9 +1,10 @@
 // Project persistence UI: the indicator (TopBar) and the banners. They read useProject() only; the wording and the
 // choice of buttons live in persistence.ts (pure, tested). "Project: ..." is about storage, "Spec: ..." about validity.
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useProject } from "../project/context";
+import type { EstimateResult, PersistenceResult } from "../project/store";
 import {
-  bannersOf, exportRecoveryFile, indicatorOf, newProjectStep, reloadConfirmed, reloadStep, retryOpenStep, retrySaveStep,
+  bannersOf, estimateView, exportRecoveryFile, indicatorOf, PROTECT_EXPLANATION, protectionView, newProjectStep, reloadConfirmed, reloadStep, retryOpenStep, retrySaveStep,
   type ActionNotice, type BannerAction, type Download, type PersistenceView,
 } from "./persistence";
 
@@ -119,4 +120,67 @@ export function PersistenceBanner({ download = downloadText }: { download?: Down
       onCancelDiscard={() => setConfirm(null)}
     />
   );
+}
+
+// ------------------------------------------------------------------ storage protection and site storage estimate
+
+export interface StorageViewProps {
+  last: PersistenceResult | null;
+  estimate: EstimateResult | null;
+  busy: boolean;
+  onRequest: () => void;
+  onRefresh: () => void;
+}
+
+/** Storage protection is a browser request, not saving; it has its own region so it cannot be mistaken for the save indicator. */
+export function StorageProtectionView({ last, estimate, busy, onRequest, onRefresh }: StorageViewProps) {
+  const p = protectionView(last);
+  const e = estimateView(estimate);
+  return (
+    <section className="storage-protect small" aria-label="Browser storage protection" data-testid="storage-protection">
+      <div className="actions">
+        <button type="button" disabled={busy} onClick={onRequest} title={PROTECT_EXPLANATION} data-testid="protect-storage-button">{p.buttonLabel}</button>
+        <span className="muted" data-testid="storage-estimate" data-kind={e.kind}>{e.text}</span>
+        <button type="button" disabled={busy} onClick={onRefresh} data-testid="storage-refresh">Refresh estimate</button>
+      </div>
+      <p className="muted" data-testid="protect-storage-help">{PROTECT_EXPLANATION}</p>
+      {p.result !== null && <p className={p.result.ok ? "" : "bad"} role="status" data-testid="protect-storage-result" data-outcome={p.result.outcome}>{p.result.text}</p>}
+    </section>
+  );
+}
+
+/** Reads the controller only. The browser is asked to persist only when the user presses the button; the estimate is read
+ *  once when the project is ready, after each committed save and after a request, never on a timer. */
+export function StorageProtection() {
+  const api = useProject();
+  const [last, setLast] = useState<PersistenceResult | null>(null);
+  const [estimate, setEstimate] = useState<EstimateResult | null>(null);
+  const [busy, setBusy] = useState(false);
+  const alive = useRef(true);
+  const booted = useRef(false);
+  const { estimate: read, requestPersistence } = api;
+  useEffect(() => { alive.current = true; return () => { alive.current = false; }; }, []);
+
+  const refresh = async () => {
+    const e = await read();
+    if (alive.current) setEstimate(e);
+  };
+  const onRequest = async () => {
+    setBusy(true);
+    try {
+      const r = await requestPersistence();
+      if (alive.current) setLast(r);
+      await refresh();
+    } finally { if (alive.current) setBusy(false); }
+  };
+
+  const key = api.status === "loading" ? null : api.status === "saved" ? `saved:${api.detail.lastSavedAt ?? 0}` : "other";
+  useEffect(() => {
+    if (key === null || (key === "other" && booted.current)) return;
+    booted.current = true;
+    void refresh();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [key]);
+
+  return <StorageProtectionView last={last} estimate={estimate} busy={busy} onRequest={() => void onRequest()} onRefresh={() => void refresh()} />;
 }

@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { useDraft, useSession } from "../app/hooks";
 import { useProject } from "../project/context";
-import { PersistenceIndicator, downloadText } from "./PersistenceStatus";
+import { PersistenceIndicator, StorageProtection, downloadText } from "./PersistenceStatus";
 import { exportRecoveryFile, shortcutHint, type ActionNotice } from "./persistence";
 import { isMac } from "./Guards";
 
@@ -73,6 +73,7 @@ export function TopBar() {
         <span className="muted">SHA-256 <code data-testid="topbar-hash" title="Canonical SHA-256 computed by the engine">{hash ?? "…"}</code></span>
       </p>
       <PersistenceIndicator />
+      <StorageProtection />
       <div className="actions">
         <button type="button" onClick={() => project.undo()} disabled={!project.canUndo} aria-label="Undo" aria-keyshortcuts={mac ? "Meta+Z" : "Control+Z"} title={`Undo (${shortcutHint("undo", mac)})`} data-testid="undo-button">
           Undo <kbd className="muted small">{shortcutHint("undo", mac)}</kbd>
