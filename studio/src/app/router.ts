@@ -24,6 +24,7 @@ export const SECTION_ROUTES: readonly SectionRoute[] = [
   { id: "integration", module: "kiro", slug: "integration" },
   { id: "levels", module: "levels", slug: "editor" },
   { id: "assets", module: "assets", slug: "library" },
+  { id: "sprites", module: "sprites", slug: "editor" },
 ];
 
 export type Route =

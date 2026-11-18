@@ -1,7 +1,7 @@
 import type { Path } from "../draft/path";
 
 export type SectionId =
-  | "overview" | "platforms" | "gameplay" | "entities" | "rules" | "spawns" | "presentation" | "spec" | "determinism" | "export" | "integration" | "levels" | "assets";
+  | "overview" | "platforms" | "gameplay" | "entities" | "rules" | "spawns" | "presentation" | "spec" | "determinism" | "export" | "integration" | "levels" | "assets" | "sprites";
 
 export interface SectionInfo { id: SectionId; title: string; blurb: string }
 
@@ -19,6 +19,7 @@ export const SECTIONS: SectionInfo[] = [
   { id: "integration", title: "Developer Integration", blurb: "How Kiro works on this repository." },
   { id: "levels", title: "Level Studio", blurb: "Levels: placements, spawn waves, difficulty, variants." },
   { id: "assets", title: "Asset library", blurb: "Import images and audio with provenance, filter, preview, delete." },
+  { id: "sprites", title: "Sprites and animation", blurb: "Slice sprite sheets, edit frames, build animation sequences." },
 ];
 
 const has = (path: Path, ...prefix: (string | number)[]) => prefix.every((s, i) => path[i] === s);

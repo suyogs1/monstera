@@ -29,10 +29,10 @@
     {
       "id": "sprites",
       "title": "Sprite and Animation Editor",
-      "status": "planned",
+      "status": "prototype",
       "targetStatus": "prototype",
       "nativeOutput": "studio only",
-      "limits": "Not built. The animations manifest schema exists. Native rendering needs engine track E1, which is conditional and not started."
+      "limits": "Sheet slicing, frame editing and animation sequences only; the animation preview player is a later task. Native rendering needs engine track E1, which is conditional and not started."
     },
     {
       "id": "levels",

@@ -40,9 +40,9 @@ describe("the committed registry", () => {
     }
   });
   it("reports today's state: modules that are not built are planned, the built ones say what is missing", () => {
-    for (const id of ["dashboard", "sprites", "gameplay", "backend", "monetization"] as const) expect(moduleEntry(id).status, id).toBe("planned");
+    for (const id of ["dashboard", "gameplay", "backend", "monetization"] as const) expect(moduleEntry(id).status, id).toBe("planned");
     for (const id of ["designer", "preview"] as const) expect(moduleEntry(id).status, id).toBe("implemented");
-    for (const id of ["kiro", "release", "levels", "assets"] as const) expect(moduleEntry(id).status, id).toBe("prototype");
+    for (const id of ["kiro", "release", "levels", "assets", "sprites"] as const) expect(moduleEntry(id).status, id).toBe("prototype");
     expect(cap(REGISTRY, "security-headers").status).toBe("prototype");
     expect(cap(REGISTRY, "security-headers").limits).toMatch(/Not deployed/);
   });
