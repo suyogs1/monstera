@@ -1,4 +1,5 @@
 import { applyActiveLevel, applyReviewedGameplay, reviewGameplay, type ApplyResult, type GameplayApplyResult, type GameplayReview } from "../derive/apply";
+import { browserProbes } from "../assets/browserProbes";
 import { BadgeRunner } from "../badge/badge";
 import { DraftStore, type Baseline, type Origin } from "../draft/store";
 import { PreviewController } from "../preview/controller";
@@ -76,6 +77,7 @@ export class Session {
       adopt: async (p) => { await this.adopt(p); },
       legacyRecovery: () => this.legacyRecovery(),
       kindIdPattern: () => this.schema?.field("game.runtime.kinds[].id")?.regex,
+      assetProbes: browserProbes(),
     });
     this.badge = new BadgeRunner(this.engine, this.store);
     this.preview = new PreviewController(this.engine);

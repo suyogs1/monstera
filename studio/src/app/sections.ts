@@ -1,7 +1,7 @@
 import type { Path } from "../draft/path";
 
 export type SectionId =
-  | "overview" | "platforms" | "gameplay" | "entities" | "rules" | "spawns" | "presentation" | "spec" | "determinism" | "export" | "integration" | "levels" | "gameplay-modules" | "gameplay-planned";
+  | "overview" | "platforms" | "gameplay" | "entities" | "rules" | "spawns" | "presentation" | "spec" | "determinism" | "export" | "integration" | "levels" | "gameplay-modules" | "gameplay-planned" | "assets";
 
 export interface SectionInfo { id: SectionId; title: string; blurb: string }
 
@@ -20,6 +20,7 @@ export const SECTIONS: SectionInfo[] = [
   { id: "levels", title: "Level Studio", blurb: "Levels: placements, spawn waves, difficulty, variants." },
   { id: "gameplay-modules", title: "Modules", blurb: "Lives, score, collectibles and enemies, compiled into the spec on request." },
   { id: "gameplay-planned", title: "Planned", blurb: "Health, power-ups and progression: not buildable on the current contract." },
+  { id: "assets", title: "Asset library", blurb: "Import images and audio with provenance, filter, preview, delete." },
 ];
 
 const has = (path: Path, ...prefix: (string | number)[]) => prefix.every((s, i) => path[i] === s);

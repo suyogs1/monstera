@@ -9,7 +9,7 @@ Statuses: `implemented` (works end to end, with a test), `prototype` (bounded su
 |---|---|---|---|---|
 | Project Dashboard | planned | implemented | studio only | Not built. Today there is one draft in the browser (localStorage) and a template picker; no project list, no status cards. |
 | Game Designer | implemented | implemented | compiles to native | The canonical v4 spec editors. Field ownership locks for derived modules are not built; with derivation off every field is owned by the Designer. |
-| Asset Studio | planned | prototype | studio only | Not built. The manifest schema exists, there is no import or library UI. Assets will not render or play in the native apps (no v4 asset concept; E1 is conditional). |
+| Asset Studio | prototype | prototype | studio only | Import, library, provenance, preview and delete protection only. Assigning an asset to a kind, sprite sheets and animation are later tasks. Assets will not render or play in the native apps (no v4 asset concept; E1 is conditional). |
 | Sprite and Animation Editor | planned | prototype | studio only | Not built. The animations manifest schema exists. Native rendering needs engine track E1, which is conditional and not started. |
 | Level Studio | prototype | prototype | compiles to native | Only the active level compiles into the native spec; other levels are Studio-only variants exported as standalone specs. No wave end, per-level win rule or in-app level selection (see multi-level-in-app). |
 | Gameplay Systems | prototype | implemented | compiles to native | Forms for lives, win score, collectibles and enemies. Derivation is off by default; while on, Game Designer shows lives, win score and collisions read-only. Health, power-ups and progression need contract changes and stay planned. |
@@ -39,7 +39,7 @@ Statuses: `implemented` (works end to end, with a test), `prototype` (bounded su
 
 | Capability | Now | Target | Native output | Evidence | Limits | Needs |
 |---|---|---|---|---|---|---|
-| Import, library and provenance of images and audio | planned | prototype | studio only | none | Not built. Studio-only: the native apps do not render or play assets. | Asset import and store (tasks 2.1 and 2.2). |
+| Import, library and provenance of images and audio | prototype | prototype | studio only | `studio/src/assets/sniff.test.ts`<br>`studio/src/assets/import.test.ts`<br>`studio/src/project/assets.controller.test.ts` | Studio-only: the native apps do not render or play assets. Origin and license are user declarations; only the license shape is checked. MP3 trailing data cannot be detected by content checks; OGG and MP3 need a browser that can read their metadata. |  |
 | Assets rendered or played inside the generated apps | planned | planned | planned | none | Conditional on engine track E1 (gate 2026-11-19); not started. | Engine track E1 and the G6 closure. |
 
 ### Sprite and Animation Editor

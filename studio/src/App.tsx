@@ -10,6 +10,7 @@ import { Determinism } from "./ui/sections/Determinism";
 import { Entities } from "./ui/sections/Entities";
 import { Export } from "./ui/sections/Export";
 import { Gameplay } from "./ui/sections/Gameplay";
+import { AssetLibrary } from "./assets/AssetLibrary";
 import { LevelStudio } from "./levels/LevelStudio";
 import { GameplayModules } from "./gameplay/Modules";
 import { GameplayPlanned } from "./gameplay/Planned";
@@ -42,6 +43,7 @@ const VIEWS: Partial<Record<SectionId, () => ReactElement>> = {
   levels: () => <LevelStudio />,
   "gameplay-modules": () => <GameplayModules />,
   "gameplay-planned": () => <GameplayPlanned />,
+  assets: () => <AssetLibrary />,
 };
 
 function NumberModeToggle() {

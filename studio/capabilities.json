@@ -21,10 +21,10 @@
     {
       "id": "assets",
       "title": "Asset Studio",
-      "status": "planned",
+      "status": "prototype",
       "targetStatus": "prototype",
       "nativeOutput": "studio only",
-      "limits": "Not built. The manifest schema exists, there is no import or library UI. Assets will not render or play in the native apps (no v4 asset concept; E1 is conditional)."
+      "limits": "Import, library, provenance, preview and delete protection only. Assigning an asset to a kind, sprite sheets and animation are later tasks. Assets will not render or play in the native apps (no v4 asset concept; E1 is conditional)."
     },
     {
       "id": "sprites",
@@ -220,12 +220,12 @@
       "id": "asset-library",
       "module": "assets",
       "title": "Import, library and provenance of images and audio",
-      "status": "planned",
+      "status": "prototype",
       "targetStatus": "prototype",
       "nativeOutput": "studio only",
-      "evidence": [],
-      "limits": "Not built. Studio-only: the native apps do not render or play assets.",
-      "requires": "Asset import and store (tasks 2.1 and 2.2).",
+      "evidence": ["studio/src/assets/sniff.test.ts", "studio/src/assets/import.test.ts", "studio/src/project/assets.controller.test.ts"],
+      "limits": "Studio-only: the native apps do not render or play assets. Origin and license are user declarations; only the license shape is checked. MP3 trailing data cannot be detected by content checks; OGG and MP3 need a browser that can read their metadata.",
+      "requires": "",
       "designRow": "Images, audio, provenance"
     },
     {
