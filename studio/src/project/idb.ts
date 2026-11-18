@@ -247,6 +247,7 @@ export type SuccessCallback<T> = (result: T, tx: IdbTx) => void;
 export interface TxStore {
   get<T = unknown>(key: IDBValidKey | IDBKeyRange, onSuccess?: SuccessCallback<T | undefined>): Slot<T | undefined>;
   getAll<T = unknown>(query?: IDBValidKey | IDBKeyRange | null, onSuccess?: SuccessCallback<T[]>): Slot<T[]>;
+  getAllKeys(query?: IDBValidKey | IDBKeyRange | null, onSuccess?: SuccessCallback<IDBValidKey[]>): Slot<IDBValidKey[]>;
   put(value: unknown, onSuccess?: SuccessCallback<IDBValidKey>): Slot<IDBValidKey>;
   add(value: unknown, onSuccess?: SuccessCallback<IDBValidKey>): Slot<IDBValidKey>;
   delete(key: IDBValidKey | IDBKeyRange, onSuccess?: SuccessCallback<undefined>): Slot<undefined>;
@@ -351,6 +352,7 @@ export function runTransaction<R extends SyncResult>(
         return {
           get: <T>(key: IDBValidKey | IDBKeyRange, cb?: SuccessCallback<T | undefined>) => run(os.get(key) as IDBRequest<T | undefined>, cb),
           getAll: <T>(query?: IDBValidKey | IDBKeyRange | null, cb?: SuccessCallback<T[]>) => run(os.getAll(query) as IDBRequest<T[]>, cb),
+          getAllKeys: (query, cb) => run(os.getAllKeys(query), cb),
           put: (value, cb) => run(os.put(value), cb),
           add: (value, cb) => run(os.add(value), cb),
           delete: (key, cb) => run(os.delete(key) as IDBRequest<undefined>, cb),

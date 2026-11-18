@@ -1,7 +1,7 @@
 import type { Path } from "../draft/path";
 
 export type SectionId =
-  | "overview" | "platforms" | "gameplay" | "entities" | "rules" | "spawns" | "presentation" | "spec" | "determinism" | "export" | "integration" | "levels";
+  | "overview" | "platforms" | "gameplay" | "entities" | "rules" | "spawns" | "presentation" | "spec" | "determinism" | "export" | "integration" | "levels" | "assets";
 
 export interface SectionInfo { id: SectionId; title: string; blurb: string }
 
@@ -18,6 +18,7 @@ export const SECTIONS: SectionInfo[] = [
   { id: "export", title: "Native source", blurb: "The generated Android and iOS projects, as a ZIP." },
   { id: "integration", title: "Developer Integration", blurb: "How Kiro works on this repository." },
   { id: "levels", title: "Level Studio", blurb: "Levels: placements, spawn waves, difficulty, variants." },
+  { id: "assets", title: "Asset library", blurb: "Import images and audio with provenance, filter, preview, delete." },
 ];
 
 const has = (path: Path, ...prefix: (string | number)[]) => prefix.every((s, i) => path[i] === s);

@@ -24,7 +24,7 @@
 //   Recovery from quarantine / format-newer: startNewProject(snapshot) saves a NEW project under a new key and moves
 //   the active pointer in the same transaction as that commit. The preserved record is never written or deleted.
 // pagehide flushing is best-effort and belongs to the caller; this store never reports saved before a commit.
-import { classifyError, openDb, type IdbConnection, type IdbErrorKind, type OpenOptions } from "./idb";
+import { classifyError, openDb, runTransaction, STORE_BLOBS, type IdbConnection, type IdbErrorKind, type OpenOptions } from "./idb";
 import { LEGACY_PROJECT_KEY, MIGRATION_META_KEY, migrateLegacyDraft, readLegacyDraft, type MigrationResult, type MigrationRuntime } from "./migrate";
 import {
   ACTIVE_KEY, buildRecord, contentText, evaluateRecord, readContents, recoveryFromRaw, recoveryFromSnapshot, recoveryWithStored, sha256Hex, snapshotIssues, stableText, writeRecord,
@@ -422,6 +422,53 @@ export class ProjectStore {
     return this.current ? this.save(this.current) : Promise.resolve(this.state.status);
   }
 
+  // ------------------------------------------------------------ asset blobs (task 2.2)
+  // Asset bytes live in the 'blobs' store, keyed [projectKey, assetId]. They are not part of the project record, its
+  // compare-and-swap or the save status. Where no write can happen (memory-only, conflict, closed) the controller keeps
+  // the bytes in memory and the result says persisted:false; read-only and quarantined refuse.
+  private blobConn(): { conn: IdbConnection | null; refused: string | null } {
+    const s = this.state.status;
+    if (s === "loading" || s === "read-only" || s === "quarantined") return { conn: null, refused: `storage is ${s}; the asset was not stored` };
+    const blocked = s === "memory-only" || s === "conflict" || s === "closed" || !this.conn || this.conn.closed;
+    return { conn: blocked ? null : this.conn, refused: null };
+  }
+  async putBlob(projectKey: string, assetId: string, bytes: Uint8Array): Promise<{ ok: true; persisted: boolean } | { ok: false; message: string }> {
+    const { conn, refused } = this.blobConn();
+    if (refused !== null) return { ok: false, message: refused };
+    if (conn === null) return { ok: true, persisted: false };
+    try {
+      const copy = bytes.slice().buffer;
+      await runTransaction(conn, [STORE_BLOBS], "readwrite", (tx) => { tx.store(STORE_BLOBS).put({ projectKey, assetId, size: bytes.length, bytes: copy }); });
+      return { ok: true, persisted: true };
+    } catch (e) {
+      return { ok: false, message: `the asset bytes could not be stored: ${classifyError(e).message}` };
+    }
+  }
+  /** The stored bytes, or null when none are stored or storage cannot be read. */
+  async getBlob(projectKey: string, assetId: string): Promise<Uint8Array | null> {
+    const conn = this.conn;
+    if (!conn || conn.closed) return null;
+    try {
+      const slot = await runTransaction(conn, [STORE_BLOBS], "readonly", (tx) => tx.store(STORE_BLOBS).get<{ bytes?: unknown }>([projectKey, assetId]));
+      const b = slot.value?.bytes;
+      return b instanceof ArrayBuffer ? new Uint8Array(b) : null;
+    } catch {
+      return null;
+    }
+  }
+  /** Best effort: removes this project's stored blobs whose asset id is not in `keep` (orphans left by undo, import or a closed tab). */
+  async pruneBlobs(projectKey: string, keep: ReadonlySet<string>): Promise<void> {
+    const { conn } = this.blobConn();
+    if (conn === null) return;
+    try {
+      await runTransaction(conn, [STORE_BLOBS], "readwrite", (tx) => {
+        const os = tx.store(STORE_BLOBS);
+        os.getAllKeys(null, (keys) => { // keys only, filtered here: the unit tests run without a global IDBKeyRange
+          for (const k of keys) if (Array.isArray(k) && k[0] === projectKey && typeof k[1] === "string" && !keep.has(k[1])) os.delete(k);
+        });
+      });
+    } catch { /* orphans only cost space; the next load tries again */ }
+  }
   private async pump(): Promise<void> {
     const conn = this.conn;
     while (this.pending && conn) {
