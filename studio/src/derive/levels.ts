@@ -27,29 +27,49 @@ export type CompileResult =
     initialEntities: CompiledEntity[];
     /** All waves in manifest order, then all difficulty steps in manifest order. */
     spawners: CompiledSpawner[];
-    /** Manifest path that produced `initialEntities[i]`, so engine issues can be mapped back to level fields (task 4.2). */
-    entityPaths: (string | number)[][];
-    /** Manifest path that produced `spawners[i]`. */
-    spawnerPaths: (string | number)[][];
+    /**
+     * Path of the manifest object (a placement) that produced `initialEntities[i]`. It names the source object, not a
+     * property: one output field can come from several source properties, and the compiler records no property-level
+     * mapping. Mapping engine issues to individual level fields is task 4.2, not a guarantee of this result.
+     */
+    entitySourcePaths: (string | number)[][];
+    /**
+     * Path of the manifest object (a wave, or a difficulty step) that produced `spawners[i]`. A step-derived spawner
+     * also copies kind and ranges from its wave; that wave is not recorded here. Source object only, as above.
+     */
+    spawnerSourcePaths: (string | number)[][];
   }
   | { ok: false; issues: CompileIssue[] };
 
-/** Fields that look natural but have no v4 representation. Rejected by name so the message says why (design section 6, E3). */
-const UNSUPPORTED: Readonly<Record<string, string>> = {
-  count: "spawners cannot count; v4 has no wave end or spawn count (E3)",
-  maxSpawns: "spawners cannot count; v4 has no wave end or spawn count (E3)",
-  endTick: "spawners cannot stop; v4 has no wave end (E3)",
-  stopTick: "spawners cannot stop; v4 has no wave end (E3)",
-  endsAtTick: "spawners cannot stop; v4 has no wave end (E3)",
-  duration: "spawners cannot stop; v4 has no wave end (E3)",
-  winScore: "a win condition per level is not supported; winScore belongs to gameplay (E3)",
-  winCondition: "a win condition per level is not supported (E3)",
-  lives: "lives per level is not supported; lives belong to gameplay (E3)",
-  next: "level sequencing and in-app level selection are not supported (E3)",
-  nextLevel: "level sequencing and in-app level selection are not supported (E3)",
-  selectable: "in-app level selection is not supported (E3)",
+const NO_END = "spawners cannot stop; v4 has no wave end (E3)";
+const NO_COUNT = "spawners cannot count; v4 has no wave end or spawn count (E3)";
+const NO_SELECT = "level sequencing and in-app level selection are not supported (E3)";
+/**
+ * Fields that look natural but have no v4 representation, by the kind of manifest object they appear on. A name is
+ * explained only in the context where the idea applies; the same name anywhere else is an ordinary unknown property
+ * (`additional`). Contexts (see `contextOf`): a level object, or a wave or difficulty-step object.
+ */
+const UNSUPPORTED: Readonly<Record<"level" | "spawn", Readonly<Record<string, string>>>> = {
+  level: {
+    winScore: "a win condition per level is not supported; winScore belongs to gameplay (E3)",
+    winCondition: "a win condition per level is not supported (E3)",
+    lives: "lives per level is not supported; lives belong to gameplay (E3)",
+    next: NO_SELECT,
+    nextLevel: NO_SELECT,
+    selectable: "in-app level selection is not supported (E3)",
+  },
+  spawn: {
+    count: NO_COUNT, maxSpawns: NO_COUNT, endTick: NO_END, stopTick: NO_END, endsAtTick: NO_END, duration: NO_END,
+  },
 };
 
+/** Context of the object that carries an unknown property at `path` (the path includes the property name). */
+function contextOf(path: readonly (string | number)[]): "level" | "spawn" | undefined {
+  if (path[0] !== "levels" || typeof path[1] !== "number") return undefined;
+  if (path.length === 3) return "level"; // levels[i].<key>
+  if (path.length === 5 && typeof path[3] === "number" && (path[2] === "waves" || path[2] === "difficulty")) return "spawn"; // levels[i].waves|difficulty[j].<key>
+  return undefined;
+}
 const isObj = (v: unknown): v is Record<string, unknown> => typeof v === "object" && v !== null && !Array.isArray(v);
 const own = (o: Record<string, unknown>, k: string) => Object.prototype.hasOwnProperty.call(o, k);
 /** Normalizes -0 to 0 so the output serializes and compares identically. */
@@ -59,13 +79,14 @@ const issue = (source: IssueSource, path: (string | number)[], code: string, mes
 function manifestIssues(raw: Issue[]): CompileIssue[] {
   return raw.map((i) => {
     const key = i.path[i.path.length - 1];
-    if (i.code === "additional" && typeof key === "string" && own(UNSUPPORTED as Record<string, unknown>, key)) {
-      return issue("levels", i.path, "unsupported-field", `"${key}" is not supported: ${UNSUPPORTED[key]}`);
+    const ctx = i.code === "additional" ? contextOf(i.path) : undefined;
+    const table = ctx === undefined ? undefined : UNSUPPORTED[ctx];
+    if (table !== undefined && typeof key === "string" && own(table, key)) {
+      return issue("levels", i.path, "unsupported-field", `"${key}" is not supported: ${table[key]}`);
     }
     return issue("levels", i.path, i.code, i.message);
   });
 }
-
 interface BaseView { maxEntities: number; kinds: Set<string> }
 
 /** Reads only what the compiler needs from the base spec. Anything else in the spec is neither read nor checked here. */
@@ -134,8 +155,8 @@ function compileOne(level: Level, at: number, base: BaseView): CompileResult {
     levelId: level.id,
     initialEntities,
     spawners,
-    entityPaths: level.placements.map((_, i) => [...lp, "placements", i]),
-    spawnerPaths: [
+    entitySourcePaths: level.placements.map((_, i) => [...lp, "placements", i]),
+    spawnerSourcePaths: [
       ...level.waves.map((_, i) => [...lp, "waves", i]),
       ...level.difficulty.map((_, j) => [...lp, "difficulty", j]),
     ],
