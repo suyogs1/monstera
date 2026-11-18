@@ -48,7 +48,16 @@ describe("golden output", () => {
     expect(Object.keys(r.spawners[0] ?? {})).toEqual(["stream", "kind", "startTick", "intervalTicks", "xMin", "xMax", "yMin", "yMax", "vx", "vy"]);
     expect(Object.keys(r.initialEntities[0] ?? {})).toEqual(["kind", "x", "y", "vx", "vy", "controlled"]);
   });
-  it("level-1 reproduces the pointers of the Lantern Run spec exactly", () => {
+  it("names source-object paths and exposes no property-level path fields", () => {
+    const r = ok(compileLevel(levels(), spec(), "level-1")) as Record<string, unknown>;
+    expect(Object.keys(r).sort()).toEqual(["entitySourcePaths", "initialEntities", "levelId", "ok", "spawnerSourcePaths", "spawners"]);
+    expect(r["entityPaths"]).toBeUndefined();
+    expect(r["spawnerPaths"]).toBeUndefined();
+    const sp = r["spawnerSourcePaths"] as (string | number)[][];
+    expect(sp.map((p) => p.length)).toEqual([4, 4, 4]); // levels, index, section, index: an object, never a property name
+    expect(sp[2]).toEqual(["levels", 0, "difficulty", 0]);
+    expect((r["entitySourcePaths"] as (string | number)[][])[0]).toEqual(["levels", 0, "placements", 0]);
+  });  it("level-1 reproduces the pointers of the Lantern Run spec exactly", () => {
     const r = ok(compileLevel(levels(), spec(), "level-1"));
     expect(r.initialEntities).toEqual(spec().game.runtime.initialEntities);
     expect(r.spawners).toEqual(spec().game.runtime.spawners);
@@ -76,7 +85,7 @@ describe("determinism and purity", () => {
     const r = ok(compileLevel(m, s, "level-1"));
     r.initialEntities[0]!.x = 1;
     r.spawners[0]!.kind = "changed";
-    r.entityPaths[0]!.push("x");
+    r.entitySourcePaths[0]!.push("x");
     expect(m).toEqual(levels());
     expect(s).toEqual(spec());
     expect(ok(compileLevel(m, s, "level-1")).initialEntities[0]?.x).toBe(32112640);
@@ -159,7 +168,7 @@ describe("difficulty steps", () => {
     }));
     expect(r.spawners.map((s) => s.stream)).toEqual(["lanterns", "wisps", "sa", "sb"]);
     expect(r.spawners.map((s) => s.kind)).toEqual(["lantern", "wisp", "wisp", "lantern"]);
-    expect(r.spawnerPaths[3]).toEqual(["levels", 0, "difficulty", 1]);
+    expect(r.spawnerSourcePaths[3]).toEqual(["levels", 0, "difficulty", 1]);
   });
   it("supports several steps on one wave", () => {
     const r = ok(withLevels((m) => {
@@ -245,7 +254,46 @@ describe("unsupported shapes", () => {
     expect(at(withLevels((m) => { m.levels[0].waves[0].color = "red"; }))).toEqual(["levels:additional@levels.0.waves.0.color"]);
     expect(at(withLevels((m) => { m.extra = 1; }))).toEqual(["levels:additional@extra"]);
   });
-  it("does not treat inherited names as unsupported-field", () => {
+  describe("unsupported-field explanations are context-aware", () => {
+    const SPAWN = ["count", "maxSpawns", "endTick", "stopTick", "endsAtTick", "duration"];
+    const LEVEL = ["winScore", "winCondition", "lives", "next", "nextLevel", "selectable"];
+    const put = (target: (m: any) => any, key: string) => at(withLevels((m) => { target(m)[key] = 10; }));
+    const contexts: [string, (m: any) => any, string[]][] = [
+      ["a level object", (m) => m.levels[0], LEVEL],
+      ["a wave", (m) => m.levels[0].waves[0], SPAWN],
+      ["a difficulty step", (m) => m.levels[0].difficulty[0], SPAWN],
+    ];
+    const everywhere: [string, (m: any) => any, string][] = [
+      ["a level object", (m) => m.levels[0], "levels.0"],
+      ["a wave", (m) => m.levels[0].waves[0], "levels.0.waves.0"],
+      ["a difficulty step", (m) => m.levels[0].difficulty[0], "levels.0.difficulty.0"],
+      ["a placement", (m) => m.levels[0].placements[0], "levels.0.placements.0"],
+      ["the manifest root", (m) => m, ""],
+    ];
+    it.each(contexts)("explains the relevant names on %s", (_n, target, names) => {
+      for (const key of names) {
+        const issues = fail(withLevels((m) => { target(m)[key] = 10; }));
+        expect(issues, key).toHaveLength(1);
+        expect(issues[0], key).toMatchObject({ code: "unsupported-field", source: "levels" });
+        expect(issues[0]?.message, key).toContain("E3");
+      }
+    });
+    it.each(everywhere)("gives the other context's names on %s only the generic issue", (name, target, prefix) => {
+      const foreign = name === "a level object" ? SPAWN : name === "a wave" || name === "a difficulty step" ? LEVEL : [...SPAWN, ...LEVEL];
+      for (const key of foreign) {
+        const issues = fail(withLevels((m) => { target(m)[key] = 10; }));
+        expect(issues, `${name}.${key}`).toEqual([{ source: "levels", code: "additional", path: [...(prefix ? prefix.split(".").map((p) => (/^\d+$/.test(p) ? Number(p) : p)) : []), key], message: `unknown property "${key}"` }]);
+        expect(issues[0]?.message).not.toContain("E3");
+      }
+    });
+    it("uses the second level's index in the context decision", () => {
+      expect(put((m) => m.levels[1], "lives")).toEqual(["levels:unsupported-field@levels.1.lives"]);
+      expect(put((m) => m.levels[1].waves[0], "lives")).toEqual(["levels:additional@levels.1.waves.0.lives"]);
+    });
+    it("still rejects a context-matching name that is not an unknown property (a real field keeps its own issue)", () => {
+      expect(at(withLevels((m) => { m.levels[0].waves[0].startTick = -1; }))).toEqual(["levels:minimum@levels.0.waves.0.startTick"]);
+    });
+  });  it("does not treat inherited names as unsupported-field", () => {
     const issues = fail(withLevels((m) => { m.levels[0].toString = 1; }));
     expect(issues[0]?.code).toBe("additional");
   });
