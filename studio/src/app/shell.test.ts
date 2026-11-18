@@ -16,12 +16,11 @@ describe("router: legacy hashes (acceptance of task 1.1)", () => {
     overview: "#/designer/overview", platforms: "#/designer/platforms", entities: "#/designer/entities", rules: "#/designer/rules",
     spawns: "#/designer/spawns", presentation: "#/designer/presentation", spec: "#/designer/spec",
     gameplay: "#/designer/world", determinism: "#/preview/determinism", export: "#/release/export", integration: "#/kiro/integration",
-    levels: "#/levels/editor",
+    levels: "#/levels/editor", "gameplay-modules": "#/gameplay/modules", "gameplay-planned": "#/gameplay/planned",
     assets: "#/assets/library",
     sprites: "#/sprites/editor",
   };
-
-  it("lists exactly the fourteen legacy section ids", () => {
+  it("lists exactly the sixteen legacy section ids", () => {
     expect(SECTIONS.map((s) => s.id).sort()).toEqual(Object.keys(expected).sort());
   });
   it.each(Object.entries(expected))("#/%s redirects to %s", (legacy, target) => {
@@ -65,9 +64,9 @@ describe("router: modules, partial and unknown hashes", () => {
       expect(resolveHash(`#/${id}/anything`).canonical).toBe(`#/${id}`);
     }
   });
-  it("Gameplay Systems has its own card although #/gameplay is the legacy Designer hash", () => {
+  it("Gameplay Systems has its own module route although #/gameplay is the legacy Designer hash", () => {
     expect(resolveHash("#/gameplay").canonical).toBe("#/designer/world");
-    expect(resolveHash("#/gameplay/modules").route).toEqual({ kind: "card", module: "gameplay" });
+    expect(resolveHash("#/gameplay/modules").route).toMatchObject({ kind: "section", module: "gameplay", sectionId: "gameplay-modules" });
     expect(resolveHash("#/gameplay/modules").redirected).toBe(false);
     expect(cardHash("gameplay")).toBe("#/gameplay/modules");
     expect(moduleHash("gameplay")).toBe("#/gameplay/modules");

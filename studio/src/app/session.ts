@@ -1,4 +1,4 @@
-import { applyActiveLevel, type ApplyResult } from "../derive/apply";
+import { applyActiveLevel, applyReviewedGameplay, reviewGameplay, type ApplyResult, type GameplayApplyResult, type GameplayReview } from "../derive/apply";
 import { browserProbes } from "../assets/browserProbes";
 import { BadgeRunner } from "../badge/badge";
 import { DraftStore, type Baseline, type Origin } from "../draft/store";
@@ -177,6 +177,10 @@ export class Session {
   /** A template becomes a new project (history cleared, saved in the background). */
   /** Compiles the active level into the spec (engine-validated, oracle-checked) and commits it as one undo step, or refuses. */
   applyActiveLevel(): Promise<ApplyResult> { return applyActiveLevel(this.project, this.engine); }
+  /** Gameplay step 1: compiles and engine-checks the gameplay manifest against the current spec; writes nothing. */
+  reviewGameplay(): Promise<GameplayReview> { return reviewGameplay(this.project, this.engine); }
+  /** Gameplay step 2: commits a reviewed plan as one undo step, only if the project is unchanged since the review. */
+  applyReviewedGameplay(review: Extract<GameplayReview, { ok: true }>): GameplayApplyResult { return applyReviewedGameplay(this.project, review); }
   async loadTemplate(id: string): Promise<void> {
     const { doc, baseline, t, name } = await this.templateContent(id);
     await this.startProjectFrom(doc, baseline, t, name);

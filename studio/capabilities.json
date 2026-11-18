@@ -45,10 +45,10 @@
     {
       "id": "gameplay",
       "title": "Gameplay Systems",
-      "status": "planned",
+      "status": "prototype",
       "targetStatus": "implemented",
       "nativeOutput": "compiles to native",
-      "limits": "Not built as a module. Lives, win score and collisions can be edited today under Game Designer. Health, power-ups and progression need contract changes and stay planned."
+      "limits": "Forms for lives, win score, collectibles and enemies. Derivation is off by default; while on, Game Designer shows lives, win score and collisions read-only. Health, power-ups and progression need contract changes and stay planned."
     },
     {
       "id": "backend",
@@ -148,12 +148,12 @@
       "id": "gameplay-core",
       "module": "gameplay",
       "title": "Lives, win score, collectibles and enemies compiled into lives, winScore and collisions",
-      "status": "planned",
+      "status": "prototype",
       "targetStatus": "implemented",
       "nativeOutput": "compiles to native",
-      "evidence": [],
-      "limits": "Not built. Opt-in derivation, default off; the derived diff and engine verdict are shown before the spec changes.",
-      "requires": "Gameplay compiler (task 5.1), apply path (task 4.2).",
+      "evidence": ["studio/src/derive/gameplay.test.ts", "studio/src/derive/gameplayApply.test.ts", "studio/src/gameplay/gameplay.ui.test.tsx"],
+      "limits": "Opt-in derivation, default off. Review shows the diff and the engine verdict; nothing changes until Apply, as one undo step. Browser-level evidence is not recorded yet.",
+      "requires": "",
       "designRow": "Lives, win score, collectible and enemy collision rows"
     },
     {

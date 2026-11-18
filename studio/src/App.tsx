@@ -13,6 +13,8 @@ import { Gameplay } from "./ui/sections/Gameplay";
 import { AssetLibrary } from "./assets/AssetLibrary";
 import { SpriteStudio } from "./sprites/SpriteStudio";
 import { LevelStudio } from "./levels/LevelStudio";
+import { GameplayModules } from "./gameplay/Modules";
+import { GameplayPlanned } from "./gameplay/Planned";
 import { Integration } from "./ui/sections/Integration";
 import { Overview } from "./ui/sections/Overview";
 import { Platforms } from "./ui/sections/Platforms";
@@ -40,6 +42,8 @@ const VIEWS: Partial<Record<SectionId, () => ReactElement>> = {
   export: () => <Export />,
   integration: () => <Integration />,
   levels: () => <LevelStudio />,
+  "gameplay-modules": () => <GameplayModules />,
+  "gameplay-planned": () => <GameplayPlanned />,
   assets: () => <AssetLibrary />,
   sprites: () => <SpriteStudio />,
 };

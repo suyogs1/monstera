@@ -1,7 +1,7 @@
 import type { Path } from "../draft/path";
 
 export type SectionId =
-  | "overview" | "platforms" | "gameplay" | "entities" | "rules" | "spawns" | "presentation" | "spec" | "determinism" | "export" | "integration" | "levels" | "assets" | "sprites";
+  | "overview" | "platforms" | "gameplay" | "entities" | "rules" | "spawns" | "presentation" | "spec" | "determinism" | "export" | "integration" | "levels" | "gameplay-modules" | "gameplay-planned" | "assets" | "sprites";
 
 export interface SectionInfo { id: SectionId; title: string; blurb: string }
 
@@ -18,6 +18,8 @@ export const SECTIONS: SectionInfo[] = [
   { id: "export", title: "Native source", blurb: "The generated Android and iOS projects, as a ZIP." },
   { id: "integration", title: "Developer Integration", blurb: "How Kiro works on this repository." },
   { id: "levels", title: "Level Studio", blurb: "Levels: placements, spawn waves, difficulty, variants." },
+  { id: "gameplay-modules", title: "Modules", blurb: "Lives, score, collectibles and enemies, compiled into the spec on request." },
+  { id: "gameplay-planned", title: "Planned", blurb: "Health, power-ups and progression: not buildable on the current contract." },
   { id: "assets", title: "Asset library", blurb: "Import images and audio with provenance, filter, preview, delete." },
   { id: "sprites", title: "Sprites and animation", blurb: "Slice sprite sheets, edit frames, build animation sequences." },
 ];

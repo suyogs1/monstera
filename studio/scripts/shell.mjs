@@ -122,7 +122,7 @@ try {
   // Gameplay Systems has its own route
   await toggle.click();
   await mobile.click('[data-testid="module-gameplay"]');
-  await mobile.waitForSelector('[data-testid="module-card"][data-module="gameplay"]');
+  await mobile.waitForSelector('[data-testid="module-header"][data-module="gameplay"]');
   check("mobile: the Gameplay Systems entry opens #/gameplay/modules, not the Designer redirect", (await mhash()) === "#/gameplay/modules" && (await expanded()) === "false", await mhash());
 
   // keyboard
