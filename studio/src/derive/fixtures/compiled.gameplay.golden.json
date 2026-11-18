@@ -1,0 +1,9 @@
+{
+  "lives": 3,
+  "winScore": 150,
+  "collisions": [
+    { "a": "lantern", "b": "keeper", "despawnA": true, "despawnB": false, "score": 10, "lives": 0 },
+    { "a": "wisp", "b": "keeper", "despawnA": true, "despawnB": false, "score": 0, "lives": -1 }
+  ],
+  "collisionSourcePaths": [["collectibles", 0], ["enemies", 0]]
+}
