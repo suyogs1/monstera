@@ -3,6 +3,7 @@ import { useProject } from "../project/context";
 import type { Asset, Provenance } from "../project/manifests";
 import { useKindIds } from "../ui/fields";
 import { AssetList } from "./AssetList";
+import { planAssign } from "./assign";
 import type { LibraryFilter } from "./library";
 const ORIGINS: Provenance["origin"][] = ["user-owned", "third-party-licensed", "ai-generated"];
 const CATEGORIES: Asset["category"][] = ["sprite", "background", "ui", "sfx", "music"];
@@ -102,6 +103,13 @@ export function AssetLibrary() {
         assets={assets} filter={filter} kindIds={kindIds} previewId={open ? open.id : null}
         preview={open ? <AssetPreview asset={open} /> : null}
         onFilter={setFilter} onPreview={setPreviewId}
+        onAssign={(id, kinds) => {
+          const m = project.manifests?.assets;
+          if (m === undefined) return;
+          const plan = planAssign(m, id, kinds, kindIds);
+          const r = plan.ok ? project.commitManifest("assets", plan.manifest, `kinds-${id}`) : null;
+          if (!plan.ok) setMessage(plan.reason); else if (r !== null && !r.ok) setMessage(r.message);
+        }}
         onDelete={(id) => {
           const r = project.deleteAsset(id);
           setMessage(r.ok ? `Deleted ${id}. Its id is not reused.` : r.reason);
