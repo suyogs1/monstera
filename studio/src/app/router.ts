@@ -27,6 +27,8 @@ export const SECTION_ROUTES: readonly SectionRoute[] = [
   { id: "gameplay-planned", module: "gameplay", slug: "planned" },
   { id: "assets", module: "assets", slug: "library" },
   { id: "sprites", module: "sprites", slug: "editor" },
+  { id: "dashboard-projects", module: "dashboard", slug: "projects" },
+  { id: "dashboard-status", module: "dashboard", slug: "status" },
 ];
 
 export type Route =

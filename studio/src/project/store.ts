@@ -25,6 +25,7 @@
 //   the active pointer in the same transaction as that commit. The preserved record is never written or deleted.
 // pagehide flushing is best-effort and belongs to the caller; this store never reports saved before a commit.
 import { classifyError, openDb, runTransaction, STORE_BLOBS, type IdbConnection, type IdbErrorKind, type OpenOptions } from "./idb";
+import { listCatalog, readEvaluated, setActiveKey, renameRecord, duplicateRecord, deleteRecord, type CatalogEntry } from "./catalog";
 import { LEGACY_PROJECT_KEY, MIGRATION_META_KEY, migrateLegacyDraft, readLegacyDraft, type MigrationResult, type MigrationRuntime } from "./migrate";
 import {
   ACTIVE_KEY, buildRecord, contentText, evaluateRecord, readContents, recoveryFromRaw, recoveryFromSnapshot, recoveryWithStored, sha256Hex, snapshotIssues, stableText, writeRecord,
@@ -606,6 +607,68 @@ export class ProjectStore {
     this.writeMarker();
     this.set("saved", { message: "Saved.", lastSavedAt: this.now() }, { project: snapshot });
     return { ok: true, projectKey: record.projectKey };
+  }
+  // ------------------------------------------------------------ project catalog (task 1.3)
+  // Several projects live side by side in IndexedDB. These methods list them and change one at a time (see catalog.ts). They
+  // work only while storage is writable (not memory-only, conflict, closed, read-only, quarantined or loading) and never
+  // change the status machine except activateProject, which moves the in-memory project to the one it opened.
+  private catalogConn(): { conn: IdbConnection } | { message: string } {
+    const { conn, refused } = this.blobConn();
+    if (refused !== null) return { message: `Projects cannot be changed: ${refused}.` };
+    if (conn === null || this.state.status === "conflict") return { message: `Projects cannot be changed while storage is ${this.state.status}.` };
+    return { conn };
+  }
+  /** Every project stored in this browser (read only). Fails with the reason when storage cannot be read. */
+  async listProjects(): Promise<{ ok: true; entries: CatalogEntry[]; activeKey: string | null } | { ok: false; message: string }> {
+    const conn = this.conn;
+    if (!conn || conn.closed) return { ok: false, message: "Storage is not open, so stored projects cannot be listed." };
+    try {
+      const verified = (await readContents(conn, [MIGRATION_META_KEY])).meta[MIGRATION_META_KEY] !== undefined;
+      const { entries, activeKey } = await listCatalog(conn, this.sha256, (k) => !verified && k === LEGACY_PROJECT_KEY);
+      return { ok: true, entries, activeKey };
+    } catch (e) {
+      return { ok: false, message: `Stored projects could not be read (${classifyError(e).message}).` };
+    }
+  }
+  /** Moves the active pointer to a stored project and makes it the in-memory project. The caller has flushed and adopted nothing yet. */
+  async activateProject(projectKey: string): Promise<{ ok: true; project: ProjectSnapshot } | { ok: false; message: string }> {
+    const c = this.catalogConn();
+    if (!("conn" in c)) return { ok: false, message: c.message };
+    await this.pumping;
+    const read = await readEvaluated(c.conn, projectKey, this.sha256);
+    if (!read.ok) return read;
+    const set = await setActiveKey(c.conn, projectKey);
+    if (!set.ok) return set;
+    this.pending = null;
+    this.seqByKey.set(projectKey, read.record.writeSeq);
+    this.lastSaved = { projectKey, seq: read.record.writeSeq, content: contentText(read.record) };
+    this.current = read.project;
+    this.set("saved", { message: "Saved." }, { project: read.project });
+    return { ok: true, project: read.project };
+  }
+  /** Renames a stored project that is NOT the one being edited (the editor renames its own project through a normal save). */
+  async renameStored(projectKey: string, name: string): Promise<{ ok: true } | { ok: false; message: string }> {
+    const c = this.catalogConn();
+    if (!("conn" in c)) return { ok: false, message: c.message };
+    try { return await renameRecord(c.conn, projectKey, name, this.sha256); } catch (e) { return { ok: false, message: `The rename could not be stored (${classifyError(e).message}).` }; }
+  }
+  /** Copies a stored project (record and asset bytes) under a new key in one transaction. The specification text is copied unchanged. */
+  async duplicateStored(projectKey: string, name: string): Promise<{ ok: true; projectKey: string } | { ok: false; message: string }> {
+    const c = this.catalogConn();
+    if (!("conn" in c)) return { ok: false, message: c.message };
+    const key = this.newProjectKey();
+    const r = await duplicateRecord(c.conn, projectKey, key, name, this.sha256);
+    if (r.ok) { this.knownKeys.push(key); this.knownCount++; this.writeMarker(); }
+    return r;
+  }
+  /** Removes a stored project and its asset bytes in one transaction. Refused for the project in memory: switch away first. */
+  async deleteStored(projectKey: string): Promise<{ ok: true } | { ok: false; message: string }> {
+    const c = this.catalogConn();
+    if (!("conn" in c)) return { ok: false, message: c.message };
+    if (this.current?.projectKey === projectKey) return { ok: false, message: "The project that is open cannot be deleted. Open another project first." };
+    const r = await deleteRecord(c.conn, projectKey);
+    if (r.ok) { this.seqByKey.delete(projectKey); this.knownKeys = this.knownKeys.filter((k) => k !== projectKey); }
+    return r;
   }
   async requestPersistence(): Promise<PersistenceResult> {
     const persist = this.storage?.persist;

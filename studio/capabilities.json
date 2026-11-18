@@ -5,10 +5,10 @@
     {
       "id": "dashboard",
       "title": "Project Dashboard",
-      "status": "planned",
+      "status": "prototype",
       "targetStatus": "implemented",
       "nativeOutput": "studio only",
-      "limits": "Not built. Today there is one draft in the browser (localStorage) and a template picker; no project list, no status cards."
+      "limits": "Projects are kept in this browser only. Create from a template or a specification file, open, rename, duplicate and delete, with status cards for the open project. Project bundles (specification, Studio data and assets in one file) are not available yet, and a generation-plan state is not shown."
     },
     {
       "id": "designer",
@@ -96,12 +96,12 @@
       "id": "project-dashboard",
       "module": "dashboard",
       "title": "Project list, status cards and bundle in and out",
-      "status": "planned",
+      "status": "prototype",
       "targetStatus": "implemented",
       "nativeOutput": "studio only",
-      "evidence": [],
-      "limits": "Not built. One draft and a template picker exist today.",
-      "requires": "Project context and persistence (task 1.2), dashboard UI (task 1.3).",
+      "evidence": ["studio/src/project/catalog.test.ts", "studio/src/dashboard/dashboard.test.tsx"],
+      "limits": "Studio-only and local to this browser. Stored projects other than the open one show the facts of their saved text; the engine checks them again when opened. A duplicate keeps the original project id because the specification is copied unchanged. The project bundle (task 1.5) is not available yet.",
+      "requires": "",
       "designRow": ""
     },
     {
