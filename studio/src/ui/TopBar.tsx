@@ -1,11 +1,18 @@
 import { useRef, useState } from "react";
 import { useDraft, useSession } from "../app/hooks";
+import { useProject } from "../project/context";
+import { PersistenceIndicator, StorageProtection, downloadText } from "./PersistenceStatus";
+import { exportRecoveryFile, shortcutHint, type ActionNotice } from "./persistence";
+import { isMac } from "./Guards";
 
 export function TopBar() {
   const session = useSession();
   const { doc, baseline, validation, revision, validatedRevision } = useDraft();
   const fileInput = useRef<HTMLInputElement>(null);
   const [message, setMessage] = useState<string | null>(null);
+  const project = useProject();
+  const mac = isMac();
+  const onRecovery = () => { const n: ActionNotice = exportRecoveryFile(project, "live", downloadText); setMessage(n.text); };
 
   const name = doc && typeof doc === "object" && !Array.isArray(doc) ? String((doc["project"] as Record<string, unknown> | undefined)?.["displayName"] ?? "") : "";
   const edited = validation?.canonicalText != null && baseline?.canonicalText != null && validation.canonicalText !== baseline.canonicalText;
@@ -65,7 +72,15 @@ export function TopBar() {
         <span className={`status ${verdict === "valid" ? "ok" : verdict === "invalid" ? "bad" : "pending"}`}>Spec: {verdict}</span>
         <span className="muted">SHA-256 <code data-testid="topbar-hash" title="Canonical SHA-256 computed by the engine">{hash ?? "…"}</code></span>
       </p>
+      <PersistenceIndicator />
+      <StorageProtection />
       <div className="actions">
+        <button type="button" onClick={() => project.undo()} disabled={!project.canUndo} aria-label="Undo" aria-keyshortcuts={mac ? "Meta+Z" : "Control+Z"} title={`Undo (${shortcutHint("undo", mac)})`} data-testid="undo-button">
+          Undo <kbd className="muted small">{shortcutHint("undo", mac)}</kbd>
+        </button>
+        <button type="button" onClick={() => project.redo()} disabled={!project.canRedo} aria-label="Redo" aria-keyshortcuts={mac ? "Meta+Shift+Z" : "Control+Shift+Z Control+Y"} title={`Redo (${shortcutHint("redo", mac)})`} data-testid="redo-button">
+          Redo <kbd className="muted small">{shortcutHint("redo", mac)}</kbd>
+        </button>
         <label className="inline">
           <span>Start from</span>
           <select value={current} onChange={(e) => onTemplate(e.target.value)} data-testid="template-select" aria-label="Start from a template">
@@ -83,6 +98,7 @@ export function TopBar() {
         <button type="button" onClick={onExport} disabled={!canExport} title={canExport ? "Download monstera.spec.json" : "Export is available when the draft is valid"} data-testid="export-button">
           Export spec
         </button>
+        <button type="button" onClick={onRecovery} title="Download your in-memory project, including an invalid draft, as a recovery file" data-testid="recovery-export-button">Export recovery data</button>
         <button type="button" onClick={() => { if (confirmDiscard()) void session.reset(); }} disabled={!edited} data-testid="reset-button">Reset</button>
       </div>
       {message && <p className="notice" role="status">{message}</p>}

@@ -1,20 +1,29 @@
 // UI-level acceptance checks, run by acceptance.mjs against the production build.
 // Every check observes the rendered page; edits go through the same store the controls use.
 import { readFileSync } from "node:fs";
+import { createHash } from "node:crypto";
+import { acceptUnloadDialogs, activeRecord, indicatorKind, livesOf, resetStudioStorage, storedMeta, storedProjects, studioDbExists, waitSaved } from "./storage.mjs";
+import { specSha256 } from "./native-evidence.mjs";
 
 const OFFICIAL = { id: "pumpkin-blaster", name: "Pumpkin Blaster" };
 
 export default async function ui({ page, origin, check, committed, TEMPLATES }) {
   const text = async (sel) => (await page.locator(sel).first().textContent())?.trim() ?? "";
-  const settled = () => page.waitForFunction(() => document.querySelector('[data-testid="validation-status"]')?.textContent?.startsWith("Checking") === false, null, { timeout: 15000 });
+  const settled = () => page.waitForFunction(() => { const s = window.session?.store.getState(); return s !== undefined && s.validation !== null && s.validatedRevision === s.revision && document.querySelector('[data-testid="validation-status"]')?.textContent?.startsWith("Checking") === false; }, null, { timeout: 15000 });
   const edit = async (path, value) => { await page.evaluate(([p, v]) => window.session.store.set(p, v), [path, value]); await settled(); };
   const open = async (id) => { await page.evaluate((h) => { window.location.hash = h; }, `/${id}`); await page.waitForTimeout(50); };
 
   // ---- shell and validation
-  await page.evaluate(() => localStorage.clear());
-  await page.reload();
+  // Deterministic start: no project, preference or eviction marker from an earlier session (IndexedDB + localStorage).
+  await resetStudioStorage(page);
   await page.waitForFunction(() => window.ready === true);
   await settled();
+  await waitSaved(page);
+  const firstRun = await storedProjects(page);
+  check("after the reset the first boot creates exactly one project in IndexedDB and shows it as saved",
+    firstRun.length === 1 && (await text('[data-testid="persistence-status"]')).startsWith("Project: saved"), `${firstRun.length} record(s)`);
+  check("the spec verdict and the project save state are separate indicators",
+    (await text('[data-testid="topbar-state"]')).startsWith("Spec: valid") && !(await text('[data-testid="topbar-state"]')).includes("saved"));
   check("Studio starts on an official game and shows the engine's verdict", (await text('[data-testid="project-name"]')).includes(OFFICIAL.name) &&
     (await text('[data-testid="validation-status"]')).startsWith("Valid"), await text('[data-testid="validation-status"]'));
 
@@ -34,6 +43,7 @@ export default async function ui({ page, origin, check, committed, TEMPLATES }) 
   // ---- every template loads through the picker
   for (const t of TEMPLATES) {
     await page.selectOption('[data-testid="template-select"]', t.id);
+    await page.waitForFunction((x) => window.session.store.getState().baseline?.templateId === x, t.id, { timeout: 15000 });
     await settled();
     const exported = await exportBytes();
     check(`template ${t.id}: loads valid and exports the committed file`, exported === committed[t.id] &&
@@ -46,6 +56,7 @@ export default async function ui({ page, origin, check, committed, TEMPLATES }) 
 
   // ---- edit, validate, revert
   await page.selectOption('[data-testid="template-select"]', OFFICIAL.id);
+  await page.waitForFunction((x) => window.session.store.getState().baseline?.templateId === x, OFFICIAL.id, { timeout: 15000 });
   await settled();
   const original = await page.evaluate(() => window.session.store.getState().validation.sha256);
   await edit(["game", "runtime", "lives"], 9);
@@ -60,15 +71,74 @@ export default async function ui({ page, origin, check, committed, TEMPLATES }) 
   check("an invalid edit lists the engine's issues and disables export",
     (await text('[data-testid="validation-status"]')).includes("issue") && (await page.locator('[data-testid="issues"] li').count()) >= 1 &&
     (await page.locator('[data-testid="export-button"]').isDisabled()));
+  // An invalid draft is never shown as Saved, is not written, raises the browser prompt, and stays recoverable.
+  check("an invalid edit is shown as Unsaved with the validation reason, never Saved",
+    (await indicatorKind(page)) === "unsaved" && (await text('[data-testid="persistence-reason"]')).includes("validation errors"), await text('[data-testid="persistence-status"]'));
+  await page.waitForTimeout(900); // longer than the save debounce: still nothing may be written
+  const afterInvalid = await activeRecord(page);
+  check("the invalid draft was not written to IndexedDB (the stored project keeps the last valid lives)", afterInvalid !== null && livesOf(afterInvalid) === 5 && (await indicatorKind(page)) === "unsaved");
+  const unloadPrompt = (await page.evaluate(() => { const e = new Event("beforeunload", { cancelable: true }); window.dispatchEvent(e); return e.defaultPrevented; }));
+  check("closing with an unsaved invalid draft raises the browser prompt", unloadPrompt === true);
+  const [recDl] = await Promise.all([page.waitForEvent("download"), page.click('[data-testid="recovery-export-button"]')]);
+  const recovery = JSON.parse(readFileSync(await recDl.path(), "utf8"));
+  check("Export recovery data preserves the invalid draft, marks it non-canonical and keeps manifests and baseline",
+    recDl.suggestedFilename().startsWith("monstera-recovery-") && recovery.format === 3 && recovery.specTextCanonical === false &&
+    recovery.specValidation?.ok === false && JSON.parse(recovery.specText).game.runtime.lives === 0 &&
+    Object.keys(recovery.manifests).length === 7 && recovery.baseline !== null, `${recDl.suggestedFilename()} format ${recovery.format}`);
   await edit(["game", "runtime", "lives"], 5);
+  await waitSaved(page);
+  check("once the draft is valid again it is saved and the browser prompt is not raised",
+    (await page.evaluate(() => { const e = new Event("beforeunload", { cancelable: true }); window.dispatchEvent(e); return e.defaultPrevented; })) === false);
 
-  // ---- persistence across reload
+  // ---- persistence across reload (IndexedDB)
   await edit(["game", "runtime", "lives"], 7);
+  check("a validated edit is not Saved until the IndexedDB write has committed", (await indicatorKind(page)) !== "saved" || (await activeRecord(page))?.specText.includes("\"lives\": 7"));
+  await waitSaved(page);
+  const committedRecord = await activeRecord(page);
+  check("Saved means the active project's record exists in IndexedDB with the edit", committedRecord !== null && livesOf(committedRecord) === 7);
   await page.reload();
   await page.waitForFunction(() => window.ready === true);
   await settled();
+  await waitSaved(page);
   const restored = await page.evaluate(() => window.session.store.getState().doc.game.runtime.lives);
-  check("the draft survives a reload (localStorage) and is re-validated by the engine", restored === 7 && (await text('[data-testid="project-name"]')).includes("edited"));
+  check("the saved project survives a reload from IndexedDB, shows Saved and is re-validated by the engine", restored === 7 && (await text('[data-testid="project-name"]')).includes("edited") &&
+    livesOf(await activeRecord(page)) === 7);
+  // ---- undo and redo: controls and keyboard (history starts empty after a reload)
+  check("Undo and Redo start disabled after a reload", (await page.locator('[data-testid="undo-button"]').isDisabled()) && (await page.locator('[data-testid="redo-button"]').isDisabled()));
+  await edit(["game", "runtime", "lives"], 8);
+  check("an edit enables Undo", !(await page.locator('[data-testid="undo-button"]').isDisabled()));
+  const livesNow = () => page.evaluate(() => window.session.store.getState().doc.game.runtime.lives);
+  await page.click('[data-testid="undo-button"]');
+  check("Undo restores the previous value and enables Redo", (await livesNow()) === 7 && !(await page.locator('[data-testid="redo-button"]').isDisabled()));
+  await page.click('[data-testid="redo-button"]');
+  check("Redo reapplies the edit", (await livesNow()) === 8);
+  const mod = (await page.evaluate(() => /mac/i.test(navigator.userAgentData?.platform || navigator.platform))) ? "Meta" : "Control";
+  await page.locator('.brand').click();
+  await page.keyboard.press(`${mod}+Z`);
+  check(`${mod}+Z undoes outside a text field`, (await livesNow()) === 7);
+  await page.keyboard.press(`${mod}+Shift+Z`);
+  check(`${mod}+Shift+Z redoes`, (await livesNow()) === 8);
+  await edit(["game", "runtime", "lives"], 7);
+  await waitSaved(page);
+  // ---- simulated quota failure: the write throws QuotaExceededError, the banner appears, nothing is shown as Saved
+  await page.evaluate(() => {
+    window.__put = IDBObjectStore.prototype.put;
+    IDBObjectStore.prototype.put = function () { throw new DOMException("simulated quota", "QuotaExceededError"); };
+  });
+  await edit(["game", "runtime", "lives"], 9);
+  await page.waitForSelector('[data-testid="banner-quota"]', { timeout: 15000 });
+  check("a quota failure shows the storage-full banner, a failed indicator and never Saved",
+    (await indicatorKind(page)) === "failed" && (await text('[data-testid="banner-quota"]')).includes("Browser storage is full") &&
+    (await page.locator('[data-testid="banner-quota"][role="alert"]').count()) === 1, await text('[data-testid="persistence-status"]'));
+  check("the failed write left the stored project at its last committed value", livesOf(await activeRecord(page)) === 7);
+  check("closing after a failed save raises the browser prompt", (await page.evaluate(() => { const e = new Event("beforeunload", { cancelable: true }); window.dispatchEvent(e); return e.defaultPrevented; })) === true);
+  await page.evaluate(() => { IDBObjectStore.prototype.put = window.__put; });
+  await page.click('[data-testid="persist-retry-save"]');
+  await waitSaved(page);
+  check("after space is back, Retry saving stores the edit and the banner goes away",
+    livesOf(await activeRecord(page)) === 9 && (await page.locator('[data-testid="banner-quota"]').count()) === 0);
+  await edit(["game", "runtime", "lives"], 7);
+  await waitSaved(page);
   page.once("dialog", (d) => d.accept());
   await page.click('[data-testid="reset-button"]');
   await page.waitForFunction(() => window.session.store.getState().doc.game.runtime.lives === 5);
@@ -276,6 +346,7 @@ export default async function ui({ page, origin, check, committed, TEMPLATES }) 
 
   // ---- M3-A: committed native build and simulator-launch evidence, bound to the exact spec SHA-256
   await page.selectOption('[data-testid="template-select"]', OFFICIAL.id);
+  await page.waitForFunction((x) => window.session.store.getState().baseline?.templateId === x, OFFICIAL.id, { timeout: 15000 });
   await settled();
   await open("determinism");
   const nativeLabel = (p) => text(`[data-testid="native-app-label-${p}"]`);
@@ -317,7 +388,89 @@ export default async function ui({ page, origin, check, committed, TEMPLATES }) 
   await open("determinism");
   check("an imported file of the same project with a different hash gets no evidence", (await nativeOf("data-matched")) === "no" && (await nativeOf("data-label")) === "GENERATED");
   await page.selectOption('[data-testid="template-select"]', OFFICIAL.id);
+  await page.waitForFunction((x) => window.session.store.getState().baseline?.templateId === x, OFFICIAL.id, { timeout: 15000 });
   await settled();  // ---- Studio has no Kiro/chat/build affordances
   const body = (await page.locator("body").innerText()).toLowerCase();
   check("no build button and no chat input exist", !(await page.locator('button:has-text("Build")').count()) && !(await page.locator("textarea").count()) && !body.includes("ask kiro"));
+  await legacyMigration({ page, origin, check, committed, TEMPLATES });}
+
+// ---- legacy M3 draft migration: real localStorage seed, real empty IndexedDB, the real migration path, a real reload.
+// Runs in its own browser context, so the database provably does not exist when the seeded boot starts.
+const LEGACY_KEY = "monstera.studio.draft.v1";
+async function legacyMigration({ page, origin, check, committed, TEMPLATES }) {
+  const template = TEMPLATES.find((t) => t.id === OFFICIAL.id);
+  const canonical = committed[OFFICIAL.id];
+  const doc = JSON.parse(canonical);
+  doc.game.runtime.lives = 6; // distinguishes the draft from the template (5)
+  const baseline = {
+    label: OFFICIAL.id, templateId: OFFICIAL.id, group: "official", canonicalText: canonical,
+    sha256: specSha256(Buffer.from(canonical, "utf8")),
+    origin: { templateId: OFFICIAL.id, path: template.path, basis: "template", canonicalText: canonical },
+  };
+  const seeded = JSON.stringify({ version: 1, docText: JSON.stringify(doc), baseline });
+
+  const ctx = await page.context().browser().newContext();
+  const p = await ctx.newPage();
+  try {
+    acceptUnloadDialogs(p);
+    // Count persistence requests without changing their behaviour: Studio must never ask on its own.
+    await ctx.addInitScript(() => { window.__persistCalls = 0; const s = navigator.storage; const orig = s.persist.bind(s); s.persist = () => { window.__persistCalls++; return orig(); }; });
+    // A same-origin page that is not Studio, so localStorage can be seeded before the app has ever run.
+    await ctx.route("**/__legacy-seed__", (r) => r.fulfill({ status: 200, contentType: "text/html", body: "<!doctype html><title>seed</title>" }));
+    await p.goto(new URL("__legacy-seed__", `${origin}/`).href);
+    const emptyBefore = !(await studioDbExists(p));
+    await p.evaluate(([k, v]) => localStorage.setItem(k, v), [LEGACY_KEY, seeded]);
+    check("legacy migration: the browser starts with no IndexedDB database and the earlier M3 draft in localStorage", emptyBefore && (await p.evaluate((k) => localStorage.getItem(k), LEGACY_KEY)) === seeded);
+
+    await p.goto(origin);
+    await p.waitForFunction(() => window.ready === true, null, { timeout: 90000 });
+    await waitSaved(p);
+    const validated = () => p.waitForFunction(() => { const s = window.session.store.getState(); return s.validation !== null && s.validatedRevision === s.revision; }, null, { timeout: 30000 });
+    await validated();
+
+    const projects1 = await storedProjects(p);
+    const meta1 = await storedMeta(p);
+    const rec = projects1.find((r) => r.projectKey === "legacy-draft-v1");
+    const expected = await p.evaluate(async (docText) => { const v = await window.engine.validateDraft(docText); return { ok: v.ok, canonicalText: v.canonicalText, sha256: v.sha256 }; }, JSON.stringify(doc));
+    const hashOfText = await p.evaluate(async (t) => [...new Uint8Array(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(t)))].map((b) => b.toString(16).padStart(2, "0")).join(""), rec?.specText ?? "");
+    check("legacy migration: boot creates exactly one IndexedDB project 'legacy-draft-v1' holding the engine's canonical text of the draft (lives 6)",
+      projects1.length === 1 && rec !== undefined && expected.ok === true && rec.specText === expected.canonicalText && livesOf(rec) === 6 && rec.specSha256 === expected.sha256 && hashOfText === rec.specSha256,
+      `${projects1.length} record(s), lives ${rec ? livesOf(rec) : "none"}`);
+    check("legacy migration: the old localStorage key is byte-identical to the seeded string", (await p.evaluate((k) => localStorage.getItem(k), LEGACY_KEY)) === seeded);
+    const flag1 = meta1.find((m) => m.key === "migration:draft.v1");
+    const active1 = meta1.find((m) => m.key === "activeProjectKey");
+    check("legacy migration: the meta store holds the migration flag (projectKey legacy-draft-v1, hash of the legacy text) and the active pointer",
+      flag1?.projectKey === "legacy-draft-v1" && flag1.legacySha256 === createHash("sha256").update(seeded).digest("hex") && typeof flag1.migratedAt === "number" && active1?.value === "legacy-draft-v1", JSON.stringify(meta1.map((m) => m.key)));
+    check("legacy migration: the indicator shows the project as saved and the open project is the migrated one",
+      (await indicatorKind(p)) === "saved" && (await p.evaluate(() => window.session.project.getState().projectKey)) === "legacy-draft-v1");
+    check("legacy migration: Studio made no persistence request on its own during boot", (await p.evaluate(() => window.__persistCalls)) === 0);
+
+    await p.reload();
+    await p.waitForFunction(() => window.ready === true, null, { timeout: 90000 });
+    await waitSaved(p);
+    await validated();
+    const projects2 = await storedProjects(p);
+    const meta2 = await storedMeta(p);
+    const state2 = await p.evaluate(() => { const s = window.session.store.getState(); return { lives: s.doc.game.runtime.lives, ok: s.validation?.ok, revision: s.revision, validatedRevision: s.validatedRevision, key: window.session.project.getState().projectKey }; });
+    check("legacy migration: after a reload the same project is restored and revalidated by the engine (lives 6, valid for the current revision)",
+      state2.key === "legacy-draft-v1" && state2.lives === 6 && state2.ok === true && state2.validatedRevision === state2.revision && (await text2(p, '[data-testid="validation-status"]')).startsWith("Valid") && (await indicatorKind(p)) === "saved",
+      JSON.stringify(state2));
+    check("legacy migration: it is not repeated (one record with that key, same total count, same migration flag and migratedAt, no second project)",
+      projects2.length === projects1.length && projects2.filter((r) => r.projectKey === "legacy-draft-v1").length === 1 && JSON.stringify(meta2.find((m) => m.key === "migration:draft.v1")) === JSON.stringify(flag1) && meta2.find((m) => m.key === "activeProjectKey")?.value === "legacy-draft-v1" && projects2[0]?.specText === rec?.specText,
+      `${projects2.length} record(s)`);
+    check("legacy migration: the old localStorage key is still byte-identical after the reload", (await p.evaluate((k) => localStorage.getItem(k), LEGACY_KEY)) === seeded);
+
+    // Storage protection and estimate in the real browser (user-initiated only).
+    check("storage estimate: shown as a site-wide browser estimate after the project is ready", /^Site storage: (about .+ of .+ \(browser estimate for this whole site, not just this project\)|estimate unavailable)$/.test(await text2(p, '[data-testid="storage-estimate"]')), await text2(p, '[data-testid="storage-estimate"]'));
+    check("storage protection: no request before the user acts", (await p.evaluate(() => window.__persistCalls)) === 0 && (await p.locator('[data-testid="protect-storage-result"]').count()) === 0);
+    await p.click('[data-testid="protect-storage-button"]');
+    await p.waitForSelector('[data-testid="protect-storage-result"]');
+    const outcome = await p.locator('[data-testid="protect-storage-result"]').getAttribute("data-outcome");
+    check("storage protection: pressing 'Protect browser storage' calls navigator.storage.persist() once and shows the honest outcome",
+      (await p.evaluate(() => window.__persistCalls)) === 1 && ["granted", "not-granted"].includes(outcome) && (await text2(p, '[data-testid="protect-storage-button"]')) === (outcome === "granted" ? "Protect browser storage" : "Request again"), outcome);
+    check("storage protection is separate from the save indicator (still saved, still no data change)", (await indicatorKind(p)) === "saved" && (await storedProjects(p)).length === projects1.length);
+  } finally {
+    await ctx.close();
+  }
 }
+const text2 = async (p, sel) => (await p.locator(sel).first().textContent())?.trim() ?? "";

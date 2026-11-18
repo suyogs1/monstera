@@ -86,7 +86,7 @@ class FakeEngine implements BadgeEngine {
 }
 
 describe("BadgeRunner", () => {
-  const ready = () => { const st = new DraftStore(undefined); st.load({ a: 1 }, baseline, valid(SHA)); return st; };
+  const ready = () => { const st = new DraftStore(); st.load({ a: 1 }, baseline, valid(SHA)); return st; };
 
   it("runs every applicable golden of the baseline project, one call each, and binds the SHA-256", async () => {
     const st = ready();
@@ -99,7 +99,7 @@ describe("BadgeRunner", () => {
   });
 
   it("refuses to start for an invalid or not yet validated draft", async () => {
-    const st = new DraftStore(undefined);
+    const st = new DraftStore();
     st.load({ a: 1 }, baseline, { ...valid(SHA), ok: false });
     const eng = new FakeEngine(scenarios(2));
     await new BadgeRunner(eng, st).start();
@@ -129,7 +129,7 @@ describe("BadgeRunner", () => {
   });
 
   it("an import with no known origin runs no goldens and reports NO GOLDENS, whatever its project.id says", async () => {
-    const st = new DraftStore(undefined);
+    const st = new DraftStore();
     st.load({ project: { id: "pumpkin-blaster" } }, { ...baseline, templateId: null, group: "import", origin: null }, valid(SHA));
     const eng = new FakeEngine(scenarios(3));
     const r = new BadgeRunner(eng, st);

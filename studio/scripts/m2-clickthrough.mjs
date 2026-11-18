@@ -9,6 +9,7 @@ import { tmpdir } from "node:os";
 import { extname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { chromium } from "playwright-core";
+import { resetStudioStorage } from "./storage.mjs";
 
 const here = fileURLToPath(new URL(".", import.meta.url));
 const studio = join(here, "..");
@@ -36,13 +37,12 @@ const errors = [];
 page.on("pageerror", (e) => errors.push(String(e)));
 page.on("console", (m) => { if (m.type() === "error") errors.push(m.text()); });
 await page.goto(origin + "/");
-await page.evaluate(() => localStorage.clear());
-await page.reload();
+await resetStudioStorage(page); // IndexedDB + localStorage reset, then reload (see storage.mjs)
 await page.waitForFunction(() => window.ready === true, null, { timeout: 60000 });
 
 const checks = [];
 const check = (name, ok, detail = "") => checks.push({ name, ok: Boolean(ok), detail });
-const settled = () => page.waitForFunction(() => document.querySelector('[data-testid="validation-status"]')?.textContent?.startsWith("Checking") === false, null, { timeout: 15000 });
+const settled = () => page.waitForFunction(() => { const s = window.session?.store.getState(); return s !== undefined && s.validation !== null && s.validatedRevision === s.revision && document.querySelector('[data-testid="validation-status"]')?.textContent?.startsWith("Checking") === false; }, null, { timeout: 15000 });
 const draftId = () => page.evaluate(() => ({ revision: window.session.store.getState().revision, sha: window.session.store.getState().validation?.sha256, doc: JSON.stringify(window.session.store.getState().doc) }));
 const selected = () => page.evaluate(() => window.session.selection.getState().kindId);
 const frames = () => page.evaluate(() => window.session.preview.getStats().framesSent);

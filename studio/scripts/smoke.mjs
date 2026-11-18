@@ -78,9 +78,33 @@ try {
     }
   });
   const text = async (sel) => (await page.locator(sel).first().textContent())?.trim() ?? "";
-  const settled = () => page.waitForFunction(() => document.querySelector('[data-testid="validation-status"]')?.textContent?.startsWith("Checking") === false, null, { timeout: 30000 });
-  const sha = () => page.evaluate(() => window.session.store.getState().validation?.sha256 ?? null);
-  const edit = async (path, value) => { await page.evaluate(([p, v]) => window.session.store.set(p, v), [path, value]); await settled(); };
+  // Validation waits are state-based: the DraftStore revision is authoritative, the panel text is only an additional condition.
+  // A result belongs to an edit only when validatedRevision === revision === the revision that edit produced.
+  const diagnose = (expected) => page.evaluate((x) => { const s = window.session.store.getState(); return `expected revision ${x}, revision ${s.revision}, validatedRevision ${s.validatedRevision}, panel "${document.querySelector('[data-testid="validation-status"]')?.textContent?.trim() ?? ""}"`; }, expected);
+  const settledAt = async (expected) => {
+    try {
+      await page.waitForFunction((x) => {
+        const s = window.session.store.getState();
+        return s.validation !== null && s.validatedRevision === s.revision && (x === null || s.revision === x) && document.querySelector('[data-testid="validation-status"]')?.textContent?.startsWith("Checking") === false;
+      }, expected, { timeout: 30000 });
+    } catch (e) { throw new Error(`validation did not settle: ${await diagnose(expected)} (${String(e.message).split("\n")[0]})`); }
+  };
+  const settled = () => settledAt(null);
+  const sha = async () => {
+    const r = await page.evaluate(() => { const s = window.session.store.getState(); return { sha: s.validation?.sha256 ?? null, revision: s.revision, validatedRevision: s.validatedRevision }; });
+    if (r.validatedRevision !== r.revision) throw new Error(`stale validation read: revision ${r.revision}, validatedRevision ${r.validatedRevision}`);
+    return r.sha;
+  };
+  const edit = async (path, value) => {
+    const revision = await page.evaluate(([p, v]) => { window.session.store.set(p, v); return window.session.store.getState().revision; }, [path, value]);
+    await settledAt(revision);
+  };
+  // A template switch is asynchronous: wait for the baseline to be the requested template, then for its validation.
+  const pickTemplate = async (id) => {
+    await page.selectOption('[data-testid="template-select"]', id);
+    await page.waitForFunction((x) => window.session.store.getState().baseline?.templateId === x, id, { timeout: 30000 });
+    await settled();
+  };
   const open = async (id) => { await page.evaluate((h) => { window.location.hash = h; }, `/${id}`); await page.waitForTimeout(50); };
   const nativeAttr = (a) => page.locator('[data-testid="native-apps"]').getAttribute(a);
 
@@ -96,13 +120,11 @@ try {
 
   // ---- templates: engine verdict and canonical hash for each official game
   for (const g of GAMES) {
-    await page.selectOption('[data-testid="template-select"]', g.id);
-    await settled();
+    await pickTemplate(g.id);
     const s = await text('[data-testid="validation-status"]');
     check(`template ${g.id} validates and the engine hash equals the committed spec's canonical SHA-256`, s.startsWith("Valid") && (await sha()) === expectedSha[g.id], s);
   }
-  await page.selectOption('[data-testid="template-select"]', OFFICIAL);
-  await settled();
+  await pickTemplate(OFFICIAL);
 
   // ---- the engine really runs: an invalid edit is refused with issues, a valid edit changes the hash
   const original = await sha();

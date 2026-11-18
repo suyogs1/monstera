@@ -1,3 +1,4 @@
+import type { EngineInfo } from "./engineInfo";
 import type {
   BadgeCheck, BadgeScenario, DraftValidation, EngineEvent, ExportPlan, EngineFunction, EngineTimings, GoldenRow, PreviewFrame, PreviewStart, PreviewTrace, PlanTemplate, TemplateInfo, TemplateLoad, WorkerRequest, WorkerResponse,
 } from "./protocol";
@@ -12,6 +13,8 @@ export class EngineClient {
   private nextId = 1;
   templates: TemplateInfo[] = [];
   timings: EngineTimings | undefined;
+  /** The engine bundled in this build (repository commit it was packed from). Undefined until init() resolved. */
+  engine: EngineInfo | undefined;
 
   constructor() {
     this.worker.onmessage = (e: MessageEvent<WorkerResponse>) => {
@@ -37,9 +40,10 @@ export class EngineClient {
 
   async init(): Promise<void> {
     const base = new URL(import.meta.env.BASE_URL, document.baseURI).href;
-    const r = (await this.send({ cmd: "init", base })) as { timings: EngineTimings; templates: TemplateInfo[] };
+    const r = (await this.send({ cmd: "init", base })) as { timings: EngineTimings; templates: TemplateInfo[]; engine: EngineInfo };
     this.timings = r.timings;
     this.templates = r.templates;
+    this.engine = r.engine;
   }
 
   /** Observer for reply size and parse time (the preview reports its snapshot cost with it). */

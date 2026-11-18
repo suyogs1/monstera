@@ -30,6 +30,9 @@ try {
   const go = async (hash) => { await page.evaluate((h) => { window.location.hash = h; }, hash); await page.waitForTimeout(80); };
   const hash = () => page.evaluate(() => window.location.hash);
 
+  // window.ready is set when the engine has started, just BEFORE React mounts App; the route store's one canonicalizing
+  // location.replace() runs on mount. Wait (bounded) for a routed hash, then assert it exactly: a missing redirect still fails.
+  await page.waitForFunction(() => window.location.hash.startsWith("#/"), null, { timeout: 5000 }).catch(() => undefined);
   check("the page starts on the Designer overview", (await hash()) === "#/designer/overview", await hash());
 
   for (const [legacy, target] of Object.entries(LEGACY)) {

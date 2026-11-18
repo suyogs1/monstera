@@ -226,3 +226,17 @@ progress { width: 100%; max-width: 30rem; }
 .dot-prototype, .dot-mock { background: var(--warn); border-color: var(--warn); }
 .dot-planned, .dot-unsupported { background: transparent; border-style: dashed; }
 .nav .nav-title { flex: 1; }
+
+.persist-state { display: flex; gap: 0.6rem; align-items: center; margin: 0; flex-wrap: wrap; }
+.persist-banners { display: grid; gap: 0.4rem; padding: 0.4rem 1rem; background: var(--panel); border-bottom: 1px solid var(--line); }
+.persist-banner { padding: 0.5rem 0.75rem; border-radius: 6px; border: 1px solid var(--line); border-left-width: 4px; background: var(--panel-2); }
+.persist-banner.bad { border-left-color: var(--bad); }
+.persist-banner.warn { border-left-color: var(--warn); }
+.persist-banner p { margin: 0.25rem 0; }
+.persist-notice { margin: 0; padding: 0.4rem 0.6rem; background: var(--panel-2); border-radius: 6px; }
+.persist-notice.bad { color: var(--bad); }
+kbd { font: inherit; font-size: 0.75em; border: 1px solid var(--line); border-radius: 4px; padding: 0 0.3em; }
+
+.storage-protect { flex-basis: 100%; margin: 0; padding: 0.4rem 0.6rem; border: 1px dashed var(--line); border-radius: 6px; }
+.storage-protect p { margin: 0.3rem 0 0; }
+.storage-protect .bad { color: var(--bad); }

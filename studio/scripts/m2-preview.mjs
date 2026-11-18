@@ -10,6 +10,7 @@ import { tmpdir } from "node:os";
 import { extname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { chromium } from "playwright-core";
+import { resetStudioStorage } from "./storage.mjs";
 
 const here = fileURLToPath(new URL(".", import.meta.url));
 const studio = join(here, "..");
@@ -44,13 +45,12 @@ page.on("pageerror", (e) => errors.push(String(e)));
 page.on("console", (m) => { if (m.type() === "error") errors.push(m.text()); });
 page.on("request", (r) => requests.push(r.url()));
 await page.goto(origin + "/");
-await page.evaluate(() => localStorage.clear());
-await page.reload();
+await resetStudioStorage(page); // IndexedDB + localStorage reset, then reload (see storage.mjs)
 await page.waitForFunction(() => window.ready === true, null, { timeout: 60000 });
 
 const checks = [];
 const check = (name, ok, detail = "") => checks.push({ name, ok: Boolean(ok), detail });
-const settled = () => page.waitForFunction(() => document.querySelector('[data-testid="validation-status"]')?.textContent?.startsWith("Checking") === false, null, { timeout: 15000 });
+const settled = () => page.waitForFunction(() => { const s = window.session?.store.getState(); return s !== undefined && s.validation !== null && s.validatedRevision === s.revision && document.querySelector('[data-testid="validation-status"]')?.textContent?.startsWith("Checking") === false; }, null, { timeout: 15000 });
 const pv = () => page.evaluate(() => ({ st: (({ snapshot, text, ...rest }) => ({ ...rest, tick: snapshot?.tick, ended: snapshot?.ended, entities: snapshot ? snapshot.entities.length / 7 : 0, score: snapshot?.score, lives: snapshot?.lives }))(window.session.preview.getState()), stats: window.session.preview.getStats() }));
 const running = (sha) => page.waitForFunction((s) => { const p = window.session.preview.getState(); return p.status === "running" && (!s || p.sha256 === s) && p.snapshot !== null; }, sha ?? null, { timeout: 15000 });
 const shaNow = () => page.evaluate(() => window.session.store.getState().validation?.sha256);

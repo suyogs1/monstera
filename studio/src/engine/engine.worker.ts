@@ -1,6 +1,7 @@
 // Pyodide worker: unpacks the unmodified engine into the virtual filesystem and calls glue.py.
 // Pyodide itself is a same-origin static file loaded at run time (not bundled by Vite).
 import glueSource from "./glue.py?raw";
+import { parseEngineInfo, type EngineInfo } from "./engineInfo";
 import type { WorkerRequest, WorkerResponse, EngineTimings } from "./protocol";
 
 interface PyProxyLike { toJs?: () => unknown; destroy?: () => void }
@@ -11,12 +12,12 @@ interface PyodideLike {
 }
 /** `e: "b"` marks a base64 binary (the Gradle wrapper jar); every other file is UTF-8 text. */
 interface BundleFile { p: string; d: string; e?: "b" }
-interface Bundle { files: BundleFile[]; templates: unknown[] }
+interface Bundle { engine: unknown; files: BundleFile[]; templates: unknown[] }
 
 let py: PyodideLike | undefined;
 let glue: (PyodideLike["pyimport"] extends (n: string) => infer R ? R : never) | undefined;
 
-async function init(base: string): Promise<{ timings: EngineTimings; templates: unknown[] }> {
+async function init(base: string): Promise<{ timings: EngineTimings; templates: unknown[]; engine: EngineInfo }> {
   const t0 = performance.now();
   const mod = (await import(/* @vite-ignore */ `${base}pyodide/pyodide.mjs`)) as {
     loadPyodide(o: { indexURL: string }): Promise<PyodideLike>;
@@ -26,6 +27,7 @@ async function init(base: string): Promise<{ timings: EngineTimings; templates: 
 
   const t1 = performance.now();
   const bundle = (await (await fetch(`${base}engine/engine-bundle.json`)).json()) as Bundle;
+  const engine = parseEngineInfo(bundle.engine); // a bundle without a real commit does not start
   const bundleFetchMs = performance.now() - t1;
 
   const t2 = performance.now();
@@ -45,6 +47,7 @@ async function init(base: string): Promise<{ timings: EngineTimings; templates: 
   const importEngineMs = performance.now() - t3;
   return {
     templates: bundle.templates,
+    engine,
     timings: { pyodideMs, bundleFetchMs, unpackMs, importEngineMs, totalMs: performance.now() - t0, files: bundle.files.length },
   };
 }
