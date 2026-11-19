@@ -1,7 +1,7 @@
 import type { Path } from "../draft/path";
 
 export type SectionId =
-  | "overview" | "platforms" | "gameplay" | "entities" | "rules" | "spawns" | "presentation" | "spec" | "determinism" | "export" | "integration" | "levels" | "gameplay-modules" | "gameplay-planned" | "assets" | "sprites" | "completeness" | "readiness" | "dashboard-projects" | "dashboard-status" | "kiro-drift" | "kiro-proposals";
+  | "overview" | "platforms" | "gameplay" | "entities" | "rules" | "spawns" | "presentation" | "spec" | "determinism" | "export" | "integration" | "levels" | "gameplay-modules" | "gameplay-planned" | "assets" | "sprites" | "completeness" | "readiness" | "dashboard-projects" | "dashboard-status" | "kiro-drift" | "kiro-proposals" | "backend-firebase" | "monetization-placements" | "monetization-mock";
 
 export interface SectionInfo { id: SectionId; title: string; blurb: string }
 
@@ -26,6 +26,9 @@ export const SECTIONS: SectionInfo[] = [
   { id: "readiness", title: "Readiness", blurb: "What is proven for this spec hash and what only you can do." },
   { id: "kiro-drift", title: "Drift", blurb: "Which Studio-written files of a re-imported export were edited, are missing or unknown." },
   { id: "kiro-proposals", title: "Proposals", blurb: "Review a change prepared elsewhere: check, compare, accept or reject." },
+  { id: "backend-firebase", title: "Firebase", blurb: "Firebase services for the exported scaffold. Scaffold text only, not connected to any backend." },
+  { id: "monetization-placements", title: "Placements", blurb: "Mock ad placements, frequency and mode (mock or test)." },
+  { id: "monetization-mock", title: "Mock behaviour", blurb: "What the mock rewarded ad does, and the scaffold that carries it." },
   { id: "dashboard-projects", title: "Projects", blurb: "Every project in this browser: create, open, rename, duplicate, delete." },
   { id: "dashboard-status", title: "Status", blurb: "Validation, hash, determinism, native evidence and populated modules of the open project." },
 ];

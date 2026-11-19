@@ -13,8 +13,8 @@ Statuses: `implemented` (works end to end, with a test), `prototype` (bounded su
 | Sprite and Animation Editor | prototype | prototype | studio only | Sheet slicing, frame editing and animation sequences only; the animation preview player is a later task. Native rendering needs engine track E1, which is conditional and not started. |
 | Level Studio | prototype | prototype | compiles to native | Only the active level compiles into the native spec; other levels are Studio-only variants exported as standalone specs. No wave end, per-level win rule or in-app level selection (see multi-level-in-app). |
 | Gameplay Systems | prototype | implemented | compiles to native | Forms for lives, win score, collectibles and enemies. Derivation is off by default; while on, Game Designer shows lives, win score and collisions read-only. Health, power-ups and progression need contract changes and stay planned. |
-| Backend and Services | planned | mock | scaffold | Not built. Will generate scaffold text and mock stubs only. Never a live Firebase connection. |
-| Monetization | planned | mock | mock | Not built. Will support mock and official Google test configurations only. No production ad ids in Studio. |
+| Backend and Services | prototype | mock | scaffold | Scaffold text only: Firebase service choices and a read-only preview. Not compiled into the app, not connected to any backend, no keys or config files. |
+| Monetization | prototype | mock | mock | Mock and test placements with a labelled mock behaviour preview. Not compiled into the app, no ad is shown, no production ad ids and no ad unit id fields. |
 | Kiro Development | prototype | implemented | scaffold | The static Developer Integration inventory with pack handoff prompts, a drift view for a re-imported export and a proposal inbox exist. There is no Kiro connection. |
 | Preview and Device Lab | implemented | implemented | studio only | Browser preview, determinism badge and hash-bound native evidence exist. The environments table is not built. Studio runs no device; it shows committed evidence only. |
 | Build and Release | prototype | implemented | compiles to native | The native source ZIP, a completeness check that blocks export on errors and a readiness checklist exist. The Studio pack is not part of the export yet (task 7.1). No signing, upload or store-ready claim. |
@@ -69,14 +69,14 @@ Statuses: `implemented` (works end to end, with a test), `prototype` (bounded su
 
 | Capability | Now | Target | Native output | Evidence | Limits | Needs |
 |---|---|---|---|---|---|---|
-| Firebase and AdMob scaffold text and setup instructions | planned | prototype | scaffold | none | Not built. Scaffold text is exported, not compiled into the app. Not a live backend. | Integrations manifest and emitters (tasks 6.1 and 6.2). |
+| Firebase and AdMob scaffold text and setup instructions | prototype | prototype | scaffold | `studio/src/integrations/ops.test.ts`<br>`studio/src/integrations/scaffold/emit.test.ts`<br>`studio/src/integrations/ui.test.tsx` | Not connected to any backend. Scaffold text is exported by the pack task (8.1), not compiled into the app. |  |
 | Live Firebase connection, account or resource creation from Studio | unsupported | unsupported | planned | none | Studio is static: no backend, no credentials, no network call to third parties. | A server and a credential model, which are not part of Studio. |
 
 ### Monetization
 
 | Capability | Now | Target | Native output | Evidence | Limits | Needs |
 |---|---|---|---|---|---|---|
-| Placement configuration, frequency rules and a labelled mock rewarded ad | planned | mock | mock | none | Not built. Mock and official test configurations only. Not compiled into the app unless engine track E2 is approved. | Integrations manifest and emitters (tasks 6.1 to 6.3). |
+| Placement configuration, frequency rules and a labelled mock rewarded ad | mock | mock | mock | `studio/src/integrations/ops.test.ts`<br>`studio/src/integrations/scaffold/emit.test.ts`<br>`studio/src/integrations/ui.test.tsx` | Mock and test placements only. No ad is shown, nothing is compiled into the app unless engine track E2 is approved, and there are no production ad ids. |  |
 | Production AdMob ids in Studio | unsupported | unsupported | planned | none | Decision D7: Studio never stores or emits real ad ids; the developer adds them after export, in developer-owned files. | Not planned. |
 
 ### Kiro Development

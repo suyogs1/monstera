@@ -117,7 +117,7 @@ try {
     && (await page.evaluate(() => window.session.store.getState().validation.ok)) === true);
 
   // ---- A7: pack export, real drift script
-  pending("A5-A7: scaffold selection and mock labels in the Backend and Monetization UI", "task 6.3 is not merged; the pack has no scaffold/ files from the UI");
+  pending("A5-A7: scaffold selection and mock labels in the Backend and Monetization UI", "the Backend and Monetization UI exists (task 6.3) but the exported pack has no scaffold/ files until Task 8.1");
   await go("/release/export");
   await page.waitForSelector('[data-testid="export"]', { timeout: 15000 });
   await page.click('[data-testid="export-generate"]');
