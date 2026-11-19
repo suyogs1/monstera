@@ -34,6 +34,8 @@ export type BundleImport = { ok: true; project: BundleProject } | { ok: false; c
 
 // A credential can be an object key; never echo a path segment that itself matches a secret rule.
 const safePath = (p: readonly (string | number)[]): string => p.map((s) => (typeof s === "string" && secretRules(s).length > 0 ? "<key>" : String(s))).join(".");
+/** Importer messages interpolate attacker-controlled keys and values; a message that matches a secret rule is replaced whole. */
+export const redact = (message: string): string => (secretRules(message).length > 0 ? "<message withheld: it contains a credential-shaped value>" : message);
 const enc = new TextEncoder();
 const byPath = (a: ZipEntry, b: ZipEntry): number => (a.path < b.path ? -1 : a.path > b.path ? 1 : 0);
 
@@ -72,9 +74,9 @@ export async function importBundle(bytes: Uint8Array): Promise<BundleImport> {
   const specBytes = files.get(SPEC_PATH);
   if (!specBytes) return refuse("missing-entry", `${SPEC_PATH} is missing`);
   const spec = decodeUtf8Strict(specBytes);
-  if (!spec.ok) return refuse("invalid-spec", `${SPEC_PATH}: ${spec.issue.message}`);
+  if (!spec.ok) return refuse("invalid-spec", redact(`${SPEC_PATH}: ${spec.issue.message}`));
   const parsed = parseStrictJson(spec.text);
-  if (!parsed.ok) return refuse("invalid-spec", `${SPEC_PATH}: ${parsed.issue.message}`);
+  if (!parsed.ok) return refuse("invalid-spec", redact(`${SPEC_PATH}: ${parsed.issue.message}`));
 
   const specSecret = findSecrets(parsed.value)[0];
   if (specSecret) return refuse("secret", `${SPEC_PATH}: a credential-shaped value (${specSecret.rule}) at ${safePath(specSecret.path)} is not accepted`);
@@ -83,7 +85,7 @@ export async function importBundle(bytes: Uint8Array): Promise<BundleImport> {
     const data = files.get(manifestPath(n));
     if (!data) return refuse("missing-entry", `${manifestPath(n)} is missing`);
     const r = parseManifest(n, data);
-    if (!r.ok) return refuse("invalid-manifest", `${manifestPath(n)}: ${r.issues[0]?.path.join(".") ?? ""} ${r.issues[0]?.message ?? ""}`.trim());
+    if (!r.ok) return refuse("invalid-manifest", redact(`${manifestPath(n)}: ${r.issues[0]?.path.join(".") ?? ""} ${r.issues[0]?.message ?? ""}`.trim()));
     const found = findSecrets(r.value)[0];
     if (found) return refuse("secret", `${manifestPath(n)}: a credential-shaped value (${found.rule}) at ${safePath(found.path)} is not accepted`);
     manifests[n] = r.value;

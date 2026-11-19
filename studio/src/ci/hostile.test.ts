@@ -303,6 +303,39 @@ describe("A10 import-path secret guards (R14.4, design 8.1)", () => {
     p.specText = JSON.stringify({ ...(JSON.parse(p.specText) as object), [aws]: 1 });
     await refusedSecret(p, aws);
   });
+  // Hand-built archives: exportBundle cannot write a manifest with an unknown key or a spec with a duplicate key.
+  const rebuilt = async (patch: (path: string, text: string) => string) => {
+    const z = await readZip(exportBundle(await sampleProject()), () => ({ max: MAX_FILE_BYTES }));
+    if (!z.ok) throw new Error(z.message);
+    const dec = new TextDecoder();
+    return rawZip(z.entries.map((e) => ({ name: e.path, plain: e.path.endsWith(".json") ? enc.encode(patch(e.path, dec.decode(e.data))) : e.data })));
+  };
+  it("importBundle never echoes a credential used as an unknown manifest key", async () => {
+    const zip = await rebuilt((p, t) => (p === manifestPath("project") ? JSON.stringify({ ...(JSON.parse(t) as object), [aws]: 1 }) : t));
+    const r = await importBundle(zip);
+    expect(r.ok).toBe(false);
+    if (r.ok) return;
+    expect(r.message).not.toContain(aws);
+  });
+  it("importBundle never echoes a credential used as a duplicate spec key", async () => {
+    const zip = await rebuilt((p, t) => (p === SPEC_PATH ? `{"${aws}":1,"${aws}":2,${t.trim().slice(1)}` : t));
+    const r = await importBundle(zip);
+    expect(r.ok).toBe(false);
+    if (r.ok) return;
+    expect(r.code).toBe("invalid-spec");
+    expect(r.message).not.toContain(aws);
+  });
+  it("importPack never echoes a credential used as an unknown manifest key", async () => {
+    const m = await sampleProject();
+    const text = JSON.stringify({ ...(JSON.parse(serializeManifest("project", m.manifests.project)) as object), [aws]: 1 });
+    const pack = await exportPack({ files: [{ path: "studio-pack/project.json", data: enc.encode(text) }] });
+    if (!pack.ok) throw new Error(pack.error);
+    const r = await importPack(pack.entries.map((e) => ({ path: e.path, data: e.data })));
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    expect(r.value.invalid.length).toBeGreaterThan(0);
+    expect(JSON.stringify(r.value.invalid)).not.toContain(aws);
+  });
   it("importPack flags a credential in studio-pack/assets.json as invalid without throwing", async () => {
     const m = await sampleProject();
     m.manifests.assets.assets[0]!.provenance.notes = aws;
