@@ -41,6 +41,8 @@ jobs:
         run: npm run scan:secrets
       - name: Secret scan of manifest schemas, header policy and manifest fixtures
         run: npm run scan:sources
+      - name: Hostile-input suite with the final dist scan (task 9.3)
+        run: STUDIO_REQUIRE_DIST=1 npx vitest --run src/ci/hostile.test.ts
       - name: Install Playwright Chromium
         run: npx playwright-core install --with-deps chromium
       - name: Smoke test against a local production preview

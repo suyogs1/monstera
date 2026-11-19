@@ -5,9 +5,10 @@
 //
 // Pending, not covered here: task 1.6 (the owner's report-only Vercel deployment and review of production violations).
 // The deployed site's headers are therefore not tested; only the header policy file and the local run are (headers.test.ts, smoke).
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { scan } from "../../scripts/scan-secrets.mjs";
 import { MAX_ASSETS, MAX_FILE_BYTES, MAX_IMAGE_SIDE, MAX_PROJECT_BYTES } from "../assets/limits";
@@ -22,6 +23,7 @@ import { emitScaffold } from "../integrations/scaffold";
 import { findSecrets } from "../integrations/secrets";
 import { kiroTemplates } from "../pack/kiroTemplates";
 import { exportPack, type PackFile } from "../pack/export";
+import { importPack } from "../pack/import";
 import { MANIFEST_NAMES, parseManifest, serializeManifest, validateManifest, type AssetsManifest, type Provenance } from "../project/manifests";
 import { MAX_DEPTH, MAX_JSON_BYTES, parseStrictJson } from "../project/manifests/strictJson";
 import { manifestsFor, pumpkinText } from "../project/testkit";
@@ -261,6 +263,79 @@ describe("A10 secret scan over exports (R14.4, design 8.1)", () => {
     const { findings } = scan(dir);
     expect(findings.map((f) => `${f.rule}@${f.file}`).sort()).toEqual(["aws-access-key-id@studio-pack/scaffold/android/Leak.kt", "source-map-file@assets/app.js.map"]);
     expect(JSON.stringify(findings)).not.toContain(planted);
+  });
+});
+
+// The controller import path is guarded by secretGuard.controller.test.ts (task 1.7); these cover the bundle and pack importers.
+describe("A10 import-path secret guards (R14.4, design 8.1)", () => {
+  const aws = ["AK", "IA", "ABCDEFGHIJKLMNOP"].join("");
+  const admob = ["ca-app", "-pub-", "1234567890123456", "~", "1234567890"].join("");
+  const pem = ["-----BEGIN ", "PRIVATE KEY-----"].join("");
+  const refusedSecret = async (p: BundleProject, secret: string) => {
+    const r = await importBundle(exportBundle(p));
+    expect(r.ok).toBe(false);
+    if (r.ok) return;
+    expect(r.code).toBe("secret");
+    expect("project" in r).toBe(false);
+    expect(r.message).not.toContain(secret);
+  };
+  it("a clean bundle still imports", async () => {
+    expect((await importBundle(exportBundle(await sampleProject()))).ok).toBe(true);
+  });
+  it("importBundle refuses a credential in a second asset's provenance source", async () => {
+    // integrations.json cannot carry one: its backend.configFiles is an enum, so its own validator already refuses it.
+    const p = await sampleProject();
+    p.manifests.assets.assets[1]!.provenance.source = aws;
+    await refusedSecret(p, aws);
+  });
+  it("importBundle refuses a credential in asset provenance", async () => {
+    const p = await sampleProject();
+    p.manifests.assets.assets[0]!.provenance.notes = admob;
+    await refusedSecret(p, admob);
+  });
+  it("importBundle refuses a credential in the spec JSON", async () => {
+    const p = await sampleProject();
+    p.specText = JSON.stringify({ ...(JSON.parse(p.specText) as object), leak: pem });
+    await refusedSecret(p, pem);
+  });
+  it("importPack flags a credential in studio-pack/assets.json as invalid without throwing", async () => {
+    const m = await sampleProject();
+    m.manifests.assets.assets[0]!.provenance.notes = aws;
+    const data = enc.encode(serializeManifest("assets", m.manifests.assets));
+    const pack = await exportPack({ files: [{ path: "studio-pack/assets.json", data }] });
+    if (!pack.ok) throw new Error(pack.error);
+    const r = await importPack(pack.entries.map((e) => ({ path: e.path, data: e.data })));
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    expect(r.value.invalid.some((i) => i.path === "studio-pack/assets.json" && i.message.includes("credential"))).toBe(true);
+    expect(JSON.stringify(r.value.invalid)).not.toContain(aws);
+  });
+});
+
+describe("A10 final dist scan (R14.4, design 8.1)", () => {
+  const dist = join(dirname(fileURLToPath(import.meta.url)), "..", "..", "dist");
+  const required = process.env.STUDIO_REQUIRE_DIST === "1";
+  const present = existsSync(dist);
+  const walk = (d: string): string[] => readdirSync(d, { withFileTypes: true }).flatMap((e) => (e.isDirectory() ? walk(join(d, e.name)) : [join(d, e.name)]));
+  it.skipIf(!present && !required)("the built dist holds no secret, no source map and no inline map (skipped when dist is not built; CI requires it)", () => {
+    expect(present, "studio/dist is missing but STUDIO_REQUIRE_DIST=1").toBe(true);
+    const r = scan(dist);
+    expect(r.scanned).toBeGreaterThan(0);
+    expect(r.findings).toEqual([]);
+    expect(walk(dist).filter((f) => f.endsWith(".map"))).toEqual([]);
+  });
+  it("negative control: a planted .map file and an inline data: source map are both found", () => {
+    const d = mkdtempSync(join(tmpdir(), "dist-scan-"));
+    try {
+      writeFileSync(join(d, "app.js.map"), "{}");
+      writeFileSync(join(d, "app.js"), "var a=1;\n//# sourceMappingURL=data:application/json;base64,e30=\n");
+      const { findings } = scan(d);
+      expect(findings.length).toBeGreaterThanOrEqual(2);
+      expect(findings.some((f) => f.file === "app.js.map" && f.rule === "source-map-file")).toBe(true);
+      expect(findings.some((f) => f.file === "app.js")).toBe(true);
+    } finally {
+      rmSync(d, { recursive: true, force: true });
+    }
   });
 });
 
