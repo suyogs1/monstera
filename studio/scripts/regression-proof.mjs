@@ -5,12 +5,11 @@
 import { spawnSync } from "node:child_process";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { classifyEngineSchemaDiff, EXCEPTION_PATH } from "./regression-classify.mjs";
 
 const repo = resolve(dirname(fileURLToPath(import.meta.url)), "..", "..");
 const BASE = "71c77e4";
 const G6_REF = "origin/g6/clean-room-regeneration";
-// Task 4.2 (#20) added this one test file under tools/monstera after BASE. It is the only known difference.
-const KNOWN_ENGINE_DELTA = ["tools/monstera/tests/test_studio_glue.py"];
 const CI = process.env.CI === "true";
 
 const run = (cmd, args) => {
@@ -35,13 +34,17 @@ const haveRef = (ref) => git("cat-file", "-e", `${ref}^{commit}`).exit === 0;
 if (!haveRef(BASE)) {
   add("engine-schema-diff", CI ? "FAIL" : "PENDING", `${BASE} is not available in this checkout (shallow clone?)`, []);
 } else {
-  const names = git("diff", "--name-only", BASE, "--", "tools/monstera", "spec/schema");
-  const stat = git("diff", "--numstat", BASE, "--", "tools/monstera", "spec/schema");
-  const files = names.out ? names.out.split(/\r?\n/) : [];
-  const unexpected = files.filter((f) => !KNOWN_ENGINE_DELTA.includes(f));
-  if (files.length === 0) add("engine-schema-diff", "PASS", "git diff is empty", [names]);
-  else if (unexpected.length > 0) add("engine-schema-diff", "FAIL", `unexpected changes: ${unexpected.join(", ")}`, [names, stat]);
-  else add("engine-schema-diff", "PENDING", `NOT empty as the task requires. Only the known task 4.2 test addition differs (${files.join(", ")}); owner must accept or amend the criterion`, [names, stat]);
+  const ns = git("diff", "--name-status", "--no-renames", BASE, "--", "tools/monstera", "spec/schema");
+  const num = git("diff", "--numstat", "--no-renames", BASE, "--", "tools/monstera", "spec/schema");
+  const blob = (rev) => {
+    const r = git("rev-parse", "--verify", "--quiet", `${rev}:${EXCEPTION_PATH}`);
+    return r.exit === 0 ? r.out : null;
+  };
+  if (ns.exit !== 0 || num.exit !== 0) add("engine-schema-diff", "FAIL", `git diff failed: ${tail(ns.out || num.out, 1)}`, [ns]);
+  else {
+    const c = classifyEngineSchemaDiff({ nameStatus: ns.out, numstat: num.out, baselineBlob: blob(BASE), currentBlob: blob("HEAD") });
+    add("engine-schema-diff", c.status, c.summary, [ns, num]);
+  }
 }
 
 // 2. Native gates.
