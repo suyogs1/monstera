@@ -5,9 +5,9 @@ name: studio
 on:
   push:
     branches: [main]
-    paths: ["studio/**", "tools/monstera/**", "spec/**", "apps/*/monstera.spec.json", "docs/evidence/m3-native-apps/**", ".kiro/**", "tools/monstera-mcp/**", ".github/workflows/studio-ci.yml"]
+    paths: ["studio/**", "tools/monstera/**", "spec/**", "apps/*/monstera.spec.json", "docs/evidence/m3-native-apps/**", ".kiro/**", "tools/monstera-mcp/**", "tools/check-drift.sh", ".github/workflows/studio-ci.yml"]
   pull_request:
-    paths: ["studio/**", "tools/monstera/**", "spec/**", "apps/*/monstera.spec.json", "docs/evidence/m3-native-apps/**", ".kiro/**", "tools/monstera-mcp/**", ".github/workflows/studio-ci.yml"]
+    paths: ["studio/**", "tools/monstera/**", "spec/**", "apps/*/monstera.spec.json", "docs/evidence/m3-native-apps/**", ".kiro/**", "tools/monstera-mcp/**", "tools/check-drift.sh", ".github/workflows/studio-ci.yml"]
   workflow_dispatch:
 permissions:
   contents: read
