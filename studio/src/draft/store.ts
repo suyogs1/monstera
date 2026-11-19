@@ -1,6 +1,7 @@
 // The one draft: a single canonical spec document plus where it came from. Nothing else is configuration.
 // The store is plain TypeScript (no React) so it can be tested; React reads it through useSyncExternalStore.
 import type { DraftValidation, TemplateInfo } from "../engine/protocol";
+import { findSecrets } from "../integrations/secrets";
 import type { Json } from "../schema/schema";
 import { setAt, type Path } from "./path";
 
@@ -80,11 +81,14 @@ export class DraftStore {
     this.commit({ ...this.state, doc, revision: this.state.revision + 1 }, "edit");
   }
 
-  set(path: Path, value: Json): void {
-    if (this.state.doc === null) return;
+  /** Applies one field edit. Returns false, changing nothing, when the value looks like a credential (design 8.1). */
+  set(path: Path, value: Json): boolean {
+    if (this.state.doc === null) return false;
+    if (findSecrets(value).length > 0) return false;
     const next = setAt(this.state.doc, path, value);
     this.editKey = path.join(".");
     try { this.replace(next); } finally { this.editKey = undefined; }
+    return true;
   }
 
   /** Records which template's goldens apply to the current draft (the document itself is unchanged). */

@@ -256,7 +256,7 @@ describe("shouldWarnBeforeUnload", () => {
 // ---------------------------------------------------------------- flows through the real controller
 
 type Gameish = { game: { runtime: { lives: number } } };
-const setLives = (h: Harness, n: number): void => h.session.store.set(["game", "runtime", "lives"], n);
+const setLives = (h: Harness, n: number): void => { h.session.store.set(["game", "runtime", "lives"], n); };
 const lives = (h: Harness): number => (h.session.store.getState().doc as unknown as Gameish).game.runtime.lives;
 const records = async (f: IDBFactory) => (await rawAll(f, STORE_PROJECTS)) as { specText: string; name: string }[];
 const storedLives = (r: { specText: string } | undefined): number => (JSON.parse(r?.specText ?? "{}") as Gameish).game.runtime.lives;
