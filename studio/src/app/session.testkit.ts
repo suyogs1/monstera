@@ -1,5 +1,6 @@
 // Test helpers for Session persistence tests. Imported by tests only (never by application code).
 import { readFileSync } from "node:fs";
+import { onTestFailed } from "vitest";
 import { join } from "node:path";
 import type { EngineClient } from "../engine/client";
 import type { DraftValidation, TemplateInfo, TemplateLoad } from "../engine/protocol";
@@ -92,13 +93,19 @@ export const tick = (): Promise<void> => new Promise((r) => setImmediate(r));
 
 export interface Harness { session: Session; engine: FakeEngine; clock: ManualSchedule }
 
-/** Polls (event ticks, no wall-clock sleeping) until the condition holds. */
-export async function until(cond: () => boolean, what = "condition"): Promise<void> {
-  for (let i = 0; i < 500; i++) {
-    if (cond()) return;
-    await tick();
-  }
-  throw new Error(`until: ${what} never became true`);
+/**
+ * Resolves once the condition holds, re-checked on every ProjectController notification (it refreshes on every draft and
+ * ProjectStore change, so any state a condition can read is announced). No event-tick budget: the awaited work includes
+ * Web Crypto digests, which Node runs on its thread pool, so how many event-loop turns they take depends on machine load.
+ * A condition that never holds fails through the test timeout, and the failed test names it.
+ */
+export function until(h: Harness, cond: () => boolean, what = "condition"): Promise<void> {
+  return new Promise((resolve) => {
+    if (cond()) { resolve(); return; }
+    let held = false;
+    onTestFailed(() => { if (!held) console.error(`until: ${what} never became true`); });
+    const off = h.session.project.subscribe(() => { if (cond()) { held = true; off(); resolve(); } });
+  });
 }
 
 export function harness(deps: Omit<SessionDeps, "engine" | "schedule"> = {}, engine = new FakeEngine()): Harness {

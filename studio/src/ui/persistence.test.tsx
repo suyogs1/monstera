@@ -291,9 +291,9 @@ describe("save status through the real controller", () => {
     h.session.project.subscribe(() => seen.push(indicatorOf(v(h)).kind));
     setLives(h, 7);
     h.clock.runDue(); // the engine check
-    await until(() => v(h).gate === "scheduled");
+    await until(h, () => v(h).gate === "scheduled");
     h.clock.runDue(); // write for lives=7 starts; its put edits lives=8 while it is in flight
-    await until(() => v(h).storeStatus === "saved" && v(h).dirty);
+    await until(h, () => v(h).storeStatus === "saved" && v(h).dirty);
     expect(v(h).status).toBe("unsaved");
     expect(indicatorOf(v(h)).kind).toBe("unsaved");
     expect(seen).not.toContain("saved");
@@ -348,7 +348,7 @@ describe("save status through the real controller", () => {
     const h = await boot({ factory: newFactory() });
     setLives(h, 6);
     h.clock.runDue(); // the engine check
-    await until(() => v(h).gate === "scheduled");
+    await until(h, () => v(h).gate === "scheduled");
     const out = JSON.parse(h.session.project.actions.exportRecovery() ?? "null") as { format: number; specText: string; specTextCanonical: boolean; specValidation: { ok: boolean } };
     expect(out).toMatchObject({ format: 3, specTextCanonical: true, specValidation: { ok: true } });
     expect(storedLives(out)).toBe(6);
