@@ -7,7 +7,7 @@ Statuses: `implemented` (works end to end, with a test), `prototype` (bounded su
 
 | Module | Now | Target | Native output | Limits |
 |---|---|---|---|---|
-| Project Dashboard | planned | implemented | studio only | Not built. Today there is one draft in the browser (localStorage) and a template picker; no project list, no status cards. |
+| Project Dashboard | prototype | implemented | studio only | Projects are kept in this browser only. Create from a template or a specification file, open, rename, duplicate and delete, with status cards for the open project. Project bundles (specification, Studio data and assets in one file) are not available yet, and a generation-plan state is not shown. |
 | Game Designer | implemented | implemented | compiles to native | The canonical v4 spec editors. Field ownership locks for derived modules are not built; with derivation off every field is owned by the Designer. |
 | Asset Studio | prototype | prototype | studio only | Import, library, provenance, preview and delete protection only. Assigning an asset to a kind, sprite sheets and animation are later tasks. Assets will not render or play in the native apps (no v4 asset concept; E1 is conditional). |
 | Sprite and Animation Editor | prototype | prototype | studio only | Sheet slicing, frame editing and animation sequences only; the animation preview player is a later task. Native rendering needs engine track E1, which is conditional and not started. |
@@ -25,7 +25,7 @@ Statuses: `implemented` (works end to end, with a test), `prototype` (bounded su
 
 | Capability | Now | Target | Native output | Evidence | Limits | Needs |
 |---|---|---|---|---|---|---|
-| Project list, status cards and bundle in and out | planned | implemented | studio only | none | Not built. One draft and a template picker exist today. | Project context and persistence (task 1.2), dashboard UI (task 1.3). |
+| Project list, status cards and bundle in and out | prototype | implemented | studio only | `studio/src/project/catalog.test.ts`<br>`studio/src/dashboard/dashboard.test.tsx` | Studio-only and local to this browser. Stored projects other than the open one show the facts of their saved text; the engine checks them again when opened. A duplicate keeps the original project id because the specification is copied unchanged. The project bundle (task 1.5) is not available yet. |  |
 
 ### Game Designer
 

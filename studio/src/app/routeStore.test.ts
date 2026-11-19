@@ -59,10 +59,10 @@ describe("route store: one subscription, one replace", () => {
     expect(b.calls.replace).toEqual(["#/preview/determinism"]);
     expect(seen).toHaveBeenCalledTimes(1);
     expect(store.getSnapshot()).toMatchObject({ kind: "section", module: "preview" });
-    b.navigate("#/dashboard");
+    b.navigate("#/backend");
     expect(b.calls.replace).toHaveLength(1); // a card hash is already canonical
     expect(seen).toHaveBeenCalledTimes(2);
-    expect(store.getSnapshot()).toEqual({ kind: "card", module: "dashboard" });
+    expect(store.getSnapshot()).toEqual({ kind: "card", module: "backend" });
   });
   it("an unknown hash is replaced once with the Designer overview", () => {
     const b = fakeBrowser("#/nope");

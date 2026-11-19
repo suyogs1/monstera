@@ -20,6 +20,7 @@ describe("router: legacy hashes (acceptance of task 1.1)", () => {
     assets: "#/assets/library",
     sprites: "#/sprites/editor",
     completeness: "#/release/completeness", readiness: "#/release/readiness",
+    "dashboard-projects": "#/dashboard/projects", "dashboard-status": "#/dashboard/status",
   };
   it("lists exactly the eighteen legacy section ids", () => {
     expect(SECTIONS.map((s) => s.id).sort()).toEqual(Object.keys(expected).sort());
@@ -60,7 +61,7 @@ describe("router: modules, partial and unknown hashes", () => {
     expect(resolveHash("#/kiro/drift").canonical).toBe("#/kiro/integration");
   });
   it("modules that are not built resolve to a card", () => {
-    for (const id of ["dashboard", "backend", "monetization"] as const) {
+    for (const id of ["backend", "monetization"] as const) {
       expect(resolveHash(`#/${id}`).route).toEqual({ kind: "card", module: id });
       expect(resolveHash(`#/${id}/anything`).canonical).toBe(`#/${id}`);
     }

@@ -16,6 +16,7 @@ import { Completeness, Readiness } from "./release/Release";
 import { LevelStudio } from "./levels/LevelStudio";
 import { GameplayModules } from "./gameplay/Modules";
 import { GameplayPlanned } from "./gameplay/Planned";
+import { Projects, Status } from "./dashboard/Dashboard";
 import { Integration } from "./ui/sections/Integration";
 import { Overview } from "./ui/sections/Overview";
 import { Platforms } from "./ui/sections/Platforms";
@@ -49,6 +50,8 @@ const VIEWS: Partial<Record<SectionId, () => ReactElement>> = {
   sprites: () => <SpriteStudio />,
   completeness: () => <Completeness />,
   readiness: () => <Readiness />,
+  "dashboard-projects": () => <Projects />,
+  "dashboard-status": () => <Status />,
 };
 
 function NumberModeToggle() {

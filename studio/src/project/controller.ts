@@ -37,6 +37,7 @@ import { gameplayIssues } from "../derive/gameplayOps";
 import { removeLevel as planLevelRemoval } from "../derive/levelOps";
 import { planImport, type ImportDeps, type ImportInput } from "../assets/import";
 import { planAssetDelete } from "../assets/library";
+import { checkProjectName, type CatalogEntry } from "./catalog";
 import { kindIdCheck, planKindRemoval, planKindRename, type KindRenamePlan } from "./kindOps";
 import { aggregateValidation, type AggregateResult } from "./validation";
 import { XrefCache, type XrefEntry, type XrefIndex } from "./xref";
@@ -87,6 +88,11 @@ export type LevelOutcome = { ok: true; changed: boolean } | { ok: false; reason:
 /** An asset import or delete. Refusals carry the reason shown to the user and change nothing (no manifest, no stored bytes kept as an asset). */
 export type AssetImportOutcome = { ok: true; id: string; notices: string[]; persisted: boolean } | { ok: false; reason: string };
 export type AssetDeleteOutcome = { ok: true } | { ok: false; reason: string; references: XrefEntry[] };
+/** The projects stored in this browser. `openKey` is the project being edited (it may not be stored yet). */
+export type ProjectListOutcome = { ok: true; entries: CatalogEntry[]; activeKey: string | null; openKey: string | null } | { ok: false; message: string };
+/** A project-list change. Refusals carry the reason shown to the user and change nothing. */
+export type ProjectOpOutcome = { ok: true } | { ok: false; reason: string };
+export type ProjectDuplicateOutcome = { ok: true; projectKey: string; name: string } | { ok: false; reason: string };
 export type RetryOpenResult = { ok: true } | { ok: false; reason: "unsaved-invalid-edits"; message: string };
 export type ReloadOutcome = ReloadResult | { ok: false; reason: "no-project"; message: string };
 
@@ -136,6 +142,16 @@ export interface ProjectActions {
   xrefIndex(): XrefIndex;
   /** Engine + manifest + cross-reference issues of the current project, each targeted at a module and field. */
   validateProject(): AggregateResult;
+  /** Every project stored in this browser, read only. */
+  listProjects(): Promise<ProjectListOutcome>;
+  /** Makes another stored project the open one. Refused while the open project has changes storage has not seen, unless `discardMemory`. */
+  openProject(key: string, opts?: { discardMemory?: boolean }): Promise<ProjectOpOutcome>;
+  /** Renames a project (1 to 80 characters). The open project is renamed through the normal save. */
+  renameProject(key: string, name: string): Promise<ProjectOpOutcome>;
+  /** Copies a project, with its asset bytes, under a new key. The specification is copied unchanged, so the copy keeps the same project.id. */
+  duplicateProject(key: string, name: string): Promise<ProjectDuplicateOutcome>;
+  /** Deletes a stored project and its asset bytes. Refused for the open project (Session.deleteProject opens another first). */
+  deleteProject(key: string): Promise<ProjectOpOutcome>;
   retryOpen(): Promise<RetryOpenResult>;
   retrySave(): Promise<ProjectStoreStatus>;
   reloadFromStorage(opts?: { discardMemory?: boolean }): Promise<ReloadOutcome>;
@@ -203,6 +219,8 @@ export class ProjectController {
       setGameplayDerivation: (o) => this.setGameplayDerivation(o),
       importAsset: (i) => this.importAsset(i), deleteAsset: (i) => this.deleteAsset(i), assetBytes: (i) => this.assetBytes(i),
       xrefIndex: () => this.xrefIndex(), validateProject: () => this.validateProject(),
+      listProjects: () => this.listProjects(), openProject: (k, o) => this.openProject(k, o), renameProject: (k, n) => this.renameProject(k, n),
+      duplicateProject: (k, n) => this.duplicateProject(k, n), deleteProject: (k) => this.deleteProject(k),
       retryOpen: () => this.retryOpen(), retrySave: () => this.retrySave(),
       reloadFromStorage: (o) => this.reloadFromStorage(o), exportRecovery: (o) => this.exportRecovery(o),
       startNewProject: (o) => this.startNewProject(o),
@@ -581,6 +599,58 @@ export class ProjectController {
     return true;
   }
 
+  // ------------------------------------------------------------ project list (task 1.3)
+  async listProjects(): Promise<ProjectListOutcome> {
+    const r = await this.deps.projects.listProjects();
+    return r.ok ? { ok: true, entries: r.entries, activeKey: r.activeKey, openKey: this.projectKey } : r;
+  }
+  async openProject(key: string, opts: { discardMemory?: boolean } = {}): Promise<ProjectOpOutcome> {
+    if (key === this.projectKey) return { ok: true };
+    if (this.dirty) {
+      await this.submit();
+      if (this.dirty && opts.discardMemory !== true) {
+        return { ok: false, reason: "The open project has changes that are not saved yet (for example a specification with validation errors). Fix them, or open the other project and discard them." };
+      }
+    }
+    this.cancelTimer?.(); // a pending save of the project being left must not run after the switch
+    this.cancelTimer = undefined;
+    await this.whenSettled();
+    const previous = this.projectKey;
+    const r = await this.deps.projects.activateProject(key);
+    if (!r.ok) return { ok: false, reason: r.message };
+    await this.deps.adopt(r.project);
+    if (this.projectKey !== key) { // the engine could not read it: go back to where we were
+      if (previous !== null) await this.deps.projects.activateProject(previous);
+      return { ok: false, reason: "The engine could not read this project, so it was not opened." };
+    }
+    return { ok: true };
+  }
+  async renameProject(key: string, name: string): Promise<ProjectOpOutcome> {
+    const n = checkProjectName(name);
+    if (!n.ok) return { ok: false, reason: n.reason };
+    if (key === this.projectKey) {
+      if (this.name !== n.name) { this.name = n.name; this.markDirty(); }
+      return { ok: true };
+    }
+    const r = await this.deps.projects.renameStored(key, n.name);
+    return r.ok ? r : { ok: false, reason: r.message };
+  }
+  async duplicateProject(key: string, name: string): Promise<ProjectDuplicateOutcome> {
+    const n = checkProjectName(name);
+    if (!n.ok) return { ok: false, reason: n.reason };
+    if (key === this.projectKey && this.dirty) {
+      await this.submit();
+      if (this.dirty) return { ok: false, reason: "The open project has changes that are not saved yet, so a copy would miss them. Fix the specification first." };
+    }
+    await this.whenSettled();
+    const r = await this.deps.projects.duplicateStored(key, n.name);
+    return r.ok ? { ok: true, projectKey: r.projectKey, name: n.name } : { ok: false, reason: r.message };
+  }
+  async deleteProject(key: string): Promise<ProjectOpOutcome> {
+    if (key === this.projectKey) return { ok: false, reason: "The project that is open cannot be deleted. Open another project first." };
+    const r = await this.deps.projects.deleteStored(key);
+    return r.ok ? r : { ok: false, reason: r.message };
+  }
   // ------------------------------------------------------------ storage actions
 
   /** Same project as the live one (key, canonical spec text, baseline, manifests)? Used to decide whether to adopt. */
