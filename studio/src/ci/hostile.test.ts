@@ -298,6 +298,11 @@ describe("A10 import-path secret guards (R14.4, design 8.1)", () => {
     p.specText = JSON.stringify({ ...(JSON.parse(p.specText) as object), leak: pem });
     await refusedSecret(p, pem);
   });
+  it("importBundle never echoes a credential used as a spec key", async () => {
+    const p = await sampleProject();
+    p.specText = JSON.stringify({ ...(JSON.parse(p.specText) as object), [aws]: 1 });
+    await refusedSecret(p, aws);
+  });
   it("importPack flags a credential in studio-pack/assets.json as invalid without throwing", async () => {
     const m = await sampleProject();
     m.manifests.assets.assets[0]!.provenance.notes = aws;

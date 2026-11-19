@@ -10,7 +10,7 @@
 import { sha256Bytes } from "../assets/import";
 import { MAX_FILE_BYTES } from "../assets/limits";
 import { sniffAsset } from "../assets/sniff";
-import { findSecrets } from "../integrations/secrets";
+import { findSecrets, secretRules } from "../integrations/secrets";
 import { MANIFEST_NAMES, parseManifest, serializeManifest, type ManifestMap, type ManifestName } from "../project/manifests";
 import { decodeUtf8Strict, MAX_JSON_BYTES, parseStrictJson } from "../project/manifests/strictJson";
 import { readZip, type EntryPolicy, type ZipRefusal } from "./unzip";
@@ -32,6 +32,8 @@ export type BundleRefusal =
   | ZipRefusal | "missing-entry" | "invalid-spec" | "invalid-manifest" | "asset-mismatch" | "project-mismatch" | "secret";
 export type BundleImport = { ok: true; project: BundleProject } | { ok: false; code: BundleRefusal; message: string };
 
+// A credential can be an object key; never echo a path segment that itself matches a secret rule.
+const safePath = (p: readonly (string | number)[]): string => p.map((s) => (typeof s === "string" && secretRules(s).length > 0 ? "<key>" : String(s))).join(".");
 const enc = new TextEncoder();
 const byPath = (a: ZipEntry, b: ZipEntry): number => (a.path < b.path ? -1 : a.path > b.path ? 1 : 0);
 
@@ -75,7 +77,7 @@ export async function importBundle(bytes: Uint8Array): Promise<BundleImport> {
   if (!parsed.ok) return refuse("invalid-spec", `${SPEC_PATH}: ${parsed.issue.message}`);
 
   const specSecret = findSecrets(parsed.value)[0];
-  if (specSecret) return refuse("secret", `${SPEC_PATH}: a credential-shaped value (${specSecret.rule}) at ${specSecret.path.join(".")} is not accepted`);
+  if (specSecret) return refuse("secret", `${SPEC_PATH}: a credential-shaped value (${specSecret.rule}) at ${safePath(specSecret.path)} is not accepted`);
   const manifests: Partial<Record<ManifestName, unknown>> = {};
   for (const n of MANIFEST_NAMES) {
     const data = files.get(manifestPath(n));
@@ -83,7 +85,7 @@ export async function importBundle(bytes: Uint8Array): Promise<BundleImport> {
     const r = parseManifest(n, data);
     if (!r.ok) return refuse("invalid-manifest", `${manifestPath(n)}: ${r.issues[0]?.path.join(".") ?? ""} ${r.issues[0]?.message ?? ""}`.trim());
     const found = findSecrets(r.value)[0];
-    if (found) return refuse("secret", `${manifestPath(n)}: a credential-shaped value (${found.rule}) at ${found.path.join(".")} is not accepted`);
+    if (found) return refuse("secret", `${manifestPath(n)}: a credential-shaped value (${found.rule}) at ${safePath(found.path)} is not accepted`);
     manifests[n] = r.value;
   }
   const map = manifests as unknown as ManifestMap;
