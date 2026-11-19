@@ -15,6 +15,8 @@
     "derive:apply": "node scripts/derive-apply.mjs",
     "a5:levels": "node scripts/a5-levels.mjs",
     "a3:dashboard": "node scripts/a3-dashboard.mjs",
+    "foundry:flow": "node scripts/foundry-flow.mjs",
+    "foundry:e2e": "node scripts/foundry-e2e.mjs",
     "levels:memory": "node scripts/level-memory.mjs",
     "scan:secrets": "node scripts/scan-secrets.mjs dist --json ../docs/evidence/studio-m3b/secret-scan.json",
     "capabilities:render": "node scripts/render-capabilities.mjs --write",
