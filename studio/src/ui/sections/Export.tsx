@@ -3,7 +3,9 @@ import { useDraft, useSession } from "../../app/hooks";
 import type { ExportFile, ExportPlan } from "../../engine/protocol";
 import { buildZip } from "../../export/zip";
 import { blocking, verifyPlan, type CheckItem } from "../../release/completeness";
+import { releaseExport } from "../../release/exportPack";
 import { useCompleteness } from "../../release/useCompleteness";
+import { useProject } from "../../project/context";
 import { setVerifiedPlan } from "../../release/verified";
 
 type Ready = Extract<ExportPlan, { ok: true }>;
@@ -59,6 +61,7 @@ export function Export() {
   const pending = draft.validatedRevision !== draft.revision;
   const [plan, setPlan] = useState<(Ready & { originPath: string | null; checks: CheckItem[] }) | null>(null);
   const completeness = useCompleteness();
+  const project = useProject();
   const blockedBy = blocking(completeness.items);
   const originPath = draft.baseline?.origin?.path ?? null;
   const [busy, setBusy] = useState(false);
@@ -93,6 +96,21 @@ export function Export() {
     setTimeout(() => URL.revokeObjectURL(url), 1000);
   };
 
+  const downloadPack = async () => {
+    if (!plan || stale || !v?.ok) return;
+    setError(null);
+    try {
+      const assets = new Map<string, Uint8Array>();
+      for (const a of project.manifests?.assets.assets ?? []) { const b = await project.assetBytes(a.id); if (b) assets.set(a.id, b); }
+      const r = await releaseExport({ items: completeness.items, plan, planChecks: plan.checks, specText: v.canonicalText, manifests: project.manifests, assets });
+      if (!r.ok) { setError(r.reason === "blocked" ? r.blockers.map((i) => i.message).join(" ") : r.message); return; }
+      const url = URL.createObjectURL(new Blob([r.zip], { type: "application/zip" }));
+      const a = document.createElement("a");
+      a.href = url; a.download = `${plan.projectId}-pack.zip`;
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    } catch (e) { setError(`the pack could not be built: ${(e as Error).message}`); }
+  };
   return (
     <section aria-labelledby="export-h" data-testid="export">
       <header className="section-head">
@@ -110,6 +128,7 @@ export function Export() {
       <div className="actions">
         <button type="button" data-testid="export-generate" disabled={!canRun} onClick={() => void generate()}>{busy ? "Generating…" : "Generate source files"}</button>
         <button type="button" data-testid="export-download" disabled={!plan || stale || planErrors.length > 0} onClick={download}>Download ZIP</button>
+        <button type="button" data-testid="export-download-pack" disabled={!plan || stale || planErrors.length > 0 || blockedBy.length > 0} onClick={() => void downloadPack()}>Download pack ZIP</button>
         {!canRun && !busy && <span className="muted small" data-testid="export-blocked">{pending ? "Waiting for validation." : !v?.ok ? "Only a valid draft can be exported." : `Export is blocked by ${blockedBy.length} problem${blockedBy.length === 1 ? "" : "s"} in the completeness check.`}</span>}
       </div>
       {blockedBy.length > 0 && v?.ok === true && !pending && (
