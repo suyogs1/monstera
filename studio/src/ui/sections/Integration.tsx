@@ -2,6 +2,7 @@ import { useState, type ReactNode } from "react";
 import { getAt } from "../../draft/path";
 import raw from "../../generated/inventory.json";
 import type { Inventory } from "../../integration/types";
+import { handoffPrompts, specPathOf } from "../../kiro/handoff";
 import { useDoc } from "../fields";
 
 const inv = raw as unknown as Inventory;
@@ -34,15 +35,10 @@ const missing = (found: boolean, what: string): ReactNode =>
 export function Integration() {
   const doc = useDoc();
   const id = (doc !== null && typeof getAt(doc, ["project", "id"]) === "string" ? (getAt(doc, ["project", "id"]) as string) : "") || "<id>";
-  const path = `spec/samples/${id}/monstera.spec.json`;
+  const path = specPathOf(id);
   const author = inv.agents.find((a) => a.name === "game-author");
   const toolNames = new Set(inv.mcp.tools.map((t) => t.name));
-  const validatePrompt =
-    `Validate ${path} with the monstera validate_spec tool. Do not change any file yet. ` +
-    `Explain every issue in plain language and propose the smallest fix for each.`;
-  const changePrompt =
-    `Using the game-author agent, change the game in ${path}: <describe the change>. ` +
-    `Follow .kiro/steering/10-game-authoring.md, validate with validate_spec, and show me the diff before generating anything.`;
+  const prompts = handoffPrompts(id);
   const c = inv.commit;
 
   return (
@@ -80,8 +76,16 @@ export function Integration() {
           </li>
           <li>Back here, choose <strong>Import spec…</strong> and load the file Kiro wrote. The engine validates it again.</li>
         </ol>
-        <Prompt title="Validate this draft" text={validatePrompt} />
-        <Prompt title="Change this game" text={changePrompt} />
+        {prompts.filter((p) => p.id === "validate" || p.id === "change").map((p) => <Prompt key={p.id} title={p.title} text={p.text} />)}
+      </section>
+      <section className="card" aria-labelledby="pack-handoff-h">
+        <header><h3 id="pack-handoff-h">Working on an exported project</h3></header>
+        <p>
+          A Studio export carries an ownership manifest, a drift check and Kiro steering. These prompts use them. After a session,
+          open <strong>Drift</strong> to see which files changed, or hand back a <strong>Proposals</strong> file to review.
+          The path to the spec in the export is <code>monstera.spec.json</code> at its root.
+        </p>
+        {prompts.filter((p) => p.id === "continue-export" || p.id === "propose").map((p) => <Prompt key={p.id} title={p.title} text={p.text} />)}
       </section>
 
       <section className="card" aria-labelledby="agents-h">

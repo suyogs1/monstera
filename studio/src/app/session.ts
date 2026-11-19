@@ -4,6 +4,7 @@ import { BadgeRunner } from "../badge/badge";
 import { DraftStore, type Baseline, type Origin } from "../draft/store";
 import { PreviewController } from "../preview/controller";
 import { Selection } from "../preview/select";
+import { planProposal, type Proposal, type ProposalPlan, type ProposalRefusal } from "../kiro/proposal";
 import { EngineClient } from "../engine/client";
 import type { DraftValidation, TemplateInfo } from "../engine/protocol";
 import { ProjectController, timeoutSchedule, type Schedule } from "../project/controller";
@@ -181,6 +182,18 @@ export class Session {
   reviewGameplay(): Promise<GameplayReview> { return reviewGameplay(this.project, this.engine); }
   /** Gameplay step 2: commits a reviewed plan as one undo step, only if the project is unchanged since the review. */
   applyReviewedGameplay(review: Extract<GameplayReview, { ok: true }>): GameplayApplyResult { return applyReviewedGameplay(this.project, review); }
+  /** Proposal inbox, step 1: checks a proposal against the current project. Nothing is written. */
+  async reviewProposal(proposal: Proposal): Promise<{ ok: true; expected: { doc: Json; manifests: ManifestMap }; plan: ProposalPlan } | ProposalRefusal> {
+    const state = this.project.currentState();
+    if (state === null) return { ok: false, stage: "precondition", message: "there is no open project" };
+    const plan = await planProposal(state, proposal, this.engine);
+    return plan.ok ? { ok: true, expected: state, plan } : plan;
+  }
+  /** Proposal inbox, step 2: commits the reviewed plan as one undo step, only if the project is still what was reviewed. */
+  applyReviewedProposal(review: { expected: { doc: Json; manifests: ManifestMap }; plan: ProposalPlan }): { ok: true } | ProposalRefusal {
+    const done = this.project.commitDerived(review.expected, review.plan.doc, review.plan.manifests);
+    return done.ok ? { ok: true } : { ok: false, stage: "precondition", message: done.message };
+  }
   async loadTemplate(id: string): Promise<void> {
     const { doc, baseline, t, name } = await this.templateContent(id);
     await this.startProjectFrom(doc, baseline, t, name);

@@ -24,6 +24,8 @@ export const SECTION_ROUTES: readonly SectionRoute[] = [
   { id: "completeness", module: "release", slug: "completeness" },
   { id: "readiness", module: "release", slug: "readiness" },
   { id: "integration", module: "kiro", slug: "integration" },
+  { id: "kiro-drift", module: "kiro", slug: "drift" },
+  { id: "kiro-proposals", module: "kiro", slug: "proposals" },
   { id: "levels", module: "levels", slug: "editor" },
   { id: "gameplay-modules", module: "gameplay", slug: "modules" },
   { id: "gameplay-planned", module: "gameplay", slug: "planned" },

@@ -341,7 +341,7 @@ export default async function ui({ page, origin, check, committed, TEMPLATES }) 
   const pageText = (await page.locator('[data-testid="integration"]').innerText()).replace("Studio is not connected to Kiro", "");
   check("no wording implies a live Kiro connection, status or session", !/connect|online|live |synced|session active/i.test(pageText.replace(/Kiro sessions/g, "").replace(/cannot see Kiro\s+sessions/g, "")), "");
   const prompts = await page.locator(".prompt pre").allTextContents();
-  check("handoff prompts name the draft's own spec path and existing MCP tools", prompts.length === 2 && prompts.every((p) => p.includes("spec/samples/pumpkin-blaster/monstera.spec.json")) && prompts[0].includes("validate_spec"));
+  check("handoff prompts name the draft's own spec path and existing MCP tools", prompts.length === 4 && prompts.slice(0, 2).every((p) => p.includes("spec/samples/pumpkin-blaster/monstera.spec.json")) && prompts[0].includes("validate_spec") && prompts[2].includes("check-drift.sh") && prompts[3].includes("monstera.studio.proposal"));
   check("agent game-author and tool validate_spec appear in the inventory", (await page.locator("main").innerText()).includes("game-author") && (await page.locator('th code:text("validate_spec")').count()) === 1);
 
   // ---- M3-A: committed native build and simulator-launch evidence, bound to the exact spec SHA-256

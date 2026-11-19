@@ -72,7 +72,7 @@
       "status": "prototype",
       "targetStatus": "implemented",
       "nativeOutput": "scaffold",
-      "limits": "Only the static Developer Integration inventory exists. Pack export, ownership manifest, drift check and proposal inbox are not built. There is no Kiro connection."
+      "limits": "The static Developer Integration inventory with pack handoff prompts, a drift view for a re-imported export and a proposal inbox exist. There is no Kiro connection."
     },
     {
       "id": "preview",
@@ -342,12 +342,14 @@
       "id": "proposal-inbox",
       "module": "kiro",
       "title": "Review and apply an externally produced proposal",
-      "status": "planned",
+      "status": "prototype",
       "targetStatus": "prototype",
       "nativeOutput": "studio only",
-      "evidence": [],
-      "limits": "Not built. Proposals are data, validated and applied only on user acceptance.",
-      "requires": "Proposal schema (done), apply path (task 4.2) and UI (task 7.4).",
+      "evidence": [
+        "studio/src/kiro/proposal.test.ts"
+      ],
+      "limits": "Reads one JSON file, checks it with the engine or the manifest rules, shows the difference and applies it only on acceptance. Who wrote a proposal is not verified.",
+      "requires": "",
       "designRow": ""
     },
     {
