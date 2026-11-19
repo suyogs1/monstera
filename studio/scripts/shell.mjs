@@ -107,13 +107,13 @@ try {
   await toggle.click();
   check("mobile: clicking the toggle again closes it and aria-expanded follows", (await expanded()) === "false" && !(await list.isVisible()));
 
-  // a module with no editors: the card
+  // Backend now has editors: its first view opens with the permanent scaffold banner. A planned module (none in the registry today) would open its card.
   await toggle.click();
   await mobile.click('[data-testid="module-backend"]');
-  await mobile.waitForSelector('[data-testid="module-card"]');
-  check("mobile: choosing a planned module opens its card and closes the menu", (await mhash()) === "#/backend" && (await expanded()) === "false" && !(await list.isVisible()), `${await mhash()} ${await expanded()}`);
+  await mobile.waitForSelector('[data-testid="module-header"][data-module="backend"]');
+  check("mobile: choosing Backend opens its first view with the scaffold banner and closes the menu", (await mhash()) === "#/backend/firebase" && (await mobile.$('[data-testid="scaffold-banner"]')) !== null && (await expanded()) === "false" && !(await list.isVisible()), `${await mhash()} ${await expanded()}`);
   o = await overflow();
-  check("mobile: no horizontal overflow on a module card", o.nav <= 0 && o.page <= 0, JSON.stringify(o));
+  check("mobile: no horizontal overflow on the Backend view", o.nav <= 0 && o.page <= 0, JSON.stringify(o));
   // a module with editors
   await toggle.click();
   await mobile.click('[data-testid="module-release"]');
@@ -144,8 +144,8 @@ try {
   await mobile.keyboard.press("Enter");
   await mobile.locator('[data-testid="module-backend"]').focus();
   await mobile.keyboard.press("Enter");
-  await mobile.waitForSelector('[data-testid="module-card"][data-module="backend"]');
-  check("mobile keyboard: Enter on a module link navigates and closes the menu", (await mhash()) === "#/backend" && (await expanded()) === "false", `${await mhash()} ${await expanded()}`);
+  await mobile.waitForSelector('[data-testid="module-header"][data-module="backend"]');
+  check("mobile keyboard: Enter on a module link navigates and closes the menu", (await mhash()) === "#/backend/firebase" && (await expanded()) === "false", `${await mhash()} ${await expanded()}`);
   check("mobile: no page error", mproblems.length === 0, mproblems.join(" | "));
   check("no page error or console error", problems.length === 0, problems.join(" | "));
 } finally {

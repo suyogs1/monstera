@@ -22,8 +22,9 @@ describe("router: legacy hashes (acceptance of task 1.1)", () => {
     completeness: "#/release/completeness", readiness: "#/release/readiness",
     "dashboard-projects": "#/dashboard/projects", "dashboard-status": "#/dashboard/status",
     "kiro-drift": "#/kiro/drift", "kiro-proposals": "#/kiro/proposals",
+    "backend-firebase": "#/backend/firebase", "monetization-placements": "#/monetization/placements", "monetization-mock": "#/monetization/mock",
   };
-  it("lists exactly the eighteen legacy section ids", () => {
+  it("lists exactly the legacy and module-view section ids", () => {
     expect(SECTIONS.map((s) => s.id).sort()).toEqual(Object.keys(expected).sort());
   });
   it.each(Object.entries(expected))("#/%s redirects to %s", (legacy, target) => {
@@ -62,10 +63,18 @@ describe("router: modules, partial and unknown hashes", () => {
     expect(resolveHash("#/kiro/nope").canonical).toBe("#/kiro/integration");
   });
   it("modules that are not built resolve to a card", () => {
+    const registry: CapabilityRegistry = JSON.parse(JSON.stringify(REGISTRY));
     for (const id of ["backend", "monetization"] as const) {
-      expect(resolveHash(`#/${id}`).route).toEqual({ kind: "card", module: id });
-      expect(resolveHash(`#/${id}/anything`).canonical).toBe(`#/${id}`);
+      const m = registry.modules.find((x) => x.id === id);
+      if (m) m.status = "planned";
+      expect(resolveHash(`#/${id}`, registry).route).toEqual({ kind: "card", module: id });
+      expect(resolveHash(`#/${id}/anything`, registry).canonical).toBe(`#/${id}`);
     }
+  });
+  it("Backend and Monetization open their editors now that the registry calls them prototypes", () => {
+    expect(resolveHash("#/backend").canonical).toBe("#/backend/firebase");
+    expect(resolveHash("#/monetization").canonical).toBe("#/monetization/placements");
+    expect(resolveHash("#/monetization/mock").route).toMatchObject({ kind: "section", module: "monetization", sectionId: "monetization-mock" });
   });
   it("Gameplay Systems has its own module route although #/gameplay is the legacy Designer hash", () => {
     expect(resolveHash("#/gameplay").canonical).toBe("#/designer/world");

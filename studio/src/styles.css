@@ -253,3 +253,4 @@ kbd { font: inherit; font-size: 0.75em; border: 1px solid var(--line); border-ra
 .tl-mark.step { fill: var(--warn); }
 .tl-start { fill: var(--ok); }
 .issue-list { margin: 0.3rem 0; padding-left: 1.2rem; }
+.banner { margin: 0 0 0.75rem; padding: 0.5rem 0.75rem; border: 1px solid var(--muted); border-radius: 6px; background: var(--panel-2); font-weight: 600; }

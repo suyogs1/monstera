@@ -16,6 +16,8 @@ import { Completeness, Readiness } from "./release/Release";
 import { LevelStudio } from "./levels/LevelStudio";
 import { GameplayModules } from "./gameplay/Modules";
 import { GameplayPlanned } from "./gameplay/Planned";
+import { Backend } from "./integrations/Backend";
+import { MockBehaviour, Placements } from "./integrations/Ads";
 import { Projects, Status } from "./dashboard/Dashboard";
 import { Drift, ProposalInbox } from "./kiro/KiroViews";
 import { Integration } from "./ui/sections/Integration";
@@ -53,6 +55,9 @@ const VIEWS: Partial<Record<SectionId, () => ReactElement>> = {
   sprites: () => <SpriteStudio />,
   completeness: () => <Completeness />,
   readiness: () => <Readiness />,
+  "backend-firebase": () => <Backend />,
+  "monetization-placements": () => <Placements />,
+  "monetization-mock": () => <MockBehaviour />,
   "dashboard-projects": () => <Projects />,
   "dashboard-status": () => <Status />,
 };

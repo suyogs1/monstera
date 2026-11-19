@@ -53,18 +53,18 @@
     {
       "id": "backend",
       "title": "Backend and Services",
-      "status": "planned",
+      "status": "prototype",
       "targetStatus": "mock",
       "nativeOutput": "scaffold",
-      "limits": "Not built. Will generate scaffold text and mock stubs only. Never a live Firebase connection."
+      "limits": "Scaffold text only: Firebase service choices and a read-only preview. Not compiled into the app, not connected to any backend, no keys or config files."
     },
     {
       "id": "monetization",
       "title": "Monetization",
-      "status": "planned",
+      "status": "prototype",
       "targetStatus": "mock",
       "nativeOutput": "mock",
-      "limits": "Not built. Will support mock and official Google test configurations only. No production ad ids in Studio."
+      "limits": "Mock and test placements with a labelled mock behaviour preview. Not compiled into the app, no ad is shown, no production ad ids and no ad unit id fields."
     },
     {
       "id": "kiro",
@@ -268,12 +268,12 @@
       "id": "integrations-scaffold",
       "module": "backend",
       "title": "Firebase and AdMob scaffold text and setup instructions",
-      "status": "planned",
+      "status": "prototype",
       "targetStatus": "prototype",
       "nativeOutput": "scaffold",
-      "evidence": [],
-      "limits": "Not built. Scaffold text is exported, not compiled into the app. Not a live backend.",
-      "requires": "Integrations manifest and emitters (tasks 6.1 and 6.2).",
+      "evidence": ["studio/src/integrations/ops.test.ts", "studio/src/integrations/scaffold/emit.test.ts", "studio/src/integrations/ui.test.tsx"],
+      "limits": "Not connected to any backend. Scaffold text is exported by the pack task (8.1), not compiled into the app.",
+      "requires": "",
       "designRow": "Firebase interfaces and stubs, AdMob placements and mock rewarded ad"
     },
     {
@@ -292,12 +292,12 @@
       "id": "admob-mock",
       "module": "monetization",
       "title": "Placement configuration, frequency rules and a labelled mock rewarded ad",
-      "status": "planned",
+      "status": "mock",
       "targetStatus": "mock",
       "nativeOutput": "mock",
-      "evidence": [],
-      "limits": "Not built. Mock and official test configurations only. Not compiled into the app unless engine track E2 is approved.",
-      "requires": "Integrations manifest and emitters (tasks 6.1 to 6.3).",
+      "evidence": ["studio/src/integrations/ops.test.ts", "studio/src/integrations/scaffold/emit.test.ts", "studio/src/integrations/ui.test.tsx"],
+      "limits": "Mock and test placements only. No ad is shown, nothing is compiled into the app unless engine track E2 is approved, and there are no production ad ids.",
+      "requires": "",
       "designRow": ""
     },
     {
