@@ -1,0 +1,56 @@
+Building for debugging...
+[0/7] /Users/runner/work/monstera/monstera/g6-clean-room/pumpkin-blaster/ios/Presentation/.build/arm64-apple-macosx/debug/MonsteraPresentationPackageTests.derived/runner.swift
+[0/7] Write sources
+[4/7] Write swift-version-7974D3F7F03D5E95.txt
+[6/9] Emitting module MonsteraPresentation
+[7/9] Compiling MonsteraPresentation Presentation.swift
+[8/11] Emitting module MonsteraPresentationTests
+[9/11] Compiling MonsteraPresentationTests PresentationTests.swift
+[10/13] Compiling MonsteraPresentationPackageTests runner.swift
+[11/13] Emitting module MonsteraPresentationPackageTests
+[11/13] Write Objects.LinkFileList
+[12/13] Linking MonsteraPresentationPackageTests
+Build complete! (33.95s)
+Test Suite 'All tests' started at 2026-11-16 07:41:36.223.
+Test Suite 'MonsteraPresentationPackageTests.xctest' started at 2026-11-16 07:41:36.224.
+Test Suite 'PresentationTests' started at 2026-11-16 07:41:36.224.
+Test Case '-[MonsteraPresentationTests.PresentationTests testBurstSpawnsWhenAnEffectEntityVanishesInsideTheWorld]' started.
+Test Case '-[MonsteraPresentationTests.PresentationTests testBurstSpawnsWhenAnEffectEntityVanishesInsideTheWorld]' passed (0.003 seconds).
+Test Case '-[MonsteraPresentationTests.PresentationTests testDegenerateViewsDoNotDivideByZero]' started.
+Test Case '-[MonsteraPresentationTests.PresentationTests testDegenerateViewsDoNotDivideByZero]' passed (0.000 seconds).
+Test Case '-[MonsteraPresentationTests.PresentationTests testEffectCountsAreBounded]' started.
+Test Case '-[MonsteraPresentationTests.PresentationTests testEffectCountsAreBounded]' passed (0.000 seconds).
+Test Case '-[MonsteraPresentationTests.PresentationTests testEndCardTitleFollowsLivesAndGlyphsFitTheirBox]' started.
+Test Case '-[MonsteraPresentationTests.PresentationTests testEndCardTitleFollowsLivesAndGlyphsFitTheirBox]' passed (0.000 seconds).
+Test Case '-[MonsteraPresentationTests.PresentationTests testEntitiesAreClippedToTheWorldRectangle]' started.
+Test Case '-[MonsteraPresentationTests.PresentationTests testEntitiesAreClippedToTheWorldRectangle]' passed (0.000 seconds).
+Test Case '-[MonsteraPresentationTests.PresentationTests testGainingALifeOrResettingDoesNotFlash]' started.
+Test Case '-[MonsteraPresentationTests.PresentationTests testGainingALifeOrResettingDoesNotFlash]' passed (0.000 seconds).
+Test Case '-[MonsteraPresentationTests.PresentationTests testHudTextDefaultsAndGlyphs]' started.
+Test Case '-[MonsteraPresentationTests.PresentationTests testHudTextDefaultsAndGlyphs]' passed (0.000 seconds).
+Test Case '-[MonsteraPresentationTests.PresentationTests testLandscapeLayoutFitsHeightBesideTheHudBar]' started.
+Test Case '-[MonsteraPresentationTests.PresentationTests testLandscapeLayoutFitsHeightBesideTheHudBar]' passed (0.000 seconds).
+Test Case '-[MonsteraPresentationTests.PresentationTests testLosingALifeFlashesAndShakesThenSettles]' started.
+Test Case '-[MonsteraPresentationTests.PresentationTests testLosingALifeFlashesAndShakesThenSettles]' passed (0.000 seconds).
+Test Case '-[MonsteraPresentationTests.PresentationTests testNoEffectForKindNoneOrWhenLeavingTheWorld]' started.
+Test Case '-[MonsteraPresentationTests.PresentationTests testNoEffectForKindNoneOrWhenLeavingTheWorld]' passed (0.000 seconds).
+Test Case '-[MonsteraPresentationTests.PresentationTests testNoPopupWithoutAScoreIncrease]' started.
+Test Case '-[MonsteraPresentationTests.PresentationTests testNoPopupWithoutAScoreIncrease]' passed (0.000 seconds).
+Test Case '-[MonsteraPresentationTests.PresentationTests testPickupSpawnsARingAndNoParticles]' started.
+Test Case '-[MonsteraPresentationTests.PresentationTests testPickupSpawnsARingAndNoParticles]' passed (0.000 seconds).
+Test Case '-[MonsteraPresentationTests.PresentationTests testPortraitLayoutKeepsAspectAndHudAboveWorld]' started.
+Test Case '-[MonsteraPresentationTests.PresentationTests testPortraitLayoutKeepsAspectAndHudAboveWorld]' passed (0.000 seconds).
+Test Case '-[MonsteraPresentationTests.PresentationTests testTheBottomInsetKeepsTheWorldClearOfTheGestureBar]' started.
+Test Case '-[MonsteraPresentationTests.PresentationTests testTheBottomInsetKeepsTheWorldClearOfTheGestureBar]' passed (0.000 seconds).
+Test Case '-[MonsteraPresentationTests.PresentationTests testTheTopInsetPushesHudAndWorldDown]' started.
+Test Case '-[MonsteraPresentationTests.PresentationTests testTheTopInsetPushesHudAndWorldDown]' passed (0.000 seconds).
+Test Suite 'PresentationTests' passed at 2026-11-16 07:41:36.233.
+	 Executed 15 tests, with 0 failures (0 unexpected) in 0.006 (0.008) seconds
+Test Suite 'MonsteraPresentationPackageTests.xctest' passed at 2026-11-16 07:41:36.233.
+	 Executed 15 tests, with 0 failures (0 unexpected) in 0.006 (0.008) seconds
+Test Suite 'All tests' passed at 2026-11-16 07:41:36.233.
+	 Executed 15 tests, with 0 failures (0 unexpected) in 0.006 (0.010) seconds
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+✔ Test run with 0 tests in 0 suites passed after 0.001 seconds.

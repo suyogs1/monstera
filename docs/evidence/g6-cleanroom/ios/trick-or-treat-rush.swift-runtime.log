@@ -1,0 +1,48 @@
+Building for debugging...
+[0/8] Copying monstera-scenarios.txt
+[1/8] Write sources
+[1/8] /Users/runner/work/monstera/monstera/g6-clean-room/trick-or-treat-rush/ios/Runtime/.build/arm64-apple-macosx/debug/MonsteraRuntimePackageTests.derived/runner.swift
+[3/8] Write sources
+[5/8] Write swift-version-7974D3F7F03D5E95.txt
+[7/13] Compiling MonsteraRuntime GeneratedRuntimeConfig.swift
+[8/13] Compiling MonsteraRuntime Prng.swift
+[9/13] Emitting module MonsteraRuntime
+[10/13] Compiling MonsteraRuntime Fixed.swift
+[11/13] Compiling MonsteraRuntime GameLoop.swift
+[12/15] Compiling MonsteraRuntime Replay.swift
+[13/15] Compiling MonsteraRuntime Simulation.swift
+[14/18] Compiling MonsteraRuntimeTests resource_bundle_accessor.swift
+[15/18] Emitting module MonsteraRuntimeTests
+[16/18] Compiling MonsteraRuntimeTests ConformanceTests.swift
+[17/20] Compiling MonsteraRuntimePackageTests runner.swift
+[18/20] Emitting module MonsteraRuntimePackageTests
+[18/20] Write Objects.LinkFileList
+[19/20] Linking MonsteraRuntimePackageTests
+Build complete! (47.60s)
+Test Suite 'All tests' started at 2026-11-16 07:43:23.811.
+Test Suite 'MonsteraRuntimePackageTests.xctest' started at 2026-11-16 07:43:23.815.
+Test Suite 'ConformanceTests' started at 2026-11-16 07:43:23.815.
+Test Case '-[MonsteraRuntimeTests.ConformanceTests testFixedPointVectors]' started.
+Test Case '-[MonsteraRuntimeTests.ConformanceTests testFixedPointVectors]' passed (0.002 seconds).
+Test Case '-[MonsteraRuntimeTests.ConformanceTests testFrameClockVectors]' started.
+Test Case '-[MonsteraRuntimeTests.ConformanceTests testFrameClockVectors]' passed (0.001 seconds).
+Test Case '-[MonsteraRuntimeTests.ConformanceTests testGoldenScenarios]' started.
+Test Case '-[MonsteraRuntimeTests.ConformanceTests testGoldenScenarios]' passed (0.882 seconds).
+Test Case '-[MonsteraRuntimeTests.ConformanceTests testHitchIsCappedAndBacklogDropped]' started.
+Test Case '-[MonsteraRuntimeTests.ConformanceTests testHitchIsCappedAndBacklogDropped]' passed (0.001 seconds).
+Test Case '-[MonsteraRuntimeTests.ConformanceTests testIdleStateIsIndependentOfDisplayRateAndJitter]' started.
+Test Case '-[MonsteraRuntimeTests.ConformanceTests testIdleStateIsIndependentOfDisplayRateAndJitter]' passed (0.908 seconds).
+Test Case '-[MonsteraRuntimeTests.ConformanceTests testInputsApplyAtTheStartOfTheNextTickInOrder]' started.
+Test Case '-[MonsteraRuntimeTests.ConformanceTests testInputsApplyAtTheStartOfTheNextTickInOrder]' passed (0.094 seconds).
+Test Case '-[MonsteraRuntimeTests.ConformanceTests testRandomnessVectors]' started.
+Test Case '-[MonsteraRuntimeTests.ConformanceTests testRandomnessVectors]' passed (0.005 seconds).
+Test Suite 'ConformanceTests' passed at 2026-11-16 07:43:25.713.
+	 Executed 7 tests, with 0 failures (0 unexpected) in 1.892 (1.898) seconds
+Test Suite 'MonsteraRuntimePackageTests.xctest' passed at 2026-11-16 07:43:25.713.
+	 Executed 7 tests, with 0 failures (0 unexpected) in 1.892 (1.898) seconds
+Test Suite 'All tests' passed at 2026-11-16 07:43:25.713.
+	 Executed 7 tests, with 0 failures (0 unexpected) in 1.892 (1.902) seconds
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+✔ Test run with 0 tests in 0 suites passed after 0.001 seconds.
