@@ -1,0 +1,26 @@
+{
+  "check": "Gradle testDebugUnitTest results",
+  "suites": [
+    {
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "suite": "app.monstera.trickortreatrush.presentation.PresentationTest",
+      "tests": 15
+    },
+    {
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "suite": "app.monstera.trickortreatrush.runtime.ConformanceTest",
+      "tests": 7
+    }
+  ],
+  "total": {
+    "errors": 0,
+    "failures": 0,
+    "skipped": 0,
+    "tests": 22
+  },
+  "verdict": "PASS"
+}
