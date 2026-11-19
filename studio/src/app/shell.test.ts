@@ -19,6 +19,7 @@ describe("router: legacy hashes (acceptance of task 1.1)", () => {
     levels: "#/levels/editor", "gameplay-modules": "#/gameplay/modules", "gameplay-planned": "#/gameplay/planned",
     assets: "#/assets/library",
     sprites: "#/sprites/editor",
+    completeness: "#/release/completeness", readiness: "#/release/readiness",
     "dashboard-projects": "#/dashboard/projects", "dashboard-status": "#/dashboard/status",
   };
   it("lists exactly the eighteen legacy section ids", () => {

@@ -1,7 +1,7 @@
 import type { Path } from "../draft/path";
 
 export type SectionId =
-  | "overview" | "platforms" | "gameplay" | "entities" | "rules" | "spawns" | "presentation" | "spec" | "determinism" | "export" | "integration" | "levels" | "gameplay-modules" | "gameplay-planned" | "assets" | "sprites" | "dashboard-projects" | "dashboard-status";
+  | "overview" | "platforms" | "gameplay" | "entities" | "rules" | "spawns" | "presentation" | "spec" | "determinism" | "export" | "integration" | "levels" | "gameplay-modules" | "gameplay-planned" | "assets" | "sprites" | "completeness" | "readiness" | "dashboard-projects" | "dashboard-status";
 
 export interface SectionInfo { id: SectionId; title: string; blurb: string }
 
@@ -22,6 +22,8 @@ export const SECTIONS: SectionInfo[] = [
   { id: "gameplay-planned", title: "Planned", blurb: "Health, power-ups and progression: not buildable on the current contract." },
   { id: "assets", title: "Asset library", blurb: "Import images and audio with provenance, filter, preview, delete." },
   { id: "sprites", title: "Sprites and animation", blurb: "Slice sprite sheets, edit frames, build animation sequences." },
+  { id: "completeness", title: "Completeness", blurb: "What blocks export: errors block, warnings do not." },
+  { id: "readiness", title: "Readiness", blurb: "What is proven for this spec hash and what only you can do." },
   { id: "dashboard-projects", title: "Projects", blurb: "Every project in this browser: create, open, rename, duplicate, delete." },
   { id: "dashboard-status", title: "Status", blurb: "Validation, hash, determinism, native evidence and populated modules of the open project." },
 ];

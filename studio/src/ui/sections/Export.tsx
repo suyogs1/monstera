@@ -1,7 +1,12 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useDraft, useSession } from "../../app/hooks";
 import type { ExportFile, ExportPlan } from "../../engine/protocol";
 import { buildZip } from "../../export/zip";
+import { blocking, verifyPlan, type CheckItem } from "../../release/completeness";
+import { releaseExport } from "../../release/exportPack";
+import { useCompleteness } from "../../release/useCompleteness";
+import { useProject } from "../../project/context";
+import { setVerifiedPlan } from "../../release/verified";
 
 type Ready = Extract<ExportPlan, { ok: true }>;
 interface Node { name: string; dirs: Map<string, Node>; files: ExportFile[] }
@@ -54,13 +59,16 @@ export function Export() {
   const draft = useDraft();
   const v = draft.validation;
   const pending = draft.validatedRevision !== draft.revision;
-  const [plan, setPlan] = useState<(Ready & { originPath: string | null }) | null>(null);
+  const [plan, setPlan] = useState<(Ready & { originPath: string | null; checks: CheckItem[] }) | null>(null);
+  const completeness = useCompleteness();
+  const project = useProject();
+  const blockedBy = blocking(completeness.items);
   const originPath = draft.baseline?.origin?.path ?? null;
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   // A plan is bound to the draft SHA-256 and the origin it was made with (the origin can choose the label).
   const stale = plan !== null && (pending || !v?.ok || v.sha256 !== plan.specSha256 || originPath !== plan.originPath);
-  const canRun = !pending && v?.ok === true && v.canonicalText !== null && !busy;
+  const canRun = !pending && v?.ok === true && v.canonicalText !== null && !busy && blockedBy.length === 0;
   const root = useMemo(() => (plan ? tree(plan.files) : null), [plan]);
   const total = plan ? plan.files.reduce((a, f) => a + f.size, 0) : 0;
 
@@ -69,13 +77,16 @@ export function Export() {
     setBusy(true); setError(null);
     try {
       const r = await session.engine.exportPlan(v.canonicalText, originPath);
-      if (r.ok) setPlan({ ...r, originPath }); else { setPlan(null); setError(r.message); }
+      if (r.ok) setPlan({ ...r, originPath, checks: await verifyPlan(r, v.sha256) }); else { setPlan(null); setError(r.message); }
     } catch (e) { setPlan(null); setError((e as Error).message); }
     finally { setBusy(false); }
   };
 
+  const planErrors = plan ? blocking(plan.checks) : [];
+  const verified = plan !== null && !stale && planErrors.length === 0;
+  useEffect(() => { setVerifiedPlan(verified && plan ? plan.specSha256 : null); }, [verified, plan]);
   const download = () => {
-    if (!plan || stale) return;
+    if (!plan || stale || planErrors.length > 0) return;
     let zip: Uint8Array<ArrayBuffer>;
     try { zip = zipFor(plan); } catch (e) { setError(`the archive could not be built: ${(e as Error).message}`); return; }
     const url = URL.createObjectURL(new Blob([zip], { type: "application/zip" }));
@@ -85,6 +96,21 @@ export function Export() {
     setTimeout(() => URL.revokeObjectURL(url), 1000);
   };
 
+  const downloadPack = async () => {
+    if (!plan || stale || !v?.ok) return;
+    setError(null);
+    try {
+      const assets = new Map<string, Uint8Array>();
+      for (const a of project.manifests?.assets.assets ?? []) { const b = await project.assetBytes(a.id); if (b) assets.set(a.id, b); }
+      const r = await releaseExport({ items: completeness.items, plan, planChecks: plan.checks, specText: v.canonicalText, manifests: project.manifests, assets });
+      if (!r.ok) { setError(r.reason === "blocked" ? r.blockers.map((i) => i.message).join(" ") : r.message); return; }
+      const url = URL.createObjectURL(new Blob([r.zip], { type: "application/zip" }));
+      const a = document.createElement("a");
+      a.href = url; a.download = `${plan.projectId}-pack.zip`;
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    } catch (e) { setError(`the pack could not be built: ${(e as Error).message}`); }
+  };
   return (
     <section aria-labelledby="export-h" data-testid="export">
       <header className="section-head">
@@ -101,9 +127,18 @@ export function Export() {
 
       <div className="actions">
         <button type="button" data-testid="export-generate" disabled={!canRun} onClick={() => void generate()}>{busy ? "Generating…" : "Generate source files"}</button>
-        <button type="button" data-testid="export-download" disabled={!plan || stale} onClick={download}>Download ZIP</button>
-        {!canRun && !busy && <span className="muted small">{pending ? "Waiting for validation." : "Only a valid draft can be exported."}</span>}
+        <button type="button" data-testid="export-download" disabled={!plan || stale || planErrors.length > 0} onClick={download}>Download ZIP</button>
+        <button type="button" data-testid="export-download-pack" disabled={!plan || stale || planErrors.length > 0 || blockedBy.length > 0} onClick={() => void downloadPack()}>Download pack ZIP</button>
+        {!canRun && !busy && <span className="muted small" data-testid="export-blocked">{pending ? "Waiting for validation." : !v?.ok ? "Only a valid draft can be exported." : `Export is blocked by ${blockedBy.length} problem${blockedBy.length === 1 ? "" : "s"} in the completeness check.`}</span>}
       </div>
+      {blockedBy.length > 0 && v?.ok === true && !pending && (
+        <p className="status bad" role="alert" data-testid="export-completeness">
+          Export is blocked: {blockedBy.slice(0, 3).map((i) => i.message).join(" ")}{blockedBy.length > 3 ? ` (and ${blockedBy.length - 3} more)` : ""} See the completeness check.
+        </p>
+      )}
+      {planErrors.length > 0 && (
+        <p className="status bad" role="alert" data-testid="export-plan-mismatch">The generated files do not equal the engine plan, so the download is blocked: {planErrors.map((i) => i.message).join(" ")}</p>
+      )}
       {error && <p className="status bad" role="alert" data-testid="export-error">The export was refused: {error}</p>}
       {stale && <p className="status pending" role="status" data-testid="export-stale">Stale: these files were generated for draft {plan.specSha256.slice(0, 12)}; the draft has changed. Generate again.</p>}
 

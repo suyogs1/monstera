@@ -21,6 +21,8 @@ export const SECTION_ROUTES: readonly SectionRoute[] = [
   { id: "spec", module: "designer", slug: "spec" },
   { id: "determinism", module: "preview", slug: "determinism" },
   { id: "export", module: "release", slug: "export" },
+  { id: "completeness", module: "release", slug: "completeness" },
+  { id: "readiness", module: "release", slug: "readiness" },
   { id: "integration", module: "kiro", slug: "integration" },
   { id: "levels", module: "levels", slug: "editor" },
   { id: "gameplay-modules", module: "gameplay", slug: "modules" },

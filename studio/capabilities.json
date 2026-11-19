@@ -88,7 +88,7 @@
       "status": "prototype",
       "targetStatus": "implemented",
       "nativeOutput": "compiles to native",
-      "limits": "Only the native source ZIP export exists. Completeness check and release readiness are not built. No signing, upload or store-ready claim."
+      "limits": "The native source ZIP, a completeness check that blocks export on errors and a readiness checklist exist. The Studio pack is not part of the export yet (task 7.1). No signing, upload or store-ready claim."
     }
   ],
   "capabilities": [
@@ -458,12 +458,12 @@
       "id": "completeness-and-readiness",
       "module": "release",
       "title": "Completeness check and release-readiness checklist",
-      "status": "planned",
+      "status": "prototype",
       "targetStatus": "implemented",
       "nativeOutput": "studio only",
-      "evidence": [],
-      "limits": "Not built. It will never claim store readiness.",
-      "requires": "Tasks 8.1 and the cross-reference index (task 1.4).",
+      "evidence": ["studio/src/release/completeness.test.tsx"],
+      "limits": "Errors block export and the generated files are checked against the engine plan. The checklist proves only \"generated\" for the current spec hash; compiled, simulator and device results are not proven by Studio. Export together with the Studio pack is not wired yet (needs task 7.1). It never claims store readiness.",
+      "requires": "",
       "designRow": ""
     },
     {
