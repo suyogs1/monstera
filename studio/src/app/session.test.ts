@@ -17,8 +17,8 @@ import type { SessionDeps } from "./session";
 
 type Gameish = { game: { runtime: { lives: number; winScore: number } } };
 const lives = (h: Harness): number => (h.session.store.getState().doc as unknown as Gameish).game.runtime.lives;
-const setLives = (h: Harness, n: number): void => h.session.store.set(["game", "runtime", "lives"], n);
-const setWin = (h: Harness, n: number): void => h.session.store.set(["game", "runtime", "winScore"], n);
+const setLives = (h: Harness, n: number): void => { h.session.store.set(["game", "runtime", "lives"], n); };
+const setWin = (h: Harness, n: number): void => { h.session.store.set(["game", "runtime", "winScore"], n); };
 const records = async (f: IDBFactory): Promise<ProjectRecord[]> => (await rawAll(f, STORE_PROJECTS)) as ProjectRecord[];
 const active = async (f: IDBFactory): Promise<unknown> => ((await rawGet(f, STORE_META, ACTIVE_KEY)) as { value?: unknown } | undefined)?.value;
 const flag = (f: IDBFactory): Promise<unknown> => rawGet(f, STORE_META, MIGRATION_META_KEY);
@@ -312,7 +312,7 @@ describe("parseable but invalid specs are never persisted or migrated", () => {
     d.game.runtime.maxEntities = 5000;
     return JSON.stringify(d);
   };
-  const setMax = (h: Harness, n: number): void => h.session.store.set(["game", "runtime", "maxEntities"], n);
+  const setMax = (h: Harness, n: number): void => { h.session.store.set(["game", "runtime", "maxEntities"], n); };
 
   it("the fake engine answers like the real one: ok false, yet parsed with canonical text and its SHA-256", async () => {
     const v = await invalidEngine().validateDraft(invalidDoc());

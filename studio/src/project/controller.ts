@@ -37,6 +37,7 @@ import { gameplayIssues } from "../derive/gameplayOps";
 import { removeLevel as planLevelRemoval } from "../derive/levelOps";
 import { planImport, type ImportDeps, type ImportInput } from "../assets/import";
 import { planAssetDelete } from "../assets/library";
+import { findSecrets } from "../integrations/secrets";
 import { checkProjectName, type CatalogEntry } from "./catalog";
 import { kindIdCheck, planKindRemoval, planKindRename, type KindRenamePlan } from "./kindOps";
 import { aggregateValidation, type AggregateResult } from "./validation";
@@ -440,6 +441,8 @@ export class ProjectController {
     const { draft } = this.deps;
     const doc = draft.getState().doc;
     if (this.manifests === null || doc === null) return { ok: false, message: "there is no open project" };
+    const found = findSecrets(value)[0];
+    if (found) return { ok: false, message: `the ${name} manifest was refused: ${found.path.join(".") || "value"} looks like a credential (${found.rule}). Remove it; Studio never stores keys.` };
     const r = validateManifest(name, value);
     if (!r.ok) return { ok: false, message: `the ${name} manifest is invalid: ${r.issues[0]?.path.join(".") ?? ""} ${r.issues[0]?.message ?? ""}`.trim() };
     if (sameValue(this.manifests[name], value)) return { ok: true, changed: false };
@@ -468,6 +471,7 @@ export class ProjectController {
     const plan = await planImport(base, input, this.deps.assetProbes);
     if (!plan.ok) return plan;
     if (this.manifests !== start || this.projectKey !== key) return { ok: false, reason: "the project changed while the file was checked; import it again" };
+    if (findSecrets(plan.manifest).length > 0) return { ok: false, reason: "the import was refused: its text looks like a credential. Remove it; Studio never stores keys." };
     const bytes = input.bytes.slice();
     const stored = await this.deps.projects.putBlob(key, plan.asset.id, bytes);
     if (!stored.ok) return { ok: false, reason: stored.message };

@@ -8,6 +8,7 @@
 //   duplicate ONE transaction writes a new record under a new key (expected absent) and copies the asset blobs. The
 //             specification text, and therefore project.id, is copied unchanged: Studio never edits a spec silently.
 //   delete    ONE transaction removes the record, its asset blobs and the active pointer when it named this project.
+import { secretRules } from "../integrations/secrets";
 import { STORE_BLOBS, STORE_META, STORE_PROJECTS, runTransaction, type IdbConnection } from "./idb";
 import type { ManifestMap } from "./manifests";
 import { ACTIVE_KEY, evaluateRecord, readContents, readRecord, writeRecord, type ProjectRecord, type ProjectSnapshot, type Sha256 } from "./record";
@@ -31,6 +32,7 @@ export function checkProjectName(raw: string): { ok: true; name: string } | { ok
   if (name.length > MAX_PROJECT_NAME) return { ok: false, reason: `A project name has at most ${MAX_PROJECT_NAME} characters.` };
   // eslint-disable-next-line no-control-regex
   if (/[\u0000-\u001f\u007f]/.test(name)) return { ok: false, reason: "A project name cannot contain control characters." };
+  if (secretRules(name).length > 0) return { ok: false, reason: "A project name cannot look like a key or credential." };
   return { ok: true, name };
 }
 
