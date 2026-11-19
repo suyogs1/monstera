@@ -661,12 +661,12 @@ describe("saving", () => {
 
     armed = true;
     setLives(h, 7); // A
-    await step(); await until(() => view().gate === "scheduled", "A validated");
+    await step(); await until(h, () => view().gate === "scheduled", "A validated");
     await step(); // save timer -> A is handed over and blocked inside the store
-    await until(() => h.session.projects.getState().status === "saving", "A in flight");
+    await until(h, () => h.session.projects.getState().status === "saving", "A in flight");
     setLives(h, 8); // B, queued behind A
-    await step(); await until(() => view().gate === "scheduled", "B validated");
-    await step(); await until(() => !view().dirty, "B handed to the store");
+    await step(); await until(h, () => view().gate === "scheduled", "B validated");
+    await step(); await until(h, () => !view().dirty, "B handed to the store");
     setLives(h, 9); // C, not even validated yet
     expect(view()).toMatchObject({ status: "unsaved", gate: "waiting-for-validation", dirty: true });
 
@@ -697,7 +697,7 @@ describe("saving", () => {
     h.session.project.attachLifecycle(win as never, doc as never);
     setLives(h, 7);
     h.clock.runDue(); // validation only
-    await until(() => h.session.project.getState().gate === "scheduled", "validated");
+    await until(h, () => h.session.project.getState().gate === "scheduled", "validated");
     expect(specLives((await records(factory))[0] as ProjectRecord)).toBe(5); // debounce still pending
     listeners.get("visibilitychange")?.(); // visible: no flush
     await tick();
