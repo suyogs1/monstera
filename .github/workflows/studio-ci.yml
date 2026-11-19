@@ -51,6 +51,8 @@ jobs:
         run: npm run a5:levels
       - name: A3 first half, Dashboard end to end (task 1.3)
         run: npm run a3:dashboard
+      - name: Foundry flow, A4 asset to A7 pack and drift (task 9.1; scaffold UI pending task 6.3)
+        run: npm run foundry:flow
       - name: Smoke test under the header policy (CSP report-only, then enforced)
         run: |
           SMOKE_CSP=report-only SMOKE_REPORT="$RUNNER_TEMP/smoke-csp-report-only.json" node scripts/smoke.mjs
