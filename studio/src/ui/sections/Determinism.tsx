@@ -6,10 +6,15 @@ import { NativeApps } from "./NativeApps";
 import { nativeEvidence, type ConformanceReport } from "../../badge/native";
 import { toIssuePath, type Path } from "../../draft/path";
 import raw from "../../generated/conformance.json";
+import nativeRaw from "../../generated/native-apps.json";
+import { Environments } from "../../preview/Environments";
+import { environmentTable } from "../../preview/envTable";
 import type { Json } from "../../schema/schema";
+import type { NativeIndex } from "../../badge/nativeApps";
 
 const REPORTS = (raw as { reports: ConformanceReport[] }).reports;
 
+const NATIVE = nativeRaw as unknown as NativeIndex;
 const short = (sha: string | null | undefined) => (sha ? sha.slice(0, 12) : "none");
 /** Checkpoint position: frame-driven scenarios count frames (RUNTIME-CONTRACT section 7), the others ticks. */
 const at = (frameDriven: boolean, n: number | null) => (n === null ? "the end" : frameDriven ? `frame ${n}` : `tick ${n}`);
@@ -116,6 +121,7 @@ export function Determinism() {
   const why = explanation(result, changes);
   const pending = draft.validatedRevision !== draft.revision;
   const canRun = !pending && v?.ok === true && result.kind !== "running";
+  const settledSha = view.ok && !pending ? view.sha256 : null;
   const shown = result.kind === "not-run" || result.kind === "running" ? run : result.run;
 
   return (
@@ -177,6 +183,7 @@ export function Determinism() {
         </table>
       )}
 
+      <Environments sha={settledSha} rows={environmentTable({ sha: settledSha, reports: REPORTS, native: NATIVE, browser: result })} />
       <NativeEvidence sha={view.ok && !pending ? view.sha256 : null} projectId={origin?.templateId ?? null} />
       <NativeApps sha={view.ok && !pending ? view.sha256 : null} projectId={(draft.doc as { project?: { id?: unknown } } | null)?.project?.id as string | null ?? origin?.templateId ?? null} />
     </section>
