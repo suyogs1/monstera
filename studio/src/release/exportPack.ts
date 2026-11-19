@@ -3,6 +3,8 @@
 // the Studio manifests and asset bytes in the Task 1.5 layout). It defines no second pack format.
 import { assetPath, manifestPath, SPEC_PATH } from "../export/bundle";
 import type { ExportPlan } from "../engine/protocol";
+import { emitScaffold } from "../integrations/scaffold/emit";
+import { kiroTemplates } from "../pack/kiroTemplates";
 import { exportPack, type ExportResult, type PackFile, type ScaffoldChoice } from "../pack/export";
 import { MANIFEST_NAMES, serializeManifest, type ManifestMap } from "../project/manifests";
 import { blocking, type CheckItem } from "./completeness";
@@ -18,6 +20,8 @@ export interface ReleaseExportInput {
   manifests: ManifestMap | null;
   /** Asset bytes by asset id. */
   assets: ReadonlyMap<string, Uint8Array>;
+  /** Text of tools/check-drift.sh, written to the pack as a studio-scaffold file (mode 0755). */
+  driftScript: string;
   existing?: readonly PackFile[];
   choices?: Readonly<Record<string, ScaffoldChoice>>;
 }
@@ -49,6 +53,10 @@ export async function releaseExport(input: ReleaseExportInput): Promise<ReleaseE
     if (!data) return refuse("missing-asset", `Asset ${a.id} has no stored file, so the pack cannot be exported.`);
     put(assetPath(a.id, a.file), data);
   }
+  put("tools/check-drift.sh", enc.encode(input.driftScript));
+  for (const f of kiroTemplates(input.plan.projectId)) put(f.path, f.data);
+  // A fixed build label keeps the pack deterministic; the scaffold has no other use for it.
+  for (const f of emitScaffold(input.manifests.integrations, "studio")) put(`studio-pack/${f.path}`, enc.encode(f.text));
   const r = await exportPack({ files: [...files.values()], existing: input.existing, choices: input.choices });
   return r.ok ? r : { ok: false, reason: "pack", message: r.error, conflicts: r.conflicts };
 }

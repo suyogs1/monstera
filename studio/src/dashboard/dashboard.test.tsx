@@ -11,7 +11,7 @@ import type { ProjectRecord } from "../project/record";
 import { memoryMarker, newFactory, pumpkinText, rawAll } from "../project/testkit";
 import { png } from "../assets/fixtures.testkit";
 import { copyName, deleteWarning, determinismLine, evidenceLine, projectRows, validationLine, type LiveProject, type ProjectRow } from "./model";
-import { CreateView, ProjectListView, StatusCards } from "./views";
+import { BundleView, CreateView, ProjectListView, StatusCards } from "./views";
 
 // ---------------------------------------------------------------- views and wording
 const SHA_A = "a".repeat(64), SHA_B = "b".repeat(64);
@@ -82,11 +82,14 @@ describe("project rows and wording", () => {
 describe("project list view", () => {
   const rows = projectRows([entry({ populated: [{ module: "assets", detail: "2 assets" }] }), { state: "unreadable", projectKey: "bad", name: "Broken", message: "no" }], live(), INDEX);
   const html = renderToStaticMarkup(<ProjectListView {...props(rows)} />);
-  it("says the projects exist only in this browser and that bundles are not available", () => {
+  it("says the projects exist only in this browser and points to the bundle", () => {
     expect(html).toContain('data-testid="browser-only"');
     expect(html).toContain("only in this browser");
-    expect(html).toContain("not available yet");
-    expect(html).not.toMatch(/Export bundle|Import bundle/);
+    expect(html).not.toContain("not available yet");
+    const bundle = renderToStaticMarkup(<BundleView busy={false} canExport onExport={() => undefined} onImportFile={() => undefined} />);
+    expect(bundle).toContain('data-testid="bundle-export"');
+    expect(bundle).toContain('data-testid="bundle-import-file"');
+    expect(renderToStaticMarkup(<BundleView busy={false} canExport={false} onExport={() => undefined} onImportFile={() => undefined} />)).toMatch(/data-testid="bundle-export"[^>]*disabled|disabled=""[^>]*data-testid="bundle-export"/);
   });
   it("shows id, targets, hash, engine check, evidence and populated modules for a project", () => {
     expect(html).toContain("pumpkin-blaster");

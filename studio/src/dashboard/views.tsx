@@ -79,8 +79,8 @@ export function ProjectListView(p: ProjectListProps) {
       <h3 id="projects-h">Projects in this browser</h3>
       <p className="muted small" data-testid="browser-only">
         These projects exist only in this browser (IndexedDB on this device). Nothing is uploaded, and clearing the site data deletes them.
-        Use Export spec in the top bar to keep a copy of the open project&apos;s specification. Project bundles (specification, Studio data
-        and assets in one file) are not available yet.
+        Use Export spec in the top bar to keep a copy of the open project&apos;s specification, or export a project bundle below
+        (specification, Studio data and assets in one file) to move it to another browser.
       </p>
       {p.listError !== null && <p className="notice" role="alert" data-testid="project-list-error">{p.listError}</p>}
       {p.notice !== null && <p className={p.notice.kind === "error" ? "notice" : "status ok"} role={p.notice.kind === "error" ? "alert" : "status"} data-testid="project-notice">{p.notice.text}</p>}
@@ -114,6 +114,30 @@ export function CreateView({ templates, busy, onCreate, onImportFile }: {
       <p className="actions">
         <label>From a specification file (<code>monstera.spec.json</code>){" "}
           <input type="file" accept=".json,application/json" disabled={busy} data-testid="create-import-file" onChange={(e) => {
+            const f = e.currentTarget.files?.[0];
+            if (f) onImportFile(f);
+            e.currentTarget.value = "";
+          }} />
+        </label>
+      </p>
+    </section>
+  );
+}
+
+export function BundleView({ busy, canExport, onExport, onImportFile }: {
+  busy: boolean; canExport: boolean; onExport(): void; onImportFile(file: File): void;
+}) {
+  return (
+    <section aria-labelledby="bundle-h" data-testid="project-bundle">
+      <h3 id="bundle-h">Project bundle</h3>
+      <p className="muted small">
+        A bundle is one ZIP with the open project&apos;s specification, its Studio data and its asset files. Importing one adds a new
+        project; a bundle that fails any check is refused and nothing is changed.
+      </p>
+      <p className="actions">
+        <button type="button" disabled={busy || !canExport} data-testid="bundle-export" onClick={onExport}>Export bundle</button>
+        <label>Import bundle (<code>.zip</code>){" "}
+          <input type="file" accept=".zip,application/zip" disabled={busy} data-testid="bundle-import-file" onChange={(e) => {
             const f = e.currentTarget.files?.[0];
             if (f) onImportFile(f);
             e.currentTarget.value = "";
