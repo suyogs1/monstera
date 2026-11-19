@@ -17,6 +17,7 @@ import { LevelStudio } from "./levels/LevelStudio";
 import { GameplayModules } from "./gameplay/Modules";
 import { GameplayPlanned } from "./gameplay/Planned";
 import { Projects, Status } from "./dashboard/Dashboard";
+import { Drift, ProposalInbox } from "./kiro/KiroViews";
 import { Integration } from "./ui/sections/Integration";
 import { Overview } from "./ui/sections/Overview";
 import { Platforms } from "./ui/sections/Platforms";
@@ -43,6 +44,8 @@ const VIEWS: Partial<Record<SectionId, () => ReactElement>> = {
   determinism: () => <Determinism />,
   export: () => <Export />,
   integration: () => <Integration />,
+  "kiro-drift": () => <Drift />,
+  "kiro-proposals": () => <ProposalInbox />,
   levels: () => <LevelStudio />,
   "gameplay-modules": () => <GameplayModules />,
   "gameplay-planned": () => <GameplayPlanned />,

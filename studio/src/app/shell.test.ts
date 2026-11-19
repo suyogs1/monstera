@@ -21,6 +21,7 @@ describe("router: legacy hashes (acceptance of task 1.1)", () => {
     sprites: "#/sprites/editor",
     completeness: "#/release/completeness", readiness: "#/release/readiness",
     "dashboard-projects": "#/dashboard/projects", "dashboard-status": "#/dashboard/status",
+    "kiro-drift": "#/kiro/drift", "kiro-proposals": "#/kiro/proposals",
   };
   it("lists exactly the eighteen legacy section ids", () => {
     expect(SECTIONS.map((s) => s.id).sort()).toEqual(Object.keys(expected).sort());
@@ -58,7 +59,7 @@ describe("router: modules, partial and unknown hashes", () => {
   });
   it("an unknown section of a known module opens that module's first view", () => {
     expect(resolveHash("#/designer/nope").canonical).toBe("#/designer/overview");
-    expect(resolveHash("#/kiro/drift").canonical).toBe("#/kiro/integration");
+    expect(resolveHash("#/kiro/nope").canonical).toBe("#/kiro/integration");
   });
   it("modules that are not built resolve to a card", () => {
     for (const id of ["backend", "monetization"] as const) {

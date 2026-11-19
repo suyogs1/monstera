@@ -15,7 +15,7 @@ Statuses: `implemented` (works end to end, with a test), `prototype` (bounded su
 | Gameplay Systems | prototype | implemented | compiles to native | Forms for lives, win score, collectibles and enemies. Derivation is off by default; while on, Game Designer shows lives, win score and collisions read-only. Health, power-ups and progression need contract changes and stay planned. |
 | Backend and Services | planned | mock | scaffold | Not built. Will generate scaffold text and mock stubs only. Never a live Firebase connection. |
 | Monetization | planned | mock | mock | Not built. Will support mock and official Google test configurations only. No production ad ids in Studio. |
-| Kiro Development | prototype | implemented | scaffold | Only the static Developer Integration inventory exists. Pack export, ownership manifest, drift check and proposal inbox are not built. There is no Kiro connection. |
+| Kiro Development | prototype | implemented | scaffold | The static Developer Integration inventory with pack handoff prompts, a drift view for a re-imported export and a proposal inbox exist. There is no Kiro connection. |
 | Preview and Device Lab | implemented | implemented | studio only | Browser preview, determinism badge and hash-bound native evidence exist. The environments table is not built. Studio runs no device; it shows committed evidence only. |
 | Build and Release | prototype | implemented | compiles to native | The native source ZIP, a completeness check that blocks export on errors and a readiness checklist exist. The Studio pack is not part of the export yet (task 7.1). No signing, upload or store-ready claim. |
 
@@ -85,7 +85,7 @@ Statuses: `implemented` (works end to end, with a test), `prototype` (bounded su
 |---|---|---|---|---|---|---|
 | Static inventory of agents, hooks, steering and MCP tools, plus handoff prompts | implemented | implemented | studio only | `docs/evidence/studio-m1/acceptance.json` | A static inventory stamped with the commit. It does not connect to Kiro. |  |
 | Studio pack export with ownership manifest and drift-check script | planned | implemented | scaffold | none | Not built. Extension roots are written once and are not compiled into the app. | Pack layout and exporter (tasks 7.1 and 7.2). |
-| Review and apply an externally produced proposal | planned | prototype | studio only | none | Not built. Proposals are data, validated and applied only on user acceptance. | Proposal schema (done), apply path (task 4.2) and UI (task 7.4). |
+| Review and apply an externally produced proposal | prototype | prototype | studio only | `studio/src/kiro/proposal.test.ts` | Reads one JSON file, checks it with the engine or the manifest rules, shows the difference and applies it only on acceptance. Who wrote a proposal is not verified. |  |
 | Direct AI provider calls from the browser | unsupported | unsupported | planned | none | Decision D6: no provider calls and no keys in the browser during this milestone. | A server that holds keys; not part of Studio. |
 | Secure replaceable AI provider architecture | planned | planned | planned | none | Roadmap only. Interface sketched in design section 8.3; no implementation. | A server that holds keys and a provider interface. |
 
