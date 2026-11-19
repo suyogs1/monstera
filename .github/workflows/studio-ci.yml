@@ -24,6 +24,8 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+        with:
+          fetch-depth: 0 # task 9.2 diffs against 71c77e4 and origin/g6/clean-room-regeneration
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: ${{ env.NODE_VERSION }}
@@ -53,6 +55,8 @@ jobs:
         run: npm run a3:dashboard
       - name: Foundry flow, A4 asset to A7 pack and drift (task 9.1; scaffold UI pending task 6.3)
         run: npm run foundry:flow
+      - name: Regression proof, task 9.2 (engine and schema diff, monstera gates, generate --check and verify, g6 evidence diff)
+        run: npm run regression
       - name: Smoke test under the header policy (CSP report-only, then enforced)
         run: |
           SMOKE_CSP=report-only SMOKE_REPORT="$RUNNER_TEMP/smoke-csp-report-only.json" node scripts/smoke.mjs
