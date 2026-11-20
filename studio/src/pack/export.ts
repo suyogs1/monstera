@@ -1,12 +1,12 @@
-﻿// Pack exporter (task 7.1). Input: the files Studio generates for this export plus, on a re-export, the tree that was
+// Pack exporter (task 7.1). Input: the files Studio generates for this export plus, on a re-export, the tree that was
 // imported. Rules (requirement 9.4): a write-once file that already exists is kept byte for byte; a studio-scaffold file
 // edited by the developer is not overwritten without an explicit per-path choice; studio-data is rewritten (Studio's copy
 // wins). The archive is deterministic: sorted paths, fixed timestamps, fixed modes (see zip.ts).
 import { buildZip, type ZipEntry } from "../export/zip";
-import { classOf, MANIFEST_PATH, modeOf, type ManifestClass } from "./layout";
+import { classOf, MANIFEST_PATH, type ManifestClass } from "./layout";
 import { parsePackManifest, serializePackManifest, sha256Bytes, type PackManifestFile, type Sha256Bytes } from "./manifest";
 
-export interface PackFile { path: string; data: Uint8Array }
+export interface PackFile { path: string; data: Uint8Array; /** Unix permission bits; 0644 when absent. Comes from the engine plan, never from the file name. */ mode?: number }
 export type ScaffoldChoice = "keep" | "overwrite";
 export interface ScaffoldConflict { path: string; existingSha256: string; manifestSha256: string | null; newSha256: string }
 export interface ExportInput {
@@ -59,7 +59,7 @@ export async function exportPack(input: ExportInput): Promise<ExportResult> {
         else if (choice !== "overwrite") conflicts.push({ path: f.path, existingSha256, manifestSha256, newSha256: await sha(f.data) });
       }
     }
-    entries.push({ path: f.path, data, mode: modeOf(f.path) });
+    entries.push({ path: f.path, data, mode: f.mode ?? 0o644 });
     // A kept scaffold file is recorded with the hash Studio would write, so it keeps showing as edited (drift).
     if (cls !== "spec" && cls !== "engine-owned") manifest.push({ path: f.path, class: cls as ManifestClass, sha256: await sha(cls === "write-once" ? data : f.data) });
   }

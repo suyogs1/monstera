@@ -129,3 +129,14 @@ describe("importPack", () => {
     expect(r.ok && r.value.invalid.map((i) => i.path)).toEqual(["studio-pack/assets.json"]);
   });
 });
+
+describe("entry modes", () => {
+  it("take the mode from the file and default to 0644, with no rule on the file name", async () => {
+    const r = await ok({ files: [{ ...f("android/gradlew", "#!/bin/sh\n"), mode: 0o755 }, f("android/a.kt", "x\n"), f("tools/check-drift.sh", "#!/bin/sh\n")] });
+    const mode = (p: string) => r.entries.find((e) => e.path === p)?.mode;
+    expect(mode("android/gradlew")).toBe(0o755);
+    expect(mode("android/a.kt")).toBe(0o644);
+    expect(mode("tools/check-drift.sh")).toBe(0o644);
+    expect(mode(MANIFEST_PATH)).toBe(0o644);
+  });
+});

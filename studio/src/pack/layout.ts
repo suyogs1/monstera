@@ -1,4 +1,4 @@
-﻿// Pack layout (design 3.1, 3.4): which ownership class a path of the exported project belongs to. Pure, no I/O.
+// Pack layout (design 3.1, 3.4): which ownership class a path of the exported project belongs to. Pure, no I/O.
 // The pack reuses the Task 4.3 level path (`studio-pack/derived/levels/<id>/monstera.spec.json`); it adds no second format.
 export const MANIFEST_PATH = "MONSTERA-STUDIO-MANIFEST.json";
 /** Classes recorded in MONSTERA-STUDIO-MANIFEST.json. */
@@ -22,5 +22,4 @@ export function classOf(path: string): PackClass | null {
   if (path === ".gitignore") return "write-once";
   return null;
 }
-/** Permission bits for an archive entry: scripts run, everything else is plain. */
-export const modeOf = (path: string): number => (path.endsWith(".sh") ? 0o755 : 0o644);
+
