@@ -74,7 +74,7 @@ if (python) {
   const out = `${r.stdout ?? ""}${r.stderr ?? ""}`.trim();
   const final = out.split(/\r?\n/).filter((l) => l.startsWith("regression-export:")).pop() ?? "";
   const status = /: PASS/.test(final) && r.status === 0 ? "PASS" : /: PENDING/.test(final) && r.status === 0 ? "PENDING" : "FAIL";
-  add("exported-spec", status, final || `regression-export.mjs produced no verdict (exit ${r.status})`, [{ command: "node studio/scripts/regression-export.mjs", exit: r.status ?? -1, out: status === "PASS" ? final : out.split(/\r?\n/).slice(-30).join("\n") }]);
+  add("exported-spec", status, final || `regression-export.mjs produced no verdict (exit ${r.status})`, [{ command: "node studio/scripts/regression-export.mjs", exit: r.status ?? -1, out }]);
 }
 
 // 4. G6 evidence untouched.
