@@ -44,8 +44,8 @@ export async function releaseExport(input: ReleaseExportInput): Promise<ReleaseE
   if (!input.plan) return refuse("no-plan", "Generate the source files first.");
   if (input.manifests === null || input.specText === null) return refuse("no-project", "No validated project is open.");
   const files = new Map<string, PackFile>();
-  const put = (path: string, data: Uint8Array) => files.set(path, { path, data });
-  for (const f of input.plan.files) put(f.path, decode(f.data));
+  const put = (path: string, data: Uint8Array, mode?: number) => files.set(path, { path, data, mode });
+  for (const f of input.plan.files) put(f.path, decode(f.data), f.mode);
   put(SPEC_PATH, enc.encode(input.specText));
   for (const n of MANIFEST_NAMES) put(manifestPath(n), enc.encode(serializeManifest(n, input.manifests[n] as never)));
   for (const a of input.manifests.assets.assets) {
@@ -53,7 +53,7 @@ export async function releaseExport(input: ReleaseExportInput): Promise<ReleaseE
     if (!data) return refuse("missing-asset", `Asset ${a.id} has no stored file, so the pack cannot be exported.`);
     put(assetPath(a.id, a.file), data);
   }
-  put("tools/check-drift.sh", enc.encode(input.driftScript));
+  put("tools/check-drift.sh", enc.encode(input.driftScript), 0o755);
   for (const f of kiroTemplates(input.plan.projectId)) put(f.path, f.data);
   // A fixed build label keeps the pack deterministic; the scaffold has no other use for it.
   for (const f of emitScaffold(input.manifests.integrations, "studio")) put(`studio-pack/${f.path}`, enc.encode(f.text));
