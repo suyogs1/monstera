@@ -12,7 +12,7 @@ import type { ProjectListOutcome } from "../project/controller";
 import { populatedModules } from "../project/catalog";
 import { indicatorOf } from "../ui/persistence";
 import { copyName, deleteWarning, determinismLine, evidenceLine, projectRows, validationLine, type LiveProject } from "./model";
-import { CreateView, ProjectListView, StatusCards, type Notice } from "./views";
+import { BundleView, CreateView, ProjectListView, StatusCards, type Notice } from "./views";
 
 const INDEX = raw as unknown as NativeIndex;
 
@@ -99,6 +99,33 @@ export function Projects() {
               if (!read.ok) { setNotice({ kind: "error", text: `Could not import ${file.name}: ${read.message} Nothing was changed.` }); return; }
               await session.project.flush();
               const r = await session.importText(read.text, file.name);
+              setNotice(r.ok ? { kind: "ok", text: `Imported ${file.name} as a new project. It is now the open project.` } : { kind: "error", text: `Could not import ${file.name}: ${r.message}` });
+            } finally { setCreating(false); refresh(); }
+          })();
+        }}
+      />
+      <BundleView
+        busy={creating} canExport={live !== null}
+        onExport={() => {
+          setCreating(true); setNotice(null);
+          void (async () => {
+            try {
+              const r = await session.exportBundleBytes();
+              if (!r.ok) { setNotice({ kind: "error", text: `The bundle could not be exported: ${r.message}.` }); return; }
+              const url = URL.createObjectURL(new Blob([r.bytes as Uint8Array<ArrayBuffer>], { type: "application/zip" }));
+              const a = document.createElement("a");
+              a.href = url; a.download = `${live?.projectId ?? "project"}-bundle.zip`;
+              document.body.appendChild(a); a.click(); a.remove();
+              setTimeout(() => URL.revokeObjectURL(url), 1000);
+              setNotice({ kind: "ok", text: "Exported the project bundle." });
+            } finally { setCreating(false); }
+          })();
+        }}
+        onImportFile={(file) => {
+          setCreating(true); setNotice(null);
+          void (async () => {
+            try {
+              const r = await session.importBundleBytes(new Uint8Array(await file.arrayBuffer()), file.name);
               setNotice(r.ok ? { kind: "ok", text: `Imported ${file.name} as a new project. It is now the open project.` } : { kind: "error", text: `Could not import ${file.name}: ${r.message}` });
             } finally { setCreating(false); refresh(); }
           })();

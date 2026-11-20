@@ -3,6 +3,7 @@ import { useDraft, useSession } from "../../app/hooks";
 import type { ExportFile, ExportPlan } from "../../engine/protocol";
 import { buildZip } from "../../export/zip";
 import { blocking, verifyPlan, type CheckItem } from "../../release/completeness";
+import driftScript from "../../../../tools/check-drift.sh?raw";
 import { releaseExport } from "../../release/exportPack";
 import { useCompleteness } from "../../release/useCompleteness";
 import { useProject } from "../../project/context";
@@ -102,7 +103,7 @@ export function Export() {
     try {
       const assets = new Map<string, Uint8Array>();
       for (const a of project.manifests?.assets.assets ?? []) { const b = await project.assetBytes(a.id); if (b) assets.set(a.id, b); }
-      const r = await releaseExport({ items: completeness.items, plan, planChecks: plan.checks, specText: v.canonicalText, manifests: project.manifests, assets });
+      const r = await releaseExport({ items: completeness.items, plan, planChecks: plan.checks, specText: v.canonicalText, manifests: project.manifests, assets, driftScript });
       if (!r.ok) { setError(r.reason === "blocked" ? r.blockers.map((i) => i.message).join(" ") : r.message); return; }
       const url = URL.createObjectURL(new Blob([r.zip], { type: "application/zip" }));
       const a = document.createElement("a");

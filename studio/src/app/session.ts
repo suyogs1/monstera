@@ -1,5 +1,7 @@
 import { applyActiveLevel, applyReviewedGameplay, reviewGameplay, type ApplyResult, type GameplayApplyResult, type GameplayReview } from "../derive/apply";
 import { browserProbes } from "../assets/browserProbes";
+import { exportBundle, importBundle } from "../export/bundle";
+import { findSecrets } from "../integrations/secrets";
 import { BadgeRunner } from "../badge/badge";
 import { DraftStore, type Baseline, type Origin } from "../draft/store";
 import { PreviewController } from "../preview/controller";
@@ -287,6 +289,55 @@ export class Session {
       await this.startProjectFrom(top, baseline, v, fileName);
     } catch (e) {
       return { ok: false, message: `${e instanceof Error ? e.message : "the project could not be created"}. Your draft was not changed.` };
+    }
+    return { ok: true };
+  }
+
+  /** The open project as a bundle ZIP (spec, manifests, asset bytes), or a reason it cannot be exported yet. Writes nothing. */
+  async exportBundleBytes(): Promise<{ ok: true; bytes: Uint8Array } | { ok: false; message: string }> {
+    await this.project.flush();
+    await this.project.whenSettled();
+    const s = this.store.getState();
+    const state = this.project.currentState();
+    const text = s.validation?.canonicalText ?? null;
+    if (state === null || text === null || s.validation?.ok !== true || s.validatedRevision !== s.revision) {
+      return { ok: false, message: "only a project whose specification the engine has validated can be exported as a bundle" };
+    }
+    const assets = new Map<string, Uint8Array>();
+    for (const a of state.manifests.assets.assets) {
+      const b = await this.project.assetBytes(a.id);
+      if (!b) return { ok: false, message: `asset ${a.id} has no stored file, so the bundle cannot be exported` };
+      assets.set(a.id, b);
+    }
+    try { return { ok: true, bytes: exportBundle({ specText: text, manifests: state.manifests, assets }) }; } catch (e) { return { ok: false, message: (e as Error).message }; }
+  }
+
+  /**
+   * Imports a bundle ZIP as a NEW project. importBundle validates everything and applies nothing; only a complete, secret-free
+   * project is stored (asset bytes first, then the project record), so a refusal leaves the open project and storage as they were.
+   */
+  async importBundleBytes(bytes: Uint8Array, fileName: string): Promise<{ ok: true } | { ok: false; message: string }> {
+    const r = await importBundle(bytes);
+    if (!r.ok) return { ok: false, message: `${r.message} Your project was not changed.` };
+    const { specText, manifests, assets } = r.project;
+    const found = findSecrets(manifests)[0];
+    if (found) return { ok: false, message: `the bundle was refused: ${found.path.join(".") || "value"} looks like a credential (${found.rule}). Studio never stores keys. Your project was not changed.` };
+    const v = await this.engine.validateDraft(specText);
+    if (!v.parsed || v.canonicalText === null) return { ok: false, message: `the bundle's specification could not be read: ${v.issues[0]?.message ?? "invalid JSON"}. Your project was not changed.` };
+    const doc = JSON.parse(v.canonicalText) as Json;
+    if (doc === null || typeof doc !== "object" || Array.isArray(doc)) return { ok: false, message: "the bundle's specification is not a JSON object. Your project was not changed." };
+    await this.project.flush();
+    const projectKey = this.projects.newProjectKey();
+    for (const [id, data] of assets) {
+      const stored = await this.projects.putBlob(projectKey, id, data.slice());
+      if (!stored.ok) return { ok: false, message: `${stored.message} Your project was not changed.` };
+    }
+    const baseline: Baseline = { label: fileName, templateId: null, group: "import", canonicalText: v.canonicalText, sha256: v.sha256,
+      origin: v.ok ? await this.originOfImport(v.sha256) : null };
+    try {
+      await this.project.replaceProject({ projectKey, name: fileName, manifests, persist: true }, () => this.store.load(doc, baseline, v));
+    } catch (e) {
+      return { ok: false, message: `${e instanceof Error ? e.message : "the project could not be created"}. Your project was not changed.` };
     }
     return { ok: true };
   }

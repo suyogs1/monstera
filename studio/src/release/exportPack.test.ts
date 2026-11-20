@@ -10,14 +10,14 @@ const enc = new TextEncoder();
 const b64 = (s: string): string => btoa(s);
 const file = (path: string, text: string) => ({ path, mode: 0o644, size: text.length, sha256: "0".repeat(64), kind: "template", data: b64(text) });
 const plan: Extract<ExportPlan, { ok: true }> = {
-  ok: true, projectId: "p", specSha256: "a".repeat(64), label: "apps/p/monstera.spec.json", layout: "app", manifestSha256: "b".repeat(64),
+  ok: true, projectId: "pumpkin-blaster", specSha256: "a".repeat(64), label: "apps/pumpkin-blaster/monstera.spec.json", layout: "app", manifestSha256: "b".repeat(64),
   scenariosIncluded: 0, scenariosOmitted: null,
   files: [file("MONSTERA-MANIFEST.json", "{}"), file("android/Main.kt", "fun main() {}\n"), file("ios/Main.swift", "print(1)\n")],
 };
 const manifests = xrefManifests();
 const assets = new Map(manifests.assets.assets.map((a) => [a.id, enc.encode(`bytes of ${a.id}`)]));
 const ready = (over: Partial<ReleaseExportInput> = {}): ReleaseExportInput =>
-  ({ items: [], plan, planChecks: [], specText: "{\"project\":{}}\n", manifests, assets, ...over });
+  ({ items: [], plan, planChecks: [], specText: "{\"project\":{}}\n", manifests, assets, driftScript: "#!/bin/sh\nexit 0\n", ...over });
 const err = (c: CheckClass): CheckItem => ({ class: c, severity: "error", message: `${c} problem`, module: null, pathText: null });
 const warn: CheckItem = { class: "asset-unused", severity: "warning", message: "unused", module: null, pathText: null };
 describe("release export: blocked by every completeness error class", () => {
@@ -47,6 +47,18 @@ describe("release export: ready project", () => {
     expect(paths.some((p) => p.startsWith("studio-pack/assets/"))).toBe(true);
     expect(paths.some((p) => /^studio-pack\/[^/]+\.json$/.test(p))).toBe(true);
     expect(r.manifest.some((f) => f.path === "android/Main.kt")).toBe(false);
+  });
+  it("carries the drift script, the scaffold and the Kiro files, classed in the Studio manifest (A7)", async () => {
+    const r = await releaseExport(ready());
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    const cls = new Map(r.manifest.map((f) => [f.path, f.class]));
+    expect(cls.get("tools/check-drift.sh")).toBe("studio-scaffold");
+    const scaffold = [...cls].filter(([p]) => p.startsWith("studio-pack/scaffold/"));
+    expect(scaffold.length).toBeGreaterThan(0);
+    expect(scaffold.every(([, c]) => c === "studio-scaffold")).toBe(true);
+    expect(cls.get(".kiro/steering/studio-drift.md")).toBe("write-once");
+    expect(r.entries.find((e) => e.path === "tools/check-drift.sh")?.mode).toBe(0o755);
   });
   it("is deterministic", async () => {
     const a = await releaseExport(ready());

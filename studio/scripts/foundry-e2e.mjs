@@ -2,9 +2,12 @@
 // the steps no earlier script covers, and prints one table mapping every requirement to the script that proves it. A script that
 // reports PENDING lines keeps them in the table; nothing pending is counted as passed. Serves dist/ (run `npm run build` first).
 // Env: E2E_REPORT = path for the JSON result (default: none; docs/evidence/ is never written by this script).
+// E2E_FULL=1 also runs the M1 and M2 acceptance scripts (A2 non-regression). They rewrite tracked files under docs/evidence/:
+// restore them with `git checkout -- docs/evidence` afterwards. Default runs do not touch them.
 // Exit code 1 if any script fails.
 import { spawnSync } from "node:child_process";
 import { writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 const studio = join(dirname(fileURLToPath(import.meta.url)), "..");
@@ -14,12 +17,17 @@ const SCRIPTS = [
   { script: "a3-dashboard.mjs", covers: ["A3"], what: "create from template, edit in the Designer, save, reload, rename, duplicate, delete" },
   { script: "derive-apply.mjs", covers: ["A5", "A6"], what: "derived-spec apply path through the engine worker" },
   { script: "a5-levels.mjs", covers: ["A5"], what: "two levels, apply, variants, real monstera validate on every export" },
-  { script: "foundry-flow.mjs", covers: ["A4", "A6", "A7"], what: "image import with provenance, slice, animation, gameplay apply, pack export, drift script, re-import" },
+  { script: "foundry-flow.mjs", covers: ["A3", "A4", "A6", "A7"], what: "bundle export and import, image import with provenance, slice, animation, scaffold UI, gameplay apply, pack export, drift script, re-import" },
 ];
+if (process.env.E2E_FULL === "1") {
+  SCRIPTS.push({ script: "acceptance.mjs", covers: ["A2"], what: "M1 acceptance (regression)" }, { script: "m2-acceptance.mjs", covers: ["A2"], what: "M2 acceptance (regression)" });
+}
 const rows = [];
 for (const s of SCRIPTS) {
   const t0 = Date.now();
-  const r = spawnSync(process.execPath, [join(studio, "scripts", s.script)], { cwd: studio, encoding: "utf8", maxBuffer: 1 << 28 });
+  // smoke.mjs writes docs/evidence by default; keep its report out of the tracked tree.
+  const env = { ...process.env, SMOKE_REPORT: process.env.SMOKE_REPORT || join(tmpdir(), "foundry-e2e-smoke.json") };
+  const r = spawnSync(process.execPath, [join(studio, "scripts", s.script)], { cwd: studio, env, encoding: "utf8", maxBuffer: 1 << 28 });
   const out = `${r.stdout ?? ""}${r.stderr ?? ""}`;
   const lines = out.split(/\r?\n/);
   const summary = lines.filter((l) => /\d+\/\d+ (checks|passed)/.test(l)).pop() ?? lines.filter(Boolean).pop() ?? "";
