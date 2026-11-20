@@ -42,15 +42,23 @@ describe("pack-import secret scan beyond the manifests", () => {
   it("accepts clean text", async () => {
     expect(await through([])).toEqual([]);
   });
-  it("does not scan binary bytes as text", async () => {
+  it("does not scan asset bytes as text", async () => {
     const hero = Uint8Array.from([...png(2, 2), ...enc.encode(AWS)]);
-    const blob = Uint8Array.from([0, 1, 2, ...enc.encode(AWS)]);
     const inv = await through([
       { path: "studio-pack/assets/asset-0001/hero.png", data: hero },
       { path: "STUDIO-PACK/ASSETS/asset-0002/x.txt", data: enc.encode(AWS) },
-      { path: "studio-pack/scaffold/blob.bin", data: blob },
     ]);
     expect(inv).toEqual([]);
+  });
+  it.each([
+    ["a NUL prefix", Uint8Array.from([0, ...enc.encode(`val k = "${AWS}"`)])],
+    ["UTF-16LE with a BOM", Uint8Array.from([0xff, 0xfe, ...[...`val k = "${AWS}"`].flatMap((c) => [c.charCodeAt(0), 0])])],
+    ["Latin-1", Uint8Array.from([0xe9, 0x20, ...enc.encode(AWS)])],
+  ])("still scans non-UTF-8 text with %s", async (_n, data) => {
+    for (const path of [".kiro/steering/enc.md", "studio-pack/scaffold/android/Enc.kt"]) {
+      const inv = await through([{ path, data }]);
+      expect(inv).toEqual([{ path, message: "contains a credential-shaped value (aws-access-key-id)" }]);
+    }
   });
   it("redacts a path that is itself credential-shaped", async () => {
     const inv = await through([f(`studio-pack/scaffold/${AWS}.kt`, `val k = "${AWS}"\n`)]);

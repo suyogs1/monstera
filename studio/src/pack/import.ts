@@ -23,13 +23,14 @@ export interface PackImport {
 export type ImportResult = { ok: true; value: PackImport } | { ok: false; error: string };
 
 // Text-scan classification. Assets are the only binary class in a pack; android/ and ios/ are covered by the engine's own
-// manifest. Everything else is scanned when its bytes decode as UTF-8 without NUL; extensions are never trusted.
+// manifest. Everything else is always scanned: clean UTF-8 is decoded as is; anything else (NUL bytes, UTF-16, Latin-1)
+// is read with NULs dropped and bytes mapped one to one, so a NUL prefix or a re-encoding cannot hide a credential.
 const NOT_TEXT_PREFIXES = ["studio-pack/assets/", "android/", "ios/"];
 const strictUtf8 = new TextDecoder("utf-8", { fatal: true });
 function textOf(path: string, data: Uint8Array): string | null {
   if (NOT_TEXT_PREFIXES.some((p) => path.toLowerCase().startsWith(p))) return null;
-  if (data.subarray(0, 8192).includes(0)) return null;
-  try { return strictUtf8.decode(data); } catch { return null; }
+  if (!data.includes(0)) { try { return strictUtf8.decode(data); } catch { /* fall through to the byte-wise reading */ } }
+  return new TextDecoder("latin1").decode(data.filter((b) => b !== 0));
 }
 function scanEntry(path: string, data: Uint8Array): PackImport["invalid"][number] | null {
   const text = textOf(path, data);
@@ -38,7 +39,8 @@ function scanEntry(path: string, data: Uint8Array): PackImport["invalid"][number
   if (data.length > MAX_FILE_BYTES) return { path: shown, message: "too large to scan for credential-shaped values" };
   const rule = secretRules(text)[0];
   return rule ? { path: shown, message: `contains a credential-shaped value (${rule})` } : null;
-}export async function importPack(files: readonly PackFile[], sha: Sha256Bytes = sha256Bytes): Promise<ImportResult> {
+}
+export async function importPack(files: readonly PackFile[], sha: Sha256Bytes = sha256Bytes): Promise<ImportResult> {
   const tree = new Map<string, Uint8Array>();
   for (const f of files) {
     const why = unsafePath(f.path);
