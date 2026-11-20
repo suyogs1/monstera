@@ -13,6 +13,7 @@
     "smoke": "node scripts/smoke.mjs",
     "shell": "node scripts/shell.mjs",
     "regression": "node scripts/regression-proof.mjs",
+    "regression:export": "node scripts/regression-export.mjs",
     "derive:apply": "node scripts/derive-apply.mjs",
     "a5:levels": "node scripts/a5-levels.mjs",
     "a3:dashboard": "node scripts/a3-dashboard.mjs",
