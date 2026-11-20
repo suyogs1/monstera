@@ -54,7 +54,7 @@ else {
   add("gates", g.exit === 0 ? "PASS" : "FAIL", tail(g.out, 1), [{ ...g, out: g.exit === 0 ? tail(g.out, 1) : g.out.split(/\r?\n/).filter((l) => /^(FAIL|gates)/.test(l)).map((l) => l.slice(0, 160)).join("\n") }]);
 }
 
-// 3. generate --check and verify. Stand-in: the committed specs, because no Studio export exists until tasks 1.6, 1.7 and 9.1 land.
+// 3a. Stand-in only: the committed specs. This is NOT the A9 proof (3b is).
 if (python) {
   const specs = [
     ["apps/pumpkin-blaster/monstera.spec.json", "apps/pumpkin-blaster"],
@@ -66,9 +66,16 @@ if (python) {
     runs.push(monstera("generate", spec, "--check"), monstera("verify", dir));
   }
   const ok = runs.every((r) => r.exit === 0);
-  add("generate-check-verify", ok ? "PASS" : "FAIL", `${specs.length} committed specs (stand-in)`, runs.map((r) => ({ ...r, out: tail(r.out, 1).slice(0, 200) })));
+  add("generate-check-verify", ok ? "PASS" : "FAIL", `${specs.length} committed specs (stand-in, not the A9 proof)`, runs.map((r) => ({ ...r, out: tail(r.out, 1).slice(0, 200) })));
 }
-add("exported-spec", "PENDING", "no Studio-exported spec was checked: tasks 1.6 and 1.7 (export, re-import) and 9.1 (end-to-end) are not merged. The committed specs above are a stand-in, not the A9 proof", []);
+// 3b. The A9 proof: specs exported by the real Studio UI, through generate --check and verify (regression-export.mjs).
+{
+  const r = spawnSync(process.execPath, [join(repo, "studio", "scripts", "regression-export.mjs")], { cwd: join(repo, "studio"), encoding: "utf8", maxBuffer: 64 * 1024 * 1024 });
+  const out = `${r.stdout ?? ""}${r.stderr ?? ""}`.trim();
+  const final = out.split(/\r?\n/).filter((l) => l.startsWith("regression-export:")).pop() ?? "";
+  const status = /: PASS/.test(final) && r.status === 0 ? "PASS" : /: PENDING/.test(final) && r.status === 0 ? "PENDING" : "FAIL";
+  add("exported-spec", status, final || `regression-export.mjs produced no verdict (exit ${r.status})`, [{ command: "node studio/scripts/regression-export.mjs", exit: r.status ?? -1, out: status === "PASS" ? final : out.split(/\r?\n/).slice(-30).join("\n") }]);
+}
 
 // 4. G6 evidence untouched.
 if (!haveRef(G6_REF)) {
