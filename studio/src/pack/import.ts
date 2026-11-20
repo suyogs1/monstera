@@ -1,6 +1,8 @@
 ﻿// Pack importer (task 7.1): reads an extracted tree, validates the manifest and every listed file, and classifies each
 // file as unchanged, edited, missing or unknown (requirement 9.3). Reading ZIP bytes with limits belongs to task 1.5; this
 // takes the already extracted entries. Nothing is written.
+import { secretRules } from "../integrations/secrets";
+import { redact } from "../export/bundle";
 import { unsafePath } from "../export/zip";
 import { parseManifest, MANIFEST_NAMES, type ManifestName } from "../project/manifests";
 import { classOf, MANIFEST_PATH, type ManifestClass } from "./layout";
@@ -49,8 +51,10 @@ export async function importPack(files: readonly PackFile[], sha: Sha256Bytes = 
   for (const name of MANIFEST_NAMES) {
     const data = tree.get(`studio-pack/${name}.json`);
     if (!data) continue;
+    const rule = secretRules(new TextDecoder("utf-8", { fatal: false }).decode(data))[0];
+    if (rule) invalid.push({ path: `studio-pack/${name}.json`, message: `contains a credential-shaped value (${rule})` });
     const r = parseManifest(name as ManifestName, data);
-    if (!r.ok) invalid.push({ path: `studio-pack/${name}.json`, message: r.issues[0] ? `${r.issues[0].path.join(".")} ${r.issues[0].message}` : "invalid" });
+    if (!r.ok) invalid.push({ path: `studio-pack/${name}.json`, message: r.issues[0] ? redact(`${r.issues[0].path.join(".")} ${r.issues[0].message}`) : "invalid" });
   }
   const drift = out.filter((f) => f.class === "studio-scaffold" && (f.state === "edited" || f.state === "missing"));
   return { ok: true, value: { manifest: parsed.value, files: out, drift, invalid } };
