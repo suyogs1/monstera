@@ -30,6 +30,8 @@ const PYTHONS = [["python3"], ["python"], ["py", "-3"]];
 const py = PYTHONS.find(([c, ...pre]) => { const p = spawnSync(c, [...pre, "--version"], { encoding: "utf8" }); return !p.error && p.status === 0; });
 if (!py) finish("FAIL", "no Python 3 found");
 const python = (args, cwd) => spawnSync(py[0], [...py.slice(1), ...args], { encoding: "utf8", cwd, env: { ...process.env, PYTHONUTF8: "1" } });
+// zipfile.extractall drops Unix modes. Apply the mode each entry carries (high 16 bits of external attributes) so the executable bit of gradlew is checked as exported.
+const UNZIP_WITH_MODES = "import sys,os,zipfile\nz=zipfile.ZipFile(sys.argv[1])\nz.extractall(sys.argv[2])\nfor i in z.infolist():\n m=(i.external_attr>>16)&0o777\n if m and not i.is_dir(): os.chmod(os.path.join(sys.argv[2],i.filename),m)";
 const monstera = (args) => { const r = python([join("tools", "monstera", "monstera.py"), ...args], repo); return { cmd: `monstera ${args.join(" ")}`, exit: r.status ?? -1, out: `${r.stdout ?? ""}${r.stderr ?? ""}`.trim() }; };
 if (!existsSync(join(studio, "dist", "index.html"))) unavailable("studio/dist is missing; run `npm run build` first");
 const server = await preview({ root: studio, preview: { port: 0, host: "127.0.0.1", open: false } });
@@ -59,7 +61,7 @@ try {
     catch (e) { line(false, `${id}: ${button} starts a download`, `${String(e.message).split("\n")[0]}\n${((await page.locator('[data-testid="export"]').innerText().catch(() => "")) ?? "").slice(0, 1500)}`); continue; }
     const zip = join(dir, `${id}.zip`), extracted = join(dir, id);
     await dl.saveAs(zip);
-    const un = python(["-c", "import sys,zipfile;zipfile.ZipFile(sys.argv[1]).extractall(sys.argv[2])", zip, extracted]);
+    const un = python(["-c", UNZIP_WITH_MODES, zip, extracted]);
     // The pack ZIP is rooted at the tree and carries monstera.spec.json; the plain ZIP holds <id>/ and embeds the spec as an Android asset.
     const pack = button === "export-download-pack";
     const out = pack ? extracted : join(extracted, id);
