@@ -28,7 +28,7 @@ export type ImportResult = { ok: true; value: PackImport } | { ok: false; error:
 const NOT_TEXT_PREFIXES = ["studio-pack/assets/", "android/", "ios/"];
 const strictUtf8 = new TextDecoder("utf-8", { fatal: true });
 function textOf(path: string, data: Uint8Array): string | null {
-  if (NOT_TEXT_PREFIXES.some((p) => path.toLowerCase().startsWith(p))) return null;
+  if (NOT_TEXT_PREFIXES.some((p) => path.startsWith(p))) return null;
   if (!data.includes(0)) { try { return strictUtf8.decode(data); } catch { /* fall through to the byte-wise reading */ } }
   return new TextDecoder("latin1").decode(data.filter((b) => b !== 0));
 }

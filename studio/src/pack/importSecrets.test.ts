@@ -46,9 +46,12 @@ describe("pack-import secret scan beyond the manifests", () => {
     const hero = Uint8Array.from([...png(2, 2), ...enc.encode(AWS)]);
     const inv = await through([
       { path: "studio-pack/assets/asset-0001/hero.png", data: hero },
-      { path: "STUDIO-PACK/ASSETS/asset-0002/x.txt", data: enc.encode(AWS) },
     ]);
     expect(inv).toEqual([]);
+  });
+  it.each(["STUDIO-PACK/ASSETS/asset-0002/x.txt", "Android/Leak.kt", "IOS/x.plist"])("scans case-variant path %s as text", async (path) => {
+    const inv = await through([f(path, `val k = "${AWS}"`)]);
+    expect(inv).toEqual([{ path, message: "contains a credential-shaped value (aws-access-key-id)" }]);
   });
   it.each([
     ["a NUL prefix", Uint8Array.from([0, ...enc.encode(`val k = "${AWS}"`)])],
