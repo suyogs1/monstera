@@ -26,6 +26,21 @@ export function secretRules(text: string): string[] {
 }
 export const looksSecret = (text: string): boolean => secretRules(text).length > 0;
 export interface SecretFinding { path: (string | number)[]; rule: string }
+/** A path for a message. A credential can be an object key, so a segment that itself matches a rule is never echoed. */
+export const safePath = (p: readonly (string | number)[]): string =>
+  p.map((s) => (typeof s === "string" && secretRules(s).length > 0 ? "<key>" : String(s))).join(".") || "value";
+/**
+ * The one guard for a whole project: the spec document and every Studio manifest. Returns a refusal message that names the
+ * rule and a redacted location and never the matched value, or null when nothing credential-shaped is present. Every path that
+ * commits or exports a full project state goes through this function.
+ */
+export function refuseSecrets(state: { doc: unknown; manifests: unknown }): string | null {
+  const inSpec = findSecrets(state.doc)[0];
+  if (inSpec) return `a credential-shaped value (${inSpec.rule}) at specification ${safePath(inSpec.path)} is not accepted. Studio never stores keys`;
+  const inManifest = findSecrets(state.manifests)[0];
+  if (inManifest) return `a credential-shaped value (${inManifest.rule}) at manifest ${safePath(inManifest.path)} is not accepted. Studio never stores keys`;
+  return null;
+}
 /** Walks every string value and object key of a parsed value. */
 export function findSecrets(value: unknown, path: (string | number)[] = []): SecretFinding[] {
   if (typeof value === "string") return secretRules(value).map((rule) => ({ path, rule }));

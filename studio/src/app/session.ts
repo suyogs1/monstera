@@ -1,7 +1,7 @@
 import { applyActiveLevel, applyReviewedGameplay, reviewGameplay, type ApplyResult, type GameplayApplyResult, type GameplayReview } from "../derive/apply";
 import { browserProbes } from "../assets/browserProbes";
 import { exportBundle, importBundle } from "../export/bundle";
-import { findSecrets } from "../integrations/secrets";
+import { refuseSecrets } from "../integrations/secrets";
 import { BadgeRunner } from "../badge/badge";
 import { DraftStore, type Baseline, type Origin } from "../draft/store";
 import { PreviewController } from "../preview/controller";
@@ -126,7 +126,7 @@ export class Session {
     if (!v.parsed) return false;
     const doc = JSON.parse(project.specText) as Json;
     if (doc === null || typeof doc !== "object" || Array.isArray(doc)) return false;
-    await this.project.replaceProject({ projectKey: project.projectKey, name: project.name, manifests: project.manifests, persist: false }, () => this.store.load(doc, project.baseline, v));
+    await this.project.replaceProject({ projectKey: project.projectKey, name: project.name, manifests: project.manifests, doc, persist: false }, () => this.store.load(doc, project.baseline, v));
     return true;
   }
 
@@ -163,8 +163,10 @@ export class Session {
   /** Content of a freshly loaded document becomes a new project (new key; every earlier project record is kept). */
   private async startProjectFrom(doc: Json, baseline: Baseline, v: DraftValidation, name: string): Promise<void> {
     const { manifests, provisionalGameplay } = await this.defaultsFor(v);
+    const refusal = refuseSecrets({ doc, manifests }); // before the save is started: its failures are reported by the store, this one is a refusal
+    if (refusal) throw new Error(refusal);
     const projectKey = this.projects.newProjectKey();
-    const saving = this.project.replaceProject({ projectKey, name, manifests, persist: true, provisionalGameplay }, () => this.store.load(doc, baseline, v));
+    const saving = this.project.replaceProject({ projectKey, name, manifests, doc, persist: true, provisionalGameplay }, () => this.store.load(doc, baseline, v));
     saving.catch(() => undefined); // the store reports save failures through its state
   }
 
@@ -268,7 +270,7 @@ export class Session {
     }
     if (!content) return;
     const { doc, baseline, v } = content;
-    const saving = this.project.replaceProject({ projectKey: view.projectKey, name: view.name ?? baseline.label, manifests: view.manifests, persist: true }, () => this.store.load(doc, baseline, v));
+    const saving = this.project.replaceProject({ projectKey: view.projectKey, name: view.name ?? baseline.label, manifests: view.manifests, doc, persist: true }, () => this.store.load(doc, baseline, v));
     saving.catch(() => undefined);
   }
 
@@ -320,12 +322,12 @@ export class Session {
     const r = await importBundle(bytes);
     if (!r.ok) return { ok: false, message: `${r.message} Your project was not changed.` };
     const { specText, manifests, assets } = r.project;
-    const found = findSecrets(manifests)[0];
-    if (found) return { ok: false, message: `the bundle was refused: ${found.path.join(".") || "value"} looks like a credential (${found.rule}). Studio never stores keys. Your project was not changed.` };
     const v = await this.engine.validateDraft(specText);
     if (!v.parsed || v.canonicalText === null) return { ok: false, message: `the bundle's specification could not be read: ${v.issues[0]?.message ?? "invalid JSON"}. Your project was not changed.` };
     const doc = JSON.parse(v.canonicalText) as Json;
     if (doc === null || typeof doc !== "object" || Array.isArray(doc)) return { ok: false, message: "the bundle's specification is not a JSON object. Your project was not changed." };
+    const refusal = refuseSecrets({ doc, manifests });
+    if (refusal) return { ok: false, message: `the bundle was refused: ${refusal}. Your project was not changed.` };
     await this.project.flush();
     const projectKey = this.projects.newProjectKey();
     // The controller keeps the bytes it is handed in its own cache, so they stay readable and re-exportable even where
@@ -343,7 +345,7 @@ export class Session {
     const baseline: Baseline = { label: fileName, templateId: null, group: "import", canonicalText: v.canonicalText, sha256: v.sha256,
       origin: v.ok ? await this.originOfImport(v.sha256) : null };
     try {
-      await this.project.replaceProject({ projectKey, name: fileName, manifests, persist: true, blobs: retained }, () => this.store.load(doc, baseline, v));
+      await this.project.replaceProject({ projectKey, name: fileName, manifests, doc, persist: true, blobs: retained }, () => this.store.load(doc, baseline, v));
     } catch (e) {
       if (this.project.getState().projectKey !== projectKey) await this.projects.pruneBlobs(projectKey, new Set());
       return { ok: false, message: `${e instanceof Error ? e.message : "the project could not be created"}. Your project was not changed.` };

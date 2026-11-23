@@ -3,6 +3,7 @@
 // engine or manifest schemas as a manual edit. Nothing is committed here: planProposal returns a plan, the caller shows the
 // diff and commits only on acceptance. A rejected or refused proposal therefore changes nothing.
 import { lockedBy, POINTER_OWNERS } from "../derive/ownership";
+import { refuseSecrets } from "../integrations/secrets";
 import { ORACLE_SEED, ORACLE_TICKS, type ApplyEngine } from "../derive/apply";
 import { parseManifest, validateManifest, type ManifestMap, type ProposalManifest } from "../project/manifests";
 import { parseStrictJson } from "../project/manifests/strictJson";
@@ -107,6 +108,8 @@ export async function planProposal(state: { doc: Json; manifests: ManifestMap },
     }
     const r = applyAll(state.doc, proposal);
     if (!r.ok) return r;
+    const secretInSpec = refuseSecrets({ doc: r.root, manifests: state.manifests });
+    if (secretInSpec) return refuse("validate", `the proposal was refused: ${secretInSpec}`);
     const verdict = await engine.validateDraft(JSON.stringify(r.root, null, 2));
     if (!verdict.ok || verdict.canonicalText === null || verdict.sha256 === null) {
       const first = verdict.issues[0];
@@ -121,6 +124,8 @@ export async function planProposal(state: { doc: Json; manifests: ManifestMap },
   const name = MANIFEST_OF[proposal.target as keyof typeof MANIFEST_OF];
   const r = applyAll(state.manifests[name], proposal);
   if (!r.ok) return r;
+  const secretInManifest = refuseSecrets({ doc: state.doc, manifests: { ...state.manifests, [name]: r.root } });
+  if (secretInManifest) return refuse("validate", `the proposal was refused: ${secretInManifest}`);
   const checked = validateManifest(name, r.root);
   if (!checked.ok) {
     const first = checked.issues[0];

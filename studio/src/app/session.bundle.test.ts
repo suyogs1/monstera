@@ -1,7 +1,8 @@
 // Task 9.1 (A3): a project bundle exported from one Session imports into another as an identical project; refusals change nothing.
 import { describe, expect, it, vi } from "vitest";
 import { png } from "../assets/fixtures.testkit";
-import { exportBundle, importBundle } from "../export/bundle";
+import { importBundle } from "../export/bundle";
+import { unguardedBundle } from "../export/bundle.testkit";
 import { rawZip } from "../export/zip.testkit";
 import { STORE_BLOBS } from "../project/idb";
 import { memoryMarker, newFactory, rawAll, readOnlyStorage } from "../project/testkit";
@@ -60,7 +61,7 @@ describe("project bundle through the Session (A3)", () => {
     if (!parsed.ok) throw new Error(parsed.message);
     const m = parsed.project.manifests;
     const tainted = { ...m, assets: { ...m.assets, assets: m.assets.assets.map((x) => ({ ...x, provenance: { ...x.provenance, notes: "AKIAIOSFODNN7EXAMPLE" } })) } };
-    const bad = exportBundle({ ...parsed.project, manifests: tainted });
+    const bad = unguardedBundle({ ...parsed.project, manifests: tainted });
     const b = await boot();
     const before = snapshot(b);
     const r = await b.session.importBundleBytes(bad, "bad.zip");
