@@ -98,6 +98,18 @@ private fun loadAtlas(context: Context, atlas: SpriteAtlas): ImageBitmap? {
     Log.i(SPRITE_TAG, "sprites atlas=loaded size=${bitmap.width}x${bitmap.height} frames=${atlas.columns * atlas.rows}")
     return bitmap.asImageBitmap()
 }
+/** Logs the first frame changes of animated kinds as drawn (contract section 10): evidence that frames follow the tick. */
+private class SpriteFrameLog {
+    private val last = HashMap<Int, Int>()
+    private var lines = 0
+    fun drawn(kind: Int, id: String, frame: Int, tick: Long) {
+        if (lines >= MAX_LINES || last[kind] == frame) return
+        last[kind] = frame
+        lines++
+        Log.i(SPRITE_TAG, "sprites tick=$tick kind=$id frame=$frame")
+    }
+    companion object { const val MAX_LINES = 6 }
+}
 private fun hexColor(hex: String): Color = Color(0xFF000000 or hex.removePrefix("#").toLong(16))
 
 private fun effectOf(e: KindEffect): Effect = when (e) {
@@ -148,6 +160,7 @@ fun GameScreen(spec: MonsteraSpec, verified: Boolean, session: GameSession, onRe
     val glyphPaint = remember { Paint(Paint.ANTI_ALIAS_FLAG).apply { textAlign = Paint.Align.CENTER } }
     val atlas = spec.game.atlas
     val sheet = remember { loadAtlas(context, atlas) }
+    val frameLog = remember { SpriteFrameLog() }
     val popupPaint = remember { Paint(Paint.ANTI_ALIAS_FLAG).apply { textAlign = Paint.Align.CENTER; isFakeBoldText = true } }
 
     LaunchedEffect(loop) {
@@ -258,6 +271,7 @@ fun GameScreen(spec: MonsteraSpec, verified: Boolean, session: GameSession, onRe
                                 dstSize = IntSize(maxOf(1, px.w.roundToInt()), maxOf(1, px.h.roundToInt())),
                                 filterQuality = FilterQuality.None,
                             )
+                            if (kind.sprite.frames.size > 1) frameLog.drawn(e.kind, kind.id, frame, loop.world.tick.toLong())
                         } else if (kind.glyph.isEmpty()) {
                             drawRect(hexColor(kind.color), Offset(px.x, px.y), Size(px.w, px.h))
                         } else {

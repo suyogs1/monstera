@@ -39,7 +39,7 @@
       "kind": "template",
       "mode": "644",
       "path": "android/app/src/main/kotlin/app/monstera/boundarylab/GameScreen.kt",
-      "sha256": "092613dd732b5d79a5ba9880f393312bb954a849dfacc43072ab1e9f9f7afb4c",
+      "sha256": "26febbce583bb833692537dcabe680f9668bfc7361e640c80c44038e21e0ec04",
       "source": "templates/android/app/src/main/kotlin/GameScreen.kt.tmpl"
     },
     {
@@ -298,7 +298,7 @@
       "kind": "template",
       "mode": "644",
       "path": "ios/Sources/BoundaryLab/GameScene.swift",
-      "sha256": "d62edc4d19776e98bc3c947259f26932f0d2a292fc53e428a7312aa893d08c03",
+      "sha256": "2540fe407db395cbc64a5956a3d1d20d5fff4557262f00adb2c90a3b63b804df",
       "source": "templates/ios/Sources/GameScene.swift.tmpl"
     },
     {

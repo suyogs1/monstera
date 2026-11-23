@@ -94,6 +94,33 @@ class AtlasValidationTests(unittest.TestCase):
         for label, data in cases.items():
             self.assertIn(("$.game.atlas.png", "semantic.atlas-png"), codes(with_atlas(data)), label)
 
+    def test_chunk_order_and_stream_rules(self) -> None:
+        good = make_png(8, 4)
+        ihdr = good[8:33]  # length, type, 13 bytes, CRC
+        rest = good[33:]
+        raw = b"".join(b"\x00" + bytes(range(32)) for _ in range(4))
+        comp = zlib.compress(raw)
+        half = len(comp) // 2
+        text = chunk(b"tEXt", b"k\x00v")
+        cases = {
+            "duplicate IHDR": good[:33] + ihdr + rest,
+            "IDAT not consecutive": good[:33] + chunk(b"IDAT", comp[:half]) + text + chunk(b"IDAT", comp[half:]) + chunk(b"IEND", b""),
+            "bytes after the zlib stream": good[:33] + chunk(b"IDAT", comp + b"\x00\x01") + chunk(b"IEND", b""),
+        }
+        expect = {"duplicate IHDR": "more than one IHDR", "IDAT not consecutive": "not consecutive",
+                  "bytes after the zlib stream": "after the end of its compressed stream"}
+        for label, data in cases.items():
+            found = png_issues(data, 8, 4)
+            self.assertTrue(found and expect[label] in found[0], f"{label}: {found}")
+        split = good[:33] + chunk(b"IDAT", comp[:half]) + chunk(b"IDAT", comp[half:]) + chunk(b"IEND", b"")
+        self.assertEqual(png_issues(split, 8, 4), [])  # consecutive IDAT chunks are one stream
+
+    def test_the_documented_inflate_limit_is_checked_from_the_header(self) -> None:
+        from monstera import atlas
+        # A header whose scanlines exceed MAX_INFLATED is refused before inflating (the schema keeps real atlases far below it).
+        found = png_issues(make_png(1100, 1000, raw=b"\x00"), 1100, 1000)
+        self.assertTrue(found and str(atlas.MAX_INFLATED) in found[0], found)
+
     def test_text_that_is_not_strict_base64_is_refused_by_the_schema(self) -> None:
         for text in ("abc", "ab=c", "a b=", "iVBORw0KGgo\n"):
             self.assertIn(("$.game.atlas.png", "pattern"), codes(with_atlas(text)), repr(text))

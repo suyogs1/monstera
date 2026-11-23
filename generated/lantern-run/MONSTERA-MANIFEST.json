@@ -39,7 +39,7 @@
       "kind": "template",
       "mode": "644",
       "path": "android/app/src/main/kotlin/app/monstera/lanternrun/GameScreen.kt",
-      "sha256": "c32dc13c2b625b2a11496292028e347f31fa7d8e277c3b4a3b78cff831683129",
+      "sha256": "7e064e552fccc2277ef7bc65c952b217ea5cf03d106402f649147089aa88a913",
       "source": "templates/android/app/src/main/kotlin/GameScreen.kt.tmpl"
     },
     {
@@ -291,7 +291,7 @@
       "kind": "template",
       "mode": "644",
       "path": "ios/Sources/LanternRun/GameScene.swift",
-      "sha256": "dc272486dba39d59c9f9355a0872696687230148d4a9a5620f6659c115fef2ee",
+      "sha256": "baab769fd0c40af84d5ec0edb3c18f8cc934d9449420a715d89811d9cbc0e174",
       "source": "templates/ios/Sources/GameScene.swift.tmpl"
     },
     {

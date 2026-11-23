@@ -39,7 +39,7 @@
       "kind": "template",
       "mode": "644",
       "path": "android/app/src/main/kotlin/app/monstera/pumpkinblaster/GameScreen.kt",
-      "sha256": "348edc6fe7bc29b6795adddb73331b3aafc77467c1fccd28153eddf8563486e0",
+      "sha256": "0dd2f432a1e6c4be23b4355968f3029d74653098662eda44afd66f501f138081",
       "source": "templates/android/app/src/main/kotlin/GameScreen.kt.tmpl"
     },
     {
@@ -291,7 +291,7 @@
       "kind": "template",
       "mode": "644",
       "path": "ios/Sources/PumpkinBlaster/GameScene.swift",
-      "sha256": "a0f042a7e12c16f323991c6ffa9516ec7626eaed7fd1f9381a86a80a75c66bd4",
+      "sha256": "33c6008536c1b0f17f67a055d90c31a65308dd719d6fa513efb8f6aa5802affc",
       "source": "templates/ios/Sources/GameScene.swift.tmpl"
     },
     {

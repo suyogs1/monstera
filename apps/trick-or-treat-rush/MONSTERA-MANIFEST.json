@@ -39,7 +39,7 @@
       "kind": "template",
       "mode": "644",
       "path": "android/app/src/main/kotlin/app/monstera/trickortreatrush/GameScreen.kt",
-      "sha256": "7c69540d4cec689189598489901593af98d998687bc1a1172593acc931a11b0e",
+      "sha256": "eb09d078424b04c72c5a946fa9d9f0caaf0420599dd648f1538bbfe8d0c1bc55",
       "source": "templates/android/app/src/main/kotlin/GameScreen.kt.tmpl"
     },
     {
@@ -291,7 +291,7 @@
       "kind": "template",
       "mode": "644",
       "path": "ios/Sources/TrickOrTreatRush/GameScene.swift",
-      "sha256": "f03c9817498e8c8ba81ff5d8be9d475b314a594fe2b40c2e749aad773bd8ded8",
+      "sha256": "09d1e216b00138c027c4a4f1ebf482cf450567e4f5425db9f6652f841a62b93e",
       "source": "templates/ios/Sources/GameScene.swift.tmpl"
     },
     {

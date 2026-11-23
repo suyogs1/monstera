@@ -57,6 +57,14 @@ def png_issues(data: bytes, width: int, height: int) -> list[str]:
         return ["the PNG does not start with a valid IHDR chunk"]
     if chunks[-1][0] != b"IEND":
         return ["the PNG has no IEND chunk"]
+    kinds = [kind for kind, _ in chunks]
+    if kinds.count(b"IHDR") != 1:
+        return ["the PNG has more than one IHDR chunk"]
+    idat_at = [i for i, kind in enumerate(kinds) if kind == b"IDAT"]
+    if not idat_at:
+        return ["the PNG has no IDAT chunk"]
+    if idat_at != list(range(idat_at[0], idat_at[-1] + 1)):
+        return ["the PNG's IDAT chunks are not consecutive"]
     w, h, depth, colour, compression, filt, interlace = struct.unpack(">IIBBBBB", chunks[0][1])
     issues = []
     if depth != 8 or colour not in _CHANNELS:
@@ -69,11 +77,15 @@ def png_issues(data: bytes, width: int, height: int) -> list[str]:
         return issues
     idat = b"".join(body for kind, body in chunks if kind == b"IDAT")
     expected = h * (1 + w * _CHANNELS[colour])
+    if expected > MAX_INFLATED:
+        return [f"the PNG image data would inflate to {expected} bytes, more than the {MAX_INFLATED} limit"]
     try:
         d = zlib.decompressobj()
         raw = d.decompress(idat, MAX_INFLATED + 1)
         if not d.eof or d.unconsumed_tail or len(raw) > MAX_INFLATED:
             return ["the PNG image data is truncated or too large"]
+        if d.unused_data:
+            return ["the PNG image data has bytes after the end of its compressed stream"]
     except zlib.error:
         return ["the PNG image data does not inflate"]
     if len(raw) != expected:

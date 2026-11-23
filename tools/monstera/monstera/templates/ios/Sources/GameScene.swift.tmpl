@@ -52,6 +52,9 @@ final class GameScene: SKScene {
     private var logged = false
     /// One texture per atlas frame (contract section 10), or nil when the spec has no atlas or it could not be loaded.
     private let frames: [SKTexture]?
+    /// First frame changes of animated kinds as drawn (contract section 10), logged as evidence that frames follow the tick.
+    private var lastFrame: [Int: Int] = [:]
+    private var frameLines = 0
     private var verified = true
     /// Safe-area top inset in points (notch, Dynamic Island); the HUD bar sits below it.
     var insetTop: Double = 0 {
@@ -293,7 +296,14 @@ final class GameScene: SKScene {
             node.isHidden = l.visible(box) == nil   // completely outside the world: nothing to draw
             node.position = point(px.x + px.w / 2, px.y + px.h / 2)
             if let sprite = node as? SKSpriteNode {
-                if let frames, let frame { sprite.texture = frames[frame] }  // the frame of this tick (contract section 10)
+                if let frames, let frame {
+                    sprite.texture = frames[frame]  // the frame of this tick (contract section 10)
+                    if kind.sprite.frames.count > 1 && frameLines < 6 && lastFrame[e.kind] != frame {
+                        lastFrame[e.kind] = frame
+                        frameLines += 1
+                        spriteLog.notice("sprites tick=\(loop.world.tick) kind=\(kind.id, privacy: .public) frame=\(frame)")
+                    }
+                }
                 sprite.size = CGSize(width: px.w, height: px.h)
             } else if let label = node as? SKLabelNode {
                 label.fontSize = Texts.glyphSize(px)
