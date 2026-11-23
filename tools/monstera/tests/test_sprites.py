@@ -142,6 +142,30 @@ class AtlasValidationTests(unittest.TestCase):
         self.assertIn(("$.game.runtime.kinds[0].sprite.ticksPerFrame", "minimum"), codes(with_atlas(make_png(8, 4), sprites=zero)))
 
 
+class V4MigrationTests(unittest.TestCase):
+    """The documented v4 -> v5 migration (docs/SPEC-V2-MIGRATION.md) checked by the real engine, from the committed v4 fixture."""
+    FIXTURE = REPO / "studio" / "src" / "project" / "fixtures" / "pumpkin-blaster.v4.spec.json"
+
+    def test_the_real_v4_spec_is_refused_and_its_neutral_v5_form_is_valid(self) -> None:
+        v4 = load_path(self.FIXTURE)
+        self.assertEqual(v4["specVersion"], 4)
+        result = validate_value(v4, STORE)
+        self.assertTrue(any("must be 5" in i.message for i in result.issues), [i.message for i in result.issues])
+        v5 = copy.deepcopy(v4)
+        v5["specVersion"] = 5
+        v5["game"]["atlas"] = {"png": "", "frameWidth": 1, "frameHeight": 1, "columns": 1, "rows": 1}
+        for kind in v5["game"]["runtime"]["kinds"]:
+            kind["sprite"] = {"frames": [], "ticksPerFrame": 1}
+        self.assertEqual(codes(v5), [])
+        # Only the v5 fields differ: deleting them gives back the v4 document apart from its version number.
+        back = copy.deepcopy(v5)
+        back["specVersion"] = 4
+        del back["game"]["atlas"]
+        for kind in back["game"]["runtime"]["kinds"]:
+            del kind["sprite"]
+        self.assertEqual(back, v4)
+
+
 class BundlingTests(unittest.TestCase):
     def plan(self, spec: dict, layout: str = "app") -> dict[str, generate.OutFile]:
         return {f.path: f for f in generate.plan(spec, "monstera.spec.json", STORE, layout=layout)}

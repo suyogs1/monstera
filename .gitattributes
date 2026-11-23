@@ -12,6 +12,7 @@ tools/monstera-mcp/** text eol=lf
 studio/schemas/** text eol=lf
 studio/security/** text eol=lf
 studio/src/project/manifests/fixtures/** text eol=lf
+studio/src/project/fixtures/** text eol=lf
 studio/capabilities.json text eol=lf
 docs/STUDIO-CAPABILITIES.md text eol=lf
 .kiro/** text eol=lf
