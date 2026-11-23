@@ -3,7 +3,8 @@ import { describe, expect, it, vi } from "vitest";
 import { png } from "../assets/fixtures.testkit";
 import { exportBundle, importBundle } from "../export/bundle";
 import { rawZip } from "../export/zip.testkit";
-import { memoryMarker, newFactory, readOnlyStorage } from "../project/testkit";
+import { STORE_BLOBS } from "../project/idb";
+import { memoryMarker, newFactory, rawAll, readOnlyStorage } from "../project/testkit";
 import type { Provenance } from "../project/manifests";
 import { drain, harness, type Harness } from "./session.testkit";
 
@@ -104,18 +105,45 @@ describe("bundle import without IndexedDB (memory-only)", () => {
     const again = await b.session.exportBundleBytes();
     expect(again.ok && again.bytes).toEqual(src.bytes);
   });
-  it("an asset that cannot be stored refuses the import: the open project is unchanged and nothing of the import stays stored", async () => {
-    const src = await bundleWithAsset();
-    const b = await boot();
+  it("a second asset that cannot be stored undoes the first: no blob of the failed import stays, and the open project is unchanged", async () => {
+    const a = await boot();
+    for (const [name, w] of [["hero.png", 32], ["foe.png", 16]] as const) {
+      expect(await a.session.project.actions.importAsset({ fileName: name, bytes: png(w, w), category: "sprite", provenance: prov })).toMatchObject({ ok: true });
+    }
+    await drain(a);
+    const out = await a.session.exportBundleBytes();
+    if (!out.ok) throw new Error(out.message);
+    expect(a.session.project.getState().manifests?.assets.assets).toHaveLength(2);
+
+    const factory = newFactory();
+    const b = await boot({ factory });
     const before = snapshot(b);
-    const prune = vi.spyOn(b.session.projects, "pruneBlobs");
-    vi.spyOn(b.session.projects, "putBlob").mockResolvedValue({ ok: false, message: "the asset bytes could not be stored: quota" });
-    const r = await b.session.importBundleBytes(src.bytes, "pumpkin-bundle.zip");
+    const blobKeys = async (): Promise<string[]> => ((await rawAll(factory, STORE_BLOBS)) as { projectKey: string; assetId: string }[]).map((r) => `${r.projectKey}/${r.assetId}`);
+    expect(await blobKeys()).toEqual([]);
+
+    // The real putBlob writes the first asset; the second one fails. pruneBlobs is NOT mocked: the real cleanup must run.
+    const real = b.session.projects.putBlob.bind(b.session.projects);
+    const keys = new Set<string>();
+    let calls = 0;
+    let firstWasStored = false;
+    vi.spyOn(b.session.projects, "putBlob").mockImplementation(async (key, id, bytes) => {
+      keys.add(key);
+      if (++calls === 2) {
+        firstWasStored = (await blobKeys()).length === 1; // the first asset really is in IndexedDB at this point
+        return { ok: false, message: "the asset bytes could not be stored: quota" };
+      }
+      return real(key, id, bytes);
+    });
+    const r = await b.session.importBundleBytes(out.bytes, "two.zip");
     expect(r.ok).toBe(false);
     if (!r.ok) expect(r.message).toContain("Your project was not changed");
-    expect(prune).toHaveBeenCalledTimes(1);
+    expect(calls).toBe(2);
+    expect(firstWasStored).toBe(true);
+    expect(keys.size).toBe(1); // one generated project key for the whole attempt
+    expect(await blobKeys()).toEqual([]); // nothing of the failed import remains under it, or anywhere
     expect(snapshot(b)).toEqual(before);
     await drain(b);
     expect(snapshot(b)).toEqual(before);
+    expect(await blobKeys()).toEqual([]);
   });
 });
