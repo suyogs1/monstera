@@ -72,7 +72,7 @@
       "status": "prototype",
       "targetStatus": "implemented",
       "nativeOutput": "scaffold",
-      "limits": "The static Developer Integration inventory with handoff prompts, Kiro templates and the Studio pack export with its ownership manifest and drift check, a drift view for a re-imported export and a proposal inbox. There is no Kiro connection and no in-browser AI call. The independent review of the pack (task 9.4) is pending."
+      "limits": "The static Developer Integration inventory with handoff prompts, Kiro templates and the Studio pack export with its ownership manifest and drift check, a drift view for a re-imported export and a proposal inbox. There is no Kiro connection and no in-browser AI call."
     },
     {
       "id": "preview",
@@ -331,11 +331,11 @@
       "id": "pack-export-and-drift",
       "module": "kiro",
       "title": "Studio pack export with ownership manifest and drift-check script",
-      "status": "prototype",
+      "status": "implemented",
       "targetStatus": "implemented",
       "nativeOutput": "scaffold",
       "evidence": ["studio/src/pack/pack.test.ts", "studio/src/pack/drift-script.test.ts", "studio/src/release/exportPack.test.ts", "studio/scripts/foundry-flow.mjs"],
-      "limits": "Scaffold files are regenerated only when unedited, write-once and extension files are never overwritten, and drift is reported, not repaired. Nothing in the pack is compiled into the app. The drift script needs bash. The independent review (task 9.4) is pending, so it is not marked implemented.",
+      "limits": "Scaffold files are regenerated only when unedited, write-once and extension files are never overwritten, and drift is reported, not repaired. Nothing in the pack is compiled into the app. The tools/check-drift.sh script needs bash; the Drift view in Studio does not.",
       "requires": "",
       "designRow": ""
     },
@@ -540,7 +540,7 @@
         "docs/evidence/studio-foundry/smoke-csp-report-only.json",
         "docs/evidence/studio-foundry/smoke-csp-enforce.json"
       ],
-      "limits": "Verified on a local preview of the built site only. Not deployed: the live site sends neither header until the Vercel Root Directory is confirmed and a report-only deployment is reviewed.",
+      "limits": "Verified on a local preview of the built site only. Not deployed: the Vercel Root Directory is confirmed (the repository root, 2026-11-16), but the live site sends neither header until the owner makes a report-only deployment and reviews its violations. Enforcement on production is not approved.",
       "requires": "",
       "designRow": ""
     }

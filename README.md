@@ -40,9 +40,12 @@ verification and a recorded demonstration (`.kiro/specs/g4-studio/tasks.md`, ite
 freeze is its first step. G6 is **not accepted**: its pull request (#15, branch `g6/clean-room-regeneration`) is open and
 unmerged, and its owner acceptance is pending.
 
-Also pending: the live Vercel report-only deployment of the security headers and the owner's review of it (Foundry Task 1.6),
-the G6 evidence comparison of the regression proof (Task 9.2, whose 18 evidence files are not on `main`), and the independent
-adversarial review of the Foundry (Task 9.4).
+Also pending: the live Vercel report-only deployment of the security headers and the owner's review of its violations (Foundry
+Task 1.6; the Root Directory is confirmed as the repository root, and enforcement on production is not approved), the G6
+evidence comparison of the regression proof (Task 9.2, whose 18 evidence files are not on `main`), the ChatGPT LLM adversarial
+implementation review against the specification and the Git diff (Task 9.4, with an optional Claude LLM architectural critique;
+these are LLM reviews, not independent human reviews, and final acceptance belongs to the repository owner), and the demo
+script and recording (Task 9.6).
 
 Not shown: gameplay or touch input on an emulator or simulator for the current spec version (the native launch evidence
 covers install, launch and the first 60 runtime ticks), performance, haptics, and any physical device.

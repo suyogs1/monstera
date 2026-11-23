@@ -202,8 +202,9 @@ which is deferred.
   it is not verified.
 - **Content-Security-Policy.** The policy source is `studio/security/headers.json` (`default-src 'self'`, `script-src 'self'
   'wasm-unsafe-eval'`, `object-src 'none'`, `frame-ancestors 'none'` and others) with `nosniff`. It is verified on a local
-  preview of the built site in report-only and enforce modes. **It is not deployed.** The live site sends neither header
-  until the Vercel Root Directory is confirmed and a report-only deployment has been reviewed by the owner (Task 1.6, pending).
+  preview of the built site in report-only and enforce modes. **It is not deployed.** The owner confirmed the Vercel Root
+  Directory as the repository root on 2026-11-16. The live report-only deployment is pending owner action, the owner's review
+  of production violations is pending, and enforcement on production is not approved (Task 1.6).
 - **Evidence integrity.** Evidence is committed to Git and reviewed there. Studio checks internal consistency and the hash
   binding; it cannot prove that a committed log was not fabricated.
 
@@ -229,8 +230,8 @@ Exact per-capability statuses, limits and evidence are in [`docs/STUDIO-CAPABILI
 
 | Status | What is in it |
 |---|---|
-| Implemented | Game Designer editors and spec view, source ZIP, browser preview, determinism badge, hash-bound native evidence, Developer Integration inventory, manifest schemas, secret scan |
-| Prototype | Dashboard with bundles, Asset Studio, Sprite and Animation Editor, Level Studio and variants, difficulty steps, Gameplay Systems core, field locks, pack export and drift, proposal inbox, environments table, completeness and readiness, project identity, security headers (not deployed) |
+| Implemented | Game Designer editors and spec view, source ZIP, browser preview, determinism badge, hash-bound native evidence, Developer Integration inventory, Studio pack export with ownership manifest and drift check, manifest schemas, secret scan |
+| Prototype | Dashboard with bundles, Asset Studio, Sprite and Animation Editor, Level Studio and variants, difficulty steps, Gameplay Systems core, field locks, proposal inbox, environments table, completeness and readiness, project identity, security headers (not deployed) |
 | Mock | AdMob placements and the mock rewarded ad |
 | Scaffold | Firebase and AdMob stub text in the Studio pack |
 | Planned | Native rendering of assets and animations (E1, not approved), health, power-ups and progression, AI provider architecture |
@@ -246,10 +247,10 @@ generated app.
 
 Not complete, and not claimed complete here:
 
-- Task 1.6: live Vercel report-only deployment and the owner's review of its reports.
+- Task 1.6: live Vercel report-only deployment (owner action), the owner's review of production violations, and enforcement. The Root Directory is confirmed; enforcement on production is not approved.
 - G6 clean-room regeneration: PR #15 is not accepted or merged.
 - Task 9.2: the G6 evidence comparison stays pending until that evidence is on `main`.
-- Task 9.4: independent adversarial review of the implementation against the specification and the Git diff.
+- Task 9.4: a ChatGPT LLM adversarial implementation review against the specification and the actual Git diff, with an optional Claude LLM architectural critique. These are LLM reviews, not independent human reviews. Final acceptance belongs to the repository owner.
 - Task 9.6: demo script and recording.
 - Full M2 acceptance matrix on a clean clone: a local Windows run failed on CRLF differences only and is not a substitute
   for a green run (`docs/evidence/studio-foundry/task-9-1-acceptance.md`).
