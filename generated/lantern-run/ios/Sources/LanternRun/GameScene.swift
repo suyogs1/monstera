@@ -301,7 +301,8 @@ final class GameScene: SKScene {
                     if kind.sprite.frames.count > 1 && frameLines < 6 && lastFrame[e.kind] != frame {
                         lastFrame[e.kind] = frame
                         frameLines += 1
-                        spriteLog.notice("sprites tick=\(loop.world.tick) kind=\(kind.id, privacy: .public) frame=\(frame)")
+                        let tick = loop.world.tick, id = kind.id  // Logger interpolations are autoclosures: no implicit self
+                        spriteLog.notice("sprites tick=\(tick) kind=\(id, privacy: .public) frame=\(frame)")
                     }
                 }
                 sprite.size = CGSize(width: px.w, height: px.h)

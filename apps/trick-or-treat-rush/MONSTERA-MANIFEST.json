@@ -291,7 +291,7 @@
       "kind": "template",
       "mode": "644",
       "path": "ios/Sources/TrickOrTreatRush/GameScene.swift",
-      "sha256": "09d1e216b00138c027c4a4f1ebf482cf450567e4f5425db9f6652f841a62b93e",
+      "sha256": "04d1c6d15e76b140323ca9c8f5fe3de1e5e7cfacfd8c7ac059b09c97fd1229e3",
       "source": "templates/ios/Sources/GameScene.swift.tmpl"
     },
     {

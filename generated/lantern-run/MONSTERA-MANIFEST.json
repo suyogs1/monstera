@@ -291,7 +291,7 @@
       "kind": "template",
       "mode": "644",
       "path": "ios/Sources/LanternRun/GameScene.swift",
-      "sha256": "baab769fd0c40af84d5ec0edb3c18f8cc934d9449420a715d89811d9cbc0e174",
+      "sha256": "dba501cc50d00a80afd2c9625f7add60174af6c149b5b1147fe294f185ef60a3",
       "source": "templates/ios/Sources/GameScene.swift.tmpl"
     },
     {

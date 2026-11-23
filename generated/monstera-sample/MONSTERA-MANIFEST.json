@@ -291,7 +291,7 @@
       "kind": "template",
       "mode": "644",
       "path": "ios/Sources/MonsteraSample/GameScene.swift",
-      "sha256": "6ee0d00d4c597bfae51e03329169d093b23ae01149cc319266e574a6d6fd8e2f",
+      "sha256": "684ce6697409ae4aacfc8dd4ebf4810bf379f5907ab1800e250f8743c51fd718",
       "source": "templates/ios/Sources/GameScene.swift.tmpl"
     },
     {

@@ -298,7 +298,7 @@
       "kind": "template",
       "mode": "644",
       "path": "ios/Sources/BoundaryLab/GameScene.swift",
-      "sha256": "2540fe407db395cbc64a5956a3d1d20d5fff4557262f00adb2c90a3b63b804df",
+      "sha256": "867aae1a8bbead23bda6c3fb094a57c20fc85265ff7a97ac7441059a39f8fb50",
       "source": "templates/ios/Sources/GameScene.swift.tmpl"
     },
     {

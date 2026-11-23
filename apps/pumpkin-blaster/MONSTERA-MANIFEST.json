@@ -291,7 +291,7 @@
       "kind": "template",
       "mode": "644",
       "path": "ios/Sources/PumpkinBlaster/GameScene.swift",
-      "sha256": "33c6008536c1b0f17f67a055d90c31a65308dd719d6fa513efb8f6aa5802affc",
+      "sha256": "b934856e587a089706c997da838581fc815bfa4a930a74a2a4cc41dce41f0541",
       "source": "templates/ios/Sources/GameScene.swift.tmpl"
     },
     {
