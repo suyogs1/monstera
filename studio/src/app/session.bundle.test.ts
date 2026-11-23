@@ -86,7 +86,8 @@ describe("bundle import without IndexedDB (memory-only)", () => {
     const src = await bundleWithAsset();
     const b = await boot({ factory: null, legacy: readOnlyStorage({}) });
     expect(b.session.project.getState().status).toBe("memory-only");
-    expect(await b.session.importBundleBytes(src.bytes, "pumpkin-bundle.zip")).toEqual({ ok: true });
+    // the open project is memory-only, so replacing it needs the explicit discard (replacement preflight)
+    expect(await b.session.importBundleBytes(src.bytes, "pumpkin-bundle.zip", { discardUnsaved: true })).toEqual({ ok: true });
     await drain(b);
     const s = b.session.project.getState();
     expect(s.status).toBe("memory-only"); // never claimed saved
