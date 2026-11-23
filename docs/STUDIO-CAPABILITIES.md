@@ -7,17 +7,17 @@ Statuses: `implemented` (works end to end, with a test), `prototype` (bounded su
 
 | Module | Now | Target | Native output | Limits |
 |---|---|---|---|---|
-| Project Dashboard | prototype | implemented | studio only | Projects are kept in this browser only. Create from a template or a specification file, open, rename, duplicate and delete, with status cards for the open project. Project bundles (specification, Studio data and assets in one file) are not available yet, and a generation-plan state is not shown. |
-| Game Designer | implemented | implemented | compiles to native | The canonical v4 spec editors. Field ownership locks for derived modules are not built; with derivation off every field is owned by the Designer. |
-| Asset Studio | prototype | prototype | studio only | Import, library, provenance, preview and delete protection only. Assigning an asset to a kind, sprite sheets and animation are later tasks. Assets will not render or play in the native apps (no v4 asset concept; E1 is conditional). |
-| Sprite and Animation Editor | prototype | prototype | studio only | Sheet slicing, frame editing and animation sequences only; the animation preview player is a later task. Native rendering needs engine track E1, which is conditional and not started. |
-| Level Studio | prototype | prototype | compiles to native | Only the active level compiles into the native spec; other levels are Studio-only variants exported as standalone specs. No wave end, per-level win rule or in-app level selection (see multi-level-in-app). |
-| Gameplay Systems | prototype | implemented | compiles to native | Forms for lives, win score, collectibles and enemies. Derivation is off by default; while on, Game Designer shows lives, win score and collisions read-only. Health, power-ups and progression need contract changes and stay planned. |
-| Backend and Services | prototype | mock | scaffold | Scaffold text only: Firebase service choices and a read-only preview. Not compiled into the app, not connected to any backend, no keys or config files. |
-| Monetization | prototype | mock | mock | Mock and test placements with a labelled mock behaviour preview. Not compiled into the app, no ad is shown, no production ad ids and no ad unit id fields. |
-| Kiro Development | prototype | implemented | scaffold | The static Developer Integration inventory with pack handoff prompts, a drift view for a re-imported export and a proposal inbox exist. There is no Kiro connection. |
-| Preview and Device Lab | implemented | implemented | studio only | Browser preview, determinism badge and hash-bound native evidence exist. The environments table is not built. Studio runs no device; it shows committed evidence only. |
-| Build and Release | prototype | implemented | compiles to native | The native source ZIP, a completeness check that blocks export on errors and a readiness checklist exist. The Studio pack is not part of the export yet (task 7.1). No signing, upload or store-ready claim. |
+| Project Dashboard | prototype | implemented | studio only | Projects are kept in this browser only. Create from a template or a specification file, open, rename, duplicate and delete, with status cards for the open project, and export or import a project bundle (specification, Studio data and asset files in one ZIP). Nothing is synced between browsers or devices, and a generation-plan state is not shown. |
+| Game Designer | implemented | implemented | compiles to native | The canonical v4 spec editors. With derivation off (the default) every field is owned by the Designer; while Level Studio or Gameplay derivation is on, the fields that module owns are read-only here. |
+| Asset Studio | prototype | prototype | studio only | Import, library, provenance, preview, delete protection and assignment of an asset to a kind. Assets are exported in the Studio pack but never render or play in the native apps (no v4 asset concept; engine track E1 is conditional and not approved). |
+| Sprite and Animation Editor | prototype | prototype | studio only | Sheet slicing, frame editing, animation sequences and a tick-based preview player, all inside Studio. Sheets and animations are exported as Studio data and never render in the native apps; that needs engine track E1, which is conditional and not approved. |
+| Level Studio | prototype | prototype | compiles to native | Only the active level compiles into the native spec, through an explicit Apply. Other levels are Studio-only variants exported as standalone specs and are not selectable inside the generated app. No wave end, per-level win rule or in-app level selection (see multi-level-in-app). |
+| Gameplay Systems | prototype | implemented | compiles to native | Forms for lives, win score, collectibles and enemies, with a reviewed Apply. Derivation is off by default; while on, Game Designer shows lives, win score and collisions read-only. Health, power-ups and progression need contract changes and stay planned. |
+| Backend and Services | prototype | mock | scaffold | Scaffold text only: Firebase service choices, a read-only preview and scaffold files written into the Studio pack. Not compiled into the app, not connected to any backend, no keys or config files. |
+| Monetization | prototype | mock | mock | Mock and test placements with a labelled mock behaviour preview and scaffold files in the Studio pack. Not compiled into the app, no ad is shown, no production ad ids and no ad unit id fields. |
+| Kiro Development | prototype | implemented | scaffold | The static Developer Integration inventory with handoff prompts, Kiro templates and the Studio pack export with its ownership manifest and drift check, a drift view for a re-imported export and a proposal inbox. There is no Kiro connection and no in-browser AI call. |
+| Preview and Device Lab | implemented | implemented | studio only | Browser preview, determinism badge, hash-bound native evidence and an environments table that folds committed records for the exact spec hash. Studio runs no emulator, simulator or device. The simulator evidence covers build, install, launch and the first runtime ticks only, not gameplay, input or performance, and no physical-device record exists. |
+| Build and Release | prototype | implemented | compiles to native | The native source ZIP together with the Studio pack, a completeness check that blocks export on errors and a readiness checklist that proves only generated source for the current spec hash. Studio compiles nothing. No signing, upload or store-ready claim. |
 
 ## Capabilities
 
@@ -25,7 +25,7 @@ Statuses: `implemented` (works end to end, with a test), `prototype` (bounded su
 
 | Capability | Now | Target | Native output | Evidence | Limits | Needs |
 |---|---|---|---|---|---|---|
-| Project list, status cards and bundle in and out | prototype | implemented | studio only | `studio/src/project/catalog.test.ts`<br>`studio/src/dashboard/dashboard.test.tsx` | Studio-only and local to this browser. Stored projects other than the open one show the facts of their saved text; the engine checks them again when opened. A duplicate keeps the original project id because the specification is copied unchanged. The project bundle (task 1.5) is not available yet. |  |
+| Project list, status cards and bundle in and out | prototype | implemented | studio only | `studio/src/project/catalog.test.ts`<br>`studio/src/dashboard/dashboard.test.tsx`<br>`studio/src/app/session.bundle.test.ts`<br>`studio/scripts/foundry-flow.mjs` | Studio-only and local to this browser. Stored projects other than the open one show the facts of their saved text; the engine checks them again when opened. A duplicate keeps the original project id because the specification is copied unchanged. The bundle ZIP is read by a hardened reader and a bundle that fails any check is refused and changes nothing; it carries Studio data and asset files, not a build. Not synced between browsers. |  |
 
 ### Game Designer
 
@@ -33,58 +33,58 @@ Statuses: `implemented` (works end to end, with a test), `prototype` (bounded su
 |---|---|---|---|---|---|---|
 | Project Brain editors for the v4 spec with engine validation | implemented | implemented | compiles to native | `docs/evidence/studio-m1/acceptance.json` | Edits the canonical spec directly. Forms follow spec/schema. |  |
 | Canonical spec view, import and export through the engine serializer | implemented | implemented | compiles to native | `docs/evidence/studio-m1/acceptance.json` | One draft only; refused files leave the draft unchanged. |  |
-| Read-only fields owned by a derived module | planned | implemented | studio only | none | Not built. | Derivation (levels, gameplay) and the cross-reference index. |
+| Read-only fields owned by a derived module | prototype | implemented | studio only | `studio/src/derive/apply.test.ts`<br>`studio/src/derive/gameplayApply.test.ts` | Locks apply only while a derivation switch is on, and only to the spec pointers that module owns (the ownership tables are unit-tested). Locking in the rendered editors is checked by unit tests of the ownership rule, not by a recorded browser acceptance run. |  |
 
 ### Asset Studio
 
 | Capability | Now | Target | Native output | Evidence | Limits | Needs |
 |---|---|---|---|---|---|---|
-| Import, library and provenance of images and audio | prototype | prototype | studio only | `studio/src/assets/sniff.test.ts`<br>`studio/src/assets/import.test.ts`<br>`studio/src/project/assets.controller.test.ts` | Studio-only: the native apps do not render or play assets. Origin and license are user declarations; only the license shape is checked. MP3 trailing data cannot be detected by content checks; OGG and MP3 need a browser that can read their metadata. |  |
+| Import, library, provenance and assignment to kinds of images and audio | prototype | prototype | studio only | `studio/src/assets/sniff.test.ts`<br>`studio/src/assets/import.test.ts`<br>`studio/src/project/assets.controller.test.ts`<br>`studio/src/project/assign.controller.test.ts` | Studio-only: the native apps do not render or play assets, and an assignment is a link in the Studio data, not a spec field. Origin and license are user declarations; only the license shape is checked. MP3 trailing data cannot be detected by content checks; OGG and MP3 need a browser that can read their metadata. |  |
 | Assets rendered or played inside the generated apps | planned | planned | planned | none | Conditional on engine track E1 (gate 2026-11-19); not started. | Engine track E1 and the G6 closure. |
 
 ### Sprite and Animation Editor
 
 | Capability | Now | Target | Native output | Evidence | Limits | Needs |
 |---|---|---|---|---|---|---|
-| Atlas slicing, frames and animation sequences with a tick-based preview | planned | prototype | studio only | none | Not built. Studio preview and export only. | Slicing and timeline library (task 3.1) and editors (tasks 3.2 and 3.3). |
+| Atlas slicing, frames and animation sequences with a tick-based preview | prototype | prototype | studio only | `studio/src/sprites/sprites.test.ts`<br>`studio/src/sprites/edit.test.ts`<br>`studio/src/sprites/player.test.ts`<br>`studio/scripts/foundry-flow.mjs` | Studio preview and export only: the animation data travels in the Studio pack as studio data and no generated app reads it. |  |
 | Sprite sheets and animations rendered inside the generated apps | planned | planned | planned | none | Conditional on engine track E1 (one atlas, one or two sequences, both platforms); not started. | Engine track E1 and the G6 closure. |
 
 ### Level Studio
 
 | Capability | Now | Target | Native output | Evidence | Limits | Needs |
 |---|---|---|---|---|---|---|
-| Active level compiled into initial entities and spawners | prototype | prototype | compiles to native | `studio/src/derive/levels.test.ts`<br>`studio/src/derive/apply.test.ts`<br>`studio/scripts/derive-apply.mjs` | Active level only. Applied through an explicit action that the engine and a bounded oracle run must accept; one undo step. |  |
-| Other levels exported as standalone spec variants | prototype | prototype | studio only | `studio/src/derive/variants.test.ts`<br>`studio/src/export/levelPack.test.ts`<br>`studio/scripts/a5-levels.mjs` | Variants are not selectable inside the generated app. The ZIP holds only studio-pack/derived/levels/<id>/monstera.spec.json; the full Studio pack is a later task. |  |
+| Active level compiled into initial entities and spawners | prototype | prototype | compiles to native | `studio/src/derive/levels.test.ts`<br>`studio/src/derive/apply.test.ts`<br>`studio/scripts/derive-apply.mjs` | Active level only. Applied through an explicit action that the engine and a bounded oracle run must accept; one undo step. Difficulty steps compile as later-starting spawners. |  |
+| Other levels exported as standalone spec variants | prototype | prototype | studio only | `studio/src/derive/variants.test.ts`<br>`studio/src/export/levelPack.test.ts`<br>`studio/scripts/a5-levels.mjs` | Variants are not selectable inside the generated app. Level Studio exports a ZIP that holds only studio-pack/derived/levels/<id>/monstera.spec.json, each checked by the engine. The Build and Release export does not add them. |  |
 | Level selection, per-level win rule and wave end inside the native app | unsupported | unsupported | planned | none | Schema v4 has one runtime and spawners that never stop. Engine track E3, outside hackathon scope. | Engine and schema change after G6 closure. |
 
 ### Gameplay Systems
 
 | Capability | Now | Target | Native output | Evidence | Limits | Needs |
 |---|---|---|---|---|---|---|
-| Lives, win score, collectibles and enemies compiled into lives, winScore and collisions | prototype | implemented | compiles to native | `studio/src/derive/gameplay.test.ts`<br>`studio/src/derive/gameplayApply.test.ts`<br>`studio/src/gameplay/gameplay.ui.test.tsx` | Opt-in derivation, default off. Review shows the diff and the engine verdict; nothing changes until Apply, as one undo step. Browser-level evidence is not recorded yet. |  |
-| Difficulty ramp as later-starting spawners | planned | prototype | compiles to native | none | Not built. v4 spawners cannot stop or change; a ramp is an extra spawner that starts later. | Level compiler (task 4.1). |
+| Lives, win score, collectibles and enemies compiled into lives, winScore and collisions | prototype | implemented | compiles to native | `studio/src/derive/gameplay.test.ts`<br>`studio/src/derive/gameplayApply.test.ts`<br>`studio/src/gameplay/gameplay.ui.test.tsx`<br>`studio/scripts/foundry-flow.mjs` | Opt-in derivation, default off. Review shows the diff and the engine verdict; nothing changes until Apply, as one undo step. The browser flow (lives, win score, collisions) runs in the foundry-flow script in CI. Health, power-ups and progression are not part of it. |  |
+| Difficulty ramp as later-starting spawners | prototype | prototype | compiles to native | `studio/src/derive/levels.test.ts`<br>`studio/src/derive/levelOps.test.ts`<br>`studio/src/levels/levels.ui.test.tsx` | Each step compiles to an extra spawner that starts later, together with its level through the explicit Apply. v4 spawners cannot stop or change, so the original wave keeps running. Steps are not a smooth ramp. |  |
 | Health, power-ups, progression | planned | planned | planned | none | Designed only. Not buildable on the v4 contract. | A timed-state and persistence contract in the engine, which is outside this milestone. |
 
 ### Backend and Services
 
 | Capability | Now | Target | Native output | Evidence | Limits | Needs |
 |---|---|---|---|---|---|---|
-| Firebase and AdMob scaffold text and setup instructions | prototype | prototype | scaffold | `studio/src/integrations/ops.test.ts`<br>`studio/src/integrations/scaffold/emit.test.ts`<br>`studio/src/integrations/ui.test.tsx` | Not connected to any backend. Scaffold text is exported by the pack task (8.1), not compiled into the app. |  |
+| Firebase and AdMob scaffold text and setup instructions | prototype | prototype | scaffold | `studio/src/integrations/ops.test.ts`<br>`studio/src/integrations/scaffold/emit.test.ts`<br>`studio/src/integrations/ui.test.tsx`<br>`studio/src/release/exportPack.test.ts` | Not connected to any backend. The scaffold text is written into the Studio pack as scaffold files for the developer to adopt; nothing is compiled into the app and no keys or config files are produced. |  |
 | Live Firebase connection, account or resource creation from Studio | unsupported | unsupported | planned | none | Studio is static: no backend, no credentials, no network call to third parties. | A server and a credential model, which are not part of Studio. |
 
 ### Monetization
 
 | Capability | Now | Target | Native output | Evidence | Limits | Needs |
 |---|---|---|---|---|---|---|
-| Placement configuration, frequency rules and a labelled mock rewarded ad | mock | mock | mock | `studio/src/integrations/ops.test.ts`<br>`studio/src/integrations/scaffold/emit.test.ts`<br>`studio/src/integrations/ui.test.tsx` | Mock and test placements only. No ad is shown, nothing is compiled into the app unless engine track E2 is approved, and there are no production ad ids. |  |
+| Placement configuration, frequency rules and a labelled mock rewarded ad | mock | mock | mock | `studio/src/integrations/ops.test.ts`<br>`studio/src/integrations/scaffold/emit.test.ts`<br>`studio/src/integrations/ui.test.tsx`<br>`studio/src/release/exportPack.test.ts` | Mock and test placements only. No ad is shown, nothing is compiled into the app unless engine track E2 is approved, and there are no production ad ids. |  |
 | Production AdMob ids in Studio | unsupported | unsupported | planned | none | Decision D7: Studio never stores or emits real ad ids; the developer adds them after export, in developer-owned files. | Not planned. |
 
 ### Kiro Development
 
 | Capability | Now | Target | Native output | Evidence | Limits | Needs |
 |---|---|---|---|---|---|---|
-| Static inventory of agents, hooks, steering and MCP tools, plus handoff prompts | implemented | implemented | studio only | `docs/evidence/studio-m1/acceptance.json` | A static inventory stamped with the commit. It does not connect to Kiro. |  |
-| Studio pack export with ownership manifest and drift-check script | planned | implemented | scaffold | none | Not built. Extension roots are written once and are not compiled into the app. | Pack layout and exporter (tasks 7.1 and 7.2). |
+| Static inventory of agents, hooks, steering and MCP tools, plus handoff prompts | implemented | implemented | studio only | `docs/evidence/studio-m1/acceptance.json`<br>`studio/src/kiro/handoff.test.ts` | A static inventory stamped with the commit. It does not connect to Kiro. |  |
+| Studio pack export with ownership manifest and drift-check script | implemented | implemented | scaffold | `studio/src/pack/pack.test.ts`<br>`studio/src/pack/drift-script.test.ts`<br>`studio/src/release/exportPack.test.ts`<br>`studio/scripts/foundry-flow.mjs` | Scaffold files are regenerated only when unedited, write-once and extension files are never overwritten, and drift is reported, not repaired. Nothing in the pack is compiled into the app. The tools/check-drift.sh script needs bash; the Drift view in Studio does not. |  |
 | Review and apply an externally produced proposal | prototype | prototype | studio only | `studio/src/kiro/proposal.test.ts` | Reads one JSON file, checks it with the engine or the manifest rules, shows the difference and applies it only on acceptance. Who wrote a proposal is not verified. |  |
 | Direct AI provider calls from the browser | unsupported | unsupported | planned | none | Decision D6: no provider calls and no keys in the browser during this milestone. | A server that holds keys; not part of Studio. |
 | Secure replaceable AI provider architecture | planned | planned | planned | none | Roadmap only. Interface sketched in design section 8.3; no implementation. | A server that holds keys and a provider interface. |
@@ -95,8 +95,8 @@ Statuses: `implemented` (works end to end, with a test), `prototype` (bounded su
 |---|---|---|---|---|---|---|
 | Interactive preview driven by the unmodified engine | implemented | implemented | studio only | `docs/evidence/studio-m2/acceptance.json` | Browser environment. The preview drawing code mirrors the presentation modules for display only. |  |
 | Oracle against the recorded golden scenarios for the exact spec | implemented | implemented | studio only | `docs/evidence/studio-m2/acceptance.json` | Oracle environment inside the browser worker; says nothing about devices. |  |
-| Committed native build and simulator evidence bound to the exact spec SHA-256 | implemented | implemented | studio only | `docs/evidence/studio-m3a/ui-acceptance.json` | Shows committed evidence only; an edited spec shows no evidence. |  |
-| Table of checks by environment (browser, oracle, jvm, swift-test, simulator, device) | planned | implemented | studio only | none | Not built. | Evidence indexes already built into Studio (task 8.0). |
+| Committed native build and simulator evidence bound to the exact spec SHA-256 | implemented | implemented | studio only | `docs/evidence/studio-m3a/ui-acceptance.json` | Shows committed evidence only; an edited spec shows no evidence. The recorded simulator and emulator results cover build, install, launch and the first runtime ticks, not gameplay, input, performance or any physical device. |  |
+| Table of checks by environment (browser, oracle, jvm, swift-test, simulator, device) | prototype | implemented | studio only | `studio/src/preview/envTable.test.ts` | Each row is folded from a committed record bound to the exact spec hash, so an edited spec reads no evidence. The device row never has a source and always reads no evidence. Covered by unit tests; no recorded browser acceptance run of this table. |  |
 | Running tests on emulators, simulators or physical devices from Studio | unsupported | unsupported | planned | none | Studio is static and runs no device. Device Lab (G5) scripts produce evidence outside Studio. | Not planned in Studio. |
 
 ### Build and Release
@@ -104,14 +104,14 @@ Statuses: `implemented` (works end to end, with a test), `prototype` (bounded su
 | Capability | Now | Target | Native output | Evidence | Limits | Needs |
 |---|---|---|---|---|---|---|
 | Native source ZIP generated by the engine in the browser | implemented | implemented | compiles to native | `docs/evidence/studio-m2/acceptance.json` | Source only. Nothing is compiled by Studio. |  |
-| Completeness check and release-readiness checklist | prototype | implemented | studio only | `studio/src/release/completeness.test.tsx` | Errors block export and the generated files are checked against the engine plan. The checklist proves only "generated" for the current spec hash; compiled, simulator and device results are not proven by Studio. Export together with the Studio pack is not wired yet (needs task 7.1). It never claims store readiness. |  |
+| Completeness check and release-readiness checklist | prototype | implemented | studio only | `studio/src/release/completeness.test.tsx`<br>`studio/src/release/exportPack.test.ts` | Errors block export and the generated files are checked against the engine plan; the export includes the Studio pack. The checklist proves only "generated" for the current spec hash; compiled, simulator and device results are not proven by Studio. It never claims store readiness. |  |
 | Signing, store upload or a store-ready claim | unsupported | unsupported | planned | none | Out of scope: no signing, no upload, no store-ready claim without evidence. | Not planned. |
 
 ### Shared foundation
 
 | Capability | Now | Target | Native output | Evidence | Limits | Needs |
 |---|---|---|---|---|---|---|
-| Project identity, module list and derivation switches (project manifest) | prototype | implemented | studio only | `studio/src/project/manifests/manifests.test.ts` | Schema and validation only; no UI or storage uses it yet. |  |
-| Versioned sidecar manifest schemas with strict TypeScript validation | implemented | implemented | studio only | `studio/src/project/manifests/manifests.test.ts`<br>`studio/src/project/manifests/hardening.test.ts` | Validates Studio-owned manifests only. The engine validates the spec. Cross-manifest references are task 1.4. |  |
-| Bundle, source-map and source scan for credential-shaped strings | implemented | implemented | studio only | `docs/evidence/studio-foundry/secret-scan-dist.json`<br>`docs/evidence/studio-foundry/secret-scan-sources.json` | Pattern based; findings never print values. |  |
-| nosniff and a Content-Security-Policy, report-only first | prototype | implemented | studio only | `docs/evidence/studio-foundry/smoke-csp-report-only.json`<br>`docs/evidence/studio-foundry/smoke-csp-enforce.json` | Verified on a local preview of the built site only. Not deployed: the live site sends neither header until the Vercel Root Directory is confirmed and a report-only deployment is reviewed. |  |
+| Project identity, module list and derivation switches (project manifest) | prototype | implemented | studio only | `studio/src/project/manifests/manifests.test.ts`<br>`studio/src/project/store.test.ts`<br>`studio/src/derive/apply.test.ts` | Stored and validated with every project, and its derivation switches drive Level Studio and Gameplay Systems. The module list is stored but does not decide which modules are shown. |  |
+| Versioned sidecar manifest schemas with strict TypeScript validation | implemented | implemented | studio only | `studio/src/project/manifests/manifests.test.ts`<br>`studio/src/project/manifests/hardening.test.ts` | Validates Studio-owned manifests only. The engine validates the spec. Cross-manifest references are checked by the separate cross-reference index. |  |
+| Bundle, source-map, source, field and pack-import scan for credential-shaped strings | implemented | implemented | studio only | `docs/evidence/studio-foundry/secret-scan-dist.json`<br>`docs/evidence/studio-foundry/secret-scan-sources.json`<br>`studio/src/ci/hostile.test.ts`<br>`studio/src/project/secretGuard.controller.test.ts` | Pattern based, so it can miss an unusual secret; findings never print values. It reduces accidental leaks and is not a guarantee. |  |
+| nosniff and a Content-Security-Policy, report-only first | prototype | implemented | studio only | `docs/evidence/studio-foundry/smoke-csp-report-only.json`<br>`docs/evidence/studio-foundry/smoke-csp-enforce.json` | Verified on a local preview of the built site only. Not deployed: the Vercel Root Directory is confirmed (the repository root, 2026-11-16), but the live site sends neither header until the owner makes a report-only deployment and reviews its violations. Enforcement on production is not approved. |  |

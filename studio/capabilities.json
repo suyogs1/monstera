@@ -8,7 +8,7 @@
       "status": "prototype",
       "targetStatus": "implemented",
       "nativeOutput": "studio only",
-      "limits": "Projects are kept in this browser only. Create from a template or a specification file, open, rename, duplicate and delete, with status cards for the open project. Project bundles (specification, Studio data and assets in one file) are not available yet, and a generation-plan state is not shown."
+      "limits": "Projects are kept in this browser only. Create from a template or a specification file, open, rename, duplicate and delete, with status cards for the open project, and export or import a project bundle (specification, Studio data and asset files in one ZIP). Nothing is synced between browsers or devices, and a generation-plan state is not shown."
     },
     {
       "id": "designer",
@@ -16,7 +16,7 @@
       "status": "implemented",
       "targetStatus": "implemented",
       "nativeOutput": "compiles to native",
-      "limits": "The canonical v4 spec editors. Field ownership locks for derived modules are not built; with derivation off every field is owned by the Designer."
+      "limits": "The canonical v4 spec editors. With derivation off (the default) every field is owned by the Designer; while Level Studio or Gameplay derivation is on, the fields that module owns are read-only here."
     },
     {
       "id": "assets",
@@ -24,7 +24,7 @@
       "status": "prototype",
       "targetStatus": "prototype",
       "nativeOutput": "studio only",
-      "limits": "Import, library, provenance, preview and delete protection only. Assigning an asset to a kind, sprite sheets and animation are later tasks. Assets will not render or play in the native apps (no v4 asset concept; E1 is conditional)."
+      "limits": "Import, library, provenance, preview, delete protection and assignment of an asset to a kind. Assets are exported in the Studio pack but never render or play in the native apps (no v4 asset concept; engine track E1 is conditional and not approved)."
     },
     {
       "id": "sprites",
@@ -32,7 +32,7 @@
       "status": "prototype",
       "targetStatus": "prototype",
       "nativeOutput": "studio only",
-      "limits": "Sheet slicing, frame editing and animation sequences only; the animation preview player is a later task. Native rendering needs engine track E1, which is conditional and not started."
+      "limits": "Sheet slicing, frame editing, animation sequences and a tick-based preview player, all inside Studio. Sheets and animations are exported as Studio data and never render in the native apps; that needs engine track E1, which is conditional and not approved."
     },
     {
       "id": "levels",
@@ -40,7 +40,7 @@
       "status": "prototype",
       "targetStatus": "prototype",
       "nativeOutput": "compiles to native",
-      "limits": "Only the active level compiles into the native spec; other levels are Studio-only variants exported as standalone specs. No wave end, per-level win rule or in-app level selection (see multi-level-in-app)."
+      "limits": "Only the active level compiles into the native spec, through an explicit Apply. Other levels are Studio-only variants exported as standalone specs and are not selectable inside the generated app. No wave end, per-level win rule or in-app level selection (see multi-level-in-app)."
     },
     {
       "id": "gameplay",
@@ -48,7 +48,7 @@
       "status": "prototype",
       "targetStatus": "implemented",
       "nativeOutput": "compiles to native",
-      "limits": "Forms for lives, win score, collectibles and enemies. Derivation is off by default; while on, Game Designer shows lives, win score and collisions read-only. Health, power-ups and progression need contract changes and stay planned."
+      "limits": "Forms for lives, win score, collectibles and enemies, with a reviewed Apply. Derivation is off by default; while on, Game Designer shows lives, win score and collisions read-only. Health, power-ups and progression need contract changes and stay planned."
     },
     {
       "id": "backend",
@@ -56,7 +56,7 @@
       "status": "prototype",
       "targetStatus": "mock",
       "nativeOutput": "scaffold",
-      "limits": "Scaffold text only: Firebase service choices and a read-only preview. Not compiled into the app, not connected to any backend, no keys or config files."
+      "limits": "Scaffold text only: Firebase service choices, a read-only preview and scaffold files written into the Studio pack. Not compiled into the app, not connected to any backend, no keys or config files."
     },
     {
       "id": "monetization",
@@ -64,7 +64,7 @@
       "status": "prototype",
       "targetStatus": "mock",
       "nativeOutput": "mock",
-      "limits": "Mock and test placements with a labelled mock behaviour preview. Not compiled into the app, no ad is shown, no production ad ids and no ad unit id fields."
+      "limits": "Mock and test placements with a labelled mock behaviour preview and scaffold files in the Studio pack. Not compiled into the app, no ad is shown, no production ad ids and no ad unit id fields."
     },
     {
       "id": "kiro",
@@ -72,7 +72,7 @@
       "status": "prototype",
       "targetStatus": "implemented",
       "nativeOutput": "scaffold",
-      "limits": "The static Developer Integration inventory with pack handoff prompts, a drift view for a re-imported export and a proposal inbox exist. There is no Kiro connection."
+      "limits": "The static Developer Integration inventory with handoff prompts, Kiro templates and the Studio pack export with its ownership manifest and drift check, a drift view for a re-imported export and a proposal inbox. There is no Kiro connection and no in-browser AI call."
     },
     {
       "id": "preview",
@@ -80,7 +80,7 @@
       "status": "implemented",
       "targetStatus": "implemented",
       "nativeOutput": "studio only",
-      "limits": "Browser preview, determinism badge and hash-bound native evidence exist. The environments table is not built. Studio runs no device; it shows committed evidence only."
+      "limits": "Browser preview, determinism badge, hash-bound native evidence and an environments table that folds committed records for the exact spec hash. Studio runs no emulator, simulator or device. The simulator evidence covers build, install, launch and the first runtime ticks only, not gameplay, input or performance, and no physical-device record exists."
     },
     {
       "id": "release",
@@ -88,7 +88,7 @@
       "status": "prototype",
       "targetStatus": "implemented",
       "nativeOutput": "compiles to native",
-      "limits": "The native source ZIP, a completeness check that blocks export on errors and a readiness checklist exist. The Studio pack is not part of the export yet (task 7.1). No signing, upload or store-ready claim."
+      "limits": "The native source ZIP together with the Studio pack, a completeness check that blocks export on errors and a readiness checklist that proves only generated source for the current spec hash. Studio compiles nothing. No signing, upload or store-ready claim."
     }
   ],
   "capabilities": [
@@ -99,8 +99,8 @@
       "status": "prototype",
       "targetStatus": "implemented",
       "nativeOutput": "studio only",
-      "evidence": ["studio/src/project/catalog.test.ts", "studio/src/dashboard/dashboard.test.tsx"],
-      "limits": "Studio-only and local to this browser. Stored projects other than the open one show the facts of their saved text; the engine checks them again when opened. A duplicate keeps the original project id because the specification is copied unchanged. The project bundle (task 1.5) is not available yet.",
+      "evidence": ["studio/src/project/catalog.test.ts", "studio/src/dashboard/dashboard.test.tsx", "studio/src/app/session.bundle.test.ts", "studio/scripts/foundry-flow.mjs"],
+      "limits": "Studio-only and local to this browser. Stored projects other than the open one show the facts of their saved text; the engine checks them again when opened. A duplicate keeps the original project id because the specification is copied unchanged. The bundle ZIP is read by a hardened reader and a bundle that fails any check is refused and changes nothing; it carries Studio data and asset files, not a build. Not synced between browsers.",
       "requires": "",
       "designRow": ""
     },
@@ -136,12 +136,12 @@
       "id": "field-ownership-locks",
       "module": "designer",
       "title": "Read-only fields owned by a derived module",
-      "status": "planned",
+      "status": "prototype",
       "targetStatus": "implemented",
       "nativeOutput": "studio only",
-      "evidence": [],
-      "limits": "Not built.",
-      "requires": "Derivation (levels, gameplay) and the cross-reference index.",
+      "evidence": ["studio/src/derive/apply.test.ts", "studio/src/derive/gameplayApply.test.ts"],
+      "limits": "Locks apply only while a derivation switch is on, and only to the spec pointers that module owns (the ownership tables are unit-tested). Locking in the rendered editors is checked by unit tests of the ownership rule, not by a recorded browser acceptance run.",
+      "requires": "",
       "designRow": ""
     },
     {
@@ -151,8 +151,8 @@
       "status": "prototype",
       "targetStatus": "implemented",
       "nativeOutput": "compiles to native",
-      "evidence": ["studio/src/derive/gameplay.test.ts", "studio/src/derive/gameplayApply.test.ts", "studio/src/gameplay/gameplay.ui.test.tsx"],
-      "limits": "Opt-in derivation, default off. Review shows the diff and the engine verdict; nothing changes until Apply, as one undo step. Browser-level evidence is not recorded yet.",
+      "evidence": ["studio/src/derive/gameplay.test.ts", "studio/src/derive/gameplayApply.test.ts", "studio/src/gameplay/gameplay.ui.test.tsx", "studio/scripts/foundry-flow.mjs"],
+      "limits": "Opt-in derivation, default off. Review shows the diff and the engine verdict; nothing changes until Apply, as one undo step. The browser flow (lives, win score, collisions) runs in the foundry-flow script in CI. Health, power-ups and progression are not part of it.",
       "requires": "",
       "designRow": "Lives, win score, collectible and enemy collision rows"
     },
@@ -160,12 +160,12 @@
       "id": "difficulty-ramp",
       "module": "gameplay",
       "title": "Difficulty ramp as later-starting spawners",
-      "status": "planned",
+      "status": "prototype",
       "targetStatus": "prototype",
       "nativeOutput": "compiles to native",
-      "evidence": [],
-      "limits": "Not built. v4 spawners cannot stop or change; a ramp is an extra spawner that starts later.",
-      "requires": "Level compiler (task 4.1).",
+      "evidence": ["studio/src/derive/levels.test.ts", "studio/src/derive/levelOps.test.ts", "studio/src/levels/levels.ui.test.tsx"],
+      "limits": "Each step compiles to an extra spawner that starts later, together with its level through the explicit Apply. v4 spawners cannot stop or change, so the original wave keeps running. Steps are not a smooth ramp.",
+      "requires": "",
       "designRow": ""
     },
     {
@@ -188,7 +188,7 @@
       "targetStatus": "prototype",
       "nativeOutput": "compiles to native",
       "evidence": ["studio/src/derive/levels.test.ts", "studio/src/derive/apply.test.ts", "studio/scripts/derive-apply.mjs"],
-      "limits": "Active level only. Applied through an explicit action that the engine and a bounded oracle run must accept; one undo step.",
+      "limits": "Active level only. Applied through an explicit action that the engine and a bounded oracle run must accept; one undo step. Difficulty steps compile as later-starting spawners.",
       "requires": "",
       "designRow": "Initial placements, spawners, difficulty ramp (as later-starting spawners)"
     },
@@ -200,7 +200,7 @@
       "targetStatus": "prototype",
       "nativeOutput": "studio only",
       "evidence": ["studio/src/derive/variants.test.ts", "studio/src/export/levelPack.test.ts", "studio/scripts/a5-levels.mjs"],
-      "limits": "Variants are not selectable inside the generated app. The ZIP holds only studio-pack/derived/levels/<id>/monstera.spec.json; the full Studio pack is a later task.",
+      "limits": "Variants are not selectable inside the generated app. Level Studio exports a ZIP that holds only studio-pack/derived/levels/<id>/monstera.spec.json, each checked by the engine. The Build and Release export does not add them.",
       "requires": "",
       "designRow": "Other levels"
     },
@@ -219,12 +219,12 @@
     {
       "id": "asset-library",
       "module": "assets",
-      "title": "Import, library and provenance of images and audio",
+      "title": "Import, library, provenance and assignment to kinds of images and audio",
       "status": "prototype",
       "targetStatus": "prototype",
       "nativeOutput": "studio only",
-      "evidence": ["studio/src/assets/sniff.test.ts", "studio/src/assets/import.test.ts", "studio/src/project/assets.controller.test.ts"],
-      "limits": "Studio-only: the native apps do not render or play assets. Origin and license are user declarations; only the license shape is checked. MP3 trailing data cannot be detected by content checks; OGG and MP3 need a browser that can read their metadata.",
+      "evidence": ["studio/src/assets/sniff.test.ts", "studio/src/assets/import.test.ts", "studio/src/project/assets.controller.test.ts", "studio/src/project/assign.controller.test.ts"],
+      "limits": "Studio-only: the native apps do not render or play assets, and an assignment is a link in the Studio data, not a spec field. Origin and license are user declarations; only the license shape is checked. MP3 trailing data cannot be detected by content checks; OGG and MP3 need a browser that can read their metadata.",
       "requires": "",
       "designRow": "Images, audio, provenance"
     },
@@ -244,12 +244,12 @@
       "id": "sprite-atlas",
       "module": "sprites",
       "title": "Atlas slicing, frames and animation sequences with a tick-based preview",
-      "status": "planned",
+      "status": "prototype",
       "targetStatus": "prototype",
       "nativeOutput": "studio only",
-      "evidence": [],
-      "limits": "Not built. Studio preview and export only.",
-      "requires": "Slicing and timeline library (task 3.1) and editors (tasks 3.2 and 3.3).",
+      "evidence": ["studio/src/sprites/sprites.test.ts", "studio/src/sprites/edit.test.ts", "studio/src/sprites/player.test.ts", "studio/scripts/foundry-flow.mjs"],
+      "limits": "Studio preview and export only: the animation data travels in the Studio pack as studio data and no generated app reads it.",
+      "requires": "",
       "designRow": "Atlas slicing, frames, animation sequences"
     },
     {
@@ -271,8 +271,8 @@
       "status": "prototype",
       "targetStatus": "prototype",
       "nativeOutput": "scaffold",
-      "evidence": ["studio/src/integrations/ops.test.ts", "studio/src/integrations/scaffold/emit.test.ts", "studio/src/integrations/ui.test.tsx"],
-      "limits": "Not connected to any backend. Scaffold text is exported by the pack task (8.1), not compiled into the app.",
+      "evidence": ["studio/src/integrations/ops.test.ts", "studio/src/integrations/scaffold/emit.test.ts", "studio/src/integrations/ui.test.tsx", "studio/src/release/exportPack.test.ts"],
+      "limits": "Not connected to any backend. The scaffold text is written into the Studio pack as scaffold files for the developer to adopt; nothing is compiled into the app and no keys or config files are produced.",
       "requires": "",
       "designRow": "Firebase interfaces and stubs, AdMob placements and mock rewarded ad"
     },
@@ -295,7 +295,7 @@
       "status": "mock",
       "targetStatus": "mock",
       "nativeOutput": "mock",
-      "evidence": ["studio/src/integrations/ops.test.ts", "studio/src/integrations/scaffold/emit.test.ts", "studio/src/integrations/ui.test.tsx"],
+      "evidence": ["studio/src/integrations/ops.test.ts", "studio/src/integrations/scaffold/emit.test.ts", "studio/src/integrations/ui.test.tsx", "studio/src/release/exportPack.test.ts"],
       "limits": "Mock and test placements only. No ad is shown, nothing is compiled into the app unless engine track E2 is approved, and there are no production ad ids.",
       "requires": "",
       "designRow": ""
@@ -320,7 +320,8 @@
       "targetStatus": "implemented",
       "nativeOutput": "studio only",
       "evidence": [
-        "docs/evidence/studio-m1/acceptance.json"
+        "docs/evidence/studio-m1/acceptance.json",
+        "studio/src/kiro/handoff.test.ts"
       ],
       "limits": "A static inventory stamped with the commit. It does not connect to Kiro.",
       "requires": "",
@@ -330,12 +331,12 @@
       "id": "pack-export-and-drift",
       "module": "kiro",
       "title": "Studio pack export with ownership manifest and drift-check script",
-      "status": "planned",
+      "status": "implemented",
       "targetStatus": "implemented",
       "nativeOutput": "scaffold",
-      "evidence": [],
-      "limits": "Not built. Extension roots are written once and are not compiled into the app.",
-      "requires": "Pack layout and exporter (tasks 7.1 and 7.2).",
+      "evidence": ["studio/src/pack/pack.test.ts", "studio/src/pack/drift-script.test.ts", "studio/src/release/exportPack.test.ts", "studio/scripts/foundry-flow.mjs"],
+      "limits": "Scaffold files are regenerated only when unedited, write-once and extension files are never overwritten, and drift is reported, not repaired. Nothing in the pack is compiled into the app. The tools/check-drift.sh script needs bash; the Drift view in Studio does not.",
+      "requires": "",
       "designRow": ""
     },
     {
@@ -414,7 +415,7 @@
       "evidence": [
         "docs/evidence/studio-m3a/ui-acceptance.json"
       ],
-      "limits": "Shows committed evidence only; an edited spec shows no evidence.",
+      "limits": "Shows committed evidence only; an edited spec shows no evidence. The recorded simulator and emulator results cover build, install, launch and the first runtime ticks, not gameplay, input, performance or any physical device.",
       "requires": "",
       "designRow": ""
     },
@@ -422,12 +423,12 @@
       "id": "environments-table",
       "module": "preview",
       "title": "Table of checks by environment (browser, oracle, jvm, swift-test, simulator, device)",
-      "status": "planned",
+      "status": "prototype",
       "targetStatus": "implemented",
       "nativeOutput": "studio only",
-      "evidence": [],
-      "limits": "Not built.",
-      "requires": "Evidence indexes already built into Studio (task 8.0).",
+      "evidence": ["studio/src/preview/envTable.test.ts"],
+      "limits": "Each row is folded from a committed record bound to the exact spec hash, so an edited spec reads no evidence. The device row never has a source and always reads no evidence. Covered by unit tests; no recorded browser acceptance run of this table.",
+      "requires": "",
       "designRow": ""
     },
     {
@@ -463,8 +464,8 @@
       "status": "prototype",
       "targetStatus": "implemented",
       "nativeOutput": "studio only",
-      "evidence": ["studio/src/release/completeness.test.tsx"],
-      "limits": "Errors block export and the generated files are checked against the engine plan. The checklist proves only \"generated\" for the current spec hash; compiled, simulator and device results are not proven by Studio. Export together with the Studio pack is not wired yet (needs task 7.1). It never claims store readiness.",
+      "evidence": ["studio/src/release/completeness.test.tsx", "studio/src/release/exportPack.test.ts"],
+      "limits": "Errors block export and the generated files are checked against the engine plan; the export includes the Studio pack. The checklist proves only \"generated\" for the current spec hash; compiled, simulator and device results are not proven by Studio. It never claims store readiness.",
       "requires": "",
       "designRow": ""
     },
@@ -488,9 +489,11 @@
       "targetStatus": "implemented",
       "nativeOutput": "studio only",
       "evidence": [
-        "studio/src/project/manifests/manifests.test.ts"
+        "studio/src/project/manifests/manifests.test.ts",
+        "studio/src/project/store.test.ts",
+        "studio/src/derive/apply.test.ts"
       ],
-      "limits": "Schema and validation only; no UI or storage uses it yet.",
+      "limits": "Stored and validated with every project, and its derivation switches drive Level Studio and Gameplay Systems. The module list is stored but does not decide which modules are shown.",
       "requires": "",
       "designRow": "Project identity, module list, derivation switches"
     },
@@ -505,22 +508,24 @@
         "studio/src/project/manifests/manifests.test.ts",
         "studio/src/project/manifests/hardening.test.ts"
       ],
-      "limits": "Validates Studio-owned manifests only. The engine validates the spec. Cross-manifest references are task 1.4.",
+      "limits": "Validates Studio-owned manifests only. The engine validates the spec. Cross-manifest references are checked by the separate cross-reference index.",
       "requires": "",
       "designRow": ""
     },
     {
       "id": "secret-scan",
       "module": "shared",
-      "title": "Bundle, source-map and source scan for credential-shaped strings",
+      "title": "Bundle, source-map, source, field and pack-import scan for credential-shaped strings",
       "status": "implemented",
       "targetStatus": "implemented",
       "nativeOutput": "studio only",
       "evidence": [
         "docs/evidence/studio-foundry/secret-scan-dist.json",
-        "docs/evidence/studio-foundry/secret-scan-sources.json"
+        "docs/evidence/studio-foundry/secret-scan-sources.json",
+        "studio/src/ci/hostile.test.ts",
+        "studio/src/project/secretGuard.controller.test.ts"
       ],
-      "limits": "Pattern based; findings never print values.",
+      "limits": "Pattern based, so it can miss an unusual secret; findings never print values. It reduces accidental leaks and is not a guarantee.",
       "requires": "",
       "designRow": ""
     },
@@ -535,7 +540,7 @@
         "docs/evidence/studio-foundry/smoke-csp-report-only.json",
         "docs/evidence/studio-foundry/smoke-csp-enforce.json"
       ],
-      "limits": "Verified on a local preview of the built site only. Not deployed: the live site sends neither header until the Vercel Root Directory is confirmed and a report-only deployment is reviewed.",
+      "limits": "Verified on a local preview of the built site only. Not deployed: the Vercel Root Directory is confirmed (the repository root, 2026-11-16), but the live site sends neither header until the owner makes a report-only deployment and reviews its violations. Enforcement on production is not approved.",
       "requires": "",
       "designRow": ""
     }
