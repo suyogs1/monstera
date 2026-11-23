@@ -4,6 +4,7 @@
 import { assetPath, manifestPath, SPEC_PATH } from "../export/bundle";
 import type { ExportPlan } from "../engine/protocol";
 import { emitScaffold } from "../integrations/scaffold/emit";
+import { refuseSecrets } from "../integrations/secrets";
 import { kiroTemplates } from "../pack/kiroTemplates";
 import { exportPack, type ExportResult, type PackFile, type ScaffoldChoice } from "../pack/export";
 import { MANIFEST_NAMES, serializeManifest, type ManifestMap } from "../project/manifests";
@@ -27,7 +28,7 @@ export interface ReleaseExportInput {
 }
 export type ReleaseExport =
   | { ok: false; reason: "blocked"; blockers: CheckItem[] }
-  | { ok: false; reason: "no-plan" | "no-project" | "missing-asset" | "pack"; message: string; conflicts: Extract<ExportResult, { ok: false }>["conflicts"] }
+  | { ok: false; reason: "no-plan" | "no-project" | "missing-asset" | "secret" | "pack"; message: string; conflicts: Extract<ExportResult, { ok: false }>["conflicts"] }
   | Extract<ExportResult, { ok: true }>;
 const enc = new TextEncoder();
 function decode(b64: string): Uint8Array {
@@ -36,13 +37,17 @@ function decode(b64: string): Uint8Array {
   for (let i = 0; i < s.length; i++) out[i] = s.charCodeAt(i);
   return out;
 }
-const refuse = (reason: "no-plan" | "no-project" | "missing-asset", message: string): ReleaseExport => ({ ok: false, reason, message, conflicts: [] });
+const refuse = (reason: "no-plan" | "no-project" | "missing-asset" | "secret", message: string): ReleaseExport => ({ ok: false, reason, message, conflicts: [] });
 /** Every completeness error class and every plan error blocks; only a clean, verified project reaches the pack exporter. */
 export async function releaseExport(input: ReleaseExportInput): Promise<ReleaseExport> {
   const blockers = blocking([...input.items, ...input.planChecks]);
   if (blockers.length > 0) return { ok: false, reason: "blocked", blockers };
   if (!input.plan) return refuse("no-plan", "Generate the source files first.");
   if (input.manifests === null || input.specText === null) return refuse("no-project", "No validated project is open.");
+  let doc: unknown = null;
+  try { doc = JSON.parse(input.specText); } catch { /* an unreadable spec has no values to scan; the plan check above blocks it */ }
+  const secret = refuseSecrets({ doc, manifests: input.manifests });
+  if (secret) return refuse("secret", `The pack was not exported: ${secret}.`);
   const files = new Map<string, PackFile>();
   const put = (path: string, data: Uint8Array, mode?: number) => files.set(path, { path, data, mode });
   for (const f of input.plan.files) put(f.path, decode(f.data), f.mode);

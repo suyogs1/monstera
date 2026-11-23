@@ -37,7 +37,7 @@ import { gameplayIssues } from "../derive/gameplayOps";
 import { removeLevel as planLevelRemoval } from "../derive/levelOps";
 import { planImport, type ImportDeps, type ImportInput } from "../assets/import";
 import { planAssetDelete } from "../assets/library";
-import { findSecrets } from "../integrations/secrets";
+import { findSecrets, refuseSecrets, safePath } from "../integrations/secrets";
 import { checkProjectName, type CatalogEntry } from "./catalog";
 import { kindIdCheck, planKindRemoval, planKindRename, type KindRenamePlan } from "./kindOps";
 import { aggregateValidation, type AggregateResult } from "./validation";
@@ -409,7 +409,12 @@ export class ProjectController {
    * cleared. With persist the new content is submitted at once (new project, import, reset); without it the project is
    * clean (it came from storage). `blobs` seeds the in-memory asset cache with bytes that may not be persisted. Returns the write's status when persisting.
    */
-  async replaceProject(p: { projectKey: string; name: string; manifests: ManifestMap; persist: boolean; provisionalGameplay?: boolean; blobs?: ReadonlyMap<string, Uint8Array> }, apply: () => void): Promise<ProjectStoreStatus | null> {
+  async replaceProject(p: { projectKey: string; name: string; manifests: ManifestMap; doc: Json; persist: boolean; provisionalGameplay?: boolean; blobs?: ReadonlyMap<string, Uint8Array> }, apply: () => void): Promise<ProjectStoreStatus | null> {
+    // New content (an import, a template, a reset) is checked before anything is replaced; a stored project is adopted as it is.
+    if (p.persist) {
+      const refusal = refuseSecrets({ doc: p.doc, manifests: p.manifests });
+      if (refusal) throw new Error(refusal);
+    }
     this.cancelTimer?.();
     this.cancelTimer = undefined;
     this.suspended = true;
@@ -442,7 +447,7 @@ export class ProjectController {
     const doc = draft.getState().doc;
     if (this.manifests === null || doc === null) return { ok: false, message: "there is no open project" };
     const found = findSecrets(value)[0];
-    if (found) return { ok: false, message: `the ${name} manifest was refused: ${found.path.join(".") || "value"} looks like a credential (${found.rule}). Remove it; Studio never stores keys.` };
+    if (found) return { ok: false, message: `the ${name} manifest was refused: ${safePath(found.path)} looks like a credential (${found.rule}). Remove it; Studio never stores keys.` };
     const r = validateManifest(name, value);
     if (!r.ok) return { ok: false, message: `the ${name} manifest is invalid: ${r.issues[0]?.path.join(".") ?? ""} ${r.issues[0]?.message ?? ""}`.trim() };
     if (sameValue(this.manifests[name], value)) return { ok: true, changed: false };
@@ -569,6 +574,8 @@ export class ProjectController {
     const live = this.deps.draft.getState().doc;
     if (this.manifests === null || live === null) return { ok: false, message: "there is no open project" };
     if (live !== expected.doc || this.manifests !== expected.manifests) return { ok: false, message: "the specification or a manifest changed while the derived one was checked; apply again" };
+    const refusal = refuseSecrets({ doc, manifests });
+    if (refusal) return { ok: false, message: `the change was refused: ${refusal}. Nothing was changed` };
     this.applyProjectChange(live, doc, manifests);
     return { ok: true, changed: true };
   }

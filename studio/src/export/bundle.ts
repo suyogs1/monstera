@@ -10,7 +10,7 @@
 import { sha256Bytes } from "../assets/import";
 import { MAX_FILE_BYTES } from "../assets/limits";
 import { sniffAsset } from "../assets/sniff";
-import { findSecrets, secretRules } from "../integrations/secrets";
+import { findSecrets, refuseSecrets, safePath, secretRules } from "../integrations/secrets";
 import { MANIFEST_NAMES, parseManifest, serializeManifest, type ManifestMap, type ManifestName } from "../project/manifests";
 import { decodeUtf8Strict, MAX_JSON_BYTES, parseStrictJson } from "../project/manifests/strictJson";
 import { readZip, type EntryPolicy, type ZipRefusal } from "./unzip";
@@ -32,8 +32,6 @@ export type BundleRefusal =
   | ZipRefusal | "missing-entry" | "invalid-spec" | "invalid-manifest" | "asset-mismatch" | "project-mismatch" | "secret";
 export type BundleImport = { ok: true; project: BundleProject } | { ok: false; code: BundleRefusal; message: string };
 
-// A credential can be an object key; never echo a path segment that itself matches a secret rule.
-const safePath = (p: readonly (string | number)[]): string => p.map((s) => (typeof s === "string" && secretRules(s).length > 0 ? "<key>" : String(s))).join(".");
 /** Importer messages interpolate attacker-controlled keys and values; a message that matches a secret rule is replaced whole. */
 export const redact = (message: string): string => (secretRules(message).length > 0 ? "<message withheld: it contains a credential-shaped value>" : message);
 const enc = new TextEncoder();
@@ -41,6 +39,10 @@ const byPath = (a: ZipEntry, b: ZipEntry): number => (a.path < b.path ? -1 : a.p
 
 /** The archive of a project. A pure function of its inputs: entries sorted by path, fixed mode and timestamp, canonical manifest text. */
 export function exportBundle(p: BundleProject): Uint8Array<ArrayBuffer> {
+  let doc: unknown = null;
+  try { doc = JSON.parse(p.specText); } catch { /* an unreadable spec has no values to scan; the engine decides validity */ }
+  const refusal = refuseSecrets({ doc, manifests: p.manifests });
+  if (refusal) throw new Error(`the bundle was not exported: ${refusal}`);
   const entries: ZipEntry[] = [{ path: SPEC_PATH, data: enc.encode(p.specText), mode: 0o644 }];
   for (const n of MANIFEST_NAMES) entries.push({ path: manifestPath(n), data: enc.encode(serializeManifest(n, p.manifests[n] as never)), mode: 0o644 });
   const listed = new Set<string>();
