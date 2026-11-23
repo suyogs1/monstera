@@ -328,15 +328,24 @@ export class Session {
     if (doc === null || typeof doc !== "object" || Array.isArray(doc)) return { ok: false, message: "the bundle's specification is not a JSON object. Your project was not changed." };
     await this.project.flush();
     const projectKey = this.projects.newProjectKey();
+    // The controller keeps the bytes it is handed in its own cache, so they stay readable and re-exportable even where
+    // putBlob could not persist them (memory-only, conflict, closed). Nothing here reports them as saved.
+    const retained = new Map<string, Uint8Array>();
     for (const [id, data] of assets) {
-      const stored = await this.projects.putBlob(projectKey, id, data.slice());
-      if (!stored.ok) return { ok: false, message: `${stored.message} Your project was not changed.` };
+      const copy = data.slice();
+      const stored = await this.projects.putBlob(projectKey, id, copy);
+      if (!stored.ok) {
+        await this.projects.pruneBlobs(projectKey, new Set()); // best effort: nothing of the refused import stays stored
+        return { ok: false, message: `${stored.message} Your project was not changed.` };
+      }
+      retained.set(id, copy);
     }
     const baseline: Baseline = { label: fileName, templateId: null, group: "import", canonicalText: v.canonicalText, sha256: v.sha256,
       origin: v.ok ? await this.originOfImport(v.sha256) : null };
     try {
-      await this.project.replaceProject({ projectKey, name: fileName, manifests, persist: true }, () => this.store.load(doc, baseline, v));
+      await this.project.replaceProject({ projectKey, name: fileName, manifests, persist: true, blobs: retained }, () => this.store.load(doc, baseline, v));
     } catch (e) {
+      if (this.project.getState().projectKey !== projectKey) await this.projects.pruneBlobs(projectKey, new Set());
       return { ok: false, message: `${e instanceof Error ? e.message : "the project could not be created"}. Your project was not changed.` };
     }
     return { ok: true };
