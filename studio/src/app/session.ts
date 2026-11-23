@@ -2,6 +2,7 @@ import { applyActiveLevel, applyReviewedGameplay, reviewGameplay, type ApplyResu
 import { browserProbes } from "../assets/browserProbes";
 import { exportBundle, importBundle } from "../export/bundle";
 import { refuseSecrets } from "../integrations/secrets";
+import type { ReplacementRisk } from "../project/controller";
 import { BadgeRunner } from "../badge/badge";
 import { DraftStore, type Baseline, type Origin } from "../draft/store";
 import { PreviewController } from "../preview/controller";
@@ -36,6 +37,11 @@ export interface SessionDeps {
 }
 
 /** Wires the worker, the schema reader, the draft and the project persistence together. No rules live here: it forwards text to the engine. */
+/** The user's explicit choice to replace the open project even when that loses unsaved data. Never a default. */
+export interface ReplaceOptions { discardUnsaved?: boolean }
+/** A replacement that was refused because it could lose data; the UI may show `message`, ask, and retry with discardUnsaved. */
+export type ReplaceRefusal = { ok: false; code: "would-lose-data"; message: string; risks: readonly ReplacementRisk[] };
+export type ReplaceOutcome = { ok: true } | ReplaceRefusal | { ok: false; code?: undefined; message: string };
 export class Session {
   readonly engine: EngineClient;
   /** The in-memory draft. Persistence is not its job; see `projects`. */
@@ -161,13 +167,24 @@ export class Session {
   }
 
   /** Content of a freshly loaded document becomes a new project (new key; every earlier project record is kept). */
-  private async startProjectFrom(doc: Json, baseline: Baseline, v: DraftValidation, name: string): Promise<void> {
+  private async startProjectFrom(doc: Json, baseline: Baseline, v: DraftValidation, name: string, opts: ReplaceOptions): Promise<ReplaceRefusal | null> {
     const { manifests, provisionalGameplay } = await this.defaultsFor(v);
     const refusal = refuseSecrets({ doc, manifests }); // before the save is started: its failures are reported by the store, this one is a refusal
     if (refusal) throw new Error(refusal);
+    const lost = await this.replacementRefusal(opts); // the last await before the replacement, so nothing can change in between
+    if (lost) return lost;
     const projectKey = this.projects.newProjectKey();
     const saving = this.project.replaceProject({ projectKey, name, manifests, doc, persist: true, provisionalGameplay }, () => this.store.load(doc, baseline, v));
     saving.catch(() => undefined); // the store reports save failures through its state
+    return null;
+  }
+
+  /** The shared preflight (ProjectController.checkReplacement) as a refusal the UI can confirm, or null when replacing loses nothing or the caller chose to discard. */
+  private async replacementRefusal(opts: ReplaceOptions): Promise<ReplaceRefusal | null> {
+    await this.validateNow(); // an edit still inside its validation delay is judged on its real state, not refused for being unchecked
+    const check = await this.project.checkReplacement();
+    if (check.ok || opts.discardUnsaved === true) return null;
+    return { ok: false, code: "would-lose-data", message: `${check.message} Nothing was replaced.`, risks: check.risks };
   }
 
   private async templateContent(id: string) {
@@ -198,9 +215,10 @@ export class Session {
     const done = this.project.commitDerived(review.expected, review.plan.doc, review.plan.manifests);
     return done.ok ? { ok: true } : { ok: false, stage: "precondition", message: done.message };
   }
-  async loadTemplate(id: string): Promise<void> {
+  /** A template becomes a new project, unless that would lose data (see ReplaceRefusal); `discardUnsaved` is the user's explicit choice. */
+  async loadTemplate(id: string, opts: ReplaceOptions = {}): Promise<ReplaceOutcome> {
     const { doc, baseline, t, name } = await this.templateContent(id);
-    await this.startProjectFrom(doc, baseline, t, name);
+    return (await this.startProjectFrom(doc, baseline, t, name, opts)) ?? { ok: true };
   }
 
   /**
@@ -218,7 +236,7 @@ export class Session {
     } else {
       const first = this.engine.templates.find((t) => t.group === "official") ?? this.engine.templates[0];
       if (!first) return { ok: false, reason: "The engine lists no template to start a replacement project from." };
-      await this.loadTemplate(first.id);
+      await this.loadTemplate(first.id, { discardUnsaved: true }); // the open project is the one being deleted
       await this.project.whenSettled();
     }
     if (this.project.getState().projectKey === key) return { ok: false, reason: "The project could not be replaced, so it was not deleted." };
@@ -275,7 +293,7 @@ export class Session {
   }
 
   /** The engine decides whether a file is loadable (strict JSON: duplicate keys and BOMs are refused). */
-  async importText(text: string, fileName: string): Promise<{ ok: true } | { ok: false; message: string }> {
+  async importText(text: string, fileName: string, opts: ReplaceOptions = {}): Promise<ReplaceOutcome> {
     const v = await this.engine.validateDraft(text);
     if (!v.parsed || v.canonicalText === null) {
       return { ok: false, message: v.issues[0]?.message ?? "the file could not be read as JSON" };
@@ -288,7 +306,8 @@ export class Session {
     const baseline: Baseline = { label: fileName, templateId: null, group: "import", canonicalText: v.canonicalText, sha256: v.sha256,
       origin: v.ok ? await this.originOfImport(v.sha256) : null };
     try {
-      await this.startProjectFrom(top, baseline, v, fileName);
+      const refusal = await this.startProjectFrom(top, baseline, v, fileName, opts);
+      if (refusal) return refusal;
     } catch (e) {
       return { ok: false, message: `${e instanceof Error ? e.message : "the project could not be created"}. Your draft was not changed.` };
     }
@@ -318,7 +337,7 @@ export class Session {
    * Imports a bundle ZIP as a NEW project. importBundle validates everything and applies nothing; only a complete, secret-free
    * project is stored (asset bytes first, then the project record), so a refusal leaves the open project and storage as they were.
    */
-  async importBundleBytes(bytes: Uint8Array, fileName: string): Promise<{ ok: true } | { ok: false; message: string }> {
+  async importBundleBytes(bytes: Uint8Array, fileName: string, opts: ReplaceOptions = {}): Promise<ReplaceOutcome> {
     const r = await importBundle(bytes);
     if (!r.ok) return { ok: false, message: `${r.message} Your project was not changed.` };
     const { specText, manifests, assets } = r.project;
@@ -328,7 +347,8 @@ export class Session {
     if (doc === null || typeof doc !== "object" || Array.isArray(doc)) return { ok: false, message: "the bundle's specification is not a JSON object. Your project was not changed." };
     const refusal = refuseSecrets({ doc, manifests });
     if (refusal) return { ok: false, message: `the bundle was refused: ${refusal}. Your project was not changed.` };
-    await this.project.flush();
+    const lost = await this.replacementRefusal(opts);
+    if (lost) return lost;
     const projectKey = this.projects.newProjectKey();
     // The controller keeps the bytes it is handed in its own cache, so they stay readable and re-exportable even where
     // putBlob could not persist them (memory-only, conflict, closed). Nothing here reports them as saved.
@@ -344,6 +364,9 @@ export class Session {
     }
     const baseline: Baseline = { label: fileName, templateId: null, group: "import", canonicalText: v.canonicalText, sha256: v.sha256,
       origin: v.ok ? await this.originOfImport(v.sha256) : null };
+    if (opts.discardUnsaved !== true && this.project.getState().dirty) { // edits arrived while the asset files were being stored
+      return { ok: false, code: "would-lose-data", message: "The open project changed while the bundle was being read. Nothing was replaced.", risks: [] };
+    }
     try {
       await this.project.replaceProject({ projectKey, name: fileName, manifests, doc, persist: true, blobs: retained }, () => this.store.load(doc, baseline, v));
     } catch (e) {
@@ -351,6 +374,23 @@ export class Session {
       return { ok: false, message: `${e instanceof Error ? e.message : "the project could not be created"}. Your project was not changed.` };
     }
     return { ok: true };
+  }
+
+  /** Runs the pending validation now instead of after its delay (same engine call and same stale-result rule as scheduleValidation). */
+  private async validateNow(): Promise<void> {
+    const s = this.store.getState();
+    if (s.doc === null || s.validatedRevision === s.revision) return;
+    this.cancelValidation?.();
+    this.cancelValidation = undefined;
+    const revision = s.revision;
+    try {
+      this.store.setValidation(revision, await this.engine.validateDraft(JSON.stringify(s.doc)));
+    } catch (e) {
+      this.store.setValidation(revision, {
+        ok: false, parsed: false, sha256: null, canonicalText: null,
+        issues: [{ path: "$", code: "studio.engine-error", message: (e as Error).message }],
+      });
+    }
   }
 
   private scheduleValidation(): void {

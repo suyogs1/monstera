@@ -94,6 +94,21 @@ export type ProjectListOutcome = { ok: true; entries: CatalogEntry[]; activeKey:
 /** A project-list change. Refusals carry the reason shown to the user and change nothing. */
 export type ProjectOpOutcome = { ok: true } | { ok: false; reason: string };
 export type ProjectDuplicateOutcome = { ok: true; projectKey: string; name: string } | { ok: false; reason: string };
+/** One way a replacement of the open project could lose data. */
+export interface ReplacementRisk { kind: "unsaved-edits" | "not-durable"; storage: ProjectStoreStatus; message: string }
+/** The shared preflight of every path that replaces the open project (template, spec import, bundle import). */
+export type ReplacementCheck = { ok: true } | { ok: false; risks: ReplacementRisk[]; message: string };
+const NOT_DURABLE: Record<Exclude<ProjectStoreStatus, "saved">, string> = {
+  "memory-only": "Storage is unavailable in this browser, so the open project exists only in memory. Replacing it loses it for good, and nothing is saved.",
+  failed: "The last save failed, so the stored copy of the open project is older than what you see.",
+  conflict: "Another tab changed this project and the open version has not been saved.",
+  closed: "The storage connection was closed, so the open project has not been saved since.",
+  "read-only": "Storage is read-only for this project (it was written by a newer version), so the open project cannot be saved.",
+  quarantined: "The stored record of this project is unreadable and was left untouched, so the open project is not saved.",
+  unsaved: "The open project has not finished saving.",
+  saving: "The open project has not finished saving.",
+  loading: "Storage is still loading, so the open project is not saved.",
+};
 export type RetryOpenResult = { ok: true } | { ok: false; reason: "unsaved-invalid-edits"; message: string };
 export type ReloadOutcome = ReloadResult | { ok: false; reason: "no-project"; message: string };
 
@@ -376,6 +391,30 @@ export class ProjectController {
     if (rt === null || !Number.isInteger(rt.lives) || !Number.isInteger(rt.winScore)) return null;
     const gameplay: ManifestMap["gameplay"] = { ...m.gameplay, lives: { start: rt.lives as number }, score: { winScore: rt.winScore as number } };
     return validateManifest("gameplay", gameplay).ok ? { ...m, gameplay } : null;
+  }
+
+  /**
+   * Preflight for replacing the open project with another one. Waits for the pending save and for every write in flight, then
+   * reports what a replacement would lose: edits that cannot be saved (an invalid specification, a pending validation) and any
+   * storage state in which the open project is not durably stored (memory-only, failed, conflict, closed, read-only,
+   * quarantined). Changes nothing. With no open project there is nothing to lose.
+   */
+  async checkReplacement(): Promise<ReplacementCheck> {
+    if (this.manifests === null || this.projectKey === null) return { ok: true };
+    if (this.dirty) await this.submit();
+    await this.whenSettled();
+    const risks: ReplacementRisk[] = [];
+    let storage = this.deps.projects.getState().status;
+    if (storage === "failed" || storage === "unsaved") { // a transient failure may have passed: one honest retry before refusing
+      storage = await this.deps.projects.retrySave();
+      await this.whenSettled();
+    }
+    if (this.dirty) {
+      risks.push({ kind: "unsaved-edits", storage, message: "The open project has edits that cannot be saved yet, for example a specification with validation errors or one that is still being checked. They would be lost." });
+    }
+    if (storage !== "saved") risks.push({ kind: "not-durable", storage, message: NOT_DURABLE[storage] });
+    if (risks.length === 0) return { ok: true };
+    return { ok: false, risks, message: `Replacing the open project could lose data. ${risks.map((r) => r.message).join(" ")} Export a recovery file first, or choose to discard.` };
   }
 
   /** Best-effort: starts the write of a pending edit now (pagehide, visibilitychange, before reload/retry). */

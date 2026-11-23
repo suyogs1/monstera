@@ -4,6 +4,7 @@ import { useProject } from "../project/context";
 import { PersistenceIndicator, StorageProtection, downloadText } from "./PersistenceStatus";
 import { exportRecoveryFile, shortcutHint, type ActionNotice } from "./persistence";
 import { isMac } from "./Guards";
+import { replaceWithConfirm } from "./replaceConfirm";
 
 export function TopBar() {
   const session = useSession();
@@ -25,7 +26,7 @@ export function TopBar() {
   const onTemplate = (id: string) => {
     if (!confirmDiscard()) return;
     setMessage(null);
-    void session.loadTemplate(id);
+    void replaceWithConfirm((o) => session.loadTemplate(id, o)).then((r) => { if (!r.ok) setMessage(r.message); });
   };
 
   const onImport = async (file: File | undefined) => {
@@ -40,7 +41,7 @@ export function TopBar() {
       if (fileInput.current) fileInput.current.value = "";
       return;
     }
-    const r = await session.importText(text, file.name);
+    const r = await replaceWithConfirm((o) => session.importText(text, file.name, o));
     setMessage(r.ok ? `Imported ${file.name}.` : `Could not import ${file.name}: ${r.message}`);
     if (fileInput.current) fileInput.current.value = "";
   };
