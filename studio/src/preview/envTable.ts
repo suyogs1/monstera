@@ -58,7 +58,8 @@ function conformanceObservations(env: Environment, reports: ConformanceReport[])
 function simulatorObservations(index: NativeIndex, sha: string): Observation[] {
   const game = matchNativeApps(index, sha, null).exact;
   if (!game) return [];
-  return game.platforms.map((p): Observation => {
+  // Only a platform whose app logged exactly this hash is a record for it; stale or unreadable evidence is not cited.
+  return game.platforms.filter((p) => p.checks.specHash.state === "pass").map((p): Observation => {
     const source = p.files.report?.repoPath ?? "";
     const failed = p.checks.compile.state === "fail" || p.checks.launch.state === "fail";
     const state = failed ? "failed" : p.label === "SIMULATOR-TESTED" ? "passed" : "not run";

@@ -1,0 +1,191 @@
+getpwuid_r did not find a match for uid 501
+Timestamp               Ty Process[PID:TID]
+2026-11-23 09:21:30.489 Df PumpkinBlaster[10418:908d] [com.apple.xpc:connection] [0x105605940] activating connection: mach=true listener=false peer=false name=com.apple.cfprefsd.daemon
+2026-11-23 09:21:30.601 Df PumpkinBlaster[10418:908d] [app.monstera.pumpkinblaster:spec] spec sha256=02f626f0f398bf98b5e0ed7106c7a3402fb55cbe6c680a9d401d5812ae76c2e5 bundledMatches=true decodedMatches=true
+2026-11-23 09:21:30.634 A  PumpkinBlaster[10418:9095] (CoreFoundation) Loading Preferences From User Session CFPrefsD
+2026-11-23 09:21:30.640 Df PumpkinBlaster[10418:908d] (libMobileGestalt.dylib) No persisted cache on this platform.
+2026-11-23 09:21:30.642 Df PumpkinBlaster[10418:9097] [com.apple.BoardServices:XPCErrors] [C:1] Alloc com.apple.frontboard.systemappservices
+2026-11-23 09:21:30.644 Df PumpkinBlaster[10418:9097] [com.apple.xpc:connection] [0x105607120] activating connection: mach=false listener=false peer=false name=(anonymous)
+2026-11-23 09:21:30.662 Df PumpkinBlaster[10418:908d] [com.apple.UIKit:Application] Deactivation reason added: 10; deactivation reasons: 0 -> 1024; animating application lifecycle event: 0
+2026-11-23 09:21:30.664 Df PumpkinBlaster[10418:908d] [com.apple.runningboard:connection] Initializing connection
+2026-11-23 09:21:30.664 Df PumpkinBlaster[10418:908d] [com.apple.runningboard:process] Removing all cached process handles
+2026-11-23 09:21:30.664 Df PumpkinBlaster[10418:908d] [com.apple.BoardServices:Injection] activating monitor for service com.apple.frontboard.open
+2026-11-23 09:21:30.664 Df PumpkinBlaster[10418:908d] [com.apple.BoardServices:Injection] activating monitor for service com.apple.frontboard.workspace-service
+2026-11-23 09:21:30.664 Df PumpkinBlaster[10418:9097] [com.apple.runningboard:connection] Sending handshake request attempt #1 to server
+2026-11-23 09:21:30.664 Df PumpkinBlaster[10418:9097] [com.apple.runningboard:connection] Creating connection to com.apple.runningboard
+2026-11-23 09:21:30.665 Df PumpkinBlaster[10418:908d] [com.apple.FrontBoard:Common] FBSWorkspace registering source: com.apple.frontboard.systemappservices
+2026-11-23 09:21:30.666 Df PumpkinBlaster[10418:9097] [com.apple.xpc:connection] [0x1055055c0] activating connection: mach=true listener=false peer=false name=com.apple.runningboard
+2026-11-23 09:21:30.669 A  PumpkinBlaster[10418:9095] (RunningBoardServices) didChangeInheritances
+2026-11-23 09:21:30.671 Df PumpkinBlaster[10418:908d] [com.apple.FrontBoard:Common] FBSWorkspace connected to endpoint : <BSServiceConnectionEndpoint: 0x60000020cde0; target: com.apple.frontboard.systemappservices; service: com.apple.frontboard.workspace-service>
+2026-11-23 09:21:30.671 Df PumpkinBlaster[10418:908d] [com.apple.FrontBoard:Common] <FBSWorkspaceScenesClient:0x600003000360 com.apple.frontboard.systemappservices> attempting immediate handshake from activate
+2026-11-23 09:21:30.673 Df PumpkinBlaster[10418:908d] [com.apple.FrontBoard:Common] <FBSWorkspaceScenesClient:0x600003000360 com.apple.frontboard.systemappservices> sent handshake
+2026-11-23 09:21:30.675 Df PumpkinBlaster[10418:9097] [com.apple.runningboard:connection] Handshake succeeded
+2026-11-23 09:21:30.675 Df PumpkinBlaster[10418:908d] [com.apple.runningboard:general] Added observer for process assertions expiration warning: <_RBSExpirationWarningClient: 0x60000020d7c0>
+2026-11-23 09:21:30.675 Df PumpkinBlaster[10418:9097] [com.apple.runningboard:connection] Identity resolved as app<app.monstera.pumpkinblaster((null))>
+2026-11-23 09:21:30.677 Df PumpkinBlaster[10418:9092] [com.apple.UIKit:BackgroundTask] Creating new assertion because there is no existing background assertion.
+2026-11-23 09:21:30.677 Df PumpkinBlaster[10418:9092] [com.apple.UIKit:BackgroundTask] Creating new background assertion
+2026-11-23 09:21:30.677 Df PumpkinBlaster[10418:9092] [com.apple.UIKit:BackgroundTask] Created new background assertion <BKSProcessAssertion: 0x60000210c500>
+2026-11-23 09:21:30.677 I  PumpkinBlaster[10418:9092] [com.apple.runningboard:assertion] Acquiring assertion: <RBSAssertionDescriptor| "Shared Background Assertion 0 for app.monstera.pumpkinblaster" ID:(null) target:10418>
+2026-11-23 09:21:30.681 Df PumpkinBlaster[10418:9092] [com.apple.UIKit:BackgroundTask] Incrementing reference count for background assertion <BKSProcessAssertion: 0x60000210c500>
+2026-11-23 09:21:30.682 Df PumpkinBlaster[10418:9092] [com.apple.UIKit:BackgroundTask] Created background task <_UIBackgroundTaskInfo: 0x60000170ce80>: taskID = 1, taskName = Launch Background Task for Coalescing, creationTime = 647 (elapsed = 0).
+2026-11-23 09:21:30.682 Df PumpkinBlaster[10418:909b] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UIApplicationSceneKeyboardSettings on FBSSceneSettings
+2026-11-23 09:21:30.683 Df PumpkinBlaster[10418:908d] [com.apple.UIKit:UIScreen] Evaluated capturing state as 0 on <UIScreen: 0x105507c00> for initial
+2026-11-23 09:21:30.684 Df PumpkinBlaster[10418:908d] [com.apple.UIKit:UIScreen] Evaluated capturing state as 0 on <UIScreen: 0x105507c00> for CADisplay KVO
+2026-11-23 09:21:30.690 Df PumpkinBlaster[10418:908d] [com.apple.Accessibility:AXSupportCommon] Read CategoryName: per-app = 1, category name = (null)
+2026-11-23 09:21:30.691 Df PumpkinBlaster[10418:908d] [com.apple.Accessibility:AXSupportCommon] Read CategoryName: per-app = 0, category name = (null)
+2026-11-23 09:21:30.697 Df PumpkinBlaster[10418:909b] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneOcclusionSettings> on FBSSceneSettings
+2026-11-23 09:21:30.699 Df PumpkinBlaster[10418:909b] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneInterfaceProtectionSettings> on FBSSceneSettings
+2026-11-23 09:21:30.701 Df PumpkinBlaster[10418:909b] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UISceneLayoutPreferencesHostSettingsExtension on FBSSceneSettings
+2026-11-23 09:21:30.703 Df PumpkinBlaster[10418:909b] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UISceneSafeAreaSettingsExtension on FBSSceneSettings
+2026-11-23 09:21:30.707 Df PumpkinBlaster[10418:909b] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UISceneLayoutPreferenceClientSettingsExtension on FBSSceneClientSettings
+2026-11-23 09:21:30.709 Df PumpkinBlaster[10418:909b] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UIHomeAffordanceHostSceneSettings> on FBSSceneSettings
+2026-11-23 09:21:30.709 Df PumpkinBlaster[10418:908d] [com.apple.dt.xctest:Default] Registering for test daemon availability notify post.
+2026-11-23 09:21:30.710 Df PumpkinBlaster[10418:908d] [com.apple.dt.xctest:Default] notify_get_state check indicated test daemon not ready.
+2026-11-23 09:21:30.710 Df PumpkinBlaster[10418:909b] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UISystemShellSceneHostingEnvironmentSettings on FBSSceneSettings
+2026-11-23 09:21:30.710 Df PumpkinBlaster[10418:908d] [com.apple.dt.xctest:Default] notify_get_state check indicated test daemon not ready.
+2026-11-23 09:21:30.711 Df PumpkinBlaster[10418:908d] [com.apple.dt.xctest:Default] notify_get_state check indicated test daemon not ready.
+2026-11-23 09:21:30.711 Df PumpkinBlaster[10418:909b] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UISceneRenderingEnvironmentSettings on FBSSceneSettings
+2026-11-23 09:21:30.712 Df PumpkinBlaster[10418:908d] [com.apple.UIKit:Application] Deactivation reason added: 11; deactivation reasons: 1024 -> 3072; animating application lifecycle event: 0
+2026-11-23 09:21:30.716 Df PumpkinBlaster[10418:909b] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneRenderingEnvironmentClientSettings> on FBSSceneClientSettings
+2026-11-23 09:21:30.723 Df PumpkinBlaster[10418:909b] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneTransitioningHostSettings> on FBSSceneSettings
+2026-11-23 09:21:30.724 Df PumpkinBlaster[10418:909b] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneFocusSystemSettings> on FBSSceneSettings
+2026-11-23 09:21:30.727 Df PumpkinBlaster[10418:909b] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UISceneOrientationSettingsExtension on FBSSceneSettings
+2026-11-23 09:21:30.727 Df PumpkinBlaster[10418:909b] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UISceneOrientationClientSettingsExtension on FBSSceneClientSettings
+2026-11-23 09:21:30.728 Df PumpkinBlaster[10418:909b] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UISceneWindowingControlClientSettings on FBSSceneClientSettings
+2026-11-23 09:21:30.729 Df PumpkinBlaster[10418:909b] [com.apple.FrontBoard:SceneExtension] Realizing settings extension FBSSceneSettingsCore on FBSSceneSettings
+2026-11-23 09:21:30.731 Df PumpkinBlaster[10418:908d] [com.apple.UIKit:Application] Deactivation reason removed: 10; deactivation reasons: 3072 -> 2048; animating application lifecycle event: 0
+2026-11-23 09:21:30.736 Df PumpkinBlaster[10418:909b] [com.apple.FrontBoard:SceneExtension] Realizing settings extension FBSSceneClientSettingsCore on FBSSceneClientSettings
+2026-11-23 09:21:30.737 Df PumpkinBlaster[10418:9092] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneHostingContentSizePreferenceClientSettings> on FBSSceneClientSettings
+2026-11-23 09:21:30.741 Df PumpkinBlaster[10418:908d] [com.apple.UIKit:EventBus] Event Timing Profile for Touch: not found, path="/System/Library/EventTimingProfiles/Sim.Touch.plist"
+2026-11-23 09:21:30.741 Df PumpkinBlaster[10418:908d] [com.apple.UIKit:EventBus] Event Timing Profile for Pencil: not found, path="/System/Library/EventTimingProfiles/Sim.Pencil.plist"
+2026-11-23 09:21:30.741 Df PumpkinBlaster[10418:908d] [com.apple.UIKit:UpdateScheduler] Selected display: name=LCD (PurpleMain), id=1
+2026-11-23 09:21:30.742 Df PumpkinBlaster[10418:9092] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UISceneHostingTraitCollectionPropagationSettings on FBSSceneSettings
+2026-11-23 09:21:30.748 Df PumpkinBlaster[10418:9092] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneHostingSheetPresentationSettings> on FBSSceneSettings
+2026-11-23 09:21:30.752 Df PumpkinBlaster[10418:9092] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneHostingSheetPresentationClientSettings> on FBSSceneClientSettings
+2026-11-23 09:21:30.753 Df PumpkinBlaster[10418:9092] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneHostingEventDeferringSettings> on FBSSceneSettings
+2026-11-23 09:21:30.754 Df PumpkinBlaster[10418:9092] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <UIKit__UITypedKeyValueSceneSettings> on FBSSceneSettings
+2026-11-23 09:21:30.755 Df PumpkinBlaster[10418:9092] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <UIKit__UITypedKeyValueSceneSettings> on FBSSceneClientSettings
+2026-11-23 09:21:30.755 Df PumpkinBlaster[10418:9092] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneHostingViewControllerPreferencePropagationClientSettings> on FBSSceneClientSettings
+2026-11-23 09:21:30.755 Df PumpkinBlaster[10418:9092] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneZoomTransitionSettings> on FBSSceneSettings
+2026-11-23 09:21:30.755 Df PumpkinBlaster[10418:909b] [com.apple.FrontBoard:SceneExtension] UIMutableApplicationSceneSettings setting counterpart class: UIApplicationSceneSettings
+2026-11-23 09:21:30.761 Df PumpkinBlaster[10418:909b] [com.apple.FrontBoard:SceneExtension] UIMutableApplicationSceneClientSettings setting counterpart class: UIApplicationSceneClientSettings
+2026-11-23 09:21:30.762 Df PumpkinBlaster[10418:909b] [com.apple.FrontBoard:SceneExtension] Realizing settings extension FBSSceneTransitionContextCore on FBSSceneTransitionContext
+2026-11-23 09:21:30.776 I  PumpkinBlaster[10418:909b] [com.apple.FrontBoard:Common] [FBSScene] [(FBSceneManager):sceneID:app.monstera.pumpkinblaster-default] Created client agent: <UIApplicationSceneClientAgent: 0x600000004b60>
+2026-11-23 09:21:30.905 Df PumpkinBlaster[10418:908d] [com.apple.BoardServices:XPCErrors] [C:2] Alloc com.apple.backboard.hid-services.xpc
+2026-11-23 09:21:30.905 Df PumpkinBlaster[10418:908d] [com.apple.xpc:connection] [0x105607b40] activating connection: mach=false listener=false peer=false name=(anonymous)
+2026-11-23 09:21:30.907 Df PumpkinBlaster[10418:9092] [com.apple.BackBoard:EventDelivery] BKSHIDEventDeliveryManager - connection activation
+2026-11-23 09:21:30.920 Df PumpkinBlaster[10418:908d] [com.apple.UIKit:BackgroundTask] Will add backgroundTask with taskName: Persistent SceneSession Map Update, expirationHandler: <__NSGlobalBlock__: 0x1e61729e0>
+2026-11-23 09:21:30.920 Df PumpkinBlaster[10418:908d] [com.apple.UIKit:BackgroundTask] Reusing background assertion <BKSProcessAssertion: 0x60000210c500>
+2026-11-23 09:21:30.921 Df PumpkinBlaster[10418:908d] [com.apple.UIKit:BackgroundTask] Incrementing reference count for background assertion <BKSProcessAssertion: 0x60000210c500>
+2026-11-23 09:21:30.921 Df PumpkinBlaster[10418:908d] [com.apple.UIKit:BackgroundTask] Created background task <_UIBackgroundTaskInfo: 0x6000017171c0>: taskID = 2, taskName = Persistent SceneSession Map Update, creationTime = 647 (elapsed = 0).
+2026-11-23 09:21:30.922 Df PumpkinBlaster[10418:908d] [com.apple.UIKit:Application] Deactivation reason added: 5; deactivation reasons: 2048 -> 2080; animating application lifecycle event: 1
+2026-11-23 09:21:30.922 Df PumpkinBlaster[10418:908d] [com.apple.UIKit:InterfaceStyle] Should send trait collection or coordinate space update, interface style 1 -> 1, <UIWindowScene: 0x10560aac0> (072B1B4A-B955-487A-A8D2-37B6855BDE67)
+2026-11-23 09:21:30.925 Df PumpkinBlaster[10418:908d] [com.apple.UIKit:InterfaceStyle] Not push traits update to screen for new style 1, <UIWindowScene: 0x10560aac0> (072B1B4A-B955-487A-A8D2-37B6855BDE67)
+2026-11-23 09:21:30.926 Df PumpkinBlaster[10418:908d] [com.apple.UIKit:HomeAffordanceObservation] Initializing: <_UIHomeAffordanceSceneNotifier: 0x600002915a40>; with scene: <UIWindowScene: 0x10560aac0>
+2026-11-23 09:21:30.926 Df PumpkinBlaster[10418:908d] [com.apple.BacklightServices:scenes] 0x600000c0f180 setDelegate:<0x600000c0f120 _UIBacklightEnvironment> hasDelegate:YES for environment:sceneID:app.monstera.pumpkinblaster-default
+2026-11-23 09:21:30.929 Df PumpkinBlaster[10418:908d] [com.apple.UIKit:InterfaceStyle] Not push traits update to screen for new style 1, <UIWindowScene: 0x10560aac0> (072B1B4A-B955-487A-A8D2-37B6855BDE67)
+2026-11-23 09:21:30.929 Df PumpkinBlaster[10418:908d] [com.apple.UIKit:EventDeferring] [0x6000029155e0] Initialized with scene: <UIWindowScene: 0x10560aac0>; behavior: <_UIEventDeferringBehavior_iOS: 0x6000002159c0>; availableForProcess: 1, systemShellManagesKeyboardFocus: 1
+2026-11-23 09:21:30.947 Df PumpkinBlaster[10418:908d] [com.apple.BackBoard:EventDelivery] policyStatus:<BKSHIDEventDeliveryPolicyObserver: 0x600002601260; process scope; status: target> was:none
+2026-11-23 09:21:30.948 Df PumpkinBlaster[10418:908d] [com.apple.UIKit:KeyWindow] Setting default evaluation strategy for UIUserInterfaceIdiomPhone to LastOneWins
+2026-11-23 09:21:30.948 Df PumpkinBlaster[10418:908d] [com.apple.UIKit:KeyWindow] Scene target of keyboard event deferring environment did change: 1; scene: UIWindowScene: 0x10560aac0; scene identity: com.apple.frontboard.systemappservices/FBSceneManager:sceneID%3Aapp.monstera.pumpkinblaster-default
+2026-11-23 09:21:30.948 Df PumpkinBlaster[10418:908d] [com.apple.UIKit:EventDeferring] [0x6000029155e0] Scene target of event deferring environments did update: scene: 0x10560aac0; current systemShellManagesKeyboardFocus: 1; systemShellManagesKeyboardFocusForScene: 1; eligibleForRecordRemoval: 1;
+2026-11-23 09:21:30.948 Df PumpkinBlaster[10418:908d] [com.apple.UIKit:KeyWindow] Scene became target of keyboard event deferring environment: UIWindowScene: 0x10560aac0; scene identity: com.apple.frontboard.systemappservices/FBSceneManager:sceneID%3Aapp.monstera.pumpkinblaster-default
+2026-11-23 09:21:30.948 Df PumpkinBlaster[10418:908d] [com.apple.UIKit:KeyWindow] Stack[KeyWindow] 0x600000c0eb50: Taking no further action for migration from LastOneWins -> SystemShellManaged as there are no scenes
+2026-11-23 09:21:30.948 Df PumpkinBlaster[10418:908d] [com.apple.UIKit:KeyWindow] Setting default evaluation strategy for UIUserInterfaceIdiomPhone to SystemShellManaged
+2026-11-23 09:21:30.949 Df PumpkinBlaster[10418:9092] [com.apple.BackBoard:EventDelivery] BKSHIDEventObserver - connection activation
+2026-11-23 09:21:30.956 Df PumpkinBlaster[10418:908d] [com.apple.UIKit:KeyWindow] Key window needs update: 0; currentKeyWindowScene: 0x0; evaluatedKeyWindowScene: 0x10560aac0; currentApplicationKeyWindow: 0x0; evaluatedApplicationKeyWindow: 0x0; reason: UIWindowScene: 0x10560aac0: Window scene became target of keyboard environment
+2026-11-23 09:21:30.956 Df PumpkinBlaster[10418:908d] [com.apple.UIKit:InterfaceStyle] Not push traits update to screen for new style 1, <UIWindowScene: 0x10560aac0> (072B1B4A-B955-487A-A8D2-37B6855BDE67)
+2026-11-23 09:21:30.974 Df PumpkinBlaster[10418:908d] [com.apple.UIKit:InterfaceStyle] Not push traits update to screen for new style 1, <UIWindowScene: 0x10560aac0> (072B1B4A-B955-487A-A8D2-37B6855BDE67)
+2026-11-23 09:21:30.982 I  PumpkinBlaster[10418:908d] [com.apple.SwiftUI:Scenes] Received scene connection to session: <UISceneSession: 0x60000210bca0; role: UIWindowSceneSessionRoleApplication; persistentIdentifier: 072B1B4A-B955-487A-A8D2-37B6855BDE67; scene: (nil); configuration: <UISceneConfiguration: 0x60000210b160>; userInfo: <__NSDictionary0: 0x1e5aeb958>>
+2026-11-23 09:21:31.222 I  PumpkinBlaster[10418:908d] [com.apple.SwiftUI:Scenes] Scene session 072B1B4A-B955-487A-A8D2-37B6855BDE67 will use item WindowGroup with id: 'type(PumpkinBlaster.ContentView, 1)'
+2026-11-23 09:21:31.446 Df PumpkinBlaster[10418:909c] [com.apple.UIKit:BackgroundTask] Ending background task with UIBackgroundTaskIdentifier: 2
+2026-11-23 09:21:31.448 Df PumpkinBlaster[10418:909c] [com.apple.UIKit:BackgroundTask] Ending task with identifier 2 and description: <_UIBackgroundTaskInfo: 0x6000017171c0>: taskID = 2, taskName = Persistent SceneSession Map Update, creationTime = 647 (elapsed = 1), _expireHandler: <__NSGlobalBlock__: 0x1e61729e0>
+2026-11-23 09:21:31.449 Df PumpkinBlaster[10418:909c] [com.apple.UIKit:BackgroundTask] Decrementing reference count for assertion <BKSProcessAssertion: 0x60000210c500> (used by background task with identifier 2: <_UIBackgroundTaskInfo: 0x6000017171c0>: taskID = 2, taskName = Persistent SceneSession Map Update, creationTime = 647 (elapsed = 1))
+2026-11-23 09:21:31.549 Df PumpkinBlaster[10418:908d] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UIApplicationSceneDisplaySettings> on FBSSceneSettings
+2026-11-23 09:21:31.590 Df PumpkinBlaster[10418:908d] [com.apple.UIKit:Orientation] <UIWindowScene: 0x10560aac0> (072B1B4A-B955-487A-A8D2-37B6855BDE67) Scene updated orientation preferences: none -> ( Ll Lr )
+2026-11-23 09:21:31.591 Df PumpkinBlaster[10418:908d] [com.apple.UIKit:KeyWindow] Key window API is scene-level: YES
+2026-11-23 09:21:31.591 Df PumpkinBlaster[10418:908d] [com.apple.UIKit:KeyWindow] UIWindowScene: 0x10560aac0: Window became key in scene: UIWindow: 0x10560bd60; contextId: 0xBB89CE8B: reason: UIWindowScene: 0x10560aac0: Window requested to become key in scene: 0x10560bd60
+2026-11-23 09:21:31.591 Df PumpkinBlaster[10418:908d] [com.apple.UIKit:KeyWindow] Key window needs update: 1; currentKeyWindowScene: 0x0; evaluatedKeyWindowScene: 0x10560aac0; currentApplicationKeyWindow: 0x0; evaluatedApplicationKeyWindow: 0x10560bd60; reason: UIWindowScene: 0x10560aac0: Window requested to become key in scene: 0x10560bd60
+2026-11-23 09:21:31.591 Df PumpkinBlaster[10418:908d] [com.apple.UIKit:KeyWindow] Window did become application key: UIWindow: 0x10560bd60; contextId: 0xBB89CE8B; scene identity: com.apple.frontboard.systemappservices/FBSceneManager:sceneID%3Aapp.monstera.pumpkinblaster-default
+2026-11-23 09:21:31.592 Df PumpkinBlaster[10418:908d] [com.apple.UIKit:EventDeferring] [0x6000029155e0] Begin local event deferring requested for token: 0x600002606b80; environments: 1; reason: UIWindowScene: 0x10560aac0: Begin event deferring in keyboardFocus for window: 0x10560bd60
+2026-11-23 09:21:31.599 I  PumpkinBlaster[10418:908d] [com.apple.SwiftUI:Scenes] Finished willConnectTo for session 072B1B4A-B955-487A-A8D2-37B6855BDE67 with scene <UIWindowScene: 0x10560aac0; role: UIWindowSceneSessionRoleApplication; persistentIdentifier: 072B1B4A-B955-487A-A8D2-37B6855BDE67; activationState: UISceneActivationStateUnattached>
+2026-11-23 09:21:31.605 Df PumpkinBlaster[10418:908d] [com.apple.UIKit:InterfaceStyle] Not push traits update to screen for new style 1, <UIWindowScene: 0x10560aac0> (072B1B4A-B955-487A-A8D2-37B6855BDE67)
+2026-11-23 09:21:31.608 Df PumpkinBlaster[10418:9092] [com.apple.BackBoard:EventDelivery] policyStatus:<BKSHIDEventDeliveryPolicyObserver: 0x600002601260; token: com.apple.frontboard.systemappservices/FBSceneManager:sceneID%3Aapp.monstera.pumpkinblaster-default; status: ancestor> was:target
+2026-11-23 09:21:31.614 Df PumpkinBlaster[10418:908d] [com.apple.UIKit:AppLifecycle] sceneOfRecord: sceneID: sceneID:app.monstera.pumpkinblaster-default  persistentID: 072B1B4A-B955-487A-A8D2-37B6855BDE67
+2026-11-23 09:21:31.615 Df PumpkinBlaster[10418:908d] [com.apple.UIKit:Application] Ignoring already applied deactivation reason: 5; deactivation reasons: 2080
+2026-11-23 09:21:31.615 Df PumpkinBlaster[10418:908d] [com.apple.UIKit:Application] Deactivation reason added: 12; deactivation reasons: 2080 -> 6176; animating application lifecycle event: 1
+2026-11-23 09:21:31.615 Df PumpkinBlaster[10418:908d] [com.apple.UIKit:Application] Deactivation reason removed: 11; deactivation reasons: 6176 -> 4128; animating application lifecycle event: 1
+2026-11-23 09:21:31.615 Df PumpkinBlaster[10418:908d] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneIntelligenceSupportSettings> on FBSSceneSettings
+2026-11-23 09:21:31.619 Df PumpkinBlaster[10418:908d] [com.apple.UIKit:InterfaceStyle] Not push traits update to screen for new style 1, <UIWindowScene: 0x10560aac0> (072B1B4A-B955-487A-A8D2-37B6855BDE67)
+2026-11-23 09:21:31.619 Df PumpkinBlaster[10418:909c] [com.apple.UIIntelligenceSupport:xpc] establishing connection to agent
+2026-11-23 09:21:31.622 Df PumpkinBlaster[10418:909c] [com.apple.xpc:session] [0x6000021100a0] Session created.
+2026-11-23 09:21:31.622 Df PumpkinBlaster[10418:909c] [com.apple.xpc:session] [0x6000021100a0] Session created from connection [0x10560c300]
+2026-11-23 09:21:31.623 Df PumpkinBlaster[10418:909c] [com.apple.xpc:connection] [0x10560c300] activating connection: mach=true listener=false peer=false name=com.apple.uiintelligencesupport.agent
+2026-11-23 09:21:31.624 Df PumpkinBlaster[10418:909c] [com.apple.xpc:session] [0x6000021100a0] Session activated
+2026-11-23 09:21:31.655 A  PumpkinBlaster[10418:908d] (CoreFoundation) Updating Key-Value Observers Of Preferences
+2026-11-23 09:21:31.688 Df PumpkinBlaster[10418:9092] [com.apple.UIKit:BackgroundTask] Ending background task with UIBackgroundTaskIdentifier: 1
+2026-11-23 09:21:31.688 Df PumpkinBlaster[10418:9092] [com.apple.UIKit:BackgroundTask] Ending task with identifier 1 and description: <_UIBackgroundTaskInfo: 0x60000170ce80>: taskID = 1, taskName = Launch Background Task for Coalescing, creationTime = 647 (elapsed = 1), _expireHandler: (null)
+2026-11-23 09:21:31.688 Df PumpkinBlaster[10418:9092] [com.apple.UIKit:BackgroundTask] Decrementing reference count for assertion <BKSProcessAssertion: 0x60000210c500> (used by background task with identifier 1: <_UIBackgroundTaskInfo: 0x60000170ce80>: taskID = 1, taskName = Launch Background Task for Coalescing, creationTime = 647 (elapsed = 1))
+2026-11-23 09:21:31.688 Df PumpkinBlaster[10418:9092] [com.apple.UIKit:BackgroundTask] Will invalidate assertion: <BKSProcessAssertion: 0x60000210c500> for task identifier: 1
+2026-11-23 09:21:31.807 A  PumpkinBlaster[10418:9092] (RunningBoardServices) didChangeInheritances
+2026-11-23 09:21:31.863 Df PumpkinBlaster[10418:908d] [app.monstera.pumpkinblaster:sprites] sprites atlas=loaded size=128x16 frames=8
+2026-11-23 09:21:31.880 E  PumpkinBlaster[10418:908d] [com.apple.UIKit:UIFocus] _TtC18_SpriteKit_SwiftUIP33_4A29C38A751B2448A1E2FA85CDDEAA5324SpriteKitViewCoordinator implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-11-23 09:21:31.915 Df PumpkinBlaster[10418:908d] [com.apple.xpc:connection] [0x105712a60] activating connection: mach=true listener=false peer=false name=com.apple.metal.simulator
+2026-11-23 09:21:31.918 Df PumpkinBlaster[10418:908d] [com.apple.xpc:connection] [0x105610240] activating connection: mach=true listener=false peer=false name=com.apple.metal.simulator
+2026-11-23 09:21:31.918 Df PumpkinBlaster[10418:908d] [com.apple.xpc:connection] [0x105610370] activating connection: mach=true listener=false peer=false name=com.apple.metal.simulator
+2026-11-23 09:21:31.989 Df PumpkinBlaster[10418:908d] [com.apple.xpc:connection] [0x1056114b0] activating connection: mach=true listener=false peer=false name=com.apple.IOSurface.Remote
+2026-11-23 09:21:32.028 Df PumpkinBlaster[10418:908d] [com.apple.network:activity] Create activity from XPC object <nw_activity 50:1 [313F665F-6612-4457-B1A4-35E17D8030BD] (reporting strategy default)>
+2026-11-23 09:21:32.028 Df PumpkinBlaster[10418:908d] [com.apple.network:activity] Create activity from XPC object <nw_activity 50:2 [56BD0E7B-6C6D-4CED-B640-3DE00791764E] (reporting strategy default)>
+2026-11-23 09:21:32.028 Df PumpkinBlaster[10418:908d] [com.apple.network:activity] Set activity <nw_activity 50:1 [313F665F-6612-4457-B1A4-35E17D8030BD] (reporting strategy default)> as the global parent
+2026-11-23 09:21:32.029 Df PumpkinBlaster[10418:908d] [com.apple.Accessibility:AXCommon] Read Per-App on Init: Smart invert = (null)
+2026-11-23 09:21:32.036 A  PumpkinBlaster[10418:9092] (RunningBoardServices) didChangeInheritances
+2026-11-23 09:21:32.042 I  PumpkinBlaster[10418:908d] [com.apple.useractivity:main] initUAUserActivity:com.apple.SwiftUI.stateRestoration- 10010228-85D8-49EA-80CE-8E84CB0EE531 UserActivity
+2026-11-23 09:21:32.043 I  PumpkinBlaster[10418:908d] [com.apple.useractivity:biome-69594900] - UAUserActivity	v1.0
+2026-11-23 09:21:32.044 I  PumpkinBlaster[10418:908d] [com.apple.useractivity:biome-69594900] 10010228-85D8-49EA-80CE-8E84CB0EE531 CREATED com.apple.SwiftUI.stateRestoration/(null)
+2026-11-23 09:21:32.047 I  PumpkinBlaster[10418:908d] [com.apple.useractivity:biome-69594900] 10010228-85D8-49EA-80CE-8E84CB0EE531 SET-DIRTY	wasDirty=false force=false informServer=false informIndex=false
+2026-11-23 09:21:32.049 I  PumpkinBlaster[10418:908d] [com.apple.useractivity:biome-69594900] 10010228-85D8-49EA-80CE-8E84CB0EE531 SET-USERINFO	count=1 false
+2026-11-23 09:21:32.049 I  PumpkinBlaster[10418:908d] [com.apple.useractivity:biome-69594900] 10010228-85D8-49EA-80CE-8E84CB0EE531 SET-DIRTY	wasDirty=true force=false informServer=false informIndex=false
+2026-11-23 09:21:32.051 Df PumpkinBlaster[10418:908d] [com.apple.UIKit:EventDeferring] [0x6000029155e0] Scene target of event deferring environments did update: scene: 0x10560aac0; current systemShellManagesKeyboardFocus: 1; systemShellManagesKeyboardFocusForScene: 1; eligibleForRecordRemoval: 1;
+2026-11-23 09:21:32.052 Df PumpkinBlaster[10418:908d] [com.apple.UIKit:KeyWindow] Scene became target of keyboard event deferring environment: UIWindowScene: 0x10560aac0; scene identity: com.apple.frontboard.systemappservices/FBSceneManager:sceneID%3Aapp.monstera.pumpkinblaster-default
+2026-11-23 09:21:32.052 Df PumpkinBlaster[10418:908d] [com.apple.UIKit:UpdateScheduler] Target list changed: <CADisplay:LCD PurpleMain>
+2026-11-23 09:21:32.054 Df PumpkinBlaster[10418:908d] [com.apple.UIKit:AppLifecycle] sceneOfRecord: sceneID: sceneID:app.monstera.pumpkinblaster-default  persistentID: 072B1B4A-B955-487A-A8D2-37B6855BDE67
+2026-11-23 09:21:32.056 Df PumpkinBlaster[10418:908d] [com.apple.UIKit:InterfaceStyle] Should not send trait collection or coordinate space update, interface style 1 -> 1, <UIWindowScene: 0x10560aac0> (072B1B4A-B955-487A-A8D2-37B6855BDE67)
+2026-11-23 09:21:32.058 Df PumpkinBlaster[10418:908d] [com.apple.UIKit:AppLifecycle] sceneOfRecord: sceneID: sceneID:app.monstera.pumpkinblaster-default  persistentID: 072B1B4A-B955-487A-A8D2-37B6855BDE67
+2026-11-23 09:21:32.061 Df PumpkinBlaster[10418:908d] [com.apple.UIKit:InterfaceStyle] Not push traits update to screen for new style 1, <UIWindowScene: 0x10560aac0> (072B1B4A-B955-487A-A8D2-37B6855BDE67)
+2026-11-23 09:21:32.064 Df PumpkinBlaster[10418:908d] [com.apple.UIKit:InterfaceStyle] Not push traits update to screen for new style 1, <UIWindowScene: 0x10560aac0> (072B1B4A-B955-487A-A8D2-37B6855BDE67)
+2026-11-23 09:21:32.065 Df PumpkinBlaster[10418:908d] [com.apple.UIKit:AppLifecycle] sceneOfRecord: sceneID: sceneID:app.monstera.pumpkinblaster-default  persistentID: 072B1B4A-B955-487A-A8D2-37B6855BDE67
+2026-11-23 09:21:32.066 Df PumpkinBlaster[10418:908d] [com.apple.UIKit:Application] Deactivation reason removed: 12; deactivation reasons: 4128 -> 32; animating application lifecycle event: 1
+2026-11-23 09:21:32.066 Df PumpkinBlaster[10418:908d] [com.apple.KeyboardArbiter:Client] Send setDeactivating: N (-DeactivationReason:SuspendedEventsOnly)
+2026-11-23 09:21:32.066 Df PumpkinBlaster[10418:908d] [com.apple.UIKit:Application] Deactivation reason removed: 5; deactivation reasons: 32 -> 0; animating application lifecycle event: 0
+2026-11-23 09:21:32.073 A  PumpkinBlaster[10418:909b] (RunningBoardServices) didChangeInheritances
+2026-11-23 09:21:32.115 Df PumpkinBlaster[10418:9092] [com.apple.xpc:connection] [0x105604710] activating connection: mach=true listener=false peer=false name=com.apple.fontservicesd
+2026-11-23 09:21:32.149 E  PumpkinBlaster[10418:908d] (libCoreFSCache.dylib) fopen failed for data file: errno = 2 (No such file or directory)
+2026-11-23 09:21:32.149 E  PumpkinBlaster[10418:908d] (libCoreFSCache.dylib) Errors found! Invalidating cache...
+2026-11-23 09:21:32.149 Df PumpkinBlaster[10418:908d] [com.apple.xpc:connection] [0x105606540] activating connection: mach=false listener=false peer=false name=com.apple.MTLCompilerService
+2026-11-23 09:21:32.169 A  PumpkinBlaster[10418:9092] (RunningBoardServices) didChangeInheritances
+2026-11-23 09:21:32.305 A  PumpkinBlaster[10418:908d] (Metal) compiling shader
+2026-11-23 09:21:33.055 A  PumpkinBlaster[10418:908d] (Metal) compiling shader
+2026-11-23 09:21:33.062 A  PumpkinBlaster[10418:908d] (Metal) compiling shader
+2026-11-23 09:21:33.067 A  PumpkinBlaster[10418:908d] (Metal) compiling shader
+2026-11-23 09:21:33.083 A  PumpkinBlaster[10418:908d] (Metal) compiling shader
+2026-11-23 09:21:33.097 Df PumpkinBlaster[10418:908d] [com.apple.KeyboardArbiter:Client] startConnection
+2026-11-23 09:21:33.099 Df PumpkinBlaster[10418:908d] [com.apple.xpc:connection] [0x105711ff0] activating connection: mach=true listener=false peer=false name=com.apple.UIKit.KeyboardManagement.hosted
+2026-11-23 09:21:33.103 Df PumpkinBlaster[10418:908d] [app.monstera.pumpkinblaster:sprites] sprites tick=5 kind=bat frame=2
+2026-11-23 09:21:33.111 A  PumpkinBlaster[10418:908d] (Metal) compiling shader
+2026-11-23 09:21:33.113 A  PumpkinBlaster[10418:908d] (Metal) compiling shader
+2026-11-23 09:21:33.124 A  PumpkinBlaster[10418:908d] (Metal) compiling shader
+2026-11-23 09:21:33.131 A  PumpkinBlaster[10418:908d] (Metal) compiling shader
+2026-11-23 09:21:33.144 Df PumpkinBlaster[10418:908d] [com.apple.KeyboardArbiter:Client] handleKeyboardChange: set currentKeyboard:N (wasKeyboard:N)
+2026-11-23 09:21:33.151 Df PumpkinBlaster[10418:908d] [com.apple.UIKit:KeyboardArbiterClientLog] isWritingToolsHandlingKeyboardTracking:Y (WT ready:Y, Arbiter ready:Y)
+2026-11-23 09:21:33.170 Df PumpkinBlaster[10418:908d] [app.monstera.pumpkinblaster:sprites] sprites tick=9 kind=bat frame=3
+2026-11-23 09:21:33.291 Df PumpkinBlaster[10418:908d] [app.monstera.pumpkinblaster:sprites] sprites tick=16 kind=bat frame=2
+2026-11-23 09:21:33.366 Df PumpkinBlaster[10418:908d] [com.apple.network:activity] <nw_activity 50:1 [313F665F-6612-4457-B1A4-35E17D8030BD] (global parent) (reporting strategy default) complete (reason success)> complete with reason 2 (success), duration 3635ms
+2026-11-23 09:21:33.366 Df PumpkinBlaster[10418:908d] [com.apple.network:activity] <nw_activity 50:2 [56BD0E7B-6C6D-4CED-B640-3DE00791764E] (reporting strategy default) complete (reason success)> complete with reason 2 (success), duration 3635ms
+2026-11-23 09:21:33.366 Df PumpkinBlaster[10418:908d] [com.apple.network:activity] Unsetting the global parent activity <nw_activity 50:1 [313F665F-6612-4457-B1A4-35E17D8030BD] (global parent) (reporting strategy default) complete (reason success)>
+2026-11-23 09:21:33.366 Df PumpkinBlaster[10418:908d] [com.apple.network:activity] Unset the global parent activity
+2026-11-23 09:21:33.422 Df PumpkinBlaster[10418:908d] [app.monstera.pumpkinblaster:sprites] sprites tick=24 kind=bat frame=3
+2026-11-23 09:21:33.555 Df PumpkinBlaster[10418:908d] [app.monstera.pumpkinblaster:sprites] sprites tick=32 kind=bat frame=2
+2026-11-23 09:21:33.689 Df PumpkinBlaster[10418:908d] [app.monstera.pumpkinblaster:sprites] sprites tick=40 kind=bat frame=3
+2026-11-23 09:21:34.022 I  PumpkinBlaster[10418:908d] [app.monstera.pumpkinblaster:runtime] runtime ticks=60 hash=ff174e23d20179f5 seed=1359916593773370
+2026-11-23 09:21:53.693 Df PumpkinBlaster[10418:908d] (UIKitCore) Simulator slow-motion animations are now off
+2026-11-23 09:21:53.885 Df PumpkinBlaster[10418:908d] [com.apple.UIKit:AppLifecycle] sceneOfRecord: sceneID: sceneID:app.monstera.pumpkinblaster-default  persistentID: 072B1B4A-B955-487A-A8D2-37B6855BDE67

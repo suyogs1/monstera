@@ -2,10 +2,12 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import zlib from "node:zlib";
 import { describe, expect, it } from "vitest";
-import { buildNativeIndex, evaluatePlatform, GAMES, parseAppLog, parsePng, projectLabel, specSha256 } from "../../scripts/native-evidence.mjs";
+import { buildNativeIndex, E1_DIR, evaluatePlatform, GAMES, M3_DIR, parseAppLog, parseOperations, parsePng, projectLabel, specSha256 } from "../../scripts/native-evidence.mjs";
 import { matchNativeApps, nativeLabelFor } from "./nativeApps";
 const repo = join(__dirname, "..", "..", "..");
-const ev = (platform: string, game: string, file: string) => join(repo, "docs", "evidence", "m3-native-apps", platform, game, file);
+// Each project's committed evidence directory (E1 for the v5 official games). Negative tests below start from these
+// records, which carry the exact current hash, so a mutation is the only reason a check can fail.
+const ev = (platform: string, game: string, file: string) => join(repo, ...GAMES.find((g) => g.id === game)!.evidenceDir.split("/"), platform, game, file);
 const GAME = "pumpkin-blaster";
 const specBytes = readFileSync(join(repo, GAMES[0]!.specPath));
 const SHA = specSha256(specBytes);
@@ -17,26 +19,79 @@ const load = (platform: "android" | "ios", game = GAME) => ({
 const states = (r: ReturnType<typeof evaluatePlatform>) => Object.fromEntries(Object.entries(r.checks).map(([k, v]) => [k, v.state]));
 const index = buildNativeIndex(repo);
 
-describe("committed Phase 1 evidence", () => {
-  it("every game and platform is verified from its own reports and logs", () => {
-    for (const g of index.games) {
+const official = index.games.filter((g) => g.evidenceDir === E1_DIR);
+describe("committed E1 evidence (current v5 official games)", () => {
+  it("both official games are read from the E1 directory", () => {
+    expect(official.map((g) => g.id).sort()).toEqual(["pumpkin-blaster", "trick-or-treat-rush"]);
+  });
+  it("every official game and platform is verified from its own reports and logs", () => {
+    for (const g of official) {
       expect(g.label).toBe("SIMULATOR-TESTED");
       for (const p of g.platforms) {
         expect(p.problem).toBeNull();
         expect(Object.values(states(p)).every((s) => s === "pass")).toBe(true);
         expect(p.loggedSha256).toBe(g.specSha256);
-        expect(p.ticks).toBe(60);
+        expect(p.ticks).toBeGreaterThanOrEqual(60);
         expect(p.screenshot!.width).toBeGreaterThan(0);
       }
     }
   });
   it("spec hashes come from the canonical spec files, not from SUMMARY.md", () => {
-    const summary = readFileSync(join(repo, "docs", "evidence", "m3-native-apps", "SUMMARY.md"), "utf8");
-    for (const g of index.games) {
+    const summary = readFileSync(join(repo, ...E1_DIR.split("/"), "SUMMARY.md"), "utf8");
+    for (const g of official) {
       expect(g.specSha256).toBe(specSha256(readFileSync(join(repo, g.specPath))));
       expect(summary).toContain(g.specSha256); // the summary agrees, but is not the source
     }
   });
+  it("the logged atlas matches the spec and every logged frame change follows frames[(tick div ticksPerFrame) mod count]", () => {
+    for (const g of official) {
+      const spec = JSON.parse(readFileSync(join(repo, g.specPath), "utf8"));
+      const atlas = spec.game.atlas;
+      const sprites = Object.fromEntries(spec.game.runtime.kinds.map((k: { id: string; sprite: { frames: number[]; ticksPerFrame: number } }) => [k.id, k.sprite]));
+      for (const platform of ["android", "ios"] as const) {
+        const log = readFileSync(ev(platform, g.id, "logs.txt"), "utf8");
+        const size = /sprites atlas=loaded size=(\d+)x(\d+)/.exec(log);
+        expect(size, `${g.id} ${platform}`).not.toBeNull();
+        expect([Number(size![1]), Number(size![2])]).toEqual([atlas.columns * atlas.frameWidth, atlas.rows * atlas.frameHeight]);
+        const changes = [...log.matchAll(/sprites tick=(\d+) kind=([a-z0-9-]+) frame=(\d+)/g)];
+        expect(changes.length, `${g.id} ${platform}`).toBeGreaterThanOrEqual(2);
+        expect(new Set(changes.map((m) => m[3])).size).toBeGreaterThan(1); // the frame actually changed
+        for (const [, tick, kind, frame] of changes) {
+          const s = sprites[kind!];
+          expect(Number(frame), `${g.id} ${platform} tick ${tick}`).toBe(s.frames[Math.floor(Number(tick) / s.ticksPerFrame) % s.frames.length]);
+        }
+      }
+    }
+  });
+});
+describe("historical M3 evidence (spec v4)", () => {
+  it("is never current: against the v5 specs every project and platform is stale and gets no label", () => {
+    const m3 = buildNativeIndex(repo, undefined, GAMES.map((g) => ({ ...g, evidenceDir: M3_DIR })));
+    for (const g of m3.games) {
+      expect(g.label).toBe("GENERATED");
+      for (const p of g.platforms) expect(p.checks.specHash.state, `${g.id} ${p.platform}`).toBe("stale");
+    }
+    const lantern = index.games.find((g) => g.id === "lantern-run")!;
+    expect(lantern.evidenceDir).toBe(M3_DIR);
+    expect(lantern.label).toBe("GENERATED");
+  });
+});
+describe("repeated operations", () => {
+  it("a second screenshot is accepted only when results.jsonl records it identically; any other repeat is refused", () => {
+    const i = load("android");
+    expect(parseOperations("android", GAME, i.report, i.results).problem).toBeNull();
+    const report = JSON.parse(i.report) as { op: string }[];
+    expect(report.filter((e) => e.op === "screenshot").length).toBe(2);
+    const lines = i.results.split("\n");
+    let last = -1;
+    lines.forEach((l, n) => { if (l.includes('"op":"screenshot"')) last = n; });
+    const dropped = lines.filter((_, n) => n !== last).join("\n");
+    expect(parseOperations("android", GAME, i.report, dropped).problem).toMatch(/screenshots/);
+    const twice = JSON.stringify([...report, report.find((e) => e.op === "build")]);
+    expect(parseOperations("android", GAME, twice, i.results).problem).toMatch(/more than once/);
+  });
+});
+describe("evaluation basics", () => {
   it("a CRLF checkout of a spec has the same identity", () => {
     expect(specSha256(Buffer.from(specBytes.toString("utf8").replace(/\n/g, "\r\n")))).toBe(SHA);
   });
@@ -130,15 +185,20 @@ describe("missing and malformed evidence", () => {
     const r = evaluatePlatform({ ...i, logs: i.logs.split("\n").filter((l) => !l.includes("MonsteraRuntime")).join("\n") });
     expect(r.checks.runtime.state).toBe("missing");
     expect(r.label).toBe("COMPILED");
-    expect(evaluatePlatform({ ...i, logs: i.logs.replace("runtime ticks=60", "runtime ticks=0") }).checks.runtime.state).toBe("fail");
+    expect(i.logs).toMatch(/runtime ticks=\d+ /);
+    expect(evaluatePlatform({ ...i, logs: i.logs.replace(/runtime ticks=\d+ /, "runtime ticks=0 ") }).checks.runtime.state).toBe("fail");
   });
   it("runtime ticks from a different process than the specification check do not count", () => {
     const i = load("android");
-    const r = evaluatePlatform({ ...i, logs: i.logs.replace("MonsteraRuntime( 4962)", "MonsteraRuntime( 1111)") });
+    expect(evaluatePlatform(i).checks.runtime.state).toBe("pass"); // the unmutated record is valid
+    const r = evaluatePlatform({ ...i, logs: i.logs.replace(/MonsteraRuntime\(\s*\d+\)/, "MonsteraRuntime( 1111)") });
     expect(r.checks.runtime.state).toBe("fail");
     expect(r.label).toBe("COMPILED");
     const j = load("ios");
-    expect(evaluatePlatform({ ...j, logs: j.logs.replace("PumpkinBlaster[10741:8854] [app.monstera.pumpkinblaster:spec]", "PumpkinBlaster[99:8854] [app.monstera.pumpkinblaster:spec]") }).checks.runtime.state).toBe("fail");
+    expect(evaluatePlatform(j).checks.runtime.state).toBe("pass");
+    const specLine = /PumpkinBlaster\[\d+:([0-9a-f]+)\] \[app\.monstera\.pumpkinblaster:spec\]/;
+    expect(j.logs).toMatch(specLine);
+    expect(evaluatePlatform({ ...j, logs: j.logs.replace(specLine, "PumpkinBlaster[99:$1] [app.monstera.pumpkinblaster:spec]") }).checks.runtime.state).toBe("fail");
   });
   it("results.jsonl must agree with report.json", () => {
     const i = load("ios");
@@ -158,7 +218,10 @@ describe("missing and malformed evidence", () => {
     const lines = i.report.split("\n");
     const dup = [...lines.slice(0, 3), lines[2]!, ...lines.slice(3)].join("\n");
     expect(evaluatePlatform({ ...i, report: dup }).problem).toMatch(/more than once/);
-    const early = i.report.replace('"timestamp":"2026-11-16T04:26:07Z"', '"timestamp":"2026-11-16T04:00:00Z"');
+    const launch = (JSON.parse(i.report) as { op: string; timestamp: string }[]).find((e) => e.op === "launch")!.timestamp;
+    const early = i.report.replace(`"op":"launch","target":"android-emulator","status":"ok","run_id":"${JSON.parse(i.report)[0].run_id}","timestamp":"${launch}"`,
+      `"op":"launch","target":"android-emulator","status":"ok","run_id":"${JSON.parse(i.report)[0].run_id}","timestamp":"2000-01-01T00:00:00Z"`);
+    expect(early).not.toBe(i.report);
     expect(evaluatePlatform({ ...i, report: early }).problem).toMatch(/before/);
   });
   it("partial platform results: the project label is the weakest platform", () => {

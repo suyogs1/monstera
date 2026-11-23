@@ -17,14 +17,22 @@ export const PLATFORMS = {
   android: { target: "android-emulator", device: "Android emulator" },
   ios: { target: "ios-simulator", device: "iOS simulator" },
 };
-/** The three Phase 1 projects. The id must equal project.id inside the canonical spec (checked at build time). */
+/** Committed evidence directories. M3 is historical (spec v4 hashes); E1 is the evidence for the current v5 official games. */
+export const M3_DIR = "docs/evidence/m3-native-apps";
+export const E1_DIR = "docs/evidence/e1-native-apps";
+/**
+ * The projects Studio shows native evidence for, each read from one directory. The id must equal project.id inside the
+ * canonical spec (checked at build time). Whatever the directory, a result counts only for the hash the app logged, so
+ * historical evidence evaluated against a newer spec is stale and never earns a label.
+ */
 export const GAMES = [
-  { id: "pumpkin-blaster", specPath: "apps/pumpkin-blaster/monstera.spec.json" },
-  { id: "trick-or-treat-rush", specPath: "apps/trick-or-treat-rush/monstera.spec.json" },
-  { id: "lantern-run", specPath: "spec/samples/lantern-run/monstera.spec.json" },
+  { id: "pumpkin-blaster", specPath: "apps/pumpkin-blaster/monstera.spec.json", evidenceDir: E1_DIR },
+  { id: "trick-or-treat-rush", specPath: "apps/trick-or-treat-rush/monstera.spec.json", evidenceDir: E1_DIR },
+  { id: "lantern-run", specPath: "spec/samples/lantern-run/monstera.spec.json", evidenceDir: M3_DIR },
 ];
 export const FILES = { report: "report.json", results: "results.jsonl", logs: "logs.txt", screenshot: "01-launched.png" };
-export const EVIDENCE_DIR = "docs/evidence/m3-native-apps";
+/** Kept for callers that show a single directory: the active one for the official games. */
+export const EVIDENCE_DIR = E1_DIR;
 export const SCOPE_NOTE = "Phase 1 verifies build, install, launch and runtime startup only. It does not prove gameplay, input handling, restart, performance, haptics or physical-device behaviour.";
 
 const SHA = /^[0-9a-f]{64}$/;
@@ -48,6 +56,7 @@ export function parseOperations(platform, gameId, reportText, resultsText) {
   try { report = JSON.parse(reportText); } catch { return { ops: {}, runId: null, problem: "report.json is not valid JSON" }; }
   if (!Array.isArray(report) || report.length === 0) return { ops: {}, runId: null, problem: "report.json is not a non-empty array of operations" };
   const ops = {};
+  const shots = []; // screenshot is the one operation a run may repeat (a later frame); every other repeat is refused
   for (const e of report) {
     if (!e || typeof e !== "object" || Array.isArray(e)) return { ops: {}, runId: null, problem: "report.json contains an entry that is not an object" };
     for (const k of ["op", "target", "status", "run_id", "timestamp"]) {
@@ -56,8 +65,9 @@ export function parseOperations(platform, gameId, reportText, resultsText) {
     if (!OPS.includes(e.op)) return { ops: {}, runId: null, problem: `report.json has an unknown operation "${e.op}"` };
     if (e.target !== target) return { ops: {}, runId: null, problem: `report.json entry "${e.op}" targets ${e.target}, expected ${target}` };
     if (!TS.test(e.timestamp) || Number.isNaN(Date.parse(e.timestamp))) return { ops: {}, runId: null, problem: `report.json entry "${e.op}" has a malformed timestamp` };
-    if (ops[e.op]) return { ops: {}, runId: null, problem: `report.json records "${e.op}" more than once` };
-    ops[e.op] = e;
+    if (e.op === "screenshot") shots.push(e);
+    if (ops[e.op] && e.op !== "screenshot") return { ops: {}, runId: null, problem: `report.json records "${e.op}" more than once` };
+    if (!ops[e.op]) ops[e.op] = e;
   }
   const runIds = new Set(report.map((e) => e.run_id));
   if (runIds.size !== 1) return { ops, runId: null, problem: "report.json mixes several run ids" };
@@ -71,11 +81,16 @@ export function parseOperations(platform, gameId, reportText, resultsText) {
   if (resultsText == null) return { ops, runId, problem: "results.jsonl is missing" };
   const lines = resultsText.split(/\r?\n/).filter((l) => l.trim() !== "");
   const seen = {};
+  const seenShots = [];
   for (const line of lines) {
     let e;
     try { e = JSON.parse(line); } catch { return { ops, runId, problem: "results.jsonl contains a line that is not valid JSON" }; }
-    if (!e || typeof e.op !== "string" || seen[e.op]) return { ops, runId, problem: "results.jsonl has a malformed or repeated operation" };
-    seen[e.op] = e;
+    if (!e || typeof e.op !== "string" || (seen[e.op] && e.op !== "screenshot")) return { ops, runId, problem: "results.jsonl has a malformed or repeated operation" };
+    if (e.op === "screenshot") seenShots.push(e);
+    if (!seen[e.op]) seen[e.op] = e;
+  }
+  if (seenShots.length !== shots.length || shots.some((s, i) => stable(s) !== stable(seenShots[i]))) {
+    return { ops, runId, problem: "results.jsonl disagrees with report.json about the screenshots" };
   }
   for (const [op, e] of Object.entries(ops)) {
     if (!seen[op] || stable(seen[op]) !== stable(e)) return { ops, runId, problem: `results.jsonl disagrees with report.json about "${op}"` };
@@ -255,10 +270,10 @@ export function projectLabel(platforms) {
 // ------------------------------------------------------------------ build-time driver
 const readOpt = (p) => (existsSync(p) ? readFileSync(p) : null);
 /** Builds the index from the repository and copies the evidence files to `publicDir` (git-ignored) so Studio can link them. */
-export function buildNativeIndex(repo, publicDir) {
-  const root = join(repo, ...EVIDENCE_DIR.split("/"));
+export function buildNativeIndex(repo, publicDir, games = GAMES) {
   if (publicDir) rmSync(publicDir, { recursive: true, force: true });
-  const games = GAMES.map((g) => {
+  const list = games.map((g) => {
+    const root = join(repo, ...g.evidenceDir.split("/"));
     const specBytes = readFileSync(join(repo, ...g.specPath.split("/")));
     const spec = JSON.parse(specBytes.toString("utf8"));
     if (spec?.project?.id !== g.id) throw new Error(`${g.specPath}: project.id is ${spec?.project?.id}, expected ${g.id}`);
@@ -271,17 +286,18 @@ export function buildNativeIndex(repo, publicDir) {
       const files = {};
       for (const [k, f] of Object.entries(FILES)) {
         if (bytes[k] == null) { files[k] = null; continue; }
-        const rel = `evidence/native-apps/${platform}/${g.id}/${f}`;
+        const rel = `evidence/native-apps/${g.evidenceDir.split("/").pop()}/${platform}/${g.id}/${f}`;
         if (publicDir) {
-          const target = join(publicDir, platform, g.id, f);
-          mkdirSync(join(publicDir, platform, g.id), { recursive: true });
+          const sub = g.evidenceDir.split("/").pop();
+          const target = join(publicDir, sub, platform, g.id, f);
+          mkdirSync(join(publicDir, sub, platform, g.id), { recursive: true });
           copyFileSync(join(dir, f), target);
         }
-        files[k] = { name: f, url: rel, repoPath: `${EVIDENCE_DIR}/${platform}/${g.id}/${f}`, bytes: bytes[k].length, sha256: sha256(bytes[k]) };
+        files[k] = { name: f, url: rel, repoPath: `${g.evidenceDir}/${platform}/${g.id}/${f}`, bytes: bytes[k].length, sha256: sha256(bytes[k]) };
       }
       return { ...result, files };
     });
-    return { id: g.id, specPath: g.specPath, specSha256: specHash, label: projectLabel(platforms), platforms };
+    return { id: g.id, specPath: g.specPath, evidenceDir: g.evidenceDir, specSha256: specHash, label: projectLabel(platforms), platforms };
   });
-  return { evidenceDir: EVIDENCE_DIR, scope: SCOPE_NOTE, games };
+  return { evidenceDir: EVIDENCE_DIR, scope: SCOPE_NOTE, games: list };
 }

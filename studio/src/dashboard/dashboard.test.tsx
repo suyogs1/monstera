@@ -17,7 +17,7 @@ import { BundleView, CreateView, ProjectListView, StatusCards } from "./views";
 const SHA_A = "a".repeat(64), SHA_B = "b".repeat(64);
 const INDEX: NativeIndex = {
   evidenceDir: "docs/evidence/x", scope: "x",
-  games: [{ id: "pumpkin-blaster", specPath: "p", specSha256: SHA_A, label: "SIMULATOR-TESTED", platforms: [] }],
+  games: [{ id: "pumpkin-blaster", specPath: "p", evidenceDir: "docs/evidence/e1-native-apps", specSha256: SHA_A, label: "SIMULATOR-TESTED", platforms: [] }],
 };
 const entry = (over: Partial<Extract<CatalogEntry, { state: "ok" }>> = {}): CatalogEntry => ({
   state: "ok", projectKey: "k1", name: "Alpha", projectId: "pumpkin-blaster", specSha256: SHA_A, writeSeq: 1, targets: ["android", "ios"], populated: [], ...over,
