@@ -407,9 +407,9 @@ export class ProjectController {
   /**
    * Makes `apply` (which loads the draft) the live project. The draft change made by `apply` is not an edit: history is
    * cleared. With persist the new content is submitted at once (new project, import, reset); without it the project is
-   * clean (it came from storage). Returns the write's status when persisting.
+   * clean (it came from storage). `blobs` seeds the in-memory asset cache with bytes that may not be persisted. Returns the write's status when persisting.
    */
-  async replaceProject(p: { projectKey: string; name: string; manifests: ManifestMap; persist: boolean; provisionalGameplay?: boolean }, apply: () => void): Promise<ProjectStoreStatus | null> {
+  async replaceProject(p: { projectKey: string; name: string; manifests: ManifestMap; persist: boolean; provisionalGameplay?: boolean; blobs?: ReadonlyMap<string, Uint8Array> }, apply: () => void): Promise<ProjectStoreStatus | null> {
     this.cancelTimer?.();
     this.cancelTimer = undefined;
     this.suspended = true;
@@ -417,7 +417,7 @@ export class ProjectController {
     this.projectKey = p.projectKey;
     this.name = p.name;
     this.manifests = p.manifests;
-    this.blobs = new Map();
+    this.blobs = new Map(p.blobs ?? []); // bytes the caller already holds for this project (an import); none for a stored one
     this.seqFloor = p.manifests.assets.nextSeq;
     void this.deps.projects.pruneBlobs(p.projectKey, new Set(p.manifests.assets.assets.map((a) => a.id)));
     this.provisionalGameplay = p.provisionalGameplay === true ? p.manifests.gameplay : null;

@@ -1,15 +1,15 @@
 // Task 9.1 (A3): a project bundle exported from one Session imports into another as an identical project; refusals change nothing.
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { png } from "../assets/fixtures.testkit";
 import { exportBundle, importBundle } from "../export/bundle";
 import { rawZip } from "../export/zip.testkit";
-import { memoryMarker, newFactory } from "../project/testkit";
+import { memoryMarker, newFactory, readOnlyStorage } from "../project/testkit";
 import type { Provenance } from "../project/manifests";
 import { drain, harness, type Harness } from "./session.testkit";
 
 const prov: Provenance = { origin: "user-owned", author: "me", license: "proprietary-owned", source: "", tool: "", model: "", promptSha256: "", acquiredOn: "", notes: "" };
-async function boot(): Promise<Harness> {
-  const h = harness({ marker: memoryMarker(), factory: newFactory() });
+async function boot(deps: Parameters<typeof harness>[0] = {}): Promise<Harness> {
+  const h = harness({ marker: memoryMarker(), factory: newFactory(), ...deps });
   await h.session.start();
   await drain(h);
   return h;
@@ -65,6 +65,57 @@ describe("project bundle through the Session (A3)", () => {
     const r = await b.session.importBundleBytes(bad, "bad.zip");
     expect(r.ok).toBe(false);
     if (!r.ok) expect(r.message).toContain("credential");
+    expect(snapshot(b)).toEqual(before);
+  });
+});
+
+describe("bundle import without IndexedDB (memory-only)", () => {
+  const bundleWithAsset = async (): Promise<{ bytes: Uint8Array; id: string; asset: Uint8Array }> => {
+    const a = await boot();
+    const added = await a.session.project.actions.importAsset({ fileName: "hero.png", bytes: png(32, 32), category: "sprite", provenance: prov });
+    expect(added).toMatchObject({ ok: true });
+    await drain(a);
+    const out = await a.session.exportBundleBytes();
+    if (!out.ok) throw new Error(out.message);
+    const id = a.session.project.getState().manifests?.assets.assets[0]?.id ?? "";
+    return { bytes: out.bytes, id, asset: (await a.session.project.assetBytes(id)) ?? new Uint8Array() };
+  };
+  it("keeps the imported asset bytes for the session, reports memory-only, and re-exports the bundle byte for byte", async () => {
+    const src = await bundleWithAsset();
+    const b = await boot({ factory: null, legacy: readOnlyStorage({}) });
+    expect(b.session.project.getState().status).toBe("memory-only");
+    expect(await b.session.importBundleBytes(src.bytes, "pumpkin-bundle.zip")).toEqual({ ok: true });
+    await drain(b);
+    const s = b.session.project.getState();
+    expect(s.status).toBe("memory-only"); // never claimed saved
+    expect(s.detail.lastSavedAt).toBeNull();
+    expect(s.manifests?.assets.assets.map((x) => x.id)).toEqual([src.id]);
+    expect(await b.session.project.assetBytes(src.id)).toEqual(src.asset);
+    const again = await b.session.exportBundleBytes();
+    expect(again.ok && again.bytes).toEqual(src.bytes);
+  });
+  it("in IndexedDB mode the imported bytes are persisted: they are readable from storage, not only from the cache", async () => {
+    const src = await bundleWithAsset();
+    const b = await boot();
+    expect(await b.session.importBundleBytes(src.bytes, "pumpkin-bundle.zip")).toEqual({ ok: true });
+    await drain(b);
+    const key = b.session.project.getState().projectKey ?? "";
+    expect(await b.session.projects.getBlob(key, src.id)).toEqual(src.asset);
+    const again = await b.session.exportBundleBytes();
+    expect(again.ok && again.bytes).toEqual(src.bytes);
+  });
+  it("an asset that cannot be stored refuses the import: the open project is unchanged and nothing of the import stays stored", async () => {
+    const src = await bundleWithAsset();
+    const b = await boot();
+    const before = snapshot(b);
+    const prune = vi.spyOn(b.session.projects, "pruneBlobs");
+    vi.spyOn(b.session.projects, "putBlob").mockResolvedValue({ ok: false, message: "the asset bytes could not be stored: quota" });
+    const r = await b.session.importBundleBytes(src.bytes, "pumpkin-bundle.zip");
+    expect(r.ok).toBe(false);
+    if (!r.ok) expect(r.message).toContain("Your project was not changed");
+    expect(prune).toHaveBeenCalledTimes(1);
+    expect(snapshot(b)).toEqual(before);
+    await drain(b);
     expect(snapshot(b)).toEqual(before);
   });
 });
