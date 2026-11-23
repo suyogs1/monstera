@@ -16,6 +16,7 @@ import { planImport, type ImportInput } from "../assets/import";
 import { png, svg, txt, u8, wav } from "../assets/fixtures.testkit";
 import { vetAsset } from "../assets/sniff";
 import { assetPath, exportBundle, importBundle, manifestPath, SPEC_PATH, type BundleProject } from "../export/bundle";
+import { unguardedBundle } from "../export/bundle.testkit";
 import { MAX_ENTRIES, readZip } from "../export/unzip";
 import { buildZip, unsafePath } from "../export/zip";
 import { rawZip } from "../export/zip.testkit";
@@ -272,7 +273,7 @@ describe("A10 import-path secret guards (R14.4, design 8.1)", () => {
   const admob = ["ca-app", "-pub-", "1234567890123456", "~", "1234567890"].join("");
   const pem = ["-----BEGIN ", "PRIVATE KEY-----"].join("");
   const refusedSecret = async (p: BundleProject, secret: string) => {
-    const r = await importBundle(exportBundle(p));
+    const r = await importBundle(unguardedBundle(p));
     expect(r.ok).toBe(false);
     if (r.ok) return;
     expect(r.code).toBe("secret");

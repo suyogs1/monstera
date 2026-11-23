@@ -37,12 +37,8 @@ export const redact = (message: string): string => (secretRules(message).length 
 const enc = new TextEncoder();
 const byPath = (a: ZipEntry, b: ZipEntry): number => (a.path < b.path ? -1 : a.path > b.path ? 1 : 0);
 
-/** The archive of a project. A pure function of its inputs: entries sorted by path, fixed mode and timestamp, canonical manifest text. */
-export function exportBundle(p: BundleProject): Uint8Array<ArrayBuffer> {
-  let doc: unknown = null;
-  try { doc = JSON.parse(p.specText); } catch { /* an unreadable spec has no values to scan; the engine decides validity */ }
-  const refusal = refuseSecrets({ doc, manifests: p.manifests });
-  if (refusal) throw new Error(`the bundle was not exported: ${refusal}`);
+/** The archive entries of a project, sorted by path. NOT guarded: only exportBundle (and test fixtures for hostile archives) call it. */
+export function bundleEntries(p: BundleProject): ZipEntry[] {
   const entries: ZipEntry[] = [{ path: SPEC_PATH, data: enc.encode(p.specText), mode: 0o644 }];
   for (const n of MANIFEST_NAMES) entries.push({ path: manifestPath(n), data: enc.encode(serializeManifest(n, p.manifests[n] as never)), mode: 0o644 });
   const listed = new Set<string>();
@@ -53,7 +49,16 @@ export function exportBundle(p: BundleProject): Uint8Array<ArrayBuffer> {
     entries.push({ path: assetPath(a.id, a.file), data, mode: 0o644 });
   }
   for (const id of p.assets.keys()) if (!listed.has(id)) throw new Error(`bytes for ${id} are not listed in the assets manifest`);
-  return buildZip(entries.sort(byPath));
+  return entries.sort(byPath);
+}
+
+/** The archive of a project. A pure function of its inputs: entries sorted by path, fixed mode and timestamp, canonical manifest text. Fails closed on a credential-shaped value. */
+export function exportBundle(p: BundleProject): Uint8Array<ArrayBuffer> {
+  let doc: unknown = null;
+  try { doc = JSON.parse(p.specText); } catch { /* an unreadable spec has no values to scan; the engine decides validity */ }
+  const refusal = refuseSecrets({ doc, manifests: p.manifests });
+  if (refusal) throw new Error(`the bundle was not exported: ${refusal}`);
+  return buildZip(bundleEntries(p));
 }
 
 const MANIFEST_FILES = new Map<string, ManifestName>(MANIFEST_NAMES.map((n) => [manifestPath(n), n]));
