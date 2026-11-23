@@ -11,8 +11,9 @@ prototypes, not finished commercial games:
 
 A third game, Lantern Run (`generated/lantern-run/`), was authored by Kiro through the MONSTERA tools without changing the engine.
 
-**MONSTERA Studio** is a static web app that runs the unmodified Python engine in the browser (Pyodide) to edit, validate,
+**MONSTERA Studio Foundry** is a static web app that runs the unmodified Python engine in the browser (Pyodide) to edit, validate,
 preview and export a game specification and its generated native source: https://monstera-phi.vercel.app/ (source in `studio/`).
+See [MONSTERA Studio Foundry](#monstera-studio-foundry) below for what works today and what does not.
 
 All games are genuine native apps: Kotlin + Jetpack Compose on Android, Swift + SwiftUI + SpriteKit on
 iOS. No React Native, Expo, Flutter or other cross-platform rendering framework.
@@ -29,13 +30,19 @@ iOS. No React Native, Expo, Flutter or other cross-platform rendering framework.
 | Pumpkin Blaster and Trick or Treat Rush, Android | COMPILED (local and CI); SIMULATOR-TESTED on an Android emulator, launch only |
 | Pumpkin Blaster and Trick or Treat Rush, iOS | COMPILED with xtool; SIMULATOR-TESTED in hosted macOS CI, launch only |
 | Simulation conformance of both games (oracle, Kotlin, Swift) | PASS on the current spec hashes (Kotlin as JVM unit tests, Swift as `swift test` on Linux) |
-| Studio (`studio/`) | Deployed at https://monstera-phi.vercel.app/; 17/17 smoke checks pass locally and against production; bundle secret scan clean |
+| Studio (`studio/`) | Deployed at https://monstera-phi.vercel.app/ (the M3-B deployment, 17/17 smoke checks recorded then). Foundry modules on `main` are listed in [the capability matrix](docs/STUDIO-CAPABILITIES.md); the Content-Security-Policy is not deployed |
 | Any physical Android or iOS device | **Not tested** |
 
-Completed: G0 toolchain, G1 specification engine, G2 deterministic runtime and conformance, G3 two games, G4 Studio (M0 to M3).
+Completed: G0 toolchain, G1 specification engine, G2 deterministic runtime and conformance, G3 two games, G4 Studio (M0 to M3),
+and the Studio Foundry tasks merged to `main` (see below; Foundry acceptance is not complete).
 Remaining: **G6**, clean-room regeneration of both games from their committed specs into empty directories, with build
 verification and a recorded demonstration (`.kiro/specs/g4-studio/tasks.md`, item 5). The framework and specification
-freeze is its first step.
+freeze is its first step. G6 is **not accepted**: its pull request (#15, branch `g6/clean-room-regeneration`) is open and
+unmerged, and its owner acceptance is pending.
+
+Also pending: the live Vercel report-only deployment of the security headers and the owner's review of it (Foundry Task 1.6),
+the G6 evidence comparison of the regression proof (Task 9.2, whose 18 evidence files are not on `main`), and the independent
+adversarial review of the Foundry (Task 9.4).
 
 Not shown: gameplay or touch input on an emulator or simulator for the current spec version (the native launch evidence
 covers install, launch and the first 60 runtime ticks), performance, haptics, and any physical device.
@@ -44,6 +51,79 @@ Evidence: [native build and launch](docs/evidence/m3-native-apps/SUMMARY.md),
 [conformance](docs/evidence/m3-native-conformance/SUMMARY.md), [Studio M3-B](docs/evidence/studio-m3b/README.md).
 Reports: [G0](docs/G0-TOOLCHAIN-REPORT.md), [G1](docs/G1-SPECIFICATION-REPORT.md), [G2](docs/G2-RUNTIME-REPORT.md),
 [G3](docs/G3-GAMES-REPORT.md). Criteria: [docs/PHASE-0.md](docs/PHASE-0.md).
+
+## MONSTERA Studio Foundry
+
+Studio is a static web app in `studio/` (Vite, React, TypeScript). The repository's Python engine runs in the page through Pyodide.
+It validates a game, previews it, checks determinism and generates the native Android (Kotlin) and iOS (Swift) **source** as a
+ZIP. There is no backend, no account, no live Kiro connection and no AI call. **The browser compiles nothing.** Native builds
+and emulator or simulator runs come from CI and Device Lab, and Studio only displays their committed evidence.
+
+### The 11 modules
+
+| Module | Role |
+|---|---|
+| Project Dashboard | Create, open, rename, duplicate and delete projects kept in this browser; export and import a project bundle |
+| Game Designer | Edit the canonical spec with engine validation, view, import and export it |
+| Asset Studio | Import images and audio with provenance, assign an asset to a kind |
+| Sprite and Animation Editor | Slice sheets, edit frames and animation sequences, preview them by tick |
+| Level Studio | Author levels; apply the active level to the spec; export other levels as standalone variants |
+| Gameplay Systems | Lives, win score, collectibles and enemies, applied to the spec after review |
+| Backend and Services | Firebase scaffold text (not a live backend) |
+| Monetization | AdMob mock and test placements (never production ids) |
+| Kiro Development | Developer Integration inventory, handoff prompts, pack drift view, proposal inbox |
+| Preview and Device Lab | Browser preview, determinism badge, environments table, committed native evidence |
+| Build and Release | Source ZIP with the Studio pack, completeness check, readiness checklist |
+
+### How the pieces relate
+
+The canonical `monstera.spec.json` (schema v4) is the only contract with the engine and the generated apps. Studio keeps what
+v4 cannot express (levels, assets, animations, gameplay inputs, integration choices, project identity) in versioned
+**sidecar manifests** that Studio validates itself. The engine generates native source from the spec alone. Level and gameplay
+data reach the native apps only when you apply them to the spec. The export ZIP carries the generated source and a **Studio
+pack** with the manifests, asset files, scaffold files and a drift-check script.
+
+### What is usable today
+
+- Editing, validating and exporting a v4 spec, with undo, redo and project persistence in IndexedDB.
+- Applying the active level and the gameplay settings to the spec (they compile to native). Other levels export as separate
+  specs and are not selectable in the generated app.
+- Browser preview, a determinism check against the recorded goldens, and the generated native source ZIP.
+- Project bundles, and the Studio pack with its ownership manifest and drift check.
+
+These are working prototypes. Statuses and limits per capability are in [the capability matrix](docs/STUDIO-CAPABILITIES.md).
+
+### Studio-only, scaffold or mock
+
+- **Studio-only:** assets, sprite sheets and animations. The v4 spec has no asset concept, so the generated apps do not draw or
+  play them. Native rendering is engine track E1, which is not approved.
+- **Scaffold:** Firebase and AdMob stub text written into the Studio pack for you to adopt. Not compiled into the app.
+- **Mock:** AdMob placements and the rewarded ad preview. No ad is shown and no production ad id is stored.
+
+### Not implemented or not supported
+
+A live Firebase connection, production AdMob ids, calls to AI providers from the browser, a live Kiro connection, running tests on
+a device from Studio, level selection or per-level win rules inside the native app, health, power-ups and progression, signing,
+store upload and any store-ready claim.
+
+### Run Studio locally
+
+Node 22 and npm are required (CI uses 22.18.0).
+
+```bash
+cd studio
+npm ci
+npm run dev          # development server
+npm test             # unit tests
+npm run build        # type check and production build into studio/dist
+npm run smoke        # browser smoke test against a local production preview (needs Chromium via playwright-core)
+```
+
+`npm run capabilities:render` regenerates the capability matrix from `studio/capabilities.json` and `npm run capabilities:check`
+fails if it is stale. Do not edit `docs/STUDIO-CAPABILITIES.md` by hand.
+
+Architecture: [architecture/MONSTERA-STUDIO.md](architecture/MONSTERA-STUDIO.md). Generated capability matrix:
+[docs/STUDIO-CAPABILITIES.md](docs/STUDIO-CAPABILITIES.md). Specification and design: `.kiro/specs/studio-foundry/`.
 
 ## Layout
 
@@ -55,14 +135,14 @@ Reports: [G0](docs/G0-TOOLCHAIN-REPORT.md), [G1](docs/G1-SPECIFICATION-REPORT.md
 | `spec/` | Canonical spec schemas, sample `monstera.spec.json`, invalid fixtures |
 | `tools/monstera/` | Specification engine and `monstera` CLI (Python 3.10+, stdlib only) |
 | `generated/` | Generator-owned native projects. Do not edit; run `monstera generate` |
-| `studio/` | MONSTERA Studio: static Vite + React + TypeScript app; the engine runs in the browser with Pyodide |
+| `studio/` | MONSTERA Studio Foundry: static Vite + React + TypeScript app; the engine runs in the browser with Pyodide |
 | `apps/` | The two Skeleton Crew apps (G3): `pumpkin-blaster/`, `trick-or-treat-rush/` |
 | `reference/g0/android/` | Phase 0 reference Android app (Gradle, Kotlin, Compose) |
 | `reference/g0/ios/` | Phase 0 reference iOS app (SwiftPM package + `xtool.yml`, SwiftUI + SpriteKit) |
 | `tools/xtool/` | xtool setup notes and Linux build scripts |
 | `tools/scripts/` | Developer and CI scripts |
 | `device-lab/` | Device Lab contract (`contract/`), per-platform adapters, run reports |
-| `architecture/` | Architecture documents |
+| `architecture/` | Architecture documents, including [MONSTERA-STUDIO.md](architecture/MONSTERA-STUDIO.md) |
 | `docs/` | Reports, decisions, curated evidence (`docs/evidence/`) |
 | `assets/` | Game assets with provenance records |
 | `.github/workflows/` | CI: `monstera` (spec engine + generated builds), `android` (Linux emulator), `ios-simulator` (hosted macOS), `studio-ci` (Studio tests, build, secret scan, Playwright smoke), `xtool-linux` (experimental, manual trigger only) |

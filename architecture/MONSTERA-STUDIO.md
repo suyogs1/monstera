@@ -1,165 +1,255 @@
-# MONSTERA Studio architecture
+# MONSTERA Studio Foundry architecture
 
-Status: **IMPLEMENTED, M3 complete (static app, deployed at https://monstera-phi.vercel.app/).** Rewritten for G4 M3-A and
-updated for M3-B; it replaces the G1.5 proposal
-(Railway API, Postgres, GitHub dispatch, remote build workers), which was never built and is no longer planned.
-Design record: `.kiro/specs/g4-studio/` (requirements, design, tasks). Rules: `.kiro/steering/07-studio.md`.
+Status: describes the Studio Foundry as built on `main` at the Task 9.5 documentation closeout. Status words (implemented,
+prototype, mock, planned, unsupported) come from one source, `studio/capabilities.json`, and are rendered in
+[`docs/STUDIO-CAPABILITIES.md`](../docs/STUDIO-CAPABILITIES.md). When this document and the registry disagree, the registry
+wins and this document is wrong. Design record: `.kiro/specs/studio-foundry/` (requirements, design, tasks). Rules:
+`.kiro/steering/07-studio.md` and `.kiro/steering/11-studio-foundry.md`. The earlier G4 milestones (M0 to M3) are the
+foundation this builds on; they are not the whole product.
 
-MONSTERA Studio is a static web app in `studio/`. A user edits a game in the browser (the **Project Brain**), and the
-repository's own Python engine, running in the page, validates the result, previews it, checks determinism against recorded
-goldens and packs the generated native Android (Kotlin) and iOS (Swift) source as a ZIP. Nothing is sent anywhere.
+## 1. Purpose
 
-## Status at a glance
+MONSTERA Studio is a static web app in `studio/` (Vite, React, TypeScript). A person edits a game in the browser. The
+repository's own Python engine runs unmodified in the page (Pyodide) to validate the game, preview it, check determinism and
+produce the native Android (Kotlin) and iOS (Swift) **source** as a ZIP. Nothing is uploaded and there is no server.
 
-| Capability | State | Evidence |
+The canonical specification file, `monstera.spec.json` (schema v4), is the only contract between Studio, the engine, Kiro
+and the generated apps. Studio never pretends to be Kiro and has no connection to Kiro.
+
+Studio is a source authoring and verification tool. **The browser does not compile native applications.** The engine
+generates source. Compilation, emulator and simulator results come from the Device Lab adapters and CI workflows that build
+the generated projects, are committed as evidence, and are only displayed by Studio.
+
+## 2. Modules
+
+The shell lists 11 modules in a fixed order. Each shows its status from the registry and offers editing only as far as that
+status allows.
+
+| Module | Role | Reaches native output |
 |---|---|---|
-| Static Vite + React + TypeScript SPA | Implemented | `studio/`, `npm run build` |
-| Engine in a Pyodide 0.29.5 Web Worker | Implemented, verified | M0 spike, M1/M2 acceptance (`docs/evidence/studio-spike/`, `studio-m1/`, `studio-m2/`) |
-| Project Brain editing, validation, canonical Spec view, import/export | Implemented, verified | `docs/evidence/studio-m1/acceptance.json` |
-| Live preview, determinism badge, source ZIP | Implemented, verified | `docs/evidence/studio-m2/acceptance.json` |
-| Native conformance report display (exact spec hash only) | Implemented, verified | M2 badge acceptance |
-| Native app build and simulator-launch evidence panel | Implemented in M3-A | `docs/evidence/studio-m3a/ui-acceptance.json`, `studio/src/badge/nativeApps.test.ts` |
-| Developer Integration (static repository inventory) | Implemented, verified | M1 acceptance |
-| Vercel hosting | **Deployed** by the owner at https://monstera-phi.vercel.app/ (commit `072c54d`); verified live, not configured, by M3-B | `docs/evidence/studio-m3b/smoke-production.json` |
-| Playwright smoke test (`studio/scripts/smoke.mjs`) | Implemented. 17/17 checks pass against a local production preview and against the deployed site | `docs/evidence/studio-m3b/smoke-local-preview.json`, `smoke-production.json` |
-| Studio CI (`.github/workflows/studio-ci.yml`) | Implemented: lockfile install, unit tests, typecheck and production build, secret scan, local-preview smoke. The deployed-site smoke runs in the same workflow but is advisory (`continue-on-error`) | `docs/evidence/studio-m3b/README.md` |
-| Secret scan of the bundle and source maps (`studio/scripts/scan-secrets.mjs`) | Implemented, unit tested, runs in Studio CI. 34 files scanned, no findings; findings never print values | `docs/evidence/studio-m3b/secret-scan.json` |
-| Final adversarial review of Studio M3 | Done by the author of M3-B, not an independent reviewer | `docs/evidence/studio-m3b/ADVERSARIAL-REVIEW.md` |
-| Backend, API, database, accounts, server-side projects | **Not implemented and not planned** | n/a |
-| Native builds triggered from Studio, remote build workers | **Not implemented and not planned** | n/a |
-| Live Kiro connection | **Not implemented and not planned** | n/a |
-| Physical-device testing, gameplay/input/performance evidence | **Not implemented** (Device Lab, G5) | n/a |
+| Project Dashboard | Create, open, rename, duplicate, delete projects; status cards; project bundle export and import | Studio only |
+| Game Designer | The canonical v4 spec editors with engine validation, spec view, import, export | Yes (it is the spec) |
+| Asset Studio | Import, library, provenance, preview, delete protection, assignment of an asset to a kind | Studio only |
+| Sprite and Animation Editor | Sheet slicing, frames, animation sequences, tick-based preview | Studio only |
+| Level Studio | Levels as Studio data; the active level compiles into the spec; other levels export as variants | Active level only |
+| Gameplay Systems | Lives, win score, collectibles, enemies compiled into `lives`, `winScore`, `collisions` | Yes, as v4 fields |
+| Backend and Services | Firebase service choices as scaffold text | Scaffold only |
+| Monetization | AdMob mock and test placements with a labelled mock preview | Mock only |
+| Kiro Development | Developer Integration inventory, handoff prompts, pack drift view, proposal inbox | Studio only |
+| Preview and Device Lab | Browser preview, determinism badge, environments table, committed native evidence | Studio only |
+| Build and Release | Source ZIP with the Studio pack, completeness check, readiness checklist | Source only |
 
-## Non-negotiable rules
+## 3. Frontend architecture
 
-1. The canonical `monstera.spec.json` is the single source of truth. Studio state *produces* it; nothing else describes
-   the generated app. It is also the only thing Studio and Kiro share.
-2. All validation, generation and simulation logic lives in `tools/monstera/`. Studio runs it and never reimplements it.
-   The one deliberate exception is display-only drawing code in the preview (`studio/src/preview/presentation.ts`), which
-   mirrors the generated presentation modules and cannot change simulation results.
-3. Generated apps are independent native Kotlin/Swift projects. They do not depend on Studio, Kiro, a web view or any
-   cross-platform runtime.
-4. The browser never compiles native code and Studio never dispatches a build.
-5. There is no server-side secret because there is no server. The bundle contains no credentials.
-6. Studio's own stack is a modern web stack. That freedom stops at `apps/*` and `generated/*` (`monstera check-architecture`).
+- A single-page app with a hash router and a module registry (`studio/src/app/`). The registry drives the navigation rail,
+  the status badges and the editability of each module page.
+- One shared **project context** (`studio/src/project/context.tsx`, `controller.ts`) owns the open project: the spec draft,
+  the sidecar manifests, the asset files, undo and redo history, validation state and save state. Modules read and change the
+  project only through it, so the Designer, Level Studio, Gameplay Systems and the exporters see the same data.
+- The engine runs in a module Web Worker (`studio/src/engine/`). The UI sends JSON text and receives JSON text; the
+  functions of `glue.py` are validate, plan, oracle check, preview start and frame, badge check and export plan.
+- Pyodide 0.29.5 and the engine files are self-hosted and pinned. Pages make no request outside their own origin.
+- Editors for spec fields are derived from `spec/schema/*.schema.json`, and values display in game units while the spec
+  keeps raw Q16.16 integers.
 
-## Runtime architecture
+## 4. Browser storage and persistence
 
-```
-Browser (static files only)
-  UI thread (React)                      Web Worker (module worker)
-    Project Brain editors                  Pyodide 0.29.5, Python 3.13.2
-    Spec view, validation panel              /repo/tools/monstera/**   engine, unmodified
-    Preview canvas                           /repo/spec/schema/*       schemas
-    Determinism, Native evidence, Export     /repo/apps, /repo/spec/**  templates, samples, goldens
-    Developer Integration                  glue.py: validate / plan / oracle / preview, returns JSON
-  localStorage: one draft                  Messages: JSON text in, JSON out
-```
+- Projects live in IndexedDB (database `monstera-studio`: stores `projects`, `blobs` and `meta`). One project is one atomic
+  record: the spec, its baseline and the manifests. Asset files are stored as blobs keyed by project and asset id.
+- `ProjectStore` is the only persistence authority. It reports `saved` only after a committed transaction. Other states are
+  explicit and visible: `saving`, `unsaved`, `failed`, `memory-only` (IndexedDB unavailable), `conflict` (another tab wrote
+  the record), `read-only` (database or record newer than this build), `quarantined` (stored record unreadable) and `closed`.
+  A conflicting, newer or unreadable stored record is never overwritten; recovery exports keep the in-memory work.
+- Only a spec the engine validated is persisted. The legacy `localStorage` draft of the earlier Studio is read once and
+  migrated, never written.
+- Storage is local to one browser profile. Clearing site data deletes projects. Moving a project between browsers uses the
+  project bundle, a ZIP with the spec, the Studio manifests and the asset files.
+- A bundle is read by a hardened ZIP reader (`studio/src/export/unzip.ts`): central directory only, every entry checked before
+  inflation (path, layout, declared sizes, ratio, overlap, CRC), STORED and DEFLATE only, with entry-count and size limits.
+  A bundle that fails any check is refused and changes nothing.
 
-- The engine package is placed at its repository-relative path inside Pyodide's virtual file system, so `REPO_ROOT`, template
-  lookup and scenario lookup behave as in the CLI. "Unmodified" means the bundled files equal the repository files byte for
-  byte (LF form, as git stores them).
-- Pyodide is self-hosted and pinned (`pyodide` 0.29.5). Pages make no request outside their own origin; the M2 acceptance
-  asserts this.
-- Validation, canonical serialization, the SHA-256 shown in the Spec view, the preview simulation, the determinism check
-  (oracle against recorded goldens) and the source ZIP (generated Android and iOS projects plus `MONSTERA-MANIFEST.json`) all
-  run in the worker through the engine.
-- Studio holds no configuration that the schema cannot express. Editors are derived from `spec/schema/*.schema.json`; values
-  display in game units while the spec keeps raw Q16.16 integers.
+## 5. Canonical spec and the unmodified engine
 
-## Build pipeline
+- All validation, canonical serialization, SHA-256 of the spec, generation, oracle simulation and the determinism check run
+  in `tools/monstera/` inside the worker. Studio never reimplements them.
+- The one deliberate exception is the display-only drawing code of the preview (`studio/src/preview/presentation.ts`,
+  `worldDraw.ts`), which mirrors the generated presentation modules and cannot change a simulation result.
+- "Unmodified" means the bundled engine, schemas, templates and golden scenarios equal the repository files byte for byte
+  (LF form). `npm run regression` (Task 9.2) enforces the freeze: the engine, `spec/schema/` and templates differ from the
+  baseline `71c77e4` only by the approved test-only change recorded in `docs/STUDIO-FOUNDRY-GATE-E.md`.
+- Studio holds no configuration the schema cannot express. A spec the engine refuses is shown with the engine's issues and is
+  never exported as valid.
 
-`npm run build` in `studio/`:
+## 6. Studio-owned sidecar manifests
 
-1. `scripts/build-engine.mjs` packs the repository engine, schemas, templates and golden scenarios into `public/engine/`
-   and copies the pinned Pyodide runtime into `public/pyodide/` (both git-ignored).
-2. `scripts/build-inventory.mjs` reads the repository and writes git-ignored files under `src/generated/`:
-   the Developer Integration inventory (stamped with the commit), the native conformance report index and the native app
-   evidence index. It also copies the native app evidence files to `public/evidence/native-apps/` (git-ignored).
-3. `tsc --noEmit`, then `vite build` emits `dist/`: static files, relative base (`./`), hostable by any static server.
+Data the v4 spec cannot express lives in versioned sidecar manifests, each with a JSON Schema in `studio/schemas/` and a strict
+TypeScript validator in `studio/src/project/manifests/`: `project`, `levels`, `gameplay`, `assets`, `animations`,
+`integrations` (and `proposal`, used by the inbox). The validators reject unknown keys, wrong types, over-long values and
+duplicate JSON keys, reject unsafe paths and ids, and run before anything is stored, imported or exported.
 
-Everything in `dist/` is derived from the repository at the commit being built. Nothing is typed into the app by hand.
+Manifests never replace the spec. The engine validates the spec; Studio validates the manifests. The two are different
+contracts and are not mixed.
 
-## Data flow and browser storage
+## 7. Cross-references and derivation
 
-- **Draft.** One draft spec lives in memory and in `localStorage` under `monstera.studio.draft.v1` (spec text plus the
-  starting template and its origin). It is restored and re-validated on reload. Nothing is uploaded; clearing site data
-  deletes it. There is no account and no server-side project store.
-- **Import.** A user-selected `monstera.spec.json` is read in the page, parsed with the engine's strict JSON rules and
-  validated. Refused files (duplicate keys, BOM, invalid UTF-8, non-object) leave the draft unchanged.
-- **Export.** The canonical spec (engine serialization) and the source ZIP are generated locally and downloaded. An unedited
-  template exports byte-identically to the committed file; an edited draft exports without recorded goldens.
-- **Kiro.** Kiro reads and writes the same `monstera.spec.json` in the repository through the developer's normal workflow
-  (editor, git, MCP tools). Studio never talks to Kiro. Developer Integration is a static inventory of `.kiro/` and
-  `tools/monstera-mcp/server.py` stamped with the commit it was read at, plus copyable prompts.
+- A read-only **cross-reference index** (`studio/src/project/xref.ts`) lists every place that refers to a spec kind, an asset
+  or a level. Renaming or deleting a kind is project-wide and blocked, with the referencing places listed, while references
+  remain.
+- **Derivation is explicit opt-in** and off by default. With it off, the Designer owns every spec field. With a derivation
+  switch on, the module that owns a set of spec pointers (`studio/src/derive/ownership.ts`) writes them and the Designer shows
+  them read-only. Pointer ownership tables are disjoint.
+- Nothing is written to the spec silently. A change goes through Review (a diff and the engine verdict) and an explicit Apply
+  that is one undo step.
 
-## Native evidence flow
+## 8. Level and gameplay compilers
 
-Two separate, read-only evidence displays appear on the Determinism page. They prove different things.
+- The **level compiler** (`studio/src/derive/levels.ts`) turns the active level's placements, waves and difficulty steps into
+  `initialEntities` and `spawners`. A difficulty step compiles to an extra spawner that starts later, because v4 spawners
+  cannot stop or change. Output is deterministic and covered by golden fixtures.
+- The **gameplay compiler** (`studio/src/derive/gameplay.ts`) turns lives, win score, collectibles and enemies into `lives`,
+  `winScore` and `collisions`.
+- Both follow the same apply path: compile, engine validation, a bounded oracle run, then commit or reject. The engine and the
+  oracle must accept the result. A rejected result leaves the project unchanged.
+- Other levels are Studio-only variants. Level Studio exports each as a standalone `monstera.spec.json` under
+  `studio-pack/derived/levels/<id>/`, and every exported variant is checked with `monstera validate`.
+- **Not supported:** level selection, per-level win rules and wave end inside the native app. Schema v4 has one runtime and
+  spawners that never stop. Health, power-ups and progression need a contract change and are planned only.
 
-1. **Simulation conformance** (`monstera conformance` reports, `docs/evidence/**/*.report.json`): the Kotlin and Swift
-   simulation cores reproduce the oracle's checkpoints.
-2. **Native app build and launch** (`docs/evidence/m3-native-apps/<android|ios>/<game>/`): the generated apps were compiled
-   and launched on an Android emulator and an iOS simulator (Device Lab adapters).
+## 9. Assets, sprites and animations
 
-For (2), the build script evaluates each game and platform with `studio/scripts/native-evidence.mjs`, which fails closed:
+- Asset Studio imports images and audio after content sniffing and limits (file size, image side, asset count, project size).
+  Origin and license are user declarations; only the shape of the license is checked. Each asset records its SHA-256.
+- An asset can be assigned to a kind (a link stored in the `assets` manifest, shown as a thumbnail in the Designer).
+- The Sprite and Animation Editor slices a sheet into frames, edits frames and builds animation sequences. A tick-based
+  preview player plays them in the browser.
+- **Native limitation.** The v4 spec has no asset or animation concept. Assets, sheets and animations are Studio data. They
+  travel in the bundle and the Studio pack and are shown in Studio previews, but the generated apps do not draw or play them.
+  Rendering them natively is engine track E1. The recorded gate decision (`docs/STUDIO-FOUNDRY-GATE-E.md`) is that E1 is not
+  approved for this milestone. Gates E2 and E3 are likewise not approved.
 
-- The spec SHA-256 is computed from the canonical spec file (`apps/*/monstera.spec.json`,
-  `spec/samples/lantern-run/monstera.spec.json`), never copied from `SUMMARY.md`.
-- `report.json` and `results.jsonl` must parse, name the right target and game, record each operation once in a plausible
-  order, and agree with each other. Otherwise nothing from them counts.
-- The app's own log lines (Android `MonsteraSpec`/`MonsteraRuntime`, iOS `:spec`/`:runtime`) are parsed strictly. The logged
-  spec hash must equal the canonical hash, the app must confirm its bundled specification (iOS also the decoded one), and
-  the runtime must log ticks from the same process.
-- Each result is shown separately: native compilation, installation and launch, exact specification hash, bundled
-  integrity, runtime observed, screenshot (a valid PNG) and logs.
-- Labels: `COMPILED` needs a successful build bound to the canonical hash by the app's own log. `SIMULATOR-TESTED` also needs
-  successful install, launch, screenshot, log capture and an observed runtime. Anything weaker is `GENERATED`.
-  `PHYSICAL-DEVICE-TESTED` is never derived from this evidence.
-- In the browser, evidence is attached to a draft only when the draft's validated SHA-256 equals the evidence's canonical
-  SHA-256. An edited draft, or an imported file with a different hash, gets no label from it, even for the same project;
-  editing back to the original hash restores it. Same-project evidence for a different hash is described as belonging to an
-  earlier or different specification.
-- The screenshot, `report.json`, `results.jsonl` and `logs.txt` are copied to the static output and linked.
+## 10. Studio pack, ownership and drift
 
-**What this evidence does not prove:** Phase 1 verifies build, install, launch and runtime startup only. It does not show
-gameplay, input handling, restart, performance, haptics or physical-device behaviour. The committed APK and `.app` build
-artifacts named in the reports are not stored. Studio cannot produce or refresh this evidence; it is recorded by Device Lab
-and CI and committed.
+The release export is one ZIP: the engine-generated native projects and `MONSTERA-MANIFEST.json`, plus the **Studio pack**.
+The pack layout (`studio/src/pack/layout.ts`) assigns every path to one ownership class:
 
-## Trust boundaries and security model
+| Class | Examples | Rule on re-export |
+|---|---|---|
+| `spec`, `engine-owned` | `monstera.spec.json`, `android/`, `ios/`, `MONSTERA-MANIFEST.json` | Owned by the engine; not in the Studio manifest |
+| `studio-data` | `studio-pack/*.json`, `studio-pack/assets/` | Rewritten every export |
+| `studio-scaffold` | `studio-pack/scaffold/`, `studio-pack/derived/`, `tools/check-drift.sh` | Regenerated only when unedited; an edited file triggers an explicit choice |
+| `write-once` | `extensions/`, `.kiro/steering|specs|hooks/`, `.gitignore`, `studio-pack/PROJECT-NOTES.md` | Written once, never overwritten |
 
-- **No server, no accounts, no secrets.** The deployed artifact is static files. There is no credential to leak. The bundle
-  contains only repository content and public Pyodide files.
-- **User input** (imported specs, edited fields) is untrusted data. It is parsed as JSON and validated by the engine; it is
-  never evaluated as code. Rendered values go through React (no `dangerouslySetInnerHTML`).
-- **Same-origin only.** The page and worker load nothing from other origins and make no network requests during use.
-- **Local state.** The draft in `localStorage` is readable by scripts on the same origin. Studio holds no sensitive data.
-- **Evidence integrity.** Evidence is committed to git and reviewed there. Studio checks internal consistency and the
-  spec hash binding, but it cannot prove that a committed log was not fabricated; the provenance rules
-  (`04-generation-and-provenance.md`) apply to whoever commits it.
-- **Hosting.** Vercel serves the static build at https://monstera-phi.vercel.app/. M3-B verified the live site (17/17 smoke
-  checks, no `.map` files served, bundle secret scan clean) and did not configure it. Open, owner-side hosting improvements,
-  not Studio implementation work: the responses carry no Content-Security-Policy and no `X-Content-Type-Options`, and the
-  Pyodide assets are served with `max-age=0, must-revalidate`. No header hardening is claimed. Any CSP must allow what
-  Pyodide needs and be verified against the smoke test before it is relied on.
+`MONSTERA-STUDIO-MANIFEST.json` records each Studio-written file with its class and SHA-256. The export is deterministic
+(double export is byte-identical) and ZIP file modes come from the engine plan, so `android/gradlew` stays executable.
 
-## Explicitly not part of Studio
+**Drift** is reported, never repaired. `tools/check-drift.sh` in the export and the Drift view in Studio classify files as
+unchanged, edited, missing or unknown. Only scaffold files count as drift. Edits to write-once files, studio data and
+engine-owned files do not.
 
-Railway or any API service, Postgres or any database, authentication, server-side generation, GitHub dispatch, remote
-build workers, build buttons, a chatbot, a live Kiro connection, signing apps for users, and shipping Studio inside a
+Extension roots and scaffold files are not compiled into the app. Compiling developer-owned source roots is engine track E2,
+which is deferred.
+
+## 11. Backend and monetization scaffolding
+
+- Backend and Services records Firebase service choices (a toggle model with no free-text fields). Monetization records AdMob
+  placements and frequency rules and shows a labelled mock rewarded-ad preview.
+- Both emit **scaffold text** (Kotlin and Swift interface stubs, a mock rewarded ad service, a SETUP guide) into
+  `studio-pack/scaffold/`. The developer adopts the files by hand.
+- **Firebase is scaffold and mock. It is not a live backend.** Studio makes no call to Firebase and creates no account or
+  resource. **AdMob is mock and test only.** No ad is shown, nothing is compiled into the app, and Studio never stores or
+  emits a production ad id. Real ad ids and `google-services.json` or `GoogleService-Info.plist` are added by the developer
+  after export.
+
+## 12. Preview, determinism and native evidence
+
+- **Browser preview** runs the unmodified engine's simulation from the spec and draws it on a canvas.
+- **Determinism badge** runs the oracle against the recorded golden scenarios for the exact spec. It reports a match, a divergence,
+  or that no goldens exist for that spec, and goes stale when the spec is edited. It says nothing about devices.
+- **Native evidence** (`studio/scripts/native-evidence.mjs`) evaluates committed records of generated app builds and
+  simulator launches, and fails closed. The spec SHA-256 is computed from the canonical spec, never copied from a summary. A
+  record counts only when its logs, report and results agree and the app logged the same spec hash. Evidence attaches to a
+  draft only when the draft's validated SHA-256 equals the evidence's hash; an edited draft shows none.
+- The **environments table** folds committed records per environment (browser, oracle, JVM, Swift test, simulator, device) for
+  the current spec hash. A row reads `passed` only when a source record backs it, otherwise `no evidence for this hash`. The
+  device row never has a source.
+- Labels follow `.kiro/steering/04-generation-and-provenance.md`. The recorded simulator and emulator evidence covers build,
+  install, launch and the first runtime ticks. It does not show gameplay, input, performance or haptics, and no physical
+  device has been tested.
+
+## 13. Build completeness and release readiness
+
+- The **completeness check** blocks export on errors: an invalid spec, a missing asset file, a plan the engine did not
+  verify, or an invalid manifest. Warnings do not block.
+- The **readiness checklist** states what is proven for one spec hash. Studio can prove only `generated`, for the hash the
+  current engine plan was verified for. `compiled`, `simulator-tested` and `device-tested` read as not proven unless a
+  committed record for that exact hash is supplied.
+- The checklist lists what only the developer can do: signing, store listing, privacy declarations, real ad ids and Firebase
+  files. Studio signs nothing, uploads nothing and makes no store-ready claim.
+
+## 14. Security
+
+- **No server, no accounts, no secrets.** The deployed artifact is static files.
+- **Hostile input.** Imported specs, bundles, packs and proposals are untrusted data. They are parsed with strict JSON rules
+  (duplicate keys, BOM and invalid UTF-8 refused), validated by the engine or the manifest validators, and never evaluated.
+  The ZIP reader is hardened (section 4). Paths with `..`, absolute paths, symlinks and path-shaped ids are refused. React
+  renders values without `dangerouslySetInnerHTML`.
+- **Secret scanning.** A field guard refuses credential-shaped text (API keys, private key blocks, service-account JSON,
+  AdMob ids, tokens, AI provider hosts) at manifest, name and spec-edit seams and when a pack is imported. A scan of the
+  built bundle, the source maps and the schemas runs in CI. Findings never print values. The scans are pattern based and
+  reduce accidental leaks; they are not a guarantee.
+- **No AI calls from the browser.** Studio sends no request to any AI provider and holds no provider key. There is no live
+  Kiro connection. A proposal produced elsewhere can be loaded as a file, reviewed and applied only on acceptance; who wrote
+  it is not verified.
+- **Content-Security-Policy.** The policy source is `studio/security/headers.json` (`default-src 'self'`, `script-src 'self'
+  'wasm-unsafe-eval'`, `object-src 'none'`, `frame-ancestors 'none'` and others) with `nosniff`. It is verified on a local
+  preview of the built site in report-only and enforce modes. **It is not deployed.** The live site sends neither header
+  until the Vercel Root Directory is confirmed and a report-only deployment has been reviewed by the owner (Task 1.6, pending).
+- **Evidence integrity.** Evidence is committed to Git and reviewed there. Studio checks internal consistency and the hash
+  binding; it cannot prove that a committed log was not fabricated.
+
+## 15. CI, regression and deployment
+
+`.github/workflows/studio-ci.yml` runs from `studio/`: lockfile install, unit tests, TypeScript check and production build,
+bundle and source scans, the hostile-input suite with the final `dist` scan, a Playwright smoke test against a local
+production preview, the shell check, the level apply path through the real engine worker, the A5 level flow, the A3
+dashboard flow, the foundry flow (bundle round trip, asset to animation, gameplay, scaffold UI, pack and drift), the
+Task 9.2 regression proof, and the smoke test under the report-only and enforced header policies. A separate job runs the
+smoke test against the deployed site; it observes and never deploys or configures hosting.
+
+Regression proof (`npm run regression`): engine and schema freeze diff against `71c77e4`, `monstera gates`,
+`generate --check` and `verify` for the committed apps, and a comparison with the G6 evidence. **The G6 evidence comparison
+is pending** because the 18 evidence files are not on `main`; the other checks pass in CI.
+
+The Studio is hosted as static files on Vercel at https://monstera-phi.vercel.app/, configured by the owner. Studio CI never
+deploys. Chromium is the only browser exercised by the smoke and flow scripts.
+
+## 16. Status summary
+
+Exact per-capability statuses, limits and evidence are in [`docs/STUDIO-CAPABILITIES.md`](../docs/STUDIO-CAPABILITIES.md).
+
+| Status | What is in it |
+|---|---|
+| Implemented | Game Designer editors and spec view, source ZIP, browser preview, determinism badge, hash-bound native evidence, Developer Integration inventory, manifest schemas, secret scan |
+| Prototype | Dashboard with bundles, Asset Studio, Sprite and Animation Editor, Level Studio and variants, difficulty steps, Gameplay Systems core, field locks, pack export and drift, proposal inbox, environments table, completeness and readiness, project identity, security headers (not deployed) |
+| Mock | AdMob placements and the mock rewarded ad |
+| Scaffold | Firebase and AdMob stub text in the Studio pack |
+| Planned | Native rendering of assets and animations (E1, not approved), health, power-ups and progression, AI provider architecture |
+| Unsupported | Live Firebase, production AdMob ids, in-browser AI calls, device testing from Studio, level selection inside the native app, signing, store upload and store-ready claims |
+
+## 17. Explicitly not part of Studio
+
+A backend, database, accounts, server-side generation or build, GitHub dispatch, remote build workers, a build button, a
+chatbot, a live Kiro connection, in-browser AI calls, signing apps for users, store upload, and shipping Studio inside a
 generated app.
 
-## Verification and CI
+## 18. Pending acceptance
 
-`.github/workflows/studio-ci.yml` runs, from `studio/`: `npm ci`, unit tests, the production build with TypeScript check, the
-bundle and source-map secret scan, and the Playwright smoke test against a local `vite preview`. A separate, advisory job runs
-the same smoke test against the deployed site. The smoke test proves load without console or HTTP errors, engine start,
-validation of the three official games to the canonical SHA-256, rejection of an invalid edit, preview frames, the evidence
-binding (shown for the exact hash, dropped after an edit, restored on revert) and same-origin requests only. It does not prove
-gameplay, input, physical devices or browsers other than Chromium. Details: `docs/evidence/studio-m3b/README.md`.
+Not complete, and not claimed complete here:
 
-## Remaining work
-
-None for Studio M3. The next milestone is G6 (clean-room regeneration of both games, then a recorded demonstration); see
-`.kiro/specs/g4-studio/tasks.md`, item 5. The hosting header observations above stay with the owner.
+- Task 1.6: live Vercel report-only deployment and the owner's review of its reports.
+- G6 clean-room regeneration: PR #15 is not accepted or merged.
+- Task 9.2: the G6 evidence comparison stays pending until that evidence is on `main`.
+- Task 9.4: independent adversarial review of the implementation against the specification and the Git diff.
+- Task 9.6: demo script and recording.
+- Full M2 acceptance matrix on a clean clone: a local Windows run failed on CRLF differences only and is not a substitute
+  for a green run (`docs/evidence/studio-foundry/task-9-1-acceptance.md`).
