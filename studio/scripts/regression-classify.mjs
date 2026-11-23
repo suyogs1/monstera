@@ -34,3 +34,39 @@ export function classifyEngineSchemaDiff({ nameStatus, numstat, baselineBlob, cu
   }
   return { status: "PASS", summary: PASS_MESSAGE };
 }
+
+// Gate E1 (docs/STUDIO-FOUNDRY-GATE-E.md). The original freeze above is checked from 71c77e4 to E1_BASE, the pre-E1 main, and
+// is never re-baselined. From E1_BASE to the current head only the paths below may change under tools/monstera and spec/schema:
+// the spec v5 contract, its validation and bundling, and the two presentation layers. Every other path, including the oracle,
+// emit_runtime and the runtime core templates of both platforms, must stay byte-identical to E1_BASE.
+export const E1_BASE = "7f0292ba99ccc1b874bf30047ae175aacd021d9f";
+export const E1_ALLOWED = Object.freeze({
+  "spec/schema/game.schema.json": "M",
+  "spec/schema/monstera.spec.schema.json": "M",
+  "tools/monstera/monstera/atlas.py": "A",
+  "tools/monstera/monstera/archcheck.py": "M",
+  "tools/monstera/monstera/generate.py": "M",
+  "tools/monstera/monstera/schema.py": "M",
+  "tools/monstera/monstera/semantic.py": "M",
+  "tools/monstera/monstera/templates/android/app/src/main/kotlin/GameScreen.kt.tmpl": "M",
+  "tools/monstera/monstera/templates/android/presentation/Presentation.kt.tmpl": "M",
+  "tools/monstera/monstera/templates/android/presentation/PresentationTest.kt.tmpl": "M",
+  "tools/monstera/monstera/templates/ios/Package.swift.tmpl": "M",
+  "tools/monstera/monstera/templates/ios/Presentation/Presentation.swift.tmpl": "M",
+  "tools/monstera/monstera/templates/ios/Presentation/PresentationTests.swift.tmpl": "M",
+  "tools/monstera/monstera/templates/ios/Sources/GameScene.swift.tmpl": "M",
+  "tools/monstera/tests/test_presentation.py": "M",
+  "tools/monstera/tests/test_sprites.py": "A",
+});
+export const E1_PASS_MESSAGE = "E1 changes are limited to the approved contract, validation, bundling and presentation paths; the runtime core and oracle are unchanged since the pre-E1 main.";
+// input: { nameStatus: string (git diff --name-status --no-renames E1_BASE HEAD -- tools/monstera spec/schema) }
+export function classifyE1Diff({ nameStatus }) {
+  const entries = nameStatus.split(/\r?\n/).map((l) => l.trim()).filter(Boolean).map((l) => {
+    const [status, ...rest] = l.split(/\t+/);
+    return { status, path: rest.join("\t") };
+  });
+  const bad = entries.filter((e) => E1_ALLOWED[e.path] !== e.status);
+  if (bad.length > 0) return { status: "FAIL", summary: `changes outside the E1 allowlist: ${bad.map((e) => `${e.status} ${e.path}`).join("; ")}` };
+  if (entries.length === 0) return { status: "PASS", summary: "no engine or schema change since the pre-E1 main" };
+  return { status: "PASS", summary: `${E1_PASS_MESSAGE} (${entries.length} approved paths changed)` };
+}

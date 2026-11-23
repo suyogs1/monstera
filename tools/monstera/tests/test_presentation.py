@@ -39,10 +39,10 @@ class VisualSchemaTests(unittest.TestCase):
         fn(spec)
         return spec
 
-    def test_all_shipped_specs_are_valid_v4(self) -> None:
+    def test_all_shipped_specs_are_valid_v5(self) -> None:
         for name, path in SPECS.items():
             spec = load(path)
-            self.assertEqual(spec["specVersion"], 4, name)
+            self.assertEqual(spec["specVersion"], 5, name)
             self.assertEqual(issues(spec), [], name)
 
     def test_neutral_values_of_the_samples_are_the_documented_defaults(self) -> None:
@@ -50,8 +50,10 @@ class VisualSchemaTests(unittest.TestCase):
             game = load(SPECS[name])["game"]
             self.assertEqual(game["hud"], {"lifeGlyph": "", "scoreLabel": "score"}, name)
             self.assertEqual(game["screens"], {"startHint": "Tap to start", "winTitle": "You win", "loseTitle": "Game over"}, name)
+            self.assertEqual(game["atlas"], {"png": "", "frameWidth": 1, "frameHeight": 1, "columns": 1, "rows": 1}, name)
             for kind in game["runtime"]["kinds"]:
                 self.assertEqual((kind["glyph"], kind["effect"]), ("", "none"), name)
+                self.assertEqual(kind["sprite"], {"frames": [], "ticksPerFrame": 1}, name)
 
     def test_accepted_glyphs_and_texts(self) -> None:
         for glyph in ("", "\u2665", "\U0001F383", "\u26B0\uFE0F", "\U0001F468\u200D\U0001F469\u200D\U0001F467"):
@@ -92,16 +94,17 @@ class VisualSchemaTests(unittest.TestCase):
                     node = node[key]
                 del node[p[-1]]
             self.assertTrue(any(code == "required" for _, code in issues(self.edit(remove))), path)
-        for key in ("glyph", "effect"):
+        for key in ("glyph", "effect", "sprite"):
             spec = self.edit(lambda s, k=key: s["game"]["runtime"]["kinds"][0].pop(k))
             self.assertTrue(any(code == "required" for _, code in issues(spec)), key)
         spec = self.edit(lambda s: s["game"]["hud"].update(extra=1))
         self.assertTrue(any(code == "additionalProperties" for _, code in issues(spec)))
 
-    def test_v3_is_rejected_with_the_new_version(self) -> None:
-        spec = self.edit(lambda s: s.update(specVersion=3))
-        result = validate_value(spec, STORE)
-        self.assertIn("must be 4", result.issues[0].message)
+    def test_older_versions_are_rejected_with_the_new_version(self) -> None:
+        for old in (3, 4):
+            spec = self.edit(lambda s, v=old: s.update(specVersion=v))
+            result = validate_value(spec, STORE)
+            self.assertIn("must be 5", result.issues[0].message)
 
 
 def visual_variant(spec: dict) -> dict:
@@ -114,11 +117,29 @@ def visual_variant(spec: dict) -> dict:
         kind["glyph"] = "\U0001F383"
         kind["effect"] = ("burst", "pickup", "none")[i % 3]
         kind["color"] = "#123456"
+        # Sprites (contract section 10): a different atlas, every kind drawn from it, the first two animated.
+        kind["sprite"] = {"frames": [i % 4, (i + 1) % 4] if i < 2 else [i % 4], "ticksPerFrame": 3 + i}
+    game["atlas"] = {"png": VARIANT_ATLAS, "frameWidth": 2, "frameHeight": 2, "columns": 2, "rows": 2}
     return out
 
 
-DISPLAY_ONLY_GAME = ("palette", "hud", "screens")
-DISPLAY_ONLY_KIND = ("color", "glyph", "effect")
+def _png_b64(width: int, height: int) -> str:
+    import base64
+    import struct
+    import zlib
+    def chunk(kind: bytes, body: bytes) -> bytes:
+        return struct.pack(">I", len(body)) + kind + body + struct.pack(">I", zlib.crc32(kind + body) & 0xFFFFFFFF)
+    raw = b"".join(b"\x00" + bytes((x * 60, y * 60, 200, 255)[c] for x in range(width) for c in range(4)) for y in range(height))
+    data = (b"\x89PNG\r\n\x1a\n" + chunk(b"IHDR", struct.pack(">IIBBBBB", width, height, 8, 6, 0, 0, 0))
+            + chunk(b"IDAT", zlib.compress(raw, 9)) + chunk(b"IEND", b""))
+    return base64.b64encode(data).decode("ascii")
+
+
+VARIANT_ATLAS = _png_b64(4, 4)
+
+
+DISPLAY_ONLY_GAME = ("palette", "hud", "screens", "atlas")
+DISPLAY_ONLY_KIND = ("color", "glyph", "effect", "sprite")
 NOT_READ_GAME = ("genre", "orientation", "targetFps")
 NOT_READ_INPUT = ("scheme",)
 
@@ -197,14 +218,16 @@ class PresentationCannotReachTheSimulationTests(unittest.TestCase):
 
         deleted_game = {f"game.{k}" for k in DISPLAY_ONLY_GAME + NOT_READ_GAME} | {f"game.input.{k}" for k in NOT_READ_INPUT}
         deleted_kind = {f"game.runtime.kinds[].{k}" for k in DISPLAY_ONLY_KIND}
+        def in_kind(p: str) -> bool:  # a deleted kind field, or a leaf inside one (kinds[].sprite.frames)
+            return p in deleted_kind or any(p.startswith(d + ".") for d in deleted_kind)
         self.assertEqual(display - {"project.displayName"},
-                         {p for p in self.leaf_patterns(load(SPECS["pumpkin-blaster"])) if p in deleted_kind
+                         {p for p in self.leaf_patterns(load(SPECS["pumpkin-blaster"])) if in_kind(p)
                           or any(p.startswith(f"game.{k}.") for k in DISPLAY_ONLY_GAME)},
                          "the Studio display-only list must equal the display-only fields deleted by strip_unread")
         checked = 0
         for path in list(SPECS.values()) + [REPO / "spec" / "samples" / "lantern-run" / "monstera.spec.json"]:
             for pattern in self.leaf_patterns(load(path)):
-                unread = pattern.startswith(("project.", "specVersion")) or pattern in deleted_kind or \
+                unread = pattern.startswith(("project.", "specVersion")) or in_kind(pattern) or \
                     any(pattern == d or pattern.startswith(d + ".") for d in deleted_game)
                 got = ts_class(pattern)
                 self.assertEqual(got != "behaviour", unread, f"{path.parent.name}: {pattern} is '{got}' in classify.ts")

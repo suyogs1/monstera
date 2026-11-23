@@ -48,7 +48,7 @@ describe("field descriptions come from the schema", () => {
     expect(model.field("game.hud.lifeGlyph")?.maxLength).toBe(8);
     expect(model.field("game.hud.lifeGlyph")?.description).toContain("once per remaining life"); // sibling overrides the $ref
     expect(model.field("game.runtime.kinds[].id")?.regex).toContain("a-z");
-    expect(model.field("specVersion")?.const).toBe(4);
+    expect(model.field("specVersion")?.const).toBe(5);
     expect(model.field("project.targets[]")?.enum).toEqual(["android", "ios"]);
   });
   it("returns undefined for paths the schema does not have", () => {

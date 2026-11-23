@@ -17,6 +17,7 @@ from typing import Any
 from xml.sax.saxutils import escape as xml_escape
 
 from . import GENERATOR_NAME, GENERATOR_VERSION, emit_kotlin, emit_runtime, emit_swift
+from .atlas import ATLAS_FILE, atlas_bytes
 from .jsonio import canonical_bytes, loads_strict, sha256_hex
 from .naming import product_name
 from .schema import SchemaStore
@@ -49,7 +50,7 @@ class OutFile:
     path: str      # POSIX, relative to the output root
     data: bytes
     source: str    # provenance: template path, "schema:<files>" or "spec"
-    kind: str      # template | static | model | spec | manifest
+    kind: str      # template | static | model | spec | asset | manifest
     mode: int = 0o644
 
 
@@ -138,6 +139,10 @@ def plan(spec: dict[str, Any], spec_path_label: str, store: SchemaStore,
                 ["UIInterfaceOrientationPortrait"] if game["orientation"] == "portrait"
                 else ["UIInterfaceOrientationLandscapeLeft", "UIInterfaceOrientationLandscapeRight"])),
     }
+    # Contract section 10: the decoded atlas is bundled unchanged as a real resource; no atlas, no file.
+    atlas_png = atlas_bytes(game["atlas"])
+    ctx["ios_resources"] = ", ".join(f'.copy("Resources/{name}")' for name in
+                                     [SPEC_FILE] + ([ATLAS_FILE] if atlas_png is not None else []))
     rows = []
     if "android" in project["targets"]:
         rows.append("| Android | `android/` (Gradle, Kotlin, Compose) | `cd android && ./gradlew assembleDebug` |")
@@ -184,6 +189,8 @@ def plan(spec: dict[str, Any], spec_path_label: str, store: SchemaStore,
                              emit_runtime.kotlin_config(game, package, ctx["header_slash"]).encode(), "spec", "model"))
         files.append(OutFile("android/app/src/test/resources/" + SCENARIOS_RESOURCE, scenarios_data, "scenarios", "scenarios"))
         files.append(OutFile("android/app/src/main/assets/" + SPEC_FILE, canonical, "spec", "spec"))
+        if atlas_png is not None:
+            files.append(OutFile("android/app/src/main/assets/" + ATLAS_FILE, atlas_png, "spec:game.atlas", "asset"))
         files.append(OutFile(f"{kt_dir}/generated/MonsteraSpec.kt",
                              emit_kotlin.models(types, f"{package}.generated", ctx["header_slash"]).encode(),
                              schema_source, "model"))
@@ -214,6 +221,8 @@ def plan(spec: dict[str, Any], spec_path_label: str, store: SchemaStore,
         template(f"{src_dir}/GameScene.swift", "ios/Sources/GameScene.swift.tmpl")
         template(f"{src_dir}/SpecIntegrity.swift", "ios/Sources/SpecIntegrity.swift.tmpl")
         files.append(OutFile(f"{src_dir}/Resources/{SPEC_FILE}", canonical, "spec", "spec"))
+        if atlas_png is not None:
+            files.append(OutFile(f"{src_dir}/Resources/{ATLAS_FILE}", atlas_png, "spec:game.atlas", "asset"))
         files.append(OutFile(f"{src_dir}/Generated/MonsteraSpec.swift",
                              emit_swift.models(types, ctx["header_slash"]).encode(), schema_source, "model"))
         files.append(OutFile(f"{src_dir}/Generated/GeneratedSpec.swift",

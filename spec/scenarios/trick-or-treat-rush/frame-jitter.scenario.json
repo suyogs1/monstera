@@ -1876,7 +1876,7 @@
   "seed": 55,
   "spec": {
     "path": "apps/trick-or-treat-rush/monstera.spec.json",
-    "sha256": "edcc2000685684cfc17fcbe3634bb01d2967b7d590cfceabb02a2286eaa79b4c"
+    "sha256": "75f62a987a9726a79c236e5e7f1004cc3b57b7801f077a23ccc2f8eaf8499eac"
   },
   "ticks": 2400
 }

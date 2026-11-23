@@ -1,5 +1,12 @@
 {
   "game": {
+    "atlas": {
+      "columns": 8,
+      "frameHeight": 16,
+      "frameWidth": 16,
+      "png": "iVBORw0KGgoAAAANSUhEUgAAAIAAAAAQCAYAAADeWHeIAAABl0lEQVR42u2ZMU4DMRBF9xAUKLkAooADINq0UEZJem5AF3EBOABKg0RPiVKliFLmKjRR+kGONGgxHnvGHmNvsiN9ab2Zv4ryfuz1btMQdXM5gLYaYaX6+ypYNjwpxFR/6fra7cGlkwrAbr34JWkAUvwvrx/gUkn4khB0PkAG2HB4/QMPj3P7KfCcIKzPp+zvR/WG4HNAagSoigC4lNPPhU+FwEDlhMDXh5BMYI2ocSz8Tocgt98F+XY0OUgSAIQLd+/QlqsnVwBi/VXU1eYTfMrlp+BTIfAFAKHjD45jXwC4/14fxM4HIAQPBc8XoO3XmgHa8F3HkgDY4HwB0AhQ8SkfAQ2eHv9Aw3MGHkrTf4wBkPg7MwNQAFP91NRPLQUll4DlZnucAeCu4avJGWj7tXYBsTeBOQIg8VdTZqo24p73XcNWaBcwe5gHwWOP9jZQAi8lAJS/avgaIeBsAw1cruwQpD4IOvkAcEFJ+zj947d7iFGOR8A2TGrs8nO91d0DxL7s4X7u64+Frx0CG0ponPs6ffX1L/UNwxkXpQ+qCtgAAAAASUVORK5CYII=",
+      "rows": 1
+    },
     "genre": "endless-runner",
     "hud": {
       "lifeGlyph": "♥",
@@ -73,6 +80,13 @@
           "height": 13107200,
           "id": "runner",
           "lifetimeTicks": 0,
+          "sprite": {
+            "frames": [
+              0,
+              1
+            ],
+            "ticksPerFrame": 8
+          },
           "width": 10485760
         },
         {
@@ -83,6 +97,10 @@
           "height": 1572864,
           "id": "stripe",
           "lifetimeTicks": 0,
+          "sprite": {
+            "frames": [],
+            "ticksPerFrame": 1
+          },
           "width": 70778880
         },
         {
@@ -93,6 +111,12 @@
           "height": 9830400,
           "id": "tombstone",
           "lifetimeTicks": 0,
+          "sprite": {
+            "frames": [
+              2
+            ],
+            "ticksPerFrame": 1
+          },
           "width": 14417920
         },
         {
@@ -103,6 +127,12 @@
           "height": 6553600,
           "id": "candy",
           "lifetimeTicks": 0,
+          "sprite": {
+            "frames": [
+              3
+            ],
+            "ticksPerFrame": 1
+          },
           "width": 6553600
         },
         {
@@ -113,6 +143,13 @@
           "height": 9830400,
           "id": "ghost",
           "lifetimeTicks": 0,
+          "sprite": {
+            "frames": [
+              4,
+              5
+            ],
+            "ticksPerFrame": 15
+          },
           "width": 14417920
         }
       ],
@@ -314,5 +351,5 @@
       "name": "0.1.0"
     }
   },
-  "specVersion": 4
+  "specVersion": 5
 }

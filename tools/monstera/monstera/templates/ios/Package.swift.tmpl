@@ -22,7 +22,7 @@ let package = Package(
                 .product(name: "MonsteraRuntime", package: "Runtime"),
                 .product(name: "MonsteraPresentation", package: "Presentation"),
             ],
-            resources: [.copy("Resources/monstera.spec.json")]
+            resources: [@@{ios_resources}]
         ),
     ]
 )
