@@ -40,7 +40,8 @@ Sections under `game`: `genre`, `hud`, `screens`, `input`, `simulation`, `runtim
 - `game.genre`, `orientation`, `targetFps`; `world` (`width`, `height`); `palette` (`background`, `primary`, `accent`: `#RRGGBB`
   uppercase; `primary` and `accent` need contrast of at least 3:1 against `background`).
 - `game.hud`: `lifeGlyph` (symbol per life, `""` shows "lives N"), `scoreLabel`. `game.screens`: `startHint`, `winTitle`, `loseTitle`.
-  These and `glyph`, `effect`, `color` are presentation only and can never change a recorded checkpoint.
+  These and `glyph`, `effect`, `color`, `sprite` and `game.atlas` are presentation only and can never change a recorded checkpoint.
+   `atlas` (spec v5, contract section 10): `png` is standard base64 of one 8-bit RGB(A) PNG of `columns` x `rows` frames of `frameWidth` x `frameHeight` pixels, or `""` for none (then every `frames` list is empty). Art comes from `assets/sprites/` with recorded provenance, never from unlicensed sources.
 - `game.input`: `scheme` (`drag`: move by finger delta times `dragGain`; `swipe`: a swipe sets the controlled entity's velocity to
   `swipeSpeed` in that direction; `lanes`: a horizontal swipe moves by `swipeSpeed` once; `tap`), `tapKind` (kind spawned at the
   first controlled entity on a tap, `""` for none) with `tapVx` and `tapVy`.
@@ -48,6 +49,7 @@ Sections under `game`: `genre`, `hud`, `screens`, `input`, `simulation`, `runtim
 - `game.runtime`: `maxEntities`, `lives` (start), `winScore` (0 disables winning).
   - `kinds[]`: `id`, `width`, `height`, `lifetimeTicks` (0 = unlimited), `exitPolicy` (`despawn` when fully outside, `clamp`, `bounce`),
     and presentation `color`, `glyph` (at most 8 characters), `effect` (`none`, `burst`, `pickup`). Use `effect: none` for kinds that expire or leave the world by their own motion.
+    and `sprite` (`frames`: 0 to 4 indices into the atlas, `ticksPerFrame` 1 to 600; `{"frames": [], "ticksPerFrame": 1}` keeps the glyph; at most two kinds animated).
   - `initialEntities[]`: `kind`, `x`, `y`, `vx`, `vy`, `controlled` (receives input).
   - `spawners[]`: `stream` (own random stream), `kind`, `startTick`, `intervalTicks`, a spawn box `xMin`..`xMax`, `yMin`..`yMax`, and
     velocity `vx`, `vy`. Difficulty rises by adding spawners with a later `startTick` and a shorter `intervalTicks`.

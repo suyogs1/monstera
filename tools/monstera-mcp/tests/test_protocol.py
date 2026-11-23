@@ -88,7 +88,7 @@ class ProtocolTests(unittest.TestCase):
     def test_engine_info_and_manifest_files_over_the_protocol(self) -> None:
         info = _payload(self.calls["engine_info"])
         self.assertFalse(info["stale"], "a server started by this test matches the repository")
-        self.assertEqual(info["spec_version"], 4)
+        self.assertEqual(info["spec_version"], 5)
         listed = _payload(self.calls["manifest_files"])
         self.assertEqual(len(listed["files"]), listed["file_count"])
         self.assertTrue(all(set(f) == {"path", "kind", "source"} for f in listed["files"]))
