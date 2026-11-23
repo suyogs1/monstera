@@ -54,3 +54,9 @@ changes; review that), `monstera generate`. A v4 spec is refused with `must be 5
 Simulation compatibility of v4 to v5: neither property is read by the simulation. Verified for the 33 scenarios of the five shipped specs when v5 was
 introduced: `scenarios record --all` changed one line per scenario, `spec.sha256`, and no checkpoint. The two Skeleton Crew games then received their
 atlases from `assets/sprites/make_atlases.py`, which again changed only the spec hash of their scenarios.
+In Studio, content written for v4 is upgraded on opening with exactly these neutral values (`studio/src/project/specV5.ts`). This covers
+stored IndexedDB projects, direct spec imports, project bundles and the legacy localStorage draft. The upgrade is used only when the v5 engine
+accepts it; versions other than 4 are never guessed. Project keys, names, manifests, assets and origins are kept; only the project manifest's spec
+hashes that named the v4 text are rebound. A stored project is re-saved as one atomic record, so a failed write leaves the v4 record untouched.
+Bundles pass their integrity checks as written before the upgrade, and the legacy draft is never written. No sprite is assigned, and
+Studio says so in a notice.

@@ -28,7 +28,7 @@ status allows.
 | Module | Role | Reaches native output |
 |---|---|---|
 | Project Dashboard | Create, open, rename, duplicate, delete projects; status cards; project bundle export and import | Studio only |
-| Game Designer | The canonical v4 spec editors with engine validation, spec view, import, export | Yes (it is the spec) |
+| Game Designer | The canonical v5 spec editors with engine validation, spec view, import, export | Yes (it is the spec) |
 | Asset Studio | Import, library, provenance, preview, delete protection, assignment of an asset to a kind | Studio only |
 | Sprite and Animation Editor | Sheet slicing, frames, animation sequences, tick-based preview | Studio only |
 | Level Studio | Levels as Studio data; the active level compiles into the spec; other levels export as variants | Active level only |
@@ -82,7 +82,7 @@ status allows.
 
 ## 6. Studio-owned sidecar manifests
 
-Data the v4 spec cannot express lives in versioned sidecar manifests, each with a JSON Schema in `studio/schemas/` and a strict
+Data the v5 spec cannot express lives in versioned sidecar manifests, each with a JSON Schema in `studio/schemas/` and a strict
 TypeScript validator in `studio/src/project/manifests/`: `project`, `levels`, `gameplay`, `assets`, `animations`,
 `integrations` (and `proposal`, used by the inbox). The validators reject unknown keys, wrong types, over-long values and
 duplicate JSON keys, reject unsafe paths and ids, and run before anything is stored, imported or exported.
@@ -122,10 +122,16 @@ contracts and are not mixed.
 - An asset can be assigned to a kind (a link stored in the `assets` manifest, shown as a thumbnail in the Designer).
 - The Sprite and Animation Editor slices a sheet into frames, edits frames and builds animation sequences. A tick-based
   preview player plays them in the browser.
-- **Native limitation.** The v4 spec has no asset or animation concept. Assets, sheets and animations are Studio data. They
-  travel in the bundle and the Studio pack and are shown in Studio previews, but the generated apps do not draw or play them.
-  Rendering them natively is engine track E1. The recorded gate decision (`docs/STUDIO-FOUNDRY-GATE-E.md`) is that E1 is not
-  approved for this milestone. Gates E2 and E3 are likewise not approved.
+- **Native sprites (spec v5, Gate E1, `architecture/RUNTIME-CONTRACT.md` section 10).** The spec embeds one PNG atlas
+  (`game.atlas`), and each kind names 0 to 4 of its frames (`kinds[].sprite`). At most two kinds animate, and the frame is
+  `frames[(tick div ticksPerFrame) mod count]`. The generator bundles the PNG as a real resource on both platforms. Compose and
+  SpriteKit draw it with nearest-neighbour sampling and fall back to the glyph. Evidence: `docs/evidence/e1-native-apps/`.
+- **Native limitation.** Studio's own assets, sheets and animations are still Studio data. They travel in the bundle and the Studio
+  pack and are shown in Studio previews, but the generated apps do not read them: the Asset and Sprite editors are not yet wired to
+  `game.atlas` and `kinds[].sprite`, which Studio keeps read-only. Content written for spec v4 (stored projects, imports, bundles,
+  legacy drafts) is upgraded to v5 on opening with neutral sprite fields; the upgraded project is saved as one atomic record, and
+  a refused upgrade leaves the original untouched. Gate decision (`docs/STUDIO-FOUNDRY-GATE-E.md`): E1 approved, E2 conditional,
+  E3 deferred.
 
 ## 10. Studio pack, ownership and drift
 
@@ -234,7 +240,7 @@ Exact per-capability statuses, limits and evidence are in [`docs/STUDIO-CAPABILI
 | Prototype | Dashboard with bundles, Asset Studio, Sprite and Animation Editor, Level Studio and variants, difficulty steps, Gameplay Systems core, field locks, proposal inbox, environments table, completeness and readiness, project identity, security headers (not deployed) |
 | Mock | AdMob placements and the mock rewarded ad |
 | Scaffold | Firebase and AdMob stub text in the Studio pack |
-| Planned | Native rendering of assets and animations (E1, not approved), health, power-ups and progression, AI provider architecture |
+| Planned | Native use of Studio library assets and audio, health, power-ups and progression, AI provider architecture |
 | Unsupported | Live Firebase, production AdMob ids, in-browser AI calls, device testing from Studio, level selection inside the native app, signing, store upload and store-ready claims |
 
 ## 17. Explicitly not part of Studio
