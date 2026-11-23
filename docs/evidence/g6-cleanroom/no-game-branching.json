@@ -1,0 +1,10 @@
+{
+  "check": "no project-specific branching in production generator and template code",
+  "comparisonHits": [],
+  "comparisonsInspected": 354,
+  "filesScanned": 62,
+  "projectIdentityStringsChecked": 15,
+  "scope": "tools/monstera/monstera/ (all files, including oracle and templates)",
+  "textHits": [],
+  "verdict": "PASS"
+}

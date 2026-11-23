@@ -1,0 +1,178 @@
+getpwuid_r did not find a match for uid 501
+Timestamp               Ty Process[PID:TID]
+2026-11-16 07:44:54.816 Df TrickOrTreatRush[23826:11448] [com.apple.xpc:connection] [0x102b06590] activating connection: mach=true listener=false peer=false name=com.apple.cfprefsd.daemon
+2026-11-16 07:44:54.965 Df TrickOrTreatRush[23826:11448] [app.monstera.trickortreatrush:spec] spec sha256=edcc2000685684cfc17fcbe3634bb01d2967b7d590cfceabb02a2286eaa79b4c bundledMatches=true decodedMatches=true
+2026-11-16 07:44:54.994 A  TrickOrTreatRush[23826:11462] (CoreFoundation) Loading Preferences From User Session CFPrefsD
+2026-11-16 07:44:55.002 Df TrickOrTreatRush[23826:11448] (libMobileGestalt.dylib) No persisted cache on this platform.
+2026-11-16 07:44:55.004 Df TrickOrTreatRush[23826:11462] [com.apple.BoardServices:XPCErrors] [C:1] Alloc com.apple.frontboard.systemappservices
+2026-11-16 07:44:55.004 Df TrickOrTreatRush[23826:11462] [com.apple.xpc:connection] [0x102c06b80] activating connection: mach=false listener=false peer=false name=(anonymous)
+2026-11-16 07:44:55.028 Df TrickOrTreatRush[23826:11448] [com.apple.UIKit:Application] Deactivation reason added: 10; deactivation reasons: 0 -> 1024; animating application lifecycle event: 0
+2026-11-16 07:44:55.028 Df TrickOrTreatRush[23826:11461] [com.apple.UIKit:BackgroundTask] Creating new assertion because there is no existing background assertion.
+2026-11-16 07:44:55.028 Df TrickOrTreatRush[23826:11461] [com.apple.UIKit:BackgroundTask] Creating new background assertion
+2026-11-16 07:44:55.028 Df TrickOrTreatRush[23826:11461] [com.apple.UIKit:BackgroundTask] Created new background assertion <BKSProcessAssertion: 0x60000210b070>
+2026-11-16 07:44:55.028 Df TrickOrTreatRush[23826:11461] [com.apple.runningboard:connection] Initializing connection
+2026-11-16 07:44:55.028 Df TrickOrTreatRush[23826:11461] [com.apple.runningboard:process] Removing all cached process handles
+2026-11-16 07:44:55.028 Df TrickOrTreatRush[23826:1145b] [com.apple.runningboard:connection] Sending handshake request attempt #1 to server
+2026-11-16 07:44:55.028 I  TrickOrTreatRush[23826:11461] [com.apple.runningboard:assertion] Acquiring assertion: <RBSAssertionDescriptor| "Shared Background Assertion 0 for app.monstera.trickortreatrush" ID:(null) target:23826>
+2026-11-16 07:44:55.029 Df TrickOrTreatRush[23826:1145b] [com.apple.runningboard:connection] Creating connection to com.apple.runningboard
+2026-11-16 07:44:55.029 Df TrickOrTreatRush[23826:1145b] [com.apple.xpc:connection] [0x102d05de0] activating connection: mach=true listener=false peer=false name=com.apple.runningboard
+2026-11-16 07:44:55.029 Df TrickOrTreatRush[23826:11448] [com.apple.BoardServices:Injection] activating monitor for service com.apple.frontboard.open
+2026-11-16 07:44:55.031 A  TrickOrTreatRush[23826:11462] (RunningBoardServices) didChangeInheritances
+2026-11-16 07:44:55.031 Df TrickOrTreatRush[23826:11448] [com.apple.BoardServices:Injection] activating monitor for service com.apple.frontboard.workspace-service
+2026-11-16 07:44:55.032 Df TrickOrTreatRush[23826:1145b] [com.apple.runningboard:connection] Handshake succeeded
+2026-11-16 07:44:55.032 Df TrickOrTreatRush[23826:1145b] [com.apple.runningboard:connection] Identity resolved as app<app.monstera.trickortreatrush((null))>
+2026-11-16 07:44:55.032 Df TrickOrTreatRush[23826:11448] [com.apple.FrontBoard:Common] FBSWorkspace registering source: com.apple.frontboard.systemappservices
+2026-11-16 07:44:55.033 Df TrickOrTreatRush[23826:11461] [com.apple.UIKit:BackgroundTask] Incrementing reference count for background assertion <BKSProcessAssertion: 0x60000210b070>
+2026-11-16 07:44:55.034 Df TrickOrTreatRush[23826:11461] [com.apple.UIKit:BackgroundTask] Created background task <_UIBackgroundTaskInfo: 0x600001702ac0>: taskID = 1, taskName = Launch Background Task for Coalescing, creationTime = 932 (elapsed = 0).
+2026-11-16 07:44:55.034 Df TrickOrTreatRush[23826:11461] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UIApplicationSceneKeyboardSettings on FBSSceneSettings
+2026-11-16 07:44:55.036 Df TrickOrTreatRush[23826:11448] [com.apple.FrontBoard:Common] FBSWorkspace connected to endpoint : <BSServiceConnectionEndpoint: 0x60000020b5c0; target: com.apple.frontboard.systemappservices; service: com.apple.frontboard.workspace-service>
+2026-11-16 07:44:55.036 Df TrickOrTreatRush[23826:11448] [com.apple.FrontBoard:Common] <FBSWorkspaceScenesClient:0x600003008360 com.apple.frontboard.systemappservices> attempting immediate handshake from activate
+2026-11-16 07:44:55.037 Df TrickOrTreatRush[23826:11448] [com.apple.FrontBoard:Common] <FBSWorkspaceScenesClient:0x600003008360 com.apple.frontboard.systemappservices> sent handshake
+2026-11-16 07:44:55.041 Df TrickOrTreatRush[23826:11448] [com.apple.runningboard:general] Added observer for process assertions expiration warning: <_RBSExpirationWarningClient: 0x60000020ca20>
+2026-11-16 07:44:55.052 Df TrickOrTreatRush[23826:11461] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneOcclusionSettings> on FBSSceneSettings
+2026-11-16 07:44:55.052 Df TrickOrTreatRush[23826:11448] [com.apple.UIKit:UIScreen] Evaluated capturing state as 0 on <UIScreen: 0x102c08430> for initial
+2026-11-16 07:44:55.052 Df TrickOrTreatRush[23826:11461] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneInterfaceProtectionSettings> on FBSSceneSettings
+2026-11-16 07:44:55.053 Df TrickOrTreatRush[23826:11448] [com.apple.UIKit:UIScreen] Evaluated capturing state as 0 on <UIScreen: 0x102c08430> for CADisplay KVO
+2026-11-16 07:44:55.055 Df TrickOrTreatRush[23826:11461] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UISceneLayoutPreferencesHostSettingsExtension on FBSSceneSettings
+2026-11-16 07:44:55.061 Df TrickOrTreatRush[23826:11461] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UISceneSafeAreaSettingsExtension on FBSSceneSettings
+2026-11-16 07:44:55.063 Df TrickOrTreatRush[23826:11461] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UISceneLayoutPreferenceClientSettingsExtension on FBSSceneClientSettings
+2026-11-16 07:44:55.064 Df TrickOrTreatRush[23826:11448] [com.apple.Accessibility:AXSupportCommon] Read CategoryName: per-app = 1, category name = (null)
+2026-11-16 07:44:55.065 Df TrickOrTreatRush[23826:11448] [com.apple.Accessibility:AXSupportCommon] Read CategoryName: per-app = 0, category name = (null)
+2026-11-16 07:44:55.069 Df TrickOrTreatRush[23826:11461] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UIHomeAffordanceHostSceneSettings> on FBSSceneSettings
+2026-11-16 07:44:55.071 Df TrickOrTreatRush[23826:11461] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UISystemShellSceneHostingEnvironmentSettings on FBSSceneSettings
+2026-11-16 07:44:55.072 Df TrickOrTreatRush[23826:11461] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UISceneRenderingEnvironmentSettings on FBSSceneSettings
+2026-11-16 07:44:55.074 Df TrickOrTreatRush[23826:11461] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneRenderingEnvironmentClientSettings> on FBSSceneClientSettings
+2026-11-16 07:44:55.075 Df TrickOrTreatRush[23826:11461] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneTransitioningHostSettings> on FBSSceneSettings
+2026-11-16 07:44:55.076 Df TrickOrTreatRush[23826:11461] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneFocusSystemSettings> on FBSSceneSettings
+2026-11-16 07:44:55.077 Df TrickOrTreatRush[23826:11461] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UISceneOrientationSettingsExtension on FBSSceneSettings
+2026-11-16 07:44:55.078 Df TrickOrTreatRush[23826:11461] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UISceneOrientationClientSettingsExtension on FBSSceneClientSettings
+2026-11-16 07:44:55.079 Df TrickOrTreatRush[23826:11461] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UISceneWindowingControlClientSettings on FBSSceneClientSettings
+2026-11-16 07:44:55.080 Df TrickOrTreatRush[23826:11461] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneHostingContentSizePreferenceClientSettings> on FBSSceneClientSettings
+2026-11-16 07:44:55.081 Df TrickOrTreatRush[23826:11461] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UISceneHostingTraitCollectionPropagationSettings on FBSSceneSettings
+2026-11-16 07:44:55.084 Df TrickOrTreatRush[23826:11461] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneHostingSheetPresentationSettings> on FBSSceneSettings
+2026-11-16 07:44:55.086 Df TrickOrTreatRush[23826:11461] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneHostingSheetPresentationClientSettings> on FBSSceneClientSettings
+2026-11-16 07:44:55.088 Df TrickOrTreatRush[23826:11461] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneHostingEventDeferringSettings> on FBSSceneSettings
+2026-11-16 07:44:55.092 Df TrickOrTreatRush[23826:11461] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <UIKit__UITypedKeyValueSceneSettings> on FBSSceneSettings
+2026-11-16 07:44:55.093 Df TrickOrTreatRush[23826:11461] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <UIKit__UITypedKeyValueSceneSettings> on FBSSceneClientSettings
+2026-11-16 07:44:55.094 Df TrickOrTreatRush[23826:11461] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneHostingViewControllerPreferencePropagationClientSettings> on FBSSceneClientSettings
+2026-11-16 07:44:55.095 Df TrickOrTreatRush[23826:11461] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneZoomTransitionSettings> on FBSSceneSettings
+2026-11-16 07:44:55.100 Df TrickOrTreatRush[23826:11462] [com.apple.FrontBoard:SceneExtension] Realizing settings extension FBSSceneSettingsCore on FBSSceneSettings
+2026-11-16 07:44:55.108 Df TrickOrTreatRush[23826:11462] [com.apple.FrontBoard:SceneExtension] Realizing settings extension FBSSceneClientSettingsCore on FBSSceneClientSettings
+2026-11-16 07:44:55.121 Df TrickOrTreatRush[23826:11462] [com.apple.FrontBoard:SceneExtension] UIMutableApplicationSceneSettings setting counterpart class: UIApplicationSceneSettings
+2026-11-16 07:44:55.121 Df TrickOrTreatRush[23826:11462] [com.apple.FrontBoard:SceneExtension] UIMutableApplicationSceneClientSettings setting counterpart class: UIApplicationSceneClientSettings
+2026-11-16 07:44:55.122 Df TrickOrTreatRush[23826:11448] [com.apple.dt.xctest:Default] Registering for test daemon availability notify post.
+2026-11-16 07:44:55.122 Df TrickOrTreatRush[23826:11462] [com.apple.FrontBoard:SceneExtension] Realizing settings extension FBSSceneTransitionContextCore on FBSSceneTransitionContext
+2026-11-16 07:44:55.122 Df TrickOrTreatRush[23826:11448] [com.apple.dt.xctest:Default] notify_get_state check indicated test daemon not ready.
+2026-11-16 07:44:55.122 Df TrickOrTreatRush[23826:11448] [com.apple.dt.xctest:Default] notify_get_state check indicated test daemon not ready.
+2026-11-16 07:44:55.122 Df TrickOrTreatRush[23826:11448] [com.apple.dt.xctest:Default] notify_get_state check indicated test daemon not ready.
+2026-11-16 07:44:55.125 Df TrickOrTreatRush[23826:11448] [com.apple.UIKit:Application] Deactivation reason added: 11; deactivation reasons: 1024 -> 3072; animating application lifecycle event: 0
+2026-11-16 07:44:55.125 I  TrickOrTreatRush[23826:11462] [com.apple.FrontBoard:Common] [FBSScene] [(FBSceneManager):sceneID:app.monstera.trickortreatrush-default] Created client agent: <UIApplicationSceneClientAgent: 0x600000008910>
+2026-11-16 07:44:55.134 Df TrickOrTreatRush[23826:11448] [com.apple.UIKit:Application] Deactivation reason removed: 10; deactivation reasons: 3072 -> 2048; animating application lifecycle event: 0
+2026-11-16 07:44:55.138 Df TrickOrTreatRush[23826:11448] [com.apple.UIKit:EventBus] Event Timing Profile for Touch: not found, path="/System/Library/EventTimingProfiles/Sim.Touch.plist"
+2026-11-16 07:44:55.139 Df TrickOrTreatRush[23826:11448] [com.apple.UIKit:EventBus] Event Timing Profile for Pencil: not found, path="/System/Library/EventTimingProfiles/Sim.Pencil.plist"
+2026-11-16 07:44:55.139 Df TrickOrTreatRush[23826:11448] [com.apple.UIKit:UpdateScheduler] Selected display: name=LCD (PurpleMain), id=1
+2026-11-16 07:44:55.154 Df TrickOrTreatRush[23826:11448] [com.apple.UIKit:BackgroundTask] Will add backgroundTask with taskName: Persistent SceneSession Map Update, expirationHandler: <__NSGlobalBlock__: 0x1e61729e0>
+2026-11-16 07:44:55.154 Df TrickOrTreatRush[23826:11448] [com.apple.UIKit:BackgroundTask] Reusing background assertion <BKSProcessAssertion: 0x60000210b070>
+2026-11-16 07:44:55.154 Df TrickOrTreatRush[23826:11448] [com.apple.UIKit:BackgroundTask] Incrementing reference count for background assertion <BKSProcessAssertion: 0x60000210b070>
+2026-11-16 07:44:55.154 Df TrickOrTreatRush[23826:11448] [com.apple.UIKit:BackgroundTask] Created background task <_UIBackgroundTaskInfo: 0x60000170c980>: taskID = 2, taskName = Persistent SceneSession Map Update, creationTime = 932 (elapsed = 0).
+2026-11-16 07:44:55.155 Df TrickOrTreatRush[23826:11448] [com.apple.UIKit:Application] Deactivation reason added: 5; deactivation reasons: 2048 -> 2080; animating application lifecycle event: 1
+2026-11-16 07:44:55.156 Df TrickOrTreatRush[23826:11448] [com.apple.UIKit:InterfaceStyle] Should send trait collection or coordinate space update, interface style 1 -> 1, <UIWindowScene: 0x102d088e0> (DEC179BD-64DC-45ED-8075-000C28BE5698)
+2026-11-16 07:44:55.159 Df TrickOrTreatRush[23826:11448] [com.apple.UIKit:InterfaceStyle] Not push traits update to screen for new style 1, <UIWindowScene: 0x102d088e0> (DEC179BD-64DC-45ED-8075-000C28BE5698)
+2026-11-16 07:44:55.159 Df TrickOrTreatRush[23826:11448] [com.apple.UIKit:HomeAffordanceObservation] Initializing: <_UIHomeAffordanceSceneNotifier: 0x60000290c4d0>; with scene: <UIWindowScene: 0x102d088e0>
+2026-11-16 07:44:55.159 Df TrickOrTreatRush[23826:11448] [com.apple.BacklightServices:scenes] 0x600000c0e970 setDelegate:<0x600000c017d0 _UIBacklightEnvironment> hasDelegate:YES for environment:sceneID:app.monstera.trickortreatrush-default
+2026-11-16 07:44:55.161 Df TrickOrTreatRush[23826:11448] [com.apple.UIKit:InterfaceStyle] Not push traits update to screen for new style 1, <UIWindowScene: 0x102d088e0> (DEC179BD-64DC-45ED-8075-000C28BE5698)
+2026-11-16 07:44:55.161 Df TrickOrTreatRush[23826:11448] [com.apple.UIKit:EventDeferring] [0x600002915110] Initialized with scene: <UIWindowScene: 0x102d088e0>; behavior: <_UIEventDeferringBehavior_iOS: 0x6000002095c0>; availableForProcess: 1, systemShellManagesKeyboardFocus: 1
+2026-11-16 07:44:55.162 Df TrickOrTreatRush[23826:11448] [com.apple.BoardServices:XPCErrors] [C:2] Alloc com.apple.backboard.hid-services.xpc
+2026-11-16 07:44:55.162 Df TrickOrTreatRush[23826:11448] [com.apple.xpc:connection] [0x102c0b850] activating connection: mach=false listener=false peer=false name=(anonymous)
+2026-11-16 07:44:55.166 Df TrickOrTreatRush[23826:11448] [com.apple.BackBoard:EventDelivery] policyStatus:<BKSHIDEventDeliveryPolicyObserver: 0x600002601680; process scope; status: target> was:none
+2026-11-16 07:44:55.166 Df TrickOrTreatRush[23826:11448] [com.apple.UIKit:KeyWindow] Setting default evaluation strategy for UIUserInterfaceIdiomPhone to LastOneWins
+2026-11-16 07:44:55.166 Df TrickOrTreatRush[23826:11448] [com.apple.UIKit:KeyWindow] Scene target of keyboard event deferring environment did change: 1; scene: UIWindowScene: 0x102d088e0; scene identity: com.apple.frontboard.systemappservices/FBSceneManager:sceneID%3Aapp.monstera.trickortreatrush-default
+2026-11-16 07:44:55.166 Df TrickOrTreatRush[23826:11448] [com.apple.UIKit:EventDeferring] [0x600002915110] Scene target of event deferring environments did update: scene: 0x102d088e0; current systemShellManagesKeyboardFocus: 1; systemShellManagesKeyboardFocusForScene: 1; eligibleForRecordRemoval: 1;
+2026-11-16 07:44:55.166 Df TrickOrTreatRush[23826:11448] [com.apple.UIKit:KeyWindow] Scene became target of keyboard event deferring environment: UIWindowScene: 0x102d088e0; scene identity: com.apple.frontboard.systemappservices/FBSceneManager:sceneID%3Aapp.monstera.trickortreatrush-default
+2026-11-16 07:44:55.167 Df TrickOrTreatRush[23826:11448] [com.apple.UIKit:KeyWindow] Stack[KeyWindow] 0x600000c0efd0: Taking no further action for migration from LastOneWins -> SystemShellManaged as there are no scenes
+2026-11-16 07:44:55.167 Df TrickOrTreatRush[23826:11462] [com.apple.BackBoard:EventDelivery] BKSHIDEventObserver - connection activation
+2026-11-16 07:44:55.167 Df TrickOrTreatRush[23826:11448] [com.apple.UIKit:KeyWindow] Setting default evaluation strategy for UIUserInterfaceIdiomPhone to SystemShellManaged
+2026-11-16 07:44:55.171 Df TrickOrTreatRush[23826:11448] [com.apple.UIKit:KeyWindow] Key window needs update: 0; currentKeyWindowScene: 0x0; evaluatedKeyWindowScene: 0x102d088e0; currentApplicationKeyWindow: 0x0; evaluatedApplicationKeyWindow: 0x0; reason: UIWindowScene: 0x102d088e0: Window scene became target of keyboard environment
+2026-11-16 07:44:55.175 Df TrickOrTreatRush[23826:11448] [com.apple.UIKit:InterfaceStyle] Not push traits update to screen for new style 1, <UIWindowScene: 0x102d088e0> (DEC179BD-64DC-45ED-8075-000C28BE5698)
+2026-11-16 07:44:55.205 Df TrickOrTreatRush[23826:11448] [com.apple.UIKit:InterfaceStyle] Not push traits update to screen for new style 1, <UIWindowScene: 0x102d088e0> (DEC179BD-64DC-45ED-8075-000C28BE5698)
+2026-11-16 07:44:55.225 I  TrickOrTreatRush[23826:11448] [com.apple.SwiftUI:Scenes] Received scene connection to session: <UISceneSession: 0x6000021042d0; role: UIWindowSceneSessionRoleApplication; persistentIdentifier: DEC179BD-64DC-45ED-8075-000C28BE5698; scene: (nil); configuration: <UISceneConfiguration: 0x600002108e10>; userInfo: <__NSDictionary0: 0x1e5aeb958>>
+2026-11-16 07:44:55.315 I  TrickOrTreatRush[23826:11448] [com.apple.SwiftUI:Scenes] Scene session DEC179BD-64DC-45ED-8075-000C28BE5698 will use item WindowGroup with id: 'type(TrickOrTreatRush.ContentView, 1)'
+2026-11-16 07:44:55.536 Df TrickOrTreatRush[23826:11448] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UIApplicationSceneDisplaySettings> on FBSSceneSettings
+2026-11-16 07:44:55.609 Df TrickOrTreatRush[23826:11448] [com.apple.UIKit:Orientation] <UIWindowScene: 0x102d088e0> (DEC179BD-64DC-45ED-8075-000C28BE5698) Scene updated orientation preferences: none -> ( Pu )
+2026-11-16 07:44:55.609 Df TrickOrTreatRush[23826:11448] [com.apple.UIKit:KeyWindow] Key window API is scene-level: YES
+2026-11-16 07:44:55.609 Df TrickOrTreatRush[23826:11448] [com.apple.UIKit:KeyWindow] UIWindowScene: 0x102d088e0: Window became key in scene: UIWindow: 0x102c0c4b0; contextId: 0x4DBEC283: reason: UIWindowScene: 0x102d088e0: Window requested to become key in scene: 0x102c0c4b0
+2026-11-16 07:44:55.609 Df TrickOrTreatRush[23826:11448] [com.apple.UIKit:KeyWindow] Key window needs update: 1; currentKeyWindowScene: 0x0; evaluatedKeyWindowScene: 0x102d088e0; currentApplicationKeyWindow: 0x0; evaluatedApplicationKeyWindow: 0x102c0c4b0; reason: UIWindowScene: 0x102d088e0: Window requested to become key in scene: 0x102c0c4b0
+2026-11-16 07:44:55.609 Df TrickOrTreatRush[23826:11448] [com.apple.UIKit:KeyWindow] Window did become application key: UIWindow: 0x102c0c4b0; contextId: 0x4DBEC283; scene identity: com.apple.frontboard.systemappservices/FBSceneManager:sceneID%3Aapp.monstera.trickortreatrush-default
+2026-11-16 07:44:55.610 Df TrickOrTreatRush[23826:11448] [com.apple.UIKit:EventDeferring] [0x600002915110] Begin local event deferring requested for token: 0x60000260c420; environments: 1; reason: UIWindowScene: 0x102d088e0: Begin event deferring in keyboardFocus for window: 0x102c0c4b0
+2026-11-16 07:44:55.617 I  TrickOrTreatRush[23826:11448] [com.apple.SwiftUI:Scenes] Finished willConnectTo for session DEC179BD-64DC-45ED-8075-000C28BE5698 with scene <UIWindowScene: 0x102d088e0; role: UIWindowSceneSessionRoleApplication; persistentIdentifier: DEC179BD-64DC-45ED-8075-000C28BE5698; activationState: UISceneActivationStateUnattached>
+2026-11-16 07:44:55.620 Df TrickOrTreatRush[23826:11465] [com.apple.BackBoard:EventDelivery] BKSHIDEventDeliveryManager - connection activation
+2026-11-16 07:44:55.622 Df TrickOrTreatRush[23826:11448] [com.apple.UIKit:InterfaceStyle] Not push traits update to screen for new style 1, <UIWindowScene: 0x102d088e0> (DEC179BD-64DC-45ED-8075-000C28BE5698)
+2026-11-16 07:44:55.630 Df TrickOrTreatRush[23826:11448] [com.apple.UIKit:AppLifecycle] sceneOfRecord: sceneID: sceneID:app.monstera.trickortreatrush-default  persistentID: DEC179BD-64DC-45ED-8075-000C28BE5698
+2026-11-16 07:44:55.630 Df TrickOrTreatRush[23826:11448] [com.apple.UIKit:Application] Ignoring already applied deactivation reason: 5; deactivation reasons: 2080
+2026-11-16 07:44:55.631 Df TrickOrTreatRush[23826:11448] [com.apple.UIKit:Application] Deactivation reason added: 12; deactivation reasons: 2080 -> 6176; animating application lifecycle event: 1
+2026-11-16 07:44:55.631 Df TrickOrTreatRush[23826:11448] [com.apple.UIKit:Application] Deactivation reason removed: 11; deactivation reasons: 6176 -> 4128; animating application lifecycle event: 1
+2026-11-16 07:44:55.632 Df TrickOrTreatRush[23826:11448] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneIntelligenceSupportSettings> on FBSSceneSettings
+2026-11-16 07:44:55.635 Df TrickOrTreatRush[23826:11448] [com.apple.UIKit:InterfaceStyle] Not push traits update to screen for new style 1, <UIWindowScene: 0x102d088e0> (DEC179BD-64DC-45ED-8075-000C28BE5698)
+2026-11-16 07:44:55.643 Df TrickOrTreatRush[23826:11462] [com.apple.UIIntelligenceSupport:xpc] establishing connection to agent
+2026-11-16 07:44:55.650 Df TrickOrTreatRush[23826:11462] [com.apple.xpc:session] [0x60000210b610] Session created.
+2026-11-16 07:44:55.650 Df TrickOrTreatRush[23826:11462] [com.apple.xpc:session] [0x60000210b610] Session created from connection [0x102c0d7a0]
+2026-11-16 07:44:55.650 Df TrickOrTreatRush[23826:11462] [com.apple.xpc:connection] [0x102c0d7a0] activating connection: mach=true listener=false peer=false name=com.apple.uiintelligencesupport.agent
+2026-11-16 07:44:55.651 Df TrickOrTreatRush[23826:11465] [com.apple.BackBoard:EventDelivery] policyStatus:<BKSHIDEventDeliveryPolicyObserver: 0x600002601680; token: com.apple.frontboard.systemappservices/FBSceneManager:sceneID%3Aapp.monstera.trickortreatrush-default; status: ancestor> was:target
+2026-11-16 07:44:55.651 Df TrickOrTreatRush[23826:11462] [com.apple.xpc:session] [0x60000210b610] Session activated
+2026-11-16 07:44:55.668 A  TrickOrTreatRush[23826:11448] (CoreFoundation) Updating Key-Value Observers Of Preferences
+2026-11-16 07:44:55.678 Df TrickOrTreatRush[23826:11462] [com.apple.UIKit:BackgroundTask] Ending background task with UIBackgroundTaskIdentifier: 2
+2026-11-16 07:44:55.679 Df TrickOrTreatRush[23826:11462] [com.apple.UIKit:BackgroundTask] Ending task with identifier 2 and description: <_UIBackgroundTaskInfo: 0x60000170c980>: taskID = 2, taskName = Persistent SceneSession Map Update, creationTime = 932 (elapsed = 1), _expireHandler: <__NSGlobalBlock__: 0x1e61729e0>
+2026-11-16 07:44:55.679 Df TrickOrTreatRush[23826:11462] [com.apple.UIKit:BackgroundTask] Decrementing reference count for assertion <BKSProcessAssertion: 0x60000210b070> (used by background task with identifier 2: <_UIBackgroundTaskInfo: 0x60000170c980>: taskID = 2, taskName = Persistent SceneSession Map Update, creationTime = 932 (elapsed = 1))
+2026-11-16 07:44:55.758 E  TrickOrTreatRush[23826:11448] [com.apple.UIKit:UIFocus] _TtC18_SpriteKit_SwiftUIP33_4A29C38A751B2448A1E2FA85CDDEAA5324SpriteKitViewCoordinator implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-11-16 07:44:55.782 Df TrickOrTreatRush[23826:11448] [com.apple.xpc:connection] [0x102b0eaa0] activating connection: mach=true listener=false peer=false name=com.apple.metal.simulator
+2026-11-16 07:44:55.788 Df TrickOrTreatRush[23826:11448] [com.apple.xpc:connection] [0x102c12240] activating connection: mach=true listener=false peer=false name=com.apple.metal.simulator
+2026-11-16 07:44:55.788 Df TrickOrTreatRush[23826:11448] [com.apple.xpc:connection] [0x102d0b410] activating connection: mach=true listener=false peer=false name=com.apple.metal.simulator
+2026-11-16 07:44:55.850 Df TrickOrTreatRush[23826:11448] [com.apple.xpc:connection] [0x102d10080] activating connection: mach=true listener=false peer=false name=com.apple.IOSurface.Remote
+2026-11-16 07:44:55.882 A  TrickOrTreatRush[23826:1145b] (RunningBoardServices) didChangeInheritances
+2026-11-16 07:44:55.972 Df TrickOrTreatRush[23826:11448] [com.apple.network:activity] Create activity from XPC object <nw_activity 50:1 [5D1C4C8F-87E8-4C8A-ADA0-9EF38CE7E488] (reporting strategy default)>
+2026-11-16 07:44:55.972 Df TrickOrTreatRush[23826:11448] [com.apple.network:activity] Create activity from XPC object <nw_activity 50:2 [3797083F-EB8E-4429-AA26-BEBA6913EC3E] (reporting strategy default)>
+2026-11-16 07:44:55.972 Df TrickOrTreatRush[23826:11448] [com.apple.network:activity] Set activity <nw_activity 50:1 [5D1C4C8F-87E8-4C8A-ADA0-9EF38CE7E488] (reporting strategy default)> as the global parent
+2026-11-16 07:44:55.972 Df TrickOrTreatRush[23826:11448] [com.apple.UIKit:BackgroundTask] Ending background task with UIBackgroundTaskIdentifier: 1
+2026-11-16 07:44:55.972 Df TrickOrTreatRush[23826:11448] [com.apple.UIKit:BackgroundTask] Ending task with identifier 1 and description: <_UIBackgroundTaskInfo: 0x600001702ac0>: taskID = 1, taskName = Launch Background Task for Coalescing, creationTime = 932 (elapsed = 1), _expireHandler: (null)
+2026-11-16 07:44:55.972 Df TrickOrTreatRush[23826:11448] [com.apple.UIKit:BackgroundTask] Decrementing reference count for assertion <BKSProcessAssertion: 0x60000210b070> (used by background task with identifier 1: <_UIBackgroundTaskInfo: 0x600001702ac0>: taskID = 1, taskName = Launch Background Task for Coalescing, creationTime = 932 (elapsed = 1))
+2026-11-16 07:44:55.973 Df TrickOrTreatRush[23826:11448] [com.apple.UIKit:BackgroundTask] Will invalidate assertion: <BKSProcessAssertion: 0x60000210b070> for task identifier: 1
+2026-11-16 07:44:55.973 Df TrickOrTreatRush[23826:11448] [com.apple.UIKit:UpdateScheduler] Target list changed: <CADisplay:LCD PurpleMain>
+2026-11-16 07:44:55.975 Df TrickOrTreatRush[23826:11448] [com.apple.UIKit:AppLifecycle] sceneOfRecord: sceneID: sceneID:app.monstera.trickortreatrush-default  persistentID: DEC179BD-64DC-45ED-8075-000C28BE5698
+2026-11-16 07:44:55.975 Df TrickOrTreatRush[23826:11448] [com.apple.UIKit:InterfaceStyle] Not push traits update to screen for new style 1, <UIWindowScene: 0x102d088e0> (DEC179BD-64DC-45ED-8075-000C28BE5698)
+2026-11-16 07:44:55.981 I  TrickOrTreatRush[23826:11448] [com.apple.useractivity:main] initUAUserActivity:com.apple.SwiftUI.stateRestoration- 1E003E90-8DBE-477F-86CC-8A61756DC2CD UserActivity
+2026-11-16 07:44:55.981 I  TrickOrTreatRush[23826:11448] [com.apple.useractivity:biome-69594900] - UAUserActivity	v1.0
+2026-11-16 07:44:55.982 I  TrickOrTreatRush[23826:11448] [com.apple.useractivity:biome-69594900] 1E003E90-8DBE-477F-86CC-8A61756DC2CD CREATED com.apple.SwiftUI.stateRestoration/(null)
+2026-11-16 07:44:55.983 I  TrickOrTreatRush[23826:11448] [com.apple.useractivity:biome-69594900] 1E003E90-8DBE-477F-86CC-8A61756DC2CD SET-DIRTY	wasDirty=false force=false informServer=false informIndex=false
+2026-11-16 07:44:55.985 I  TrickOrTreatRush[23826:11448] [com.apple.useractivity:biome-69594900] 1E003E90-8DBE-477F-86CC-8A61756DC2CD SET-USERINFO	count=1 false
+2026-11-16 07:44:55.985 I  TrickOrTreatRush[23826:11448] [com.apple.useractivity:biome-69594900] 1E003E90-8DBE-477F-86CC-8A61756DC2CD SET-DIRTY	wasDirty=true force=false informServer=false informIndex=false
+2026-11-16 07:44:55.988 Df TrickOrTreatRush[23826:11448] [com.apple.Accessibility:AXCommon] Read Per-App on Init: Smart invert = (null)
+2026-11-16 07:44:55.989 Df TrickOrTreatRush[23826:11448] [com.apple.UIKit:EventDeferring] [0x600002915110] Scene target of event deferring environments did update: scene: 0x102d088e0; current systemShellManagesKeyboardFocus: 1; systemShellManagesKeyboardFocusForScene: 1; eligibleForRecordRemoval: 1;
+2026-11-16 07:44:55.989 Df TrickOrTreatRush[23826:11448] [com.apple.UIKit:KeyWindow] Scene became target of keyboard event deferring environment: UIWindowScene: 0x102d088e0; scene identity: com.apple.frontboard.systemappservices/FBSceneManager:sceneID%3Aapp.monstera.trickortreatrush-default
+2026-11-16 07:44:55.990 Df TrickOrTreatRush[23826:11448] [com.apple.UIKit:InterfaceStyle] Not push traits update to screen for new style 1, <UIWindowScene: 0x102d088e0> (DEC179BD-64DC-45ED-8075-000C28BE5698)
+2026-11-16 07:44:55.991 Df TrickOrTreatRush[23826:11448] [com.apple.UIKit:AppLifecycle] sceneOfRecord: sceneID: sceneID:app.monstera.trickortreatrush-default  persistentID: DEC179BD-64DC-45ED-8075-000C28BE5698
+2026-11-16 07:44:55.991 Df TrickOrTreatRush[23826:11448] [com.apple.UIKit:Application] Deactivation reason removed: 12; deactivation reasons: 4128 -> 32; animating application lifecycle event: 1
+2026-11-16 07:44:55.991 Df TrickOrTreatRush[23826:11448] [com.apple.KeyboardArbiter:Client] Send setDeactivating: N (-DeactivationReason:SuspendedEventsOnly)
+2026-11-16 07:44:55.991 Df TrickOrTreatRush[23826:11448] [com.apple.UIKit:Application] Deactivation reason removed: 5; deactivation reasons: 32 -> 0; animating application lifecycle event: 0
+2026-11-16 07:44:55.994 Df TrickOrTreatRush[23826:11448] [com.apple.KeyboardArbiter:Client] startConnection
+2026-11-16 07:44:55.997 Df TrickOrTreatRush[23826:11448] [com.apple.xpc:connection] [0x102d0efd0] activating connection: mach=true listener=false peer=false name=com.apple.UIKit.KeyboardManagement.hosted
+2026-11-16 07:44:56.000 Df TrickOrTreatRush[23826:11448] [com.apple.KeyboardArbiter:Client] handleKeyboardChange: set currentKeyboard:N (wasKeyboard:N)
+2026-11-16 07:44:56.004 Df TrickOrTreatRush[23826:11448] [com.apple.UIKit:KeyboardArbiterClientLog] isWritingToolsHandlingKeyboardTracking:Y (WT ready:Y, Arbiter ready:Y)
+2026-11-16 07:44:56.034 Df TrickOrTreatRush[23826:11462] [com.apple.xpc:connection] [0x102b07530] activating connection: mach=true listener=false peer=false name=com.apple.fontservicesd
+2026-11-16 07:44:56.150 E  TrickOrTreatRush[23826:11448] (libCoreFSCache.dylib) fopen failed for data file: errno = 2 (No such file or directory)
+2026-11-16 07:44:56.151 E  TrickOrTreatRush[23826:11448] (libCoreFSCache.dylib) Errors found! Invalidating cache...
+2026-11-16 07:44:56.151 Df TrickOrTreatRush[23826:11448] [com.apple.xpc:connection] [0x102d1fa40] activating connection: mach=false listener=false peer=false name=com.apple.MTLCompilerService
+2026-11-16 07:44:56.186 A  TrickOrTreatRush[23826:1145b] (RunningBoardServices) didChangeInheritances
+2026-11-16 07:44:56.242 A  TrickOrTreatRush[23826:11448] (Metal) compiling shader
+2026-11-16 07:44:56.759 A  TrickOrTreatRush[23826:11448] (Metal) compiling shader
+2026-11-16 07:44:56.770 A  TrickOrTreatRush[23826:11448] (Metal) compiling shader
+2026-11-16 07:44:56.778 A  TrickOrTreatRush[23826:11448] (Metal) compiling shader
+2026-11-16 07:44:56.790 A  TrickOrTreatRush[23826:11448] (Metal) compiling shader
+2026-11-16 07:44:56.819 A  TrickOrTreatRush[23826:11448] (Metal) compiling shader
+2026-11-16 07:44:56.821 A  TrickOrTreatRush[23826:11448] (Metal) compiling shader
+2026-11-16 07:44:56.824 A  TrickOrTreatRush[23826:11448] (Metal) compiling shader
+2026-11-16 07:44:56.827 A  TrickOrTreatRush[23826:11448] (Metal) compiling shader
+2026-11-16 07:44:56.987 Df TrickOrTreatRush[23826:11448] [com.apple.network:activity] <nw_activity 50:1 [5D1C4C8F-87E8-4C8A-ADA0-9EF38CE7E488] (global parent) (reporting strategy default) complete (reason success)> complete with reason 2 (success), duration 2703ms
+2026-11-16 07:44:56.987 Df TrickOrTreatRush[23826:11448] [com.apple.network:activity] <nw_activity 50:2 [3797083F-EB8E-4429-AA26-BEBA6913EC3E] (reporting strategy default) complete (reason success)> complete with reason 2 (success), duration 2703ms
+2026-11-16 07:44:56.987 Df TrickOrTreatRush[23826:11448] [com.apple.network:activity] Unsetting the global parent activity <nw_activity 50:1 [5D1C4C8F-87E8-4C8A-ADA0-9EF38CE7E488] (global parent) (reporting strategy default) complete (reason success)>
+2026-11-16 07:44:56.987 Df TrickOrTreatRush[23826:11448] [com.apple.network:activity] Unset the global parent activity
+2026-11-16 07:44:57.709 I  TrickOrTreatRush[23826:11448] [app.monstera.trickortreatrush:runtime] runtime ticks=60 hash=62a8d1e2502b1b97 seed=8261448460128426
