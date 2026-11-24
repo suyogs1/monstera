@@ -42,3 +42,6 @@ __pycache__/
 # G6-B clean-room scratch (fresh generated trees and reports; evidence is copied to docs/evidence/g6-cleanroom/)
 g6-clean-room/
 g6-clean-room-reports/
+
+# E2 native extension proof scratch (fresh projects built in CI; never committed)
+e2-native/

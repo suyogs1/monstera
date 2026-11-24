@@ -1,10 +1,10 @@
 // Every sentence the Backend and Monetization views show, as data, so the honesty test can scan all of it (design 8.2).
 // Claim words (live, connected, production, store-ready) appear only in a sentence that negates them.
 export const BACKEND_BANNER = "Scaffold only. Not connected to any backend.";
-export const MONETIZATION_BANNER = "Mock only. No ad is shown, no ad network is contacted, and there are no production ad ids.";
+export const MONETIZATION_BANNER = "Mock only. The exported app shows a labelled MOCK overlay instead of an ad, no ad network is contacted, and there are no production ad ids.";
 export const MOCK_LABEL = "MOCK";
 export const BACKEND_TITLE = "Firebase services (scaffold)";
-export const BACKEND_INTRO = "Choose which Firebase services the exported scaffold should include interfaces for. Studio creates no account, project or resource, and the scaffold is not compiled into the app.";
+export const BACKEND_INTRO = "Choose which Firebase services the exported scaffold should include interfaces for. Studio creates no account, project or resource, and the scaffold holds no SDK, key or connection.";
 export const SERVICES_TITLE = "Services";
 export const CONFIG_TITLE = "Config files";
 export const CONFIG_HELP = "You add these after export. They are git-ignored, and Studio never stores or reads them.";
@@ -17,7 +17,7 @@ export const MODE_HELP = "mock simulates ads in the log. test marks the placemen
 export const ID_HELP = "A placement name, not an ad unit id.";
 export const REWARD_HELP = "Only a rewarded placement has a reward.";
 export const MOCK_TITLE = "Mock behaviour";
-export const MOCK_INTRO = "The exported MockRewardedAdService simulates an ad: it logs a line prefixed [MOCK AD], shows no ad, and calls your reward callback only for a rewarded placement.";
+export const MOCK_INTRO = "The exported MockRewardedAdService simulates an ad: it logs a line prefixed [MOCK AD], the app shows a labelled MOCK overlay instead of an ad, and your reward callback runs only for a rewarded placement.";
 export const FREQUENCY_TITLE = "Frequency rules";
 export const MOCK_PREVIEW_TITLE = "AdMob scaffold preview";
 export const NOT_APPLIED = "Not applied: ";

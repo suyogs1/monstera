@@ -18,7 +18,7 @@ const plan: Extract<ExportPlan, { ok: true }> = {
 const manifests = xrefManifests();
 const assets = new Map(manifests.assets.assets.map((a) => [a.id, enc.encode(`bytes of ${a.id}`)]));
 const ready = (over: Partial<ReleaseExportInput> = {}): ReleaseExportInput =>
-  ({ items: [], plan, planChecks: [], specText: "{\"project\":{}}\n", manifests, assets, driftScript: "#!/bin/sh\nexit 0\n", ...over });
+  ({ items: [], plan, planChecks: [], specText: "{\"project\":{\"platforms\":{\"ios\":{\"deploymentTarget\":\"17.0\"}}}}\n", manifests, assets, driftScript: "#!/bin/sh\nexit 0\n", ...over });
 const err = (c: CheckClass): CheckItem => ({ class: c, severity: "error", message: `${c} problem`, module: null, pathText: null });
 const warn: CheckItem = { class: "asset-unused", severity: "warning", message: "unused", module: null, pathText: null };
 describe("release export: blocked by every completeness error class", () => {
@@ -59,7 +59,28 @@ describe("release export: ready project", () => {
     expect(scaffold.length).toBeGreaterThan(0);
     expect(scaffold.every(([, c]) => c === "studio-scaffold")).toBe(true);
     expect(cls.get(".kiro/steering/studio-drift.md")).toBe("write-once");
-    expect(r.entries.find((e) => e.path === "tools/check-drift.sh")?.mode).toBe(0o755);
+    // E2: the native sources are write-once under extensions/, and Studio's only scaffold file is the map that lists them.
+    expect(scaffold.map(([p]) => p)).toEqual(["studio-pack/scaffold/EXTENSIONS.md"]);
+    const once = [...cls].filter(([p]) => p.startsWith("extensions/"));
+    expect(once.length).toBeGreaterThan(10);
+    expect(once.every(([, c]) => c === "write-once")).toBe(true);
+    expect(cls.get("extensions/ios/MonsteraExtensions/Package.swift")).toBe("write-once");
+    expect(cls.get("extensions/android/src/main/kotlin/monstera/extensions/MonsteraExtensions.kt")).toBe("write-once");    expect(r.entries.find((e) => e.path === "tools/check-drift.sh")?.mode).toBe(0o755);
+  });
+  it("keeps an edited extension file on re-export, byte for byte (E2 ownership)", async () => {
+    const first = await releaseExport(ready());
+    expect(first.ok).toBe(true);
+    if (!first.ok) return;
+    const mine = "extensions/android/src/main/kotlin/monstera/extensions/MonsteraExtensions.kt";
+    const existing = first.entries.map((e) => (e.path === mine ? { path: e.path, data: enc.encode("// mine\n") } : { path: e.path, data: e.data }));
+    const again = await releaseExport(ready({ existing }));
+    expect(again.ok).toBe(true);
+    if (!again.ok) return;
+    expect(new TextDecoder().decode(again.entries.find((e) => e.path === mine)?.data)).toBe("// mine\n");
+    expect(again.kept).toContain(mine);
+  });
+  it("refuses a spec without an iOS deployment target instead of guessing one", async () => {
+    expect(await releaseExport(ready({ specText: "{\"project\":{}}\n" }))).toMatchObject({ ok: false, reason: "no-project" });
   });
   it("is deterministic", async () => {
     const a = await releaseExport(ready());

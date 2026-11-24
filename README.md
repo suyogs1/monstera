@@ -105,8 +105,8 @@ These are working prototypes. Statuses and limits per capability are in [the cap
 - **Studio-only:** the Studio asset library, sprite sheets and animations. Studio's Asset and Sprite editors are not yet wired to the
   spec's atlas fields, which are read-only in Studio. Projects, imports, bundles and drafts written for spec v4 are upgraded to v5 when opened
   (neutral sprite fields, no sprites assigned).
-- **Scaffold:** Firebase and AdMob stub text written into the Studio pack for you to adopt. Not compiled into the app.
-- **Mock:** AdMob placements and the rewarded ad preview. No ad is shown and no production ad id is stored.
+- **Scaffold:** Firebase and AdMob interfaces and stubs written once into `extensions/` of the exported project and compiled by the generated Android and iOS projects. No SDK, no backend connection.
+- **Mock:** AdMob placements and a labelled MOCK rewarded overlay in the exported app. No ad is requested and no production ad id is stored.
 
 ### Not implemented or not supported
 

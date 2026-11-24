@@ -216,11 +216,11 @@ try {
     const names = (unzip.stdout ?? "").split(/\r?\n/).filter(Boolean);
     check("A7: the pack holds the spec, the studio manifest and the asset bytes", unzip.status === 0 && ["monstera.spec.json", "MONSTERA-STUDIO-MANIFEST.json"].every((p) => names.includes(p))
       && names.some((n) => n.startsWith("studio-pack/assets/")), unzip.stderr + names.filter((n) => !/^(android|ios)\//.test(n)).join(","));
-    const SCAFFOLD = "studio-pack/scaffold/android/AdService.kt";
+    const SCAFFOLD = "studio-pack/scaffold/EXTENSIONS.md";
     const ONCE = ".kiro/steering/studio-ownership.md";
-    check("A7: the UI pack contains the drift script, the scaffold files and the Kiro files", names.includes("tools/check-drift.sh") && names.includes(SCAFFOLD) && names.includes("studio-pack/scaffold/SETUP.md") && names.includes(ONCE)
+    check("A7: the UI pack contains the drift script, the scaffold files and the Kiro files", names.includes("tools/check-drift.sh") && names.includes(SCAFFOLD) && names.includes("extensions/SETUP.md") && names.includes("extensions/android/src/main/kotlin/monstera/studio/scaffold/AdService.kt") && names.includes("extensions/ios/MonsteraExtensions/Package.swift") && names.includes(ONCE)
       && names.includes(".kiro/hooks/studio-drift-check.json"), names.filter((n) => !/^(android|ios)\//.test(n)).join(","));
-    const firebaseKt = join(out, "studio-pack", "scaffold", "android", "FirebaseServices.kt");
+    const firebaseKt = join(out, "extensions", "android", "src", "main", "kotlin", "monstera", "studio", "scaffold", "FirebaseServices.kt");
     check("A7: the exported scaffold carries the service chosen in the UI", existsSync(firebaseKt) && /AUTH: Boolean = true/.test(readFileSync(firebaseKt, "utf8")));
     const classes = JSON.parse(readFileSync(join(out, "MONSTERA-STUDIO-MANIFEST.json"), "utf8")).files ?? [];
     const classOfPath = (p) => classes.find((f) => f.path === p)?.class;
@@ -234,11 +234,11 @@ try {
       check("A7: the pack's own tools/check-drift.sh reports no drift on the untouched UI-exported pack (exit 0)", clean.code === 0 && !/^(edited|missing)\s/m.test(clean.out), clean.out);
       const touch = (rel, fn) => { const p = join(out, rel); const original = readFileSync(p); try { return fn(p); } finally { writeFileSync(p, original); } };
       const e1 = touch(SCAFFOLD, (p) => { appendFileSync(p, " "); return drift(); });
-      check("A7: an edited studio-scaffold file is reported as edited and is drift (exit 1)", e1.code === 1 && /^edited\s+studio-scaffold\s+studio-pack\/scaffold\/android\/AdService\.kt/m.test(e1.out), `${e1.code} ${e1.out}`);
+      check("A7: an edited studio-scaffold file is reported as edited and is drift (exit 1)", e1.code === 1 && /^edited\s+studio-scaffold\s+studio-pack\/scaffold\/EXTENSIONS\.md/m.test(e1.out), `${e1.code} ${e1.out}`);
       const e2 = touch(ONCE, (p) => { appendFileSync(p, "\nmine\n"); return drift(); });
       check("A7: an edited write-once file is listed as edited but is not drift (exit 0)", e2.code === 0 && /^edited\s+write-once\s+\.kiro\/steering\/studio-ownership\.md/m.test(e2.out) && /scaffold-drift=0/.test(e2.out), `${e2.code} ${e2.out}`);
       const e3 = touch(SCAFFOLD, (p) => { rmSync(p); return drift(); });
-      check("A7: a deleted studio-scaffold file is reported as missing and is drift (exit 1)", e3.code === 1 && /^missing\s+studio-scaffold\s+studio-pack\/scaffold\/android\/AdService\.kt/m.test(e3.out), `${e3.code} ${e3.out}`);
+      check("A7: a deleted studio-scaffold file is reported as missing and is drift (exit 1)", e3.code === 1 && /^missing\s+studio-scaffold\s+studio-pack\/scaffold\/EXTENSIONS\.md/m.test(e3.out), `${e3.code} ${e3.out}`);
       const data = join(out, "studio-pack", "assets.json");
       if (existsSync(data)) {
         const original = readFileSync(data);

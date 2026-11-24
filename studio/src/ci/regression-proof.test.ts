@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { APPROVED_BLOB, BASELINE_BLOB, E1_ALLOWED, E1_BASE, EXCEPTION_PATH, PASS_MESSAGE, classifyE1Diff, classifyEngineSchemaDiff } from "../../scripts/regression-classify.mjs";
+import { APPROVED_BLOB, BASELINE_BLOB, E1_ALLOWED, E1_BASE, E2_ALLOWED, EXCEPTION_PATH, PASS_MESSAGE, classifyE1Diff, classifyEngineSchemaDiff } from "../../scripts/regression-classify.mjs";
 
 const base = {
   nameStatus: `M\t${EXCEPTION_PATH}`,
@@ -82,5 +82,19 @@ describe("Gate E1 engine diff (pre-E1 main to HEAD, explicit allowlist)", () => 
   });
   it("lists no runtime core or oracle path", () => {
     for (const p of Object.keys(E1_ALLOWED)) expect(p).not.toMatch(/oracle\/|emit_runtime|\/runtime\/|\/Runtime\//);
+  });
+});
+describe("Gate E2 engine diff (template-only extension wiring)", () => {
+  const ns = (rows: [string, string][]) => rows.map(([s, p]) => `${s}\t${p}`).join("\n");
+  it("accepts exactly the approved E2 template paths and nothing in the schema, oracle, emitters or runtime core", () => {
+    expect(classifyE1Diff({ nameStatus: ns(Object.entries(E2_ALLOWED).map(([p, s]) => [s, p])) }).status).toBe("PASS");
+    for (const p of Object.keys(E2_ALLOWED)) {
+      expect(p).not.toMatch(/oracle\/|emit_|\/runtime\/|\/Runtime\/|^spec\/schema/);
+      expect(p).toMatch(/\/templates\/|tests\/test_extensions\.py$/);
+    }
+  });
+  it("still fails for a schema or runtime-core change and for a wrong status on an E2 path", () => {
+    expect(classifyE1Diff({ nameStatus: ns([["M", "spec/schema/game.schema.json"], ["M", "tools/monstera/monstera/templates/android/runtime/Fixed.kt.tmpl"]]) }).status).toBe("FAIL");
+    expect(classifyE1Diff({ nameStatus: ns([["M", "tools/monstera/monstera/templates/ios/ExtensionDefaults/Package.swift.tmpl"]]) }).status).toBe("FAIL");
   });
 });

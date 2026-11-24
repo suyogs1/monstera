@@ -18,8 +18,15 @@
       "kind": "template",
       "mode": "644",
       "path": "android/app/build.gradle.kts",
-      "sha256": "d7f1785b2fb6abe9cbc94d4d17db1582af71bd7841ee5eeb5ec5c9b32800bcb2",
+      "sha256": "6b7461751e9ba35939b8c81345f141bee4ce481c1a5cf8fa11be7f61a805eb6c",
       "source": "templates/android/app/build.gradle.kts.tmpl"
+    },
+    {
+      "kind": "template",
+      "mode": "644",
+      "path": "android/app/src/extensionDefaults/kotlin/monstera/extensions/MonsteraExtensions.kt",
+      "sha256": "73272ec1ca7584f93076d6cd9db4492e0e8906b5b025d48c57eab11d311881c3",
+      "source": "templates/android/extensions/MonsteraExtensions.kt.tmpl"
     },
     {
       "kind": "template",
@@ -46,7 +53,7 @@
       "kind": "template",
       "mode": "644",
       "path": "android/app/src/main/kotlin/app/monstera/lanternrun/MainActivity.kt",
-      "sha256": "e16e398fa0da3da37cb3fda9d5c5b5c9814848bca8130481ce172197991107cc",
+      "sha256": "7ede4c04d0f6be335ee126041241ec53c982f52d2dc8be49ac7dee36c741d175",
       "source": "templates/android/app/src/main/kotlin/MainActivity.kt.tmpl"
     },
     {
@@ -185,6 +192,20 @@
     {
       "kind": "template",
       "mode": "644",
+      "path": "ios/ExtensionDefaults/Package.swift",
+      "sha256": "8cdf72f1372653c218c4d478db8d6728dd86a3fc1fbfcf9ff43efda15f4efe54",
+      "source": "templates/ios/ExtensionDefaults/Package.swift.tmpl"
+    },
+    {
+      "kind": "template",
+      "mode": "644",
+      "path": "ios/ExtensionDefaults/Sources/MonsteraExtensions/MonsteraExtensions.swift",
+      "sha256": "89ef23dc85116d80ab110f336152196d5af67676a8b7b4e0c11536cd713eadc0",
+      "source": "templates/ios/ExtensionDefaults/MonsteraExtensions.swift.tmpl"
+    },
+    {
+      "kind": "template",
+      "mode": "644",
       "path": "ios/Info.plist",
       "sha256": "0dcbf8902a1f1e9de62ac3033bb637ee28500aa4994cbfdf7fed91bde98292ef",
       "source": "templates/ios/Info.plist.tmpl"
@@ -193,7 +214,7 @@
       "kind": "template",
       "mode": "644",
       "path": "ios/Package.swift",
-      "sha256": "e80fa4c1ed861a2d43bc65a442c1113e58370530ff907f319d2878e88679d4a4",
+      "sha256": "ac3e105e3ec3fad41d3134cc40c75c58d134e1a44218313d0f69f56f53175d4e",
       "source": "templates/ios/Package.swift.tmpl"
     },
     {
@@ -284,7 +305,7 @@
       "kind": "template",
       "mode": "644",
       "path": "ios/Sources/LanternRun/ContentView.swift",
-      "sha256": "0e5621afa568d20a39d468973ab7dfdb473451d353f90ab64935a7f408d60fff",
+      "sha256": "2c040bd38af41bfea64b640b28563fa5af29b026e4c56f83306ec54cb0292de1",
       "source": "templates/ios/Sources/ContentView.swift.tmpl"
     },
     {

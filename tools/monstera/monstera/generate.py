@@ -173,6 +173,8 @@ def plan(spec: dict[str, Any], spec_path_label: str, store: SchemaStore,
         template("android/app/src/main/AndroidManifest.xml", "android/app/src/main/AndroidManifest.xml.tmpl")
         template(f"{kt_dir}/MainActivity.kt", "android/app/src/main/kotlin/MainActivity.kt.tmpl")
         template(f"{kt_dir}/GameScreen.kt", "android/app/src/main/kotlin/GameScreen.kt.tmpl")
+        template("android/app/src/extensionDefaults/kotlin/monstera/extensions/MonsteraExtensions.kt",
+                 "android/extensions/MonsteraExtensions.kt.tmpl")
         template(f"{kt_dir}/presentation/Presentation.kt", "android/presentation/Presentation.kt.tmpl")
         template(f"android/app/src/test/kotlin/{package.replace(chr(46), chr(47))}/presentation/PresentationTest.kt",
                  "android/presentation/PresentationTest.kt.tmpl")
@@ -214,6 +216,9 @@ def plan(spec: dict[str, Any], spec_path_label: str, store: SchemaStore,
         template("ios/Presentation/Sources/MonsteraPresentation/Presentation.swift", "ios/Presentation/Presentation.swift.tmpl")
         template("ios/Presentation/Tests/MonsteraPresentationTests/PresentationTests.swift",
                  "ios/Presentation/PresentationTests.swift.tmpl")
+        template("ios/ExtensionDefaults/Package.swift", "ios/ExtensionDefaults/Package.swift.tmpl")
+        template("ios/ExtensionDefaults/Sources/MonsteraExtensions/MonsteraExtensions.swift",
+                 "ios/ExtensionDefaults/MonsteraExtensions.swift.tmpl")
         template("ios/xtool.yml", "ios/xtool.yml.tmpl")
         template("ios/Info.plist", "ios/Info.plist.tmpl")
         template(f"{src_dir}/{product}App.swift", "ios/Sources/App.swift.tmpl")

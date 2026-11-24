@@ -5,9 +5,10 @@ Status: owner decision recorded. It does not change `.kiro/specs/studio-foundry/
 | Track | Decision | Meaning |
 |---|---|---|
 | E1 (sprite atlas and animation in the native apps) | **Approved; implementation authorized now** (owner decision, with an explicit sequencing override: E1 may start before the G6 recording) | One atlas per project, sprite references on kinds, frames driven by simulation ticks, on Android and iOS. Implemented on a separate branch and PR, following the steering 08 order. Anything larger is cut, not scheduled. |
-| E2 (developer-owned source roots compiled into the app) | Conditional | Considered only after E1 is complete and verified, and after a review of the remaining time and credits. A separate owner decision. |
+| E2 (developer-owned source roots compiled into the app) | **Approved; implementation authorized 2026-11-24** (explicit owner decision "E2 native extension integration", main verified at `3a69b2c`, E1 merged) | Template-only change on branch `studio/e2-native-extensions`: the generated Gradle project compiles `extensions/android`, the generated SwiftPM project links `extensions/ios/MonsteraExtensions`, with engine-owned no-op defaults when a root is absent. Studio writes the Firebase scaffold, the AdMob placement constants, `AdService`, `MockRewardedAdService`, a labelled MOCK rewarded overlay, native tests and `SETUP.md` once into `extensions/`. No schema, oracle, emitter or runtime-core change; no SDK, id, key or network call. The Task 9.2 allowlist names the E2 template paths (`E2_ALLOWED`). |
 | E3 (level table in the spec) | Deferred | Post-submission work. |
 
+- E2 does not change the G6 baseline or any G6/M3 evidence: it touches only the template paths in `E2_ALLOWED` and regenerates the committed generated trees. Android compile and JVM test results and the iOS CI result are recorded in the E2 pull request, not here.
 ## G6 baseline and sequencing
 
 - The frozen G6 baseline stays `71c77e448972bd5cd997993d518d3cf91adb3328`. The G6 clean-room evidence (`docs/evidence/g6-cleanroom/`) describes that baseline and is not rewritten. The formal freeze sign-off and the final G6 acceptance are not recorded here.

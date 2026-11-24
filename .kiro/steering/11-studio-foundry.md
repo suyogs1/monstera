@@ -15,7 +15,7 @@ Spec: `.kiro/specs/studio-foundry/` (requirements, design, tasks). Implementatio
   accepts. It never mutates the canonical spec silently, on load, on import or as a side effect of editing a sidecar.
 - **Engine track.** E1 (native sprite references and bundling, spec v5) is approved by the owner with a sequencing override
   and recorded in `docs/STUDIO-FOUNDRY-GATE-E.md`; E1 changes to `tools/monstera/`, `spec/schema/` and templates are limited to the
-  allowlist checked by the Task 9.2 proof. E2 (compiled extension roots) is conditional on E1 acceptance; E3 (level table) is
+  allowlist checked by the Task 9.2 proof. E2 (compiled extension roots) was approved on 2026-11-24 and is template-only; E3 (level table) is
   deferred. The G6 baseline `71c77e4` and its evidence are not rewritten.
 - **Format upgrade exception.** The one load-time spec change Studio makes is the documented v4 to v5 upgrade
   (`docs/SPEC-V2-MIGRATION.md`): only for valid v4 content, only when the v5 engine accepts the result, adding neutral sprite fields,
