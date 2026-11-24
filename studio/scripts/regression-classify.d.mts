@@ -9,5 +9,6 @@ export function classifyEngineSchemaDiff(input: EngineDiffInput): { status: "PAS
 export const E1_BASE: string;
 export const E1_ALLOWED: Readonly<Record<string, "A" | "M">>;
 export const E2_ALLOWED: Readonly<Record<string, "A" | "M">>;
+export const DIAGNOSTICS_PINNED: Readonly<Record<string, Readonly<{ status: "M"; blob: string }>>>;
 export const E1_PASS_MESSAGE: string;
-export function classifyE1Diff(input: { nameStatus: string }): { status: "PASS" | "FAIL"; summary: string };
+export function classifyE1Diff(input: { nameStatus: string; blobs?: Readonly<Record<string, string | null>> }): { status: "PASS" | "FAIL"; summary: string };

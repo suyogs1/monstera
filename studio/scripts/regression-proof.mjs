@@ -5,7 +5,7 @@
 import { spawnSync } from "node:child_process";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { classifyE1Diff, classifyEngineSchemaDiff, E1_BASE, EXCEPTION_PATH } from "./regression-classify.mjs";
+import { classifyE1Diff, classifyEngineSchemaDiff, DIAGNOSTICS_PINNED, E1_BASE, EXCEPTION_PATH } from "./regression-classify.mjs";
 
 const repo = resolve(dirname(fileURLToPath(import.meta.url)), "..", "..");
 const BASE = "71c77e4";
@@ -51,7 +51,9 @@ if (haveRef(E1_BASE)) {
   const ns = git("diff", "--name-status", "--no-renames", E1_BASE, "HEAD", "--", "tools/monstera", "spec/schema");
   if (ns.exit !== 0) add("e1-engine-diff", "FAIL", `git diff failed: ${tail(ns.out, 1)}`, [ns]);
   else {
-    const c = classifyE1Diff({ nameStatus: ns.out });
+    const headBlob = (path) => { const r = git("rev-parse", "--verify", "--quiet", `HEAD:${path}`); return r.exit === 0 ? r.out.trim() : null; };
+  const blobs = Object.fromEntries(Object.keys(DIAGNOSTICS_PINNED).map((p) => [p, headBlob(p)]));
+  const c = classifyE1Diff({ nameStatus: ns.out, blobs });
     add("e1-engine-diff", c.status, c.summary, [ns]);
   }
 }
