@@ -92,7 +92,7 @@ const UNIT = 65536;
 
 export function addKind(doc: Doc): { doc: Doc; id: string } {
   const id = uniqueKindId(doc);
-  const kind: Json = { id, color: "#FFFFFF", glyph: "", effect: "none", width: UNIT, height: UNIT, lifetimeTicks: 0, exitPolicy: "despawn" };
+  const kind: Json = { id, color: "#FFFFFF", glyph: "", effect: "none", sprite: { frames: [], ticksPerFrame: 1 }, width: UNIT, height: UNIT, lifetimeTicks: 0, exitPolicy: "despawn" };
   return { doc: insertAt(doc, [...RT, "kinds"], kind), id };
 }
 

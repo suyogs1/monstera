@@ -4,8 +4,8 @@
   "projectId": "lantern-run",
   "spec": {
     "path": "monstera.spec.json",
-    "baseSha256": "cc08da835eab0e59b23ddb58e766cd9420e41514124e09b7903438a5fd0d60b1",
-    "currentSha256": "cc08da835eab0e59b23ddb58e766cd9420e41514124e09b7903438a5fd0d60b1"
+    "baseSha256": "d2e6c31ee6578406c6199c9470a4ad337a7b655b400db65a939d2fb58ee7cd12",
+    "currentSha256": "d2e6c31ee6578406c6199c9470a4ad337a7b655b400db65a939d2fb58ee7cd12"
   },
   "engine": {
     "gitCommit": "71c77e4000000000000000000000000000000000"

@@ -5,6 +5,7 @@ from __future__ import annotations
 
 from typing import Any
 
+from .atlas import atlas_bytes, png_issues
 from .naming import product_name
 from .schema import Issue
 
@@ -23,6 +24,7 @@ _RESERVED_MODULES = frozenset({
 })
 MAX_ASPECT = 3.0
 MIN_CONTRAST = 3.0  # WCAG 2.x non-text contrast threshold
+MAX_ANIMATIONS = 2  # Gate E1: one atlas, one or two animation sequences (contract section 10)
 
 
 def _luminance(hex_color: str) -> float:
@@ -96,6 +98,38 @@ def _runtime_issues(game: dict[str, Any]) -> list[Issue]:
     return out
 
 
+def _atlas_issues(game: dict[str, Any]) -> list[Issue]:
+    """Contract section 10: the one atlas decodes to a well-formed PNG of the declared grid, and every sprite frame exists."""
+    atlas = game["atlas"]
+    issues: list[Issue] = []
+    count = atlas["columns"] * atlas["rows"]
+    try:
+        data = atlas_bytes(atlas)
+    except ValueError as e:
+        return [Issue("$.game.atlas.png", "semantic.atlas-png", str(e))]
+    if data is not None:
+        for reason in png_issues(data, atlas["columns"] * atlas["frameWidth"], atlas["rows"] * atlas["frameHeight"]):
+            issues.append(Issue("$.game.atlas.png", "semantic.atlas-png", reason))
+    for i, kind in enumerate(game["runtime"]["kinds"]):
+        frames = kind["sprite"]["frames"]
+        path = f"$.game.runtime.kinds[{i}].sprite.frames"
+        if frames and data is None:
+            issues.append(Issue(path, "semantic.sprite-without-atlas",
+                                f"kind '{kind['id']}' names atlas frames but game.atlas.png is empty; add the atlas or use []"))
+            continue
+        for j, frame in enumerate(frames):
+            if frame >= count:
+                issues.append(Issue(f"{path}[{j}]", "semantic.sprite-frame",
+                                    f"frame {frame} is outside the atlas, which has {count} frames "
+                                    f"({atlas['columns']} columns x {atlas['rows']} rows)"))
+    animated = [kind["id"] for kind in game["runtime"]["kinds"] if len(kind["sprite"]["frames"]) > 1]
+    if len(animated) > MAX_ANIMATIONS:
+        issues.append(Issue("$.game.runtime.kinds", "semantic.sprite-animations",
+                            f"{len(animated)} kinds are animated ({', '.join(animated)}); at most {MAX_ANIMATIONS} animation "
+                            "sequences are supported (Gate E1); give the others one frame"))
+    return issues
+
+
 def validate(spec: dict[str, Any], type_names: frozenset[str] = frozenset()) -> list[Issue]:
     issues: list[Issue] = []
     project, game = spec["project"], spec["game"]
@@ -129,6 +163,7 @@ def validate(spec: dict[str, Any], type_names: frozenset[str] = frozenset()) -> 
                             f"aspect ratio {aspect:.2f}:1 exceeds {MAX_ASPECT:.0f}:1"))
 
     issues += _runtime_issues(game)
+    issues += _atlas_issues(game)
     palette = game["palette"]
     for role in ("primary", "accent"):
         ratio = contrast_ratio(palette[role], palette["background"])

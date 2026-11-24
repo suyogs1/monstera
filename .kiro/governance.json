@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "active": "balanced",
+  "active": "lean",
   "profiles": {
     "lean": {
       "maxReviewRounds": 1,

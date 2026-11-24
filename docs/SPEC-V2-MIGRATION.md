@@ -42,3 +42,21 @@ changes; review that), `monstera generate`. A `glyph` replaces the rectangle; se
 Simulation compatibility of v3 to v4: none of the new properties is read by the simulation (`architecture/RUNTIME-CONTRACT.md` section 9). A migrated
 spec has a new SHA-256, so the golden scenarios must be re-recorded, but every recorded checkpoint (hash and observables) stays identical. Verified for
 the 29 scenarios of the four shipped specs when v4 was introduced: only `spec.sha256` changed. A migration that changes any checkpoint is not a v4 migration.
+## v4 to v5 (Gate E1, sprites)
+`specVersion` is now exactly `5`. Both new properties are presentation only (`architecture/RUNTIME-CONTRACT.md` section 10), required, and have a
+neutral value that keeps the v4 look (glyphs or color rectangles). There are no hidden defaults: write the neutral value explicitly.
+| Where | New property | Constraint | Neutral value |
+|---|---|---|---|
+| `game` | `atlas` | `png`: standard base64 of one 8-bit RGB or RGBA PNG, at most 24 KiB of text, or `""`; `frameWidth`, `frameHeight` 1 to 128; `columns`, `rows` 1 to 16; the PNG must be `columns*frameWidth` x `rows*frameHeight` pixels | `{"png": "", "frameWidth": 1, "frameHeight": 1, "columns": 1, "rows": 1}` |
+| `game.runtime.kinds[]` | `sprite` | `frames`: 0 to 4 atlas frame indices (they need an atlas); `ticksPerFrame` 1 to 600; at most two kinds of a project have more than one frame | `{"frames": [], "ticksPerFrame": 1}` |
+Migrate by adding the neutral values and setting `"specVersion": 5`, then `monstera format`, `monstera scenarios record --all` (only the spec hash
+changes; review that), `monstera generate`. A v4 spec is refused with `must be 5`; nothing is defaulted silently.
+Simulation compatibility of v4 to v5: neither property is read by the simulation. Verified for the 33 scenarios of the five shipped specs when v5 was
+introduced: `scenarios record --all` changed one line per scenario, `spec.sha256`, and no checkpoint. The two Skeleton Crew games then received their
+atlases from `assets/sprites/make_atlases.py`, which again changed only the spec hash of their scenarios.
+In Studio, content written for v4 is upgraded on opening with exactly these neutral values (`studio/src/project/specV5.ts`). This covers
+stored IndexedDB projects, direct spec imports, project bundles and the legacy localStorage draft. The upgrade is used only when the v5 engine
+accepts it; versions other than 4 are never guessed. Project keys, names, manifests, assets and origins are kept; only the project manifest's spec
+hashes that named the v4 text are rebound. A stored project is re-saved as one atomic record, so a failed write leaves the v4 record untouched.
+Bundles pass their integrity checks as written before the upgrade, and the legacy draft is never written. No sprite is assigned, and
+Studio says so in a notice.

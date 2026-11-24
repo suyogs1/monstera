@@ -178,7 +178,10 @@ jobs:
             bash $A install
             bash $A launch
             sleep 5
+            # simctl captures the device framebuffer: a landscape game on a portrait device is captured sideways (E1 evidence).
             bash $A screenshot 01-launched
+            sleep 1
+            bash $A screenshot 02-later
             bash $A logs
             bash $A stop
             bash $A report

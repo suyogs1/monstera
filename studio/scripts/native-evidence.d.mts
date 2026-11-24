@@ -8,11 +8,15 @@ export interface PlatformEvidence {
   label: NativeLabel; loggedSha256: string | null; ticks: number | null; screenshot: { width: number; height: number } | null;
   files: Record<"report" | "results" | "logs" | "screenshot", EvidenceFile | null>;
 }
-export interface GameEvidence { id: string; specPath: string; specSha256: string; label: NativeLabel; platforms: PlatformEvidence[] }
+export interface GameEvidence { id: string; specPath: string; evidenceDir: string; specSha256: string; label: NativeLabel; platforms: PlatformEvidence[] }
 export interface NativeIndex { evidenceDir: string; scope: string; games: GameEvidence[] }
 export const SCOPE_NOTE: string;
 export const PLATFORMS: Record<string, { target: string; device: string }>;
-export const GAMES: { id: string; specPath: string }[];
+export interface EvidenceGame { id: string; specPath: string; evidenceDir: string }
+export const GAMES: EvidenceGame[];
+export const M3_DIR: string;
+export const E1_DIR: string;
+export const EVIDENCE_DIR: string;
 export const FILES: Record<string, string>;
 export function sha256(bytes: Uint8Array): string;
 export function specSha256(bytes: Uint8Array): string;
@@ -21,4 +25,4 @@ export function parseAppLog(platform: string, text: string | null, canonicalSha:
 export function parsePng(bytes: Uint8Array | null): { width: number; height: number } | null;
 export function evaluatePlatform(i: { platform: "android" | "ios"; gameId: string; specSha256: string; report: string | null; results: string | null; logs: string | null; screenshot: Uint8Array | null }): Omit<PlatformEvidence, "files">;
 export function projectLabel(platforms: { platform: string; label: NativeLabel }[]): NativeLabel;
-export function buildNativeIndex(repo: string, publicDir?: string): NativeIndex;
+export function buildNativeIndex(repo: string, publicDir?: string, games?: EvidenceGame[]): NativeIndex;

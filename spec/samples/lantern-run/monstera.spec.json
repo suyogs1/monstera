@@ -1,5 +1,12 @@
 {
   "game": {
+    "atlas": {
+      "columns": 1,
+      "frameHeight": 1,
+      "frameWidth": 1,
+      "png": "",
+      "rows": 1
+    },
     "genre": "endless-runner",
     "hud": {
       "lifeGlyph": "🕯",
@@ -57,6 +64,10 @@
           "height": 6553600,
           "id": "keeper",
           "lifetimeTicks": 0,
+          "sprite": {
+            "frames": [],
+            "ticksPerFrame": 1
+          },
           "width": 6553600
         },
         {
@@ -67,6 +78,10 @@
           "height": 5242880,
           "id": "lantern",
           "lifetimeTicks": 0,
+          "sprite": {
+            "frames": [],
+            "ticksPerFrame": 1
+          },
           "width": 5242880
         },
         {
@@ -77,6 +92,10 @@
           "height": 6553600,
           "id": "wisp",
           "lifetimeTicks": 0,
+          "sprite": {
+            "frames": [],
+            "ticksPerFrame": 1
+          },
           "width": 6553600
         }
       ],
@@ -158,5 +177,5 @@
       "name": "0.1.0"
     }
   },
-  "specVersion": 4
+  "specVersion": 5
 }

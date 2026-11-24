@@ -1,4 +1,4 @@
-import { applyActiveLevel, applyReviewedGameplay, reviewGameplay, type ApplyResult, type GameplayApplyResult, type GameplayReview } from "../derive/apply";
+import { applyActiveLevel, applyReviewedGameplay, derivationState, inputsSha256, reviewGameplay, type ApplyResult, type GameplayApplyResult, type GameplayReview } from "../derive/apply";
 import { browserProbes } from "../assets/browserProbes";
 import { exportBundle, importBundle } from "../export/bundle";
 import { refuseSecrets } from "../integrations/secrets";
@@ -15,6 +15,7 @@ import { buildDefaultManifestsOrThrow, INITIALIZATION_RUNTIME, migrationDefaultM
 import { LEGACY_KEY, type CanonicalSpec } from "../project/migrate";
 import type { ManifestMap } from "../project/manifests";
 import { sha256Hex, specProjectId, stableText, type ProjectSnapshot } from "../project/record";
+import { isV4, migrateV4Doc, textIsV4 } from "../project/specV5";
 import { ProjectStore, type ProjectStoreDeps, type StorageLike } from "../project/store";
 import { SchemaModel, type Json } from "../schema/schema";
 const VALIDATE_DELAY_MS = 150;
@@ -41,7 +42,11 @@ export interface SessionDeps {
 export interface ReplaceOptions { discardUnsaved?: boolean }
 /** A replacement that was refused because it could lose data; the UI may show `message`, ask, and retry with discardUnsaved. */
 export type ReplaceRefusal = { ok: false; code: "would-lose-data"; message: string; risks: readonly ReplacementRisk[] };
-export type ReplaceOutcome = { ok: true } | ReplaceRefusal | { ok: false; code?: undefined; message: string };
+/** `migratedFrom: 4`: the opened content was a spec v4 document, upgraded to v5 with neutral sprite fields (see specV5.ts). */
+export type ReplaceOutcome = { ok: true; migratedFrom?: 4 } | ReplaceRefusal | { ok: false; code?: undefined; message: string };
+/** The engine's verdict for the v5 form of a v4 text: none (not v4), migrated (the engine accepts it) or refused (it does not). */
+type V4Upgrade = { kind: "none" } | { kind: "migrated"; v: DraftValidation & { canonicalText: string; sha256: string } } | { kind: "refused"; message: string };
+export const MIGRATION_NOTICE = "This project was written for specification v4 and was upgraded to v5. Your project, its data and its assets were kept; neutral sprite fields were added and no sprites were assigned. You can keep editing as before.";
 export class Session {
   readonly engine: EngineClient;
   /** The in-memory draft. Persistence is not its job; see `projects`. */
@@ -126,20 +131,118 @@ export class Session {
   }
 
   /** Makes a stored (or recovered) project live. Clean: nothing to save. False when the engine cannot read its text. */
-  private async adopt(project: ProjectSnapshot): Promise<boolean> {
+  private async adopt(stored: ProjectSnapshot): Promise<boolean> {
+    // A spec v4 project (or one whose baseline still holds v4 text, after a legacy migration) is upgraded first. The upgraded
+    // project is saved as ONE atomic record under its own key; until that write commits the stored v4 record is untouched,
+    // and a refused upgrade leaves it exactly as it was (it opens as before).
+    let migrated = false;
+    let project = stored;
+    try {
+      const up = await this.migrateSnapshot(stored);
+      if (up) { project = up; migrated = true; }
+    } catch { /* the engine could not answer: open the stored project unchanged */ }
     let v: DraftValidation;
     try { v = await this.engine.validateDraft(project.specText); } catch { return false; }
     if (!v.parsed) return false;
     const doc = JSON.parse(project.specText) as Json;
     if (doc === null || typeof doc !== "object" || Array.isArray(doc)) return false;
-    await this.project.replaceProject({ projectKey: project.projectKey, name: project.name, manifests: project.manifests, doc, persist: false }, () => this.store.load(doc, project.baseline, v));
+    await this.project.replaceProject({ projectKey: project.projectKey, name: project.name, manifests: project.manifests, doc, persist: migrated }, () => this.store.load(doc, project.baseline, v));
+    if (migrated) this.announceMigration();
     return true;
   }
+
+  /** The v5 engine's verdict on the v5 form of a v4 text (specV5.ts). Never guesses another version. */
+  private async upgradeV4(text: string): Promise<V4Upgrade> {
+    // The engine reads the v4 text first, with its strict loader: duplicate keys, a BOM or invalid UTF-8 are never migrated.
+    const first = await this.engine.validateDraft(text);
+    if (!first.parsed || first.canonicalText === null) return { kind: "none" };
+    // Exactly the integer 4 in the engine's own canonical text (not 4.0, which JSON.parse would turn into 4).
+    if (!/"specVersion": 4[,\r\n}]/.test(first.canonicalText)) return { kind: "none" };
+    const doc = JSON.parse(first.canonicalText) as Json;
+    if (!isV4(doc)) return { kind: "none" };
+    // Only a valid v4 spec: every issue the v5 engine reports must be one of the v5 additions. Anything else (a wrong type
+    // such as 60.0 for an integer, an invalid value) means the document was not valid v4, and it is not migrated.
+    const other = first.issues.filter((i) => !(i.path === "$.specVersion" || (i.code === "required" && /'(atlas|sprite)'/.test(i.message))));
+    if (other.length > 0) return { kind: "refused", message: `it is not a valid v4 specification (${other[0]!.path} ${other[0]!.message}), so it is not migrated` };
+    const m = migrateV4Doc(doc);
+    if (!m.ok) return { kind: "refused", message: "it declares specification v4 but already has v5 fields or no entity kinds, so it is not migrated" };
+    const v = await this.engine.validateDraft(stableText(m.doc));
+    if (v.ok !== true || v.canonicalText === null || v.sha256 === null) {
+      const first = v.issues[0];
+      return { kind: "refused", message: `its v5 form is not valid (${first ? `${first.path} ${first.message}` : "the engine refused it"}), so it is not migrated` };
+    }
+    return { kind: "migrated", v: { ...v, canonicalText: v.canonicalText, sha256: v.sha256 } };
+  }
+
+  /** Points the project manifest's spec hashes that named the old text at the new one; every other value is kept. */
+  private static rebindSpecHashes(m: ManifestMap, oldSha: string | null, newSha: string): ManifestMap {
+    if (oldSha === null || oldSha === newSha) return m;
+    const s = m.project.spec;
+    const spec = { ...s, baseSha256: s.baseSha256 === oldSha ? newSha : s.baseSha256, currentSha256: s.currentSha256 === oldSha ? newSha : s.currentSha256 };
+    return spec.baseSha256 === s.baseSha256 && spec.currentSha256 === s.currentSha256 ? m : { ...m, project: { ...m.project, spec } };
+  }
+
+  /** The baseline and origin of a migrated project: v4 texts become their v5 forms; null when nothing references v4. */
+  private async upgradeBaseline(b: Baseline): Promise<Baseline | null> {
+    let next = b;
+    if (textIsV4(b.canonicalText)) {
+      const up = await this.upgradeV4(b.canonicalText as string);
+      if (up.kind === "migrated") next = { ...next, canonicalText: up.v.canonicalText, sha256: up.v.sha256 };
+    }
+    const o = b.origin;
+    if (o && textIsV4(o.canonicalText)) {
+      const t = (await this.templateCanonicals()).find((x) => x.info.id === o.templateId);
+      if (t?.canonicalText) {
+        // "identical" stays only while the baseline really equals the template; a v4 copy of it no longer does.
+        const basis = o.basis === "identical" && next.sha256 !== t.sha256 ? "template" : o.basis;
+        next = { ...next, origin: { ...o, path: t.info.path, canonicalText: t.canonicalText, basis } };
+      } else {
+        next = { ...next, origin: null }; // the template no longer exists: no goldens are claimed for this project
+      }
+    }
+    return next === b ? null : next;
+  }
+
+  /** The upgraded form of a stored project, or null when it needs none or cannot be upgraded (it is then opened unchanged). */
+  private async migrateSnapshot(p: ProjectSnapshot): Promise<ProjectSnapshot | null> {
+    const spec = await this.upgradeV4(p.specText);
+    if (spec.kind === "refused") return null;
+    const baseline = await this.upgradeBaseline(p.baseline);
+    if (spec.kind === "none" && baseline === null) return null;
+    const specText = spec.kind === "migrated" ? spec.v.canonicalText : p.specText;
+    const manifests = spec.kind === "migrated"
+      ? await Session.carryDerivation(p.specText, specText, p.manifests, Session.rebindSpecHashes(p.manifests, await sha256Hex(p.specText), spec.v.sha256))
+      : p.manifests;
+    return { ...p, specText, baseline: baseline ?? p.baseline, manifests };
+  }
+
+  /**
+   * Derivation that was in sync with the v4 text stays in sync with its v5 form: the recorded input hash is recomputed for the
+   * migrated document. Derivation that was already stale (or never applied) is left as it was.
+   */
+  private static async carryDerivation(oldText: string, newText: string, before: ManifestMap, after: ManifestMap): Promise<ManifestMap> {
+    let oldDoc: Json, newDoc: Json;
+    try { oldDoc = JSON.parse(oldText) as Json; newDoc = JSON.parse(newText) as Json; } catch { return after; }
+    if ((await derivationState(oldDoc, before)) !== "fresh") return after;
+    return { ...after, project: { ...after.project, derived: { inputsSha256: await inputsSha256(newDoc, after) } } };
+  }
+
+  private readonly migrationListeners = new Set<() => void>();
+  /** Set when content written for spec v4 was upgraded in this session (shown once by the top bar until dismissed). */
+  migrationNotice: string | null = null;
+  onMigrationNotice = (l: () => void): (() => void) => { this.migrationListeners.add(l); return () => this.migrationListeners.delete(l); };
+  dismissMigrationNotice(): void { this.migrationNotice = null; for (const l of this.migrationListeners) l(); }
+  private announceMigration(): void { this.migrationNotice = MIGRATION_NOTICE; for (const l of this.migrationListeners) l(); }
 
   /** The engine's canonical text, its SHA-256 and the runtime facts of that same document; null when it cannot supply them. */
   private async canonicalize(docText: string): Promise<CanonicalSpec | null> {
     let v: DraftValidation;
     try { v = await this.engine.validateDraft(docText); } catch { return null; }
+    if (v.ok !== true && textIsV4(docText)) { // a v4 legacy draft: its v5 form, only when the engine accepts it
+      let up: V4Upgrade;
+      try { up = await this.upgradeV4(docText); } catch { return null; }
+      if (up.kind === "migrated") v = up.v;
+    }
     // A document that parses gets canonical text even when it is invalid (ok: false); only a VALID spec may be migrated.
     if (v.ok !== true || !v.parsed || v.canonicalText === null || v.sha256 === null) return null;
     return { canonicalText: v.canonicalText, sha256: v.sha256, runtime: specRuntimeFacts(v.canonicalText) };
@@ -294,11 +397,15 @@ export class Session {
 
   /** The engine decides whether a file is loadable (strict JSON: duplicate keys and BOMs are refused). */
   async importText(text: string, fileName: string, opts: ReplaceOptions = {}): Promise<ReplaceOutcome> {
-    const v = await this.engine.validateDraft(text);
+    let v = await this.engine.validateDraft(text);
     if (!v.parsed || v.canonicalText === null) {
       return { ok: false, message: v.issues[0]?.message ?? "the file could not be read as JSON" };
     }
-    const top = JSON.parse(v.canonicalText) as Json;
+    const up = await this.upgradeV4(text);
+    if (up.kind === "refused") return { ok: false, message: `this is a specification v4 file, but ${up.message}. Your draft was not changed.` };
+    if (up.kind === "migrated") v = up.v;
+    const canonicalText: string = v.canonicalText ?? text; // non-null: checked above, and a migrated verdict always has it
+    const top = JSON.parse(canonicalText) as Json;
     if (top === null || typeof top !== "object" || Array.isArray(top)) {
       const kind = top === null ? "null" : Array.isArray(top) ? "an array" : typeof top;
       return { ok: false, message: `a specification is a JSON object, but this file contains ${kind}. Your draft was not changed.` };
@@ -311,6 +418,7 @@ export class Session {
     } catch (e) {
       return { ok: false, message: `${e instanceof Error ? e.message : "the project could not be created"}. Your draft was not changed.` };
     }
+    if (up.kind === "migrated") { this.announceMigration(); return { ok: true, migratedFrom: 4 }; }
     return { ok: true };
   }
 
@@ -340,10 +448,18 @@ export class Session {
   async importBundleBytes(bytes: Uint8Array, fileName: string, opts: ReplaceOptions = {}): Promise<ReplaceOutcome> {
     const r = await importBundle(bytes);
     if (!r.ok) return { ok: false, message: `${r.message} Your project was not changed.` };
-    const { specText, manifests, assets } = r.project;
-    const v = await this.engine.validateDraft(specText);
+    const { specText, assets } = r.project;
+    let manifests = r.project.manifests;
+    let v = await this.engine.validateDraft(specText);
     if (!v.parsed || v.canonicalText === null) return { ok: false, message: `the bundle's specification could not be read: ${v.issues[0]?.message ?? "invalid JSON"}. Your project was not changed.` };
-    const doc = JSON.parse(v.canonicalText) as Json;
+    // Every bundle integrity check above ran on the bundle as written; only then is a v4 specification upgraded.
+    const up = await this.upgradeV4(specText);
+    if (up.kind === "refused") return { ok: false, message: `the bundle holds a specification v4 file, but ${up.message}. Your project was not changed.` };
+    if (up.kind === "migrated") {
+      manifests = await Session.carryDerivation(v.canonicalText, up.v.canonicalText, manifests, Session.rebindSpecHashes(manifests, v.sha256, up.v.sha256));
+      v = up.v;
+    }
+    const doc = JSON.parse(v.canonicalText ?? specText) as Json; // non-null: checked above, and a migrated verdict always has it
     if (doc === null || typeof doc !== "object" || Array.isArray(doc)) return { ok: false, message: "the bundle's specification is not a JSON object. Your project was not changed." };
     const refusal = refuseSecrets({ doc, manifests });
     if (refusal) return { ok: false, message: `the bundle was refused: ${refusal}. Your project was not changed.` };
@@ -373,6 +489,7 @@ export class Session {
       if (this.project.getState().projectKey !== projectKey) await this.projects.pruneBlobs(projectKey, new Set());
       return { ok: false, message: `${e instanceof Error ? e.message : "the project could not be created"}. Your project was not changed.` };
     }
+    if (up.kind === "migrated") { this.announceMigration(); return { ok: true, migratedFrom: 4 }; }
     return { ok: true };
   }
 

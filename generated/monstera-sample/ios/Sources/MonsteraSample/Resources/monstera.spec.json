@@ -1,5 +1,12 @@
 {
   "game": {
+    "atlas": {
+      "columns": 1,
+      "frameHeight": 1,
+      "frameWidth": 1,
+      "png": "",
+      "rows": 1
+    },
     "genre": "prototype",
     "hud": {
       "lifeGlyph": "",
@@ -81,6 +88,10 @@
           "height": 6291456,
           "id": "player",
           "lifetimeTicks": 0,
+          "sprite": {
+            "frames": [],
+            "ticksPerFrame": 1
+          },
           "width": 6291456
         },
         {
@@ -91,6 +102,10 @@
           "height": 3145728,
           "id": "bullet",
           "lifetimeTicks": 120,
+          "sprite": {
+            "frames": [],
+            "ticksPerFrame": 1
+          },
           "width": 1048576
         },
         {
@@ -101,6 +116,10 @@
           "height": 5242880,
           "id": "enemy",
           "lifetimeTicks": 0,
+          "sprite": {
+            "frames": [],
+            "ticksPerFrame": 1
+          },
           "width": 5242880
         },
         {
@@ -111,6 +130,10 @@
           "height": 2621440,
           "id": "ball",
           "lifetimeTicks": 0,
+          "sprite": {
+            "frames": [],
+            "ticksPerFrame": 1
+          },
           "width": 2621440
         },
         {
@@ -121,6 +144,10 @@
           "height": 2097152,
           "id": "drifter",
           "lifetimeTicks": 0,
+          "sprite": {
+            "frames": [],
+            "ticksPerFrame": 1
+          },
           "width": 2097152
         },
         {
@@ -131,6 +158,10 @@
           "height": 524288,
           "id": "spark",
           "lifetimeTicks": 30,
+          "sprite": {
+            "frames": [],
+            "ticksPerFrame": 1
+          },
           "width": 524288
         }
       ],
@@ -200,5 +231,5 @@
       "name": "0.1.0"
     }
   },
-  "specVersion": 4
+  "specVersion": 5
 }

@@ -16,6 +16,8 @@ export const DISPLAY_ONLY_PATTERNS = [
   "game.hud.lifeGlyph", "game.hud.scoreLabel",
   "game.screens.startHint", "game.screens.winTitle", "game.screens.loseTitle",
   "game.runtime.kinds[].color", "game.runtime.kinds[].glyph", "game.runtime.kinds[].effect",
+  "game.atlas.png", "game.atlas.frameWidth", "game.atlas.frameHeight", "game.atlas.columns", "game.atlas.rows",
+  "game.runtime.kinds[].sprite.frames", "game.runtime.kinds[].sprite.frames[]", "game.runtime.kinds[].sprite.ticksPerFrame",
 ] as const;
 
 /** Prefixes of the fields the oracle reads (sim.Config and the frame loop). Everything else under `game` is not read. */

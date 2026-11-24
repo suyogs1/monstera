@@ -3,7 +3,7 @@ import { join, resolve } from "node:path";
 import { renderToStaticMarkup } from "react-dom/server";
 import { createElement } from "react";
 import { describe, expect, it } from "vitest";
-import { buildNativeIndex, GAMES, specSha256 } from "../../scripts/native-evidence.mjs";
+import { buildNativeIndex, E1_DIR, GAMES, specSha256 } from "../../scripts/native-evidence.mjs";
 import type { Verdict } from "../badge/badge";
 import type { ConformanceReport } from "../badge/native";
 import type { NativeIndex } from "../badge/nativeApps";
@@ -43,6 +43,11 @@ describe("environments table: the three templates", () => {
     it(`${g.id}: recorded evidence for its own hash`, () => {
       const rows = none(templateSha);
       expect(rows.map((r) => r.env)).toEqual([...ENVIRONMENTS]);
+      if (g.evidenceDir !== E1_DIR) {
+        // Only historical (spec v4) records exist for this project: none of them is evidence for its v5 hash.
+        for (const env of ["oracle", "jvm", "swift-test", "simulator", "device", "browser"]) expect(row(rows, env), env).toMatchObject({ state: NO_EVIDENCE, sources: [] });
+        return;
+      }
       for (const env of ["oracle", "jvm", "swift-test"]) {
         const r = row(rows, env);
         expect(r.state, env).toBe("passed");
@@ -96,12 +101,14 @@ describe("environments table: states come only from records", () => {
     }
   });
   it("a simulator pass needs the exact hash and a source file", () => {
-    const platform = (label: string, report: string | null, launch: string) => ({ device: "Android emulator", label, checks: { compile: { state: "pass" }, launch: { state: launch } }, files: { report: report ? { repoPath: report } : null } });
+    const platform = (label: string, report: string | null, launch: string, specHash = "pass") => ({ device: "Android emulator", label, checks: { compile: { state: "pass" }, launch: { state: launch }, specHash: { state: specHash } }, files: { report: report ? { repoPath: report } : null } });
     const game = (platforms: unknown[], specSha256 = sha("a")) => ({ native: { evidenceDir: "", scope: "", games: [{ id: "g", specSha256, platforms }] } as unknown as NativeIndex });
     const ok = platform("SIMULATOR-TESTED", "docs/evidence/m/report.json", "pass");
     expect(row(table([], null, game([ok]).native), "simulator")).toMatchObject({ state: "passed", sources: ["docs/evidence/m/report.json"] });
     expect(row(table([], null, game([platform("SIMULATOR-TESTED", null, "pass")]).native), "simulator").state).toBe(NO_EVIDENCE);
     expect(row(table([], null, game([ok], sha("b")).native), "simulator").state).toBe(NO_EVIDENCE);
+    // A record whose app logged another hash (historical evidence) is not cited at all, whatever its label says.
+    expect(row(table([], null, game([platform("SIMULATOR-TESTED", "docs/evidence/m/report.json", "pass", "stale")]).native), "simulator")).toMatchObject({ state: NO_EVIDENCE, sources: [] });
     expect(row(table([], null, game([platform("COMPILED", "docs/evidence/m/report.json", "missing")]).native), "simulator").state).toBe("not run");
     expect(row(table([], null, game([ok, platform("GENERATED", "docs/evidence/m/ios.json", "fail")]).native), "simulator").state).toBe("failed");
   });

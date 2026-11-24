@@ -9,7 +9,7 @@ Design: `.kiro/specs/g4-studio/` (requirements, design, tasks). `architecture/MO
 - Studio is a **static web app** (Vite, React, TypeScript; Vercel). There is no backend, no account, no server-side secret and
   no build dispatch. The browser never compiles native code.
 - The unmodified engine (`tools/monstera`, `spec/schema`) runs in a Pyodide Web Worker (M0 proved it). The engine stays
-  authoritative for the canonical v4 specification, its validation, deterministic simulation and generation. Studio holds no
+  authoritative for the canonical v5 specification, its validation, deterministic simulation and generation. Studio holds no
   copy of those semantics and never edits `tools/monstera`, `spec/schema`, templates or generated output.
 - The canonical `monstera.spec.json` is the single source of truth for the generated native apps and the only contract with
   the engine and Kiro: Studio imports and exports it. Forms for the spec derive from `spec/schema/*.schema.json`; values show
@@ -19,10 +19,10 @@ Design: `.kiro/specs/g4-studio/` (requirements, design, tasks). `architecture/MO
   (`monstera.studio.<name>` plus an integer `version`), has a JSON Schema under `studio/schemas/`, and is validated in
   TypeScript at runtime with the engine's discipline (every property required, no additional properties, unsupported keywords
   fail at load, integers for game quantities). Studio is the authority for these manifests only.
-- **Compile, then let the engine decide.** A sidecar capability that schema v4 can express is compiled into the v4 spec by a
+- **Compile, then let the engine decide.** A sidecar capability that schema v5 can express is compiled into the v5 spec by a
   pure function, only on explicit user action (derivation is off by default, and the derived diff and engine verdict are shown before the user accepts). The unmodified engine then validates and simulates the result; nothing is committed to the spec until it
   passes. Studio never re-implements engine rules (collision, scoring, ticks, RNG, spec validation) in TypeScript to predict
-  or replace an engine answer. Capabilities v4 cannot express are Studio-only, scaffolding or mock and are labelled as such
+  or replace an engine answer. Capabilities v5 cannot express are Studio-only, scaffolding or mock and are labelled as such
   (statuses: implemented, prototype, mock, planned, unsupported). Every module states whether it reaches native output.
 - No engine, schema or template change is made for Studio Foundry before G6 is closed. Any such change is an engine-track item
   that needs an explicit owner decision.

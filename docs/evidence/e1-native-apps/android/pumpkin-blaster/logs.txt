@@ -1,0 +1,15 @@
+--------- beginning of system
+11-23 14:40:32.788 W/ActivityTaskManager(  761): callingPackage for (uid=2000, pid=7072) has no WPC
+11-23 14:40:32.878 I/ActivityTaskManager(  761): START u0 {flg=0x10000000 xflg=0x5 cmp=app.monstera.pumpkinblaster/.MainActivity} with LAUNCH_MULTIPLE from uid 2000 (com.android.shell) (BAL_ALLOW_PERMISSION) result code=0
+11-23 14:40:33.493 I/ActivityTaskManager(  761): Config changes=20000480 {1.0 310mcc260mnc [en_US] ldltr sw448dp w997dp h448dp 480dpi nrml long compactNeeded land finger qwerty/v/v dpad/v winConfig={ mBounds=Rect(0, 0 - 2992, 1344) mAppBounds=Rect(0, 0 - 2992, 1344) mMaxBounds=Rect(0, 0 - 2992, 1344) mDisplayRotation=ROTATION_90 mWindowingMode=fullscreen mActivityType=undefined mAlwaysOnTop=undefined mRotation=ROTATION_90} as.3 s.307 fontWeightAdjustment=0}
+--------- beginning of main
+11-23 14:40:34.885 I/MonsteraSpec( 7080): spec sha256=02f626f0f398bf98b5e0ed7106c7a3402fb55cbe6c680a9d401d5812ae76c2e5 bundledMatches=true
+11-23 14:40:35.750 I/MonsteraSprites( 7080): sprites atlas=loaded size=128x16 frames=8
+11-23 14:40:36.247 I/ActivityTaskManager(  761): Displayed app.monstera.pumpkinblaster/.MainActivity for user 0: +3s470ms
+11-23 14:40:36.344 I/MonsteraSprites( 7080): sprites tick=5 kind=bat frame=2
+11-23 14:40:36.740 I/MonsteraSprites( 7080): sprites tick=10 kind=bat frame=3
+11-23 14:40:36.866 I/MonsteraSprites( 7080): sprites tick=19 kind=bat frame=2
+11-23 14:40:36.946 I/MonsteraSprites( 7080): sprites tick=24 kind=bat frame=3
+11-23 14:40:37.074 I/MonsteraSprites( 7080): sprites tick=32 kind=bat frame=2
+11-23 14:40:37.224 I/MonsteraSprites( 7080): sprites tick=41 kind=bat frame=3
+11-23 14:40:37.586 I/MonsteraRuntime( 7080): runtime ticks=62 hash=ad78ee82915118b2 seed=1795425034720

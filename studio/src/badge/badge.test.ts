@@ -172,7 +172,8 @@ describe("classification (explains, never decides)", () => {
   it("every display-only pattern exists in a real template", () => {
     const leaves = new Set<string>();
     const walk = (v: Json, at: (string | number)[]) => {
-      if (v !== null && typeof v === "object") Object.entries(v).forEach(([k, x]) => walk(x as Json, [...at, Array.isArray(v) ? Number(k) : k]));
+      if (Array.isArray(v) && v.length === 0) leaves.add(toPattern(at)); // an empty array is a leaf (as in test_presentation.py)
+      else if (v !== null && typeof v === "object") Object.entries(v).forEach(([k, x]) => walk(x as Json, [...at, Array.isArray(v) ? Number(k) : k]));
       else leaves.add(toPattern(at));
     };
     walk(pumpkin, []);

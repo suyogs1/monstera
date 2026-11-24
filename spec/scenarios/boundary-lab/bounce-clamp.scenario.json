@@ -170,7 +170,7 @@
   "seed": 3,
   "spec": {
     "path": "spec/samples/boundary-lab/monstera.spec.json",
-    "sha256": "e8da048e668619b9598537a3b235fb604293c688b7556720fd5c716505c90f47"
+    "sha256": "28ea859cecfbd1c19cff1b2e669f44d9947b9d09c56b73f9d8ac6c1c83e4149d"
   },
   "ticks": 12
 }

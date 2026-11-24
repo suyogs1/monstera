@@ -81,14 +81,14 @@ and emulator or simulator runs come from CI and Device Lab, and Studio only disp
 ### How the pieces relate
 
 The canonical `monstera.spec.json` (schema v4) is the only contract with the engine and the generated apps. Studio keeps what
-v4 cannot express (levels, assets, animations, gameplay inputs, integration choices, project identity) in versioned
+v5 cannot express (levels, Studio assets, animations, gameplay inputs, integration choices, project identity) in versioned
 **sidecar manifests** that Studio validates itself. The engine generates native source from the spec alone. Level and gameplay
 data reach the native apps only when you apply them to the spec. The export ZIP carries the generated source and a **Studio
 pack** with the manifests, asset files, scaffold files and a drift-check script.
 
 ### What is usable today
 
-- Editing, validating and exporting a v4 spec, with undo, redo and project persistence in IndexedDB.
+- Editing, validating and exporting a v5 spec, with undo, redo and project persistence in IndexedDB.
 - Applying the active level and the gameplay settings to the spec (they compile to native). Other levels export as separate
   specs and are not selectable in the generated app.
 - Browser preview, a determinism check against the recorded goldens, and the generated native source ZIP.
@@ -98,8 +98,13 @@ These are working prototypes. Statuses and limits per capability are in [the cap
 
 ### Studio-only, scaffold or mock
 
-- **Studio-only:** assets, sprite sheets and animations. The v4 spec has no asset concept, so the generated apps do not draw or
-  play them. Native rendering is engine track E1, which is not approved.
+- **Native sprites (spec v5, Gate E1):** both official games draw original pixel-art sprites, and two kinds per game animate
+  from the simulation tick. Each spec embeds one PNG atlas, and at most two kinds animate. The atlas is written by
+  `assets/sprites/make_atlases.py`, not by Studio. Evidence: [E1 native evidence](docs/evidence/e1-native-apps/SUMMARY.md) (Android emulator, iOS simulator, launch and
+  attract mode only); the M3 evidence stays as the historical v4 record.
+- **Studio-only:** the Studio asset library, sprite sheets and animations. Studio's Asset and Sprite editors are not yet wired to the
+  spec's atlas fields, which are read-only in Studio. Projects, imports, bundles and drafts written for spec v4 are upgraded to v5 when opened
+  (neutral sprite fields, no sprites assigned).
 - **Scaffold:** Firebase and AdMob stub text written into the Studio pack for you to adopt. Not compiled into the app.
 - **Mock:** AdMob placements and the rewarded ad preview. No ad is shown and no production ad id is stored.
 

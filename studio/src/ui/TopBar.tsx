@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useSyncExternalStore } from "react";
 import { useDraft, useSession } from "../app/hooks";
 import { useProject } from "../project/context";
 import { PersistenceIndicator, StorageProtection, downloadText } from "./PersistenceStatus";
@@ -13,6 +13,7 @@ export function TopBar() {
   const [message, setMessage] = useState<string | null>(null);
   const project = useProject();
   const mac = isMac();
+  const migrated = useSyncExternalStore(session.onMigrationNotice, () => session.migrationNotice);
   const onRecovery = () => { const n: ActionNotice = exportRecoveryFile(project, "live", downloadText); setMessage(n.text); };
 
   const name = doc && typeof doc === "object" && !Array.isArray(doc) ? String((doc["project"] as Record<string, unknown> | undefined)?.["displayName"] ?? "") : "";
@@ -103,6 +104,12 @@ export function TopBar() {
         <button type="button" onClick={() => { if (confirmDiscard()) void session.reset(); }} disabled={!edited} data-testid="reset-button">Reset</button>
       </div>
       {message && <p className="notice" role="status">{message}</p>}
+      {migrated && (
+        <p className="notice" role="status" data-testid="spec-migration-notice">
+          {migrated} Sprite atlases cannot be authored in Studio yet; those fields stay read-only.{" "}
+          <button type="button" onClick={() => session.dismissMigrationNotice()} data-testid="spec-migration-dismiss">Dismiss</button>
+        </p>
+      )}
     </header>
   );
 }

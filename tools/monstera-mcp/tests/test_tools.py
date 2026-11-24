@@ -65,7 +65,7 @@ class ParityTests(unittest.TestCase):
     def test_engine_info_reports_the_engine_and_detects_staleness(self) -> None:
         info = tools.engine_info()
         self.assertEqual(info["generator"]["name"], "monstera-generator")
-        self.assertEqual(info["spec_version"], 4)
+        self.assertEqual(info["spec_version"], 5)
         self.assertEqual(info["schema_digests"], tools.store().digests())
         self.assertFalse(info["stale"])
         # A schema that changed after this process loaded it makes the report stale.

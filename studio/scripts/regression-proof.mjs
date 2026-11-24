@@ -5,7 +5,7 @@
 import { spawnSync } from "node:child_process";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { classifyEngineSchemaDiff, EXCEPTION_PATH } from "./regression-classify.mjs";
+import { classifyE1Diff, classifyEngineSchemaDiff, E1_BASE, EXCEPTION_PATH } from "./regression-classify.mjs";
 
 const repo = resolve(dirname(fileURLToPath(import.meta.url)), "..", "..");
 const BASE = "71c77e4";
@@ -30,20 +30,29 @@ const results = [];
 const add = (id, status, summary, runs, detail) => results.push({ id, status, summary, runs, detail });
 const haveRef = (ref) => git("cat-file", "-e", `${ref}^{commit}`).exit === 0;
 
-// 1. Engine and schema untouched since BASE.
-if (!haveRef(BASE)) {
-  add("engine-schema-diff", CI ? "FAIL" : "PENDING", `${BASE} is not available in this checkout (shallow clone?)`, []);
+// 1. Engine and schema untouched from BASE to E1_BASE (the original G6 freeze, never re-baselined), then 1b below.
+if (!haveRef(BASE) || !haveRef(E1_BASE)) {
+  add("engine-schema-diff", CI ? "FAIL" : "PENDING", `${BASE} or ${E1_BASE} is not available in this checkout (shallow clone?)`, []);
 } else {
-  const ns = git("diff", "--name-status", "--no-renames", BASE, "--", "tools/monstera", "spec/schema");
-  const num = git("diff", "--numstat", "--no-renames", BASE, "--", "tools/monstera", "spec/schema");
+  const ns = git("diff", "--name-status", "--no-renames", BASE, E1_BASE, "--", "tools/monstera", "spec/schema");
+  const num = git("diff", "--numstat", "--no-renames", BASE, E1_BASE, "--", "tools/monstera", "spec/schema");
   const blob = (rev) => {
     const r = git("rev-parse", "--verify", "--quiet", `${rev}:${EXCEPTION_PATH}`);
     return r.exit === 0 ? r.out : null;
   };
   if (ns.exit !== 0 || num.exit !== 0) add("engine-schema-diff", "FAIL", `git diff failed: ${tail(ns.out || num.out, 1)}`, [ns]);
   else {
-    const c = classifyEngineSchemaDiff({ nameStatus: ns.out, numstat: num.out, baselineBlob: blob(BASE), currentBlob: blob("HEAD") });
-    add("engine-schema-diff", c.status, c.summary, [ns, num]);
+    const c = classifyEngineSchemaDiff({ nameStatus: ns.out, numstat: num.out, baselineBlob: blob(BASE), currentBlob: blob(E1_BASE) });
+    add("engine-schema-diff", c.status, `${BASE}..${E1_BASE}: ${c.summary}`, [ns, num]);
+  }
+}
+// 1b. Gate E1: from the pre-E1 main to HEAD only the approved E1 paths change (regression-classify.mjs, E1_ALLOWED).
+if (haveRef(E1_BASE)) {
+  const ns = git("diff", "--name-status", "--no-renames", E1_BASE, "HEAD", "--", "tools/monstera", "spec/schema");
+  if (ns.exit !== 0) add("e1-engine-diff", "FAIL", `git diff failed: ${tail(ns.out, 1)}`, [ns]);
+  else {
+    const c = classifyE1Diff({ nameStatus: ns.out });
+    add("e1-engine-diff", c.status, c.summary, [ns]);
   }
 }
 

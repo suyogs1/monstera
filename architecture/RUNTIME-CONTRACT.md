@@ -213,3 +213,25 @@ and the older `kinds[].color` and `game.palette`.
 6. Drawing is clipped to the world rectangle; the HUD bar and the letterbox are never drawn into by the world. The layout, the clip
    rule and the effect rules are specified by the `presentation` unit tests, which exist once per platform and are independent
    implementations like the cores. They are not part of conformance and are not compared across platforms.
+
+## 10. Sprites and the atlas (visual only, spec v5, Gate E1)
+Spec v5 adds `game.atlas` and `game.runtime.kinds[].sprite`. Both are presentation fields with every property of section 9: the core never
+receives them, they change the spec SHA-256 and nothing else, and recorded checkpoints stay identical.
+1. **One atlas per project.** `game.atlas.png` is standard base64 of one 8-bit RGB or RGBA PNG (the empty string: no atlas) holding
+   `columns` x `rows` frames of `frameWidth` x `frameHeight` pixels. Frame `n` is the rectangle at column `n mod columns`, row
+   `n div columns`, counted from the top left. `monstera validate` decodes the PNG fully (signature, chunk CRCs, IHDR first, IDAT
+   inflating to exactly the declared scanlines, IEND last) and requires its size to be `columns*frameWidth` x `rows*frameHeight`.
+2. **Sprite of a kind.** `sprite.frames` lists 0 to 4 frame indices, each below `columns*rows`; frames require an atlas. No frames:
+   the glyph or color rectangle of section 9 is drawn. One frame: a still sprite. Two to four: one animation sequence. At most two
+   kinds of a project are animated (Gate E1 scope: one or two animation sequences).
+3. **Animation is a function of the simulation tick.** At world tick `t` (the tick counter of section 4 after the frame's ticks) every
+   entity of the kind shows `frames[(t div ticksPerFrame) mod count]`, with integer division. No clock, no per-entity phase, no
+   interpolation. The same state draws the same frame on both platforms, and pausing the simulation pauses the animation.
+4. **Bundling.** The generator writes the decoded PNG bytes unchanged as a real resource: `android/app/src/main/assets/monstera-atlas.png`
+   and `ios/Sources/<Product>/Resources/monstera-atlas.png` (a SwiftPM resource of the app target). Without an atlas no file is written.
+   The generated manifest records its SHA-256 like every other file.
+5. **Drawing.** A frame is scaled to fill the entity box (the same box the glyph uses) with nearest-neighbour sampling, so pixel art
+   stays sharp. If the resource cannot be loaded or decoded, the app draws the glyph instead and logs the failure; it never stops.
+6. **Tests.** The frame rule is specified by the `presentation` unit tests on each platform (hand-computed indices), and
+   `tools/monstera/tests/test_sprites.py` proves that the oracle state hashes of every scenario are identical for a spec whose atlas
+   and sprites are removed, changed or added.

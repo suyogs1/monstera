@@ -1,5 +1,12 @@
 {
   "game": {
+    "atlas": {
+      "columns": 8,
+      "frameHeight": 16,
+      "frameWidth": 16,
+      "png": "iVBORw0KGgoAAAANSUhEUgAAAIAAAAAQCAYAAADeWHeIAAABiUlEQVR42u2YMY7CMBAA/ZI84R5AvkF1EpQ8AulEf184iQdQUfEAvkFDQ3XN1TRGBow269312kkkLvZKKyVOrEiesb2xMSPG7KuxLk2N8kIL/2dxyRakT19N2LYtV97NyVqY6kFbGyslBTEHZG6/FPjFCuCA/14fqZUAQj7OQ/C4DYOEMJcf2+BbsI3qw70rtWkEgBIUIYSHjeFLEsRgc20YpgfqYFHJvU/B5vonwd+bjgRFCcClCP+8uicrwPN5TAIHyw22B+evNfC9AFT/1Jl/FwBIMGkBDra1KRkI4OFqBAASUMs6N4Mp+FgKbX9OogA+kmDS8D+/mw7k2D1X9L0EALApKaiikIMnLeMa+JJELPy/3SOnLEHqzMc5tAC5e3hqDRHd+z18KEEVQBAALOvRIpDYAqSqXbt/c38S+A9CVfyVIoALt7TnJFcDqDIiwBiHQ5pzg9gWMNki0EHh7qVngQRo6WevR4A/5AFQUUXgIAOXeRD01hKgrJR7HgP/B/g1atSoUU7cAMZ8/EJ7Qec7AAAAAElFTkSuQmCC",
+      "rows": 1
+    },
     "genre": "arcade-shooter",
     "hud": {
       "lifeGlyph": "♥",
@@ -81,6 +88,12 @@
           "height": 5898240,
           "id": "player",
           "lifetimeTicks": 0,
+          "sprite": {
+            "frames": [
+              0
+            ],
+            "ticksPerFrame": 1
+          },
           "width": 7864320
         },
         {
@@ -91,6 +104,10 @@
           "height": 1048576,
           "id": "bullet",
           "lifetimeTicks": 120,
+          "sprite": {
+            "frames": [],
+            "ticksPerFrame": 1
+          },
           "width": 2621440
         },
         {
@@ -101,6 +118,12 @@
           "height": 7208960,
           "id": "pumpkin",
           "lifetimeTicks": 0,
+          "sprite": {
+            "frames": [
+              1
+            ],
+            "ticksPerFrame": 1
+          },
           "width": 7208960
         },
         {
@@ -111,6 +134,13 @@
           "height": 3276800,
           "id": "bat",
           "lifetimeTicks": 0,
+          "sprite": {
+            "frames": [
+              2,
+              3
+            ],
+            "ticksPerFrame": 8
+          },
           "width": 4587520
         },
         {
@@ -121,6 +151,12 @@
           "height": 2359296,
           "id": "ember",
           "lifetimeTicks": 0,
+          "sprite": {
+            "frames": [
+              4
+            ],
+            "ticksPerFrame": 1
+          },
           "width": 2359296
         },
         {
@@ -131,6 +167,10 @@
           "height": 524288,
           "id": "star",
           "lifetimeTicks": 0,
+          "sprite": {
+            "frames": [],
+            "ticksPerFrame": 1
+          },
           "width": 524288
         }
       ],
@@ -224,5 +264,5 @@
       "name": "0.1.0"
     }
   },
-  "specVersion": 4
+  "specVersion": 5
 }

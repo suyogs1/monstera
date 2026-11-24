@@ -26,7 +26,7 @@ SUPPORTED_KEYWORDS = frozenset({
     "type", "properties", "required", "additionalProperties",
     "enum", "const", "pattern", "minLength", "maxLength",
     "minimum", "maximum", "exclusiveMinimum",
-    "items", "minItems", "uniqueItems",
+    "items", "minItems", "maxItems", "uniqueItems",
 })
 ROOT_SCHEMA = "monstera.spec.schema.json"
 
@@ -155,7 +155,7 @@ class SchemaStore:
                 _anchored(node["pattern"])
             except re.error as exc:
                 fail(f"pattern does not compile: {exc}")
-        for key in ("minLength", "maxLength", "minItems"):
+        for key in ("minLength", "maxLength", "minItems", "maxItems"):
             if key in node and not (_TYPE_CHECKS["integer"](node[key]) and node[key] >= 0):
                 fail(f"'{key}' must be a non-negative integer")
         for key in ("minimum", "maximum", "exclusiveMinimum"):
@@ -298,6 +298,8 @@ class SchemaStore:
     def _validate_array(self, node: dict[str, Any], value: list[Any], path: str, base: str, out: list[Issue]) -> None:
         if "minItems" in node and len(value) < node["minItems"]:
             out.append(Issue(path, "minItems", f"needs at least {node['minItems']} item(s), got {len(value)}"))
+        if "maxItems" in node and len(value) > node["maxItems"]:
+            out.append(Issue(path, "maxItems", f"allows at most {node['maxItems']} item(s), got {len(value)}"))
         if node.get("uniqueItems"):
             seen: list[str] = []
             for index, item in enumerate(value):

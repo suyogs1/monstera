@@ -1,0 +1,9 @@
+[
+{"op":"build","target":"android-emulator","status":"ok","run_id":"e1-d51a7ea-android-pumpkin-blaster","timestamp":"2026-11-23T09:10:32Z","artifact":"device-lab/reports/runs/e1-d51a7ea-android-pumpkin-blaster/android-emulator/app-debug.apk"},
+{"op":"install","target":"android-emulator","status":"ok","run_id":"e1-d51a7ea-android-pumpkin-blaster","timestamp":"2026-11-23T09:10:33Z"},
+{"op":"launch","target":"android-emulator","status":"ok","run_id":"e1-d51a7ea-android-pumpkin-blaster","timestamp":"2026-11-23T09:10:37Z"},
+{"op":"screenshot","target":"android-emulator","status":"ok","run_id":"e1-d51a7ea-android-pumpkin-blaster","timestamp":"2026-11-23T09:10:42Z","artifact":"device-lab/reports/runs/e1-d51a7ea-android-pumpkin-blaster/android-emulator/01-launched.png"},
+{"op":"screenshot","target":"android-emulator","status":"ok","run_id":"e1-d51a7ea-android-pumpkin-blaster","timestamp":"2026-11-23T09:10:44Z","artifact":"device-lab/reports/runs/e1-d51a7ea-android-pumpkin-blaster/android-emulator/02-later.png"},
+{"op":"logs","target":"android-emulator","status":"ok","run_id":"e1-d51a7ea-android-pumpkin-blaster","timestamp":"2026-11-23T09:10:44Z","artifact":"device-lab/reports/runs/e1-d51a7ea-android-pumpkin-blaster/android-emulator/logs.txt"},
+{"op":"stop","target":"android-emulator","status":"ok","run_id":"e1-d51a7ea-android-pumpkin-blaster","timestamp":"2026-11-23T09:10:44Z"}
+]

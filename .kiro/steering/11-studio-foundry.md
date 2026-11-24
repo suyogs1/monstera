@@ -7,15 +7,19 @@ Spec: `.kiro/specs/studio-foundry/` (requirements, design, tasks). Implementatio
 `07-studio.md`; this file does not repeat them and must not contradict them. If the two ever disagree, 07 decides and this file is fixed.
 
 ## Architecture decisions (owner, 2026-11-16)
-- **Two layers, one project identity.** The canonical v4 spec stays authoritative for its supported game semantics. Versioned
+- **Two layers, one project identity.** The canonical v5 spec stays authoritative for its supported game semantics. Versioned
   Studio sidecar manifests own the new Studio domains. A fact has exactly one owner; there are no competing sources of truth.
   The project identity (`project.json` `projectId`) equals `spec.project.id`.
-- **Derivation is opt-in and explicit, default OFF.** Compiling sidecar settings into the v4 spec happens only when the user
+- **Derivation is opt-in and explicit, default OFF.** Compiling sidecar settings into the v5 spec happens only when the user
   asks for it. Studio shows the derived diff and the engine's validation result first, and changes the spec only after the user
   accepts. It never mutates the canonical spec silently, on load, on import or as a side effect of editing a sidecar.
-- **Engine track.** E1 (native sprite references and bundling) is conditional on the 2026-11-19 gate and the conditions in
-  `design.md` section 6. E2 is off by default. E3 is out of scope. No change to `tools/monstera/`, `spec/schema/` or templates
-  before G6 is closed.
+- **Engine track.** E1 (native sprite references and bundling, spec v5) is approved by the owner with a sequencing override
+  and recorded in `docs/STUDIO-FOUNDRY-GATE-E.md`; E1 changes to `tools/monstera/`, `spec/schema/` and templates are limited to the
+  allowlist checked by the Task 9.2 proof. E2 (compiled extension roots) is conditional on E1 acceptance; E3 (level table) is
+  deferred. The G6 baseline `71c77e4` and its evidence are not rewritten.
+- **Format upgrade exception.** The one load-time spec change Studio makes is the documented v4 to v5 upgrade
+  (`docs/SPEC-V2-MIGRATION.md`): only for valid v4 content, only when the v5 engine accepts the result, adding neutral sprite fields,
+  saved atomically, with a visible notice. Every other change to the spec still needs the user's explicit action.
 - **No direct AI provider calls from the browser in this milestone.** Importing externally produced assets and proposals stays
   possible. A secure replaceable provider architecture stays on the roadmap and is `planned`, not built.
 - **Monetization.** Studio supports mock and official Google test configurations only. It never stores or emits a production

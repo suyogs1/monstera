@@ -1,5 +1,12 @@
 {
   "game": {
+    "atlas": {
+      "columns": 1,
+      "frameHeight": 1,
+      "frameWidth": 1,
+      "png": "",
+      "rows": 1
+    },
     "genre": "prototype",
     "hud": {
       "lifeGlyph": "",
@@ -313,6 +320,10 @@
           "height": 655360,
           "id": "probe",
           "lifetimeTicks": 0,
+          "sprite": {
+            "frames": [],
+            "ticksPerFrame": 1
+          },
           "width": 655360
         },
         {
@@ -323,6 +334,10 @@
           "height": 655360,
           "id": "target",
           "lifetimeTicks": 0,
+          "sprite": {
+            "frames": [],
+            "ticksPerFrame": 1
+          },
           "width": 655360
         },
         {
@@ -333,6 +348,10 @@
           "height": 0,
           "id": "dot",
           "lifetimeTicks": 0,
+          "sprite": {
+            "frames": [],
+            "ticksPerFrame": 1
+          },
           "width": 0
         },
         {
@@ -343,6 +362,10 @@
           "height": 655360,
           "id": "mover",
           "lifetimeTicks": 0,
+          "sprite": {
+            "frames": [],
+            "ticksPerFrame": 1
+          },
           "width": 655360
         },
         {
@@ -353,6 +376,10 @@
           "height": 655360,
           "id": "ball",
           "lifetimeTicks": 0,
+          "sprite": {
+            "frames": [],
+            "ticksPerFrame": 1
+          },
           "width": 655360
         },
         {
@@ -363,6 +390,10 @@
           "height": 655360,
           "id": "stick",
           "lifetimeTicks": 0,
+          "sprite": {
+            "frames": [],
+            "ticksPerFrame": 1
+          },
           "width": 655360
         },
         {
@@ -373,6 +404,10 @@
           "height": 131072,
           "id": "timer",
           "lifetimeTicks": 5,
+          "sprite": {
+            "frames": [],
+            "ticksPerFrame": 1
+          },
           "width": 131072
         },
         {
@@ -383,6 +418,10 @@
           "height": 1310720,
           "id": "player",
           "lifetimeTicks": 0,
+          "sprite": {
+            "frames": [],
+            "ticksPerFrame": 1
+          },
           "width": 1310720
         },
         {
@@ -393,6 +432,10 @@
           "height": 524288,
           "id": "bullet",
           "lifetimeTicks": 60,
+          "sprite": {
+            "frames": [],
+            "ticksPerFrame": 1
+          },
           "width": 262144
         },
         {
@@ -403,6 +446,10 @@
           "height": 1310720,
           "id": "mine",
           "lifetimeTicks": 0,
+          "sprite": {
+            "frames": [],
+            "ticksPerFrame": 1
+          },
           "width": 1310720
         },
         {
@@ -413,6 +460,10 @@
           "height": 262144,
           "id": "fast",
           "lifetimeTicks": 0,
+          "sprite": {
+            "frames": [],
+            "ticksPerFrame": 1
+          },
           "width": 262144
         },
         {
@@ -423,6 +474,10 @@
           "height": 262144,
           "id": "filler",
           "lifetimeTicks": 0,
+          "sprite": {
+            "frames": [],
+            "ticksPerFrame": 1
+          },
           "width": 262144
         },
         {
@@ -433,6 +488,10 @@
           "height": 131072,
           "id": "spark",
           "lifetimeTicks": 3,
+          "sprite": {
+            "frames": [],
+            "ticksPerFrame": 1
+          },
           "width": 131072
         },
         {
@@ -443,6 +502,10 @@
           "height": 655360,
           "id": "twin",
           "lifetimeTicks": 0,
+          "sprite": {
+            "frames": [],
+            "ticksPerFrame": 1
+          },
           "width": 655360
         }
       ],
@@ -512,5 +575,5 @@
       "name": "0.1.0"
     }
   },
-  "specVersion": 4
+  "specVersion": 5
 }

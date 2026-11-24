@@ -5,6 +5,7 @@ import SpriteKit
 import os
 
 private let log = Logger(subsystem: "@@{identifier}", category: "runtime")
+private let spriteLog = Logger(subsystem: "@@{identifier}", category: "sprites")
 private let rawOne = 65536.0
 private let bestKey = "best"
 
@@ -49,6 +50,11 @@ final class GameScene: SKScene {
     private var touchStart: CGPoint?
     private var touchTotal = CGPoint.zero
     private var logged = false
+    /// One texture per atlas frame (contract section 10), or nil when the spec has no atlas or it could not be loaded.
+    private let frames: [SKTexture]?
+    /// First frame changes of animated kinds as drawn (contract section 10), logged as evidence that frames follow the tick.
+    private var lastFrame: [Int: Int] = [:]
+    private var frameLines = 0
     private var verified = true
     /// Safe-area top inset in points (notch, Dynamic Island); the HUD bar sits below it.
     var insetTop: Double = 0 {
@@ -67,6 +73,7 @@ final class GameScene: SKScene {
         loop = GameScene.makeLoop(seed: seed)
         best = Int64(UserDefaults.standard.integer(forKey: bestKey))
         tracker = GameScene.makeTracker(spec: spec)
+        frames = GameScene.loadAtlas(spec.game.atlas)
         super.init(size: CGSize(width: spec.game.world.width, height: spec.game.world.height))
         scaleMode = .resizeFill
         backgroundColor = SKColor(hex: spec.game.palette.background)
@@ -115,6 +122,28 @@ final class GameScene: SKScene {
         addChild(card)
     }
 
+    /// Slices the bundled atlas into one nearest-neighbour texture per frame. A missing or unreadable file logs and falls back to glyphs.
+    private static func loadAtlas(_ atlas: SpriteAtlas) -> [SKTexture]? {
+        guard !atlas.png.isEmpty else { return nil }
+        guard let url = Bundle.module.url(forResource: "monstera-atlas", withExtension: "png"),
+              let image = UIImage(contentsOfFile: url.path) else {
+            spriteLog.error("sprites atlas=unavailable; drawing glyphs")
+            return nil
+        }
+        let sheet = SKTexture(image: image)
+        sheet.filteringMode = .nearest
+        let w = Double(atlas.columns * atlas.frameWidth), h = Double(atlas.rows * atlas.frameHeight)
+        let textures = (0..<(atlas.columns * atlas.rows)).map { n -> SKTexture in
+            let r = Sprites.source(n, columns: atlas.columns, frameW: atlas.frameWidth, frameH: atlas.frameHeight)
+            // SpriteKit texture rectangles are unit coordinates from the bottom left; the atlas rule counts rows from the top.
+            let t = SKTexture(rect: CGRect(x: Double(r.left) / w, y: (h - Double(r.top + r.height)) / h,
+                                           width: Double(r.width) / w, height: Double(r.height) / h), in: sheet)
+            t.filteringMode = .nearest
+            return t
+        }
+        spriteLog.notice("sprites atlas=loaded size=\(Int(w))x\(Int(h)) frames=\(textures.count)")
+        return textures
+    }
     private static func makeLoop(seed: UInt64) -> GameLoop {
         GameLoop(world: MonsteraRuntime.World(config: GeneratedRuntimeConfig.config, seed: seed),
                  tickRate: GeneratedRuntimeConfig.tickRate,
@@ -240,9 +269,15 @@ final class GameScene: SKScene {
             let box = Box((Double(e.x) + Double(e.vx) * alpha) / rawOne, (Double(e.y) + Double(e.vy) * alpha) / rawOne,
                           Double(k.width) / rawOne, Double(k.height) / rawOne)
             let px = l.toScreen(box)
+            let frame = frames.flatMap { _ in Sprites.frameAt(kind.sprite.frames, ticksPerFrame: kind.sprite.ticksPerFrame, tick: UInt64(loop.world.tick)) }
             let node: SKNode
             if let existing = nodes[e.id] {
                 node = existing
+            } else if let frames, let frame {
+                let sprite = SKSpriteNode(texture: frames[frame])
+                node = sprite
+                nodes[e.id] = node
+                entityLayer.addChild(node)
             } else if kind.glyph.isEmpty {
                 let rect = SKShapeNode(rectOf: CGSize(width: 1, height: 1))
                 rect.fillColor = SKColor(hex: kind.color)
@@ -260,7 +295,18 @@ final class GameScene: SKScene {
             }
             node.isHidden = l.visible(box) == nil   // completely outside the world: nothing to draw
             node.position = point(px.x + px.w / 2, px.y + px.h / 2)
-            if let label = node as? SKLabelNode {
+            if let sprite = node as? SKSpriteNode {
+                if let frames, let frame {
+                    sprite.texture = frames[frame]  // the frame of this tick (contract section 10)
+                    if kind.sprite.frames.count > 1 && frameLines < 6 && lastFrame[e.kind] != frame {
+                        lastFrame[e.kind] = frame
+                        frameLines += 1
+                        let tick = loop.world.tick, id = kind.id  // Logger interpolations are autoclosures: no implicit self
+                        spriteLog.notice("sprites tick=\(tick) kind=\(id, privacy: .public) frame=\(frame)")
+                    }
+                }
+                sprite.size = CGSize(width: px.w, height: px.h)
+            } else if let label = node as? SKLabelNode {
                 label.fontSize = Texts.glyphSize(px)
             } else {
                 node.xScale = px.w

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { APPROVED_BLOB, BASELINE_BLOB, EXCEPTION_PATH, PASS_MESSAGE, classifyEngineSchemaDiff } from "../../scripts/regression-classify.mjs";
+import { APPROVED_BLOB, BASELINE_BLOB, E1_ALLOWED, E1_BASE, EXCEPTION_PATH, PASS_MESSAGE, classifyE1Diff, classifyEngineSchemaDiff } from "../../scripts/regression-classify.mjs";
 
 const base = {
   nameStatus: `M\t${EXCEPTION_PATH}`,
@@ -53,5 +53,34 @@ describe("task 9.2 engine/schema freeze (baseline 71c77e4, approved blob fixed)"
 
   it("fails when the file is deleted", () => {
     expect(classifyEngineSchemaDiff({ ...base, nameStatus: `D\t${EXCEPTION_PATH}`, currentBlob: null }).status).toBe("FAIL");
+  });
+});
+describe("Gate E1 engine diff (pre-E1 main to HEAD, explicit allowlist)", () => {
+  const ns = (rows: [string, string][]) => rows.map(([s, p]) => `${s}\t${p}`).join("\n");
+  it("the E1 base is the pre-E1 main and never the original G6 baseline", () => {
+    expect(E1_BASE).toBe("7f0292ba99ccc1b874bf30047ae175aacd021d9f");
+    expect(E1_BASE.startsWith("71c77e4")).toBe(false);
+  });
+  it("passes for no change and for approved paths with their approved status", () => {
+    expect(classifyE1Diff({ nameStatus: "" }).status).toBe("PASS");
+    expect(classifyE1Diff({ nameStatus: ns(Object.entries(E1_ALLOWED).map(([p, s]) => [s, p])) }).status).toBe("PASS");
+  });
+  it("fails for the oracle, emit_runtime, a runtime core template, an unknown file or a wrong status", () => {
+    for (const path of [
+      "tools/monstera/monstera/oracle/sim.py",
+      "tools/monstera/monstera/emit_runtime.py",
+      "tools/monstera/monstera/templates/android/runtime/Simulation.kt.tmpl",
+      "tools/monstera/monstera/templates/ios/Runtime/Simulation.swift.tmpl",
+      "spec/schema/project.schema.json",
+    ]) {
+      const r = classifyE1Diff({ nameStatus: ns([["M", path]]) });
+      expect(r.status, path).toBe("FAIL");
+      expect(r.summary).toContain(path);
+    }
+    expect(classifyE1Diff({ nameStatus: ns([["D", "tools/monstera/monstera/semantic.py"]]) }).status).toBe("FAIL");
+    expect(classifyE1Diff({ nameStatus: ns([["M", "tools/monstera/monstera/atlas.py"]]) }).status).toBe("FAIL"); // added, not modified, since E1_BASE
+  });
+  it("lists no runtime core or oracle path", () => {
+    for (const p of Object.keys(E1_ALLOWED)) expect(p).not.toMatch(/oracle\/|emit_runtime|\/runtime\/|\/Runtime\//);
   });
 });
