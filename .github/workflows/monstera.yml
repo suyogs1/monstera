@@ -137,7 +137,9 @@ jobs:
           bash tools/monstera/bin/monstera verify g6-clean-room/atlas-proof
           python3 tools/scripts/check-atlas-bytes.py "$spec" g6-clean-room/atlas-proof
           RUN_ID="$RUN_ID-atlas-proof" DL_APP_DIR=g6-clean-room/atlas-proof/android bash device-lab/android/adapter.sh build
-          (cd g6-clean-room/atlas-proof/android && ./gradlew testDebugUnitTest --no-daemon)
+          # A fork carries no recorded goldens (they belong to the template spec), so only the presentation tests run here: they
+          # include the sprite frame rule. Simulation equality with the template is proven by the oracle check in the Studio apply path.
+          (cd g6-clean-room/atlas-proof/android && ./gradlew testDebugUnitTest --no-daemon --tests "*.presentation.*")
       - name: Upload build result and clean-room reports
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
@@ -211,7 +213,8 @@ jobs:
             export RUN_ID="$BASE_RUN_ID-$(basename "$app")" DL_APP_DIR="$app/ios" DL_APP_PRODUCT="$product" DL_APP_BUNDLE_ID="$bundle"
             bash $A build
             mkdir -p g6-clean-room-reports
-            swift test --package-path "$app/ios/Runtime" 2>&1 | tee "g6-clean-room-reports/$(basename "$app").swift-runtime.log"
+            # A fork (strict row) has no recorded goldens, so its runtime conformance test has nothing to replay; see the Android job.
+            if [ -z "${strict:-}" ]; then swift test --package-path "$app/ios/Runtime" 2>&1 | tee "g6-clean-room-reports/$(basename "$app").swift-runtime.log"; fi
             swift test --package-path "$app/ios/Presentation" 2>&1 | tee "g6-clean-room-reports/$(basename "$app").swift-presentation.log"
             bash $A install
             bash $A launch
