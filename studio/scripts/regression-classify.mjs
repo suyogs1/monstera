@@ -71,14 +71,30 @@ export const E2_ALLOWED = Object.freeze({
   "tools/monstera/tests/test_extensions.py": "A",
 });
 const ALLOWED = Object.freeze({ ...E1_ALLOWED, ...E2_ALLOWED });
+// PR #61 (studio/atlas-native-proof): bounded, redacted subprocess diagnostics in `monstera conformance` and their tests. Unlike the
+// lists above this exception is pinned to content: each path may only be modified (M) and its blob at HEAD must be exactly the one
+// below, so any later edit to either file fails until it is reviewed and pinned again. Blobs are fixed constants, never read from HEAD.
+export const DIAGNOSTICS_PINNED = Object.freeze({
+  "tools/monstera/monstera/conformance.py": Object.freeze({ status: "M", blob: "9e096004a8d8c892e82afce923e65efda7b04af8" }),
+  "tools/monstera/tests/test_scenarios.py": Object.freeze({ status: "M", blob: "c7f763a96781bac51422eb54093ce3462dca6fba" }),
+});
 export const E1_PASS_MESSAGE = "E1 changes are limited to the approved contract, validation, bundling and presentation paths; the runtime core and oracle are unchanged since the pre-E1 main.";
-// input: { nameStatus: string (git diff --name-status --no-renames E1_BASE HEAD -- tools/monstera spec/schema) }
-export function classifyE1Diff({ nameStatus }) {
+// input: { nameStatus: string (git diff --name-status --no-renames E1_BASE HEAD -- tools/monstera spec/schema),
+//          blobs: { [path]: string|null } (blob at HEAD of each DIAGNOSTICS_PINNED path; a missing entry fails a pinned change) }
+export function classifyE1Diff({ nameStatus, blobs = {} }) {
   const entries = nameStatus.split(/\r?\n/).map((l) => l.trim()).filter(Boolean).map((l) => {
     const [status, ...rest] = l.split(/\t+/);
     return { status, path: rest.join("\t") };
   });
-  const bad = entries.filter((e) => ALLOWED[e.path] !== e.status);
+  const pinned = (e) => {
+    const pin = DIAGNOSTICS_PINNED[e.path];
+    return pin !== undefined && pin.status === e.status && blobs[e.path] === pin.blob;
+  };
+  const bad = entries.filter((e) => ALLOWED[e.path] !== e.status && !pinned(e));
+  const pinnedBad = bad.filter((e) => DIAGNOSTICS_PINNED[e.path] !== undefined);
+  if (pinnedBad.length > 0) {
+    return { status: "FAIL", summary: `pinned diagnostics paths do not match their approved content: ${pinnedBad.map((e) => `${e.status} ${e.path} blob ${blobs[e.path] ?? "missing"}, approved ${DIAGNOSTICS_PINNED[e.path].status} ${DIAGNOSTICS_PINNED[e.path].blob}`).join("; ")}${bad.length > pinnedBad.length ? `; also outside the allowlists: ${bad.filter((e) => !pinnedBad.includes(e)).map((e) => `${e.status} ${e.path}`).join("; ")}` : ""}` };
+  }
   if (bad.length > 0) return { status: "FAIL", summary: `changes outside the E1 and E2 allowlists: ${bad.map((e) => `${e.status} ${e.path}`).join("; ")}` };
   if (entries.length === 0) return { status: "PASS", summary: "no engine or schema change since the pre-E1 main" };
   return { status: "PASS", summary: `${E1_PASS_MESSAGE} (${entries.length} approved paths changed)` };

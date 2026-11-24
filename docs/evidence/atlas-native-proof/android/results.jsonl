@@ -1,0 +1,8 @@
+{"op":"build","target":"android-emulator","status":"ok","run_id":"atlas-native-proof-android","timestamp":"2026-11-24T08:39:34Z","artifact":"device-lab/reports/runs/atlas-native-proof-android/android-emulator/app-debug.apk"}
+{"op":"install","target":"android-emulator","status":"ok","run_id":"atlas-native-proof-android","timestamp":"2026-11-24T08:39:35Z"}
+{"op":"launch","target":"android-emulator","status":"ok","run_id":"atlas-native-proof-android","timestamp":"2026-11-24T08:39:39Z"}
+{"op":"screenshot","target":"android-emulator","status":"ok","run_id":"atlas-native-proof-android","timestamp":"2026-11-24T08:39:46Z","artifact":"device-lab/reports/runs/atlas-native-proof-android/android-emulator/01-launched.png"}
+{"op":"screenshot","target":"android-emulator","status":"ok","run_id":"atlas-native-proof-android","timestamp":"2026-11-24T08:39:48Z","artifact":"device-lab/reports/runs/atlas-native-proof-android/android-emulator/02-later.png"}
+{"op":"logs","target":"android-emulator","status":"ok","run_id":"atlas-native-proof-android","timestamp":"2026-11-24T08:39:49Z","artifact":"device-lab/reports/runs/atlas-native-proof-android/android-emulator/logs.txt"}
+{"op":"stop","target":"android-emulator","status":"ok","run_id":"atlas-native-proof-android","timestamp":"2026-11-24T08:39:49Z"}
+{"op":"report","target":"android-emulator","status":"ok","run_id":"atlas-native-proof-android","timestamp":"2026-11-24T08:39:49Z","artifact":"device-lab/reports/runs/atlas-native-proof-android/android-emulator/report.json"}

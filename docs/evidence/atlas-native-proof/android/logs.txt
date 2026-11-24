@@ -1,0 +1,15 @@
+--------- beginning of system
+11-24 14:09:08.461 W/ActivityTaskManager(  762): callingPackage for (uid=2000, pid=8762) has no WPC
+11-24 14:09:08.771 I/ActivityTaskManager(  762): START u0 {flg=0x10000000 xflg=0x5 cmp=app.monstera.atlasproof/.MainActivity} with LAUNCH_MULTIPLE from uid 2000 (com.android.shell) (BAL_ALLOW_PERMISSION) result code=0
+--------- beginning of main
+11-24 14:09:10.755 I/MonsteraSpec( 8783): spec sha256=0f1ba683b85ed3b0271a47ad0eb8f09e61efbebf6d045d9ca6892b7efe11b241 bundledMatches=true
+11-24 14:09:11.081 I/MonsteraSprites( 8783): sprites atlas=loaded size=128x16 frames=8
+11-24 14:09:11.278 I/ActivityTaskManager(  762): Displayed app.monstera.atlasproof/.MainActivity for user 0: +2s859ms
+11-24 14:09:11.777 I/ActivityTaskManager(  762): Activity reported stop, but no longer stopping: ActivityRecord{240747007 u0 com.google.android.apps.nexuslauncher/.NexusLauncherActivity t2} STOPPED
+11-24 14:09:12.300 I/MonsteraRuntime( 8783): runtime ticks=60 hash=f6d2353dab33978e seed=1795509550706
+11-24 14:09:16.816 I/MonsteraSprites( 8783): sprites tick=331 kind=wisp frame=3
+11-24 14:09:16.902 I/MonsteraSprites( 8783): sprites tick=336 kind=wisp frame=2
+11-24 14:09:17.034 I/MonsteraSprites( 8783): sprites tick=344 kind=wisp frame=3
+11-24 14:09:17.168 I/MonsteraSprites( 8783): sprites tick=352 kind=wisp frame=2
+11-24 14:09:17.301 I/MonsteraSprites( 8783): sprites tick=360 kind=wisp frame=3
+11-24 14:09:17.435 I/MonsteraSprites( 8783): sprites tick=368 kind=wisp frame=2

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { APPROVED_BLOB, BASELINE_BLOB, E1_ALLOWED, E1_BASE, E2_ALLOWED, EXCEPTION_PATH, PASS_MESSAGE, classifyE1Diff, classifyEngineSchemaDiff } from "../../scripts/regression-classify.mjs";
+import { APPROVED_BLOB, BASELINE_BLOB, DIAGNOSTICS_PINNED, E1_ALLOWED, E1_BASE, E2_ALLOWED, EXCEPTION_PATH, PASS_MESSAGE, classifyE1Diff, classifyEngineSchemaDiff } from "../../scripts/regression-classify.mjs";
 
 const base = {
   nameStatus: `M\t${EXCEPTION_PATH}`,
@@ -96,5 +96,57 @@ describe("Gate E2 engine diff (template-only extension wiring)", () => {
   it("still fails for a schema or runtime-core change and for a wrong status on an E2 path", () => {
     expect(classifyE1Diff({ nameStatus: ns([["M", "spec/schema/game.schema.json"], ["M", "tools/monstera/monstera/templates/android/runtime/Fixed.kt.tmpl"]]) }).status).toBe("FAIL");
     expect(classifyE1Diff({ nameStatus: ns([["M", "tools/monstera/monstera/templates/ios/ExtensionDefaults/Package.swift.tmpl"]]) }).status).toBe("FAIL");
+  });
+});
+describe("PR #61 conformance diagnostics (content-pinned exception)", () => {
+  const ns = (rows: [string, string][]) => rows.map(([s, p]) => `${s}\t${p}`).join("\n");
+  const CONF = "tools/monstera/monstera/conformance.py";
+  const TEST = "tools/monstera/tests/test_scenarios.py";
+  const CONF_BLOB = "9e096004a8d8c892e82afce923e65efda7b04af8";
+  const TEST_BLOB = "c7f763a96781bac51422eb54093ce3462dca6fba";
+  const approved: Record<string, string> = { [CONF]: CONF_BLOB, [TEST]: TEST_BLOB };
+  const both = ns([["M", CONF], ["M", TEST]]);
+  it("pins exactly the two paths, as modifications, to fixed blobs, and leaves the E1 and E2 lists without them", () => {
+    expect(Object.keys(DIAGNOSTICS_PINNED).sort()).toEqual([CONF, TEST]);
+    for (const [p, pin] of Object.entries(DIAGNOSTICS_PINNED)) {
+      expect(pin).toEqual({ status: "M", blob: approved[p] });
+      expect(Object.isFrozen(pin)).toBe(true);
+      expect(E1_ALLOWED[p]).toBeUndefined();
+      expect(E2_ALLOWED[p]).toBeUndefined();
+    }
+    expect(Object.isFrozen(DIAGNOSTICS_PINNED)).toBe(true);
+  });
+  it("passes with the approved blobs, alone or together with the approved E1 and E2 paths", () => {
+    expect(classifyE1Diff({ nameStatus: both, blobs: approved }).status).toBe("PASS");
+    expect(classifyE1Diff({ nameStatus: ns([["M", CONF]]), blobs: approved }).status).toBe("PASS");
+    const all = ns([...Object.entries({ ...E1_ALLOWED, ...E2_ALLOWED }).map(([p, s]) => [s, p] as [string, string]), ["M", CONF], ["M", TEST]]);
+    expect(classifyE1Diff({ nameStatus: all, blobs: approved }).status).toBe("PASS");
+  });
+  it("fails for a different blob of either file (any later edit), naming the path and both blobs", () => {
+    for (const p of [CONF, TEST]) {
+      const r = classifyE1Diff({ nameStatus: both, blobs: { ...approved, [p]: "0".repeat(40) } });
+      expect(r.status).toBe("FAIL");
+      expect(r.summary).toContain(p);
+      expect(r.summary).toContain("0".repeat(40));
+      expect(r.summary).toContain(approved[p]);
+    }
+  });
+  it("fails closed when the blob is missing or the caller passes none", () => {
+    expect(classifyE1Diff({ nameStatus: both, blobs: { [TEST]: TEST_BLOB } }).status).toBe("FAIL");
+    expect(classifyE1Diff({ nameStatus: both, blobs: { ...approved, [CONF]: null } }).status).toBe("FAIL");
+    expect(classifyE1Diff({ nameStatus: both }).status).toBe("FAIL");
+  });
+  it("fails for an unexpected status even with the approved blob (added, deleted, typechange)", () => {
+    for (const s of ["A", "D", "T"]) {
+      expect(classifyE1Diff({ nameStatus: ns([[s, CONF]]), blobs: approved }).status, s).toBe("FAIL");
+      expect(classifyE1Diff({ nameStatus: ns([[s, TEST]]), blobs: approved }).status, s).toBe("FAIL");
+    }
+  });
+  it("fails for an extra path next to the approved diagnostics change, including another test file and the oracle", () => {
+    for (const extra of ["tools/monstera/tests/test_presentation_extra.py", "tools/monstera/monstera/oracle/sim.py", "tools/monstera/monstera/cli.py", "spec/schema/conformance.schema.json"]) {
+      const r = classifyE1Diff({ nameStatus: `${both}\nM\t${extra}`, blobs: { ...approved, [extra]: CONF_BLOB } });
+      expect(r.status, extra).toBe("FAIL");
+      expect(r.summary).toContain(extra);
+    }
   });
 });

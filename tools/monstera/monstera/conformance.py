@@ -85,6 +85,51 @@ def _run(cmd: list[str], cwd: Path, env: dict[str, str]) -> subprocess.Completed
     return subprocess.run(cmd, cwd=cwd, env=env, capture_output=True, text=True, timeout=1800)
 
 
+# Diagnostics of a failed build or test run: the tail of each stream, bounded, with credential-shaped text replaced. Only what
+# the tool itself wrote is kept (the environment is never printed), and the verdict never depends on this text.
+DIAG_LINES = 60
+DIAG_CHARS = 4000
+_SECRETS = [
+    (re.compile(r"\b(?:gh[pousr]_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,})\b"), "<redacted-github-token>"),
+    (re.compile(r"\b(?:AKIA|ASIA)[0-9A-Z]{16}\b"), "<redacted-aws-key-id>"),
+    (re.compile(r"\bAIza[0-9A-Za-z_\-]{35}\b"), "<redacted-google-api-key>"),
+    (re.compile(r"(?i)\b(bearer|basic)\s+[A-Za-z0-9._~+/=\-]{8,}"), r"\1 <redacted>"),
+    (re.compile(r"(?i)\b([a-z0-9_.\-]*(?:password|passwd|secret|token|api[_-]?key|credential)[a-z0-9_.\-]*)\s*([=:])\s*\S+"),
+     r"\1\2<redacted>"),
+    (re.compile(r"(?i)\b([a-z][a-z0-9+.\-]*://)[^/\s:@]+:[^/\s@]+@"), r"\1<redacted>@"),
+    (re.compile(r"-----BEGIN [A-Z ]*PRIVATE KEY-----.*?-----END [A-Z ]*PRIVATE KEY-----", re.S), "<redacted-private-key>"),
+]
+
+
+def redact(text: str) -> str:
+    for pattern, replacement in _SECRETS:
+        text = pattern.sub(replacement, text)
+    return text
+
+
+def diagnostics(proc: subprocess.CompletedProcess[str]) -> str:
+    """Bounded, redacted tail of the stdout and stderr of a finished process; empty when it wrote nothing."""
+    parts = []
+    for name, text in (("stdout", proc.stdout), ("stderr", proc.stderr)):
+        lines = (text or "").splitlines()
+        if not lines:
+            continue
+        joined = "\n".join(lines[-DIAG_LINES:])
+        tail = joined[-DIAG_CHARS:]
+        cut = len(lines) > DIAG_LINES or len(tail) < len(joined)
+        note = "; last part only" if cut else ""
+        parts.append(f"--- {name} ({len(lines)} lines{note}) ---\n{redact(tail)}")
+    return "\n".join(parts)
+
+
+def _with_diagnostics(status: str, detail: str, proc: subprocess.CompletedProcess[str]) -> str:
+    """The detail line, followed by the diagnostics when the run did not pass."""
+    if status == "pass":
+        return detail
+    diag = diagnostics(proc)
+    return f"{detail}\n{diag}" if diag else detail
+
+
 def _kotlin(gen: Path, out_file: Path) -> tuple[str, str]:
     android = gen / "android"
     if not (android / "gradlew").exists():
@@ -99,7 +144,7 @@ def _kotlin(gen: Path, out_file: Path) -> tuple[str, str]:
     # Test failures are decided by comparing the recorded checkpoints, not by the exit status alone,
     # but a build failure (no output) is an error.
     status = "pass" if proc.returncode == 0 else ("fail" if out_file.exists() else "error")
-    return status, f"{' '.join(cmd)} (cwd {android.name}) exit {proc.returncode}"
+    return status, _with_diagnostics(status, f"{' '.join(cmd)} (cwd {android.name}) exit {proc.returncode}", proc)
 
 
 def docker_command(pkg: Path, results: Path, image: str) -> list[str]:
@@ -125,7 +170,7 @@ def _swift(gen: Path, out_file: Path, image: str | None) -> tuple[str, str]:
             if produced.exists():
                 out_file.write_bytes(produced.read_bytes())
         status = "pass" if proc.returncode == 0 else ("fail" if out_file.exists() else "error")
-        return status, f"docker run {image} swift test (package ios/Runtime) exit {proc.returncode}"
+        return status, _with_diagnostics(status, f"docker run {image} swift test (package ios/Runtime) exit {proc.returncode}", proc)
     swift = shutil.which("swift")
     if not swift:
         return "skipped", "swift not found; pass --swift-image to run in a container"
@@ -135,7 +180,7 @@ def _swift(gen: Path, out_file: Path, image: str | None) -> tuple[str, str]:
     except (OSError, subprocess.TimeoutExpired) as exc:
         return "error", f"swift test: {exc}"
     status = "pass" if proc.returncode == 0 else ("fail" if out_file.exists() else "error")
-    return status, f"swift test --package-path ios/Runtime exit {proc.returncode}"
+    return status, _with_diagnostics(status, f"swift test --package-path ios/Runtime exit {proc.returncode}", proc)
 
 
 def _verified_manifest(gen: Path) -> dict[str, Any]:
@@ -231,7 +276,7 @@ def summarize(report: dict[str, Any]) -> list[str]:
         lines.append("  NOT a pass: not every platform (oracle, kotlin, swift) ran and matched; the oracle alone proves nothing "
                      "about the native cores")
     for p in report["platforms"]:
-        lines.append(f"  {p['platform']:7s} {p['status']:8s} {p['detail']}")
+        lines.append(f"  {p['platform']:7s} {p['status']:8s} " + p["detail"].replace("\n", "\n      "))
     for sc in report["scenarios"]:
         cells = " ".join(f"{r['platform']}={r['status']}" for r in sc["results"])
         lines.append(f"  {sc['name']:20s} {sc['checkpoints']:4d} checkpoints  {cells}")

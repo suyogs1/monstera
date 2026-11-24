@@ -57,6 +57,8 @@ jobs:
         run: npm run a3:dashboard
       - name: Foundry flow, A3 bundle, A4 asset to A7 pack, scaffold UI and drift (task 9.1)
         run: npm run foundry:flow
+      - name: Authored sprites, import sheet to exported spec equals the committed spec the native proof builds
+        run: npm run atlas:proof -- --check
       - name: Regression proof, task 9.2 (engine and schema diff, monstera gates, generate --check and verify, g6 evidence diff)
         run: npm run regression
       - name: Smoke test under the header policy (CSP report-only, then enforced)

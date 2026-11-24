@@ -143,6 +143,39 @@ class ConformanceComparison(Base):
         self.assertEqual({s["name"] for s in report["scenarios"]},
                          {p.name[:-len(scenario.SUFFIX)] for p in SAMPLE_SCENARIOS.glob("*.json")})
 
+    def test_a_failed_native_run_keeps_bounded_redacted_diagnostics_and_the_same_verdict(self) -> None:
+        import subprocess
+        gen = REPO / "generated" / "monstera-sample"
+        token = "ghp_" + "a" * 36
+        noise = [f"line {i}" for i in range(200)]
+        stderr = "\n".join([*noise, "FAILURE: Build failed with an exception.", f"Authorization: Bearer {token}",
+                              "signing.password=hunter2hunter2", "https://user:pa55word@example.com/repo"])
+        done = subprocess.CompletedProcess(["bash", "./gradlew"], 1, stdout="> Task :app:compileDebugKotlin FAILED\n", stderr=stderr)
+        with mock.patch.object(conformance, "_run", return_value=done):
+            report = conformance.run(gen, self.store, ["oracle", "kotlin"])
+        self.assertEqual(self.store.validate(report, "conformance.schema.json"), [])
+        [kotlin] = [p for p in report["platforms"] if p["platform"] == "kotlin"]
+        self.assertEqual(kotlin["status"], "error", "no checkpoint output: a build failure is an error, as before")
+        self.assertEqual(report["verdict"], "fail")
+        detail = kotlin["detail"]
+        first, _, rest = detail.partition("\n")
+        self.assertTrue(first.endswith("--no-daemon --console=plain cleanTestDebugUnitTest testDebugUnitTest (cwd android) exit 1"), first)
+        self.assertTrue(rest.startswith("--- stdout (1 lines) ---\n"), rest[:60])
+        self.assertIn("compileDebugKotlin FAILED", detail)
+        self.assertIn("FAILURE: Build failed with an exception.", detail)
+        self.assertIn("last part only", detail)
+        self.assertNotIn("line 0\n", detail)
+        self.assertLessEqual(len(detail), 200 + 2 * (conformance.DIAG_CHARS + 80))
+        for secret in (token, "hunter2hunter2", "pa55word"):
+            self.assertNotIn(secret, detail)
+        summary = "\n".join(conformance.summarize(report))
+        self.assertIn("FAILURE: Build failed with an exception.", summary)
+        self.assertNotIn(token, summary)
+    def test_a_passing_native_run_adds_no_diagnostics(self) -> None:
+        import subprocess
+        done = subprocess.CompletedProcess(["x"], 0, stdout="BUILD SUCCESSFUL\n", stderr="")
+        self.assertEqual(conformance._with_diagnostics("pass", "cmd exit 0", done), "cmd exit 0")
+        self.assertEqual(conformance._with_diagnostics("error", "cmd exit 1", subprocess.CompletedProcess(["x"], 1, "", "")), "cmd exit 1")
     def test_unknown_platform_and_arbitrary_images_are_refused(self) -> None:
         gen = REPO / "generated" / "monstera-sample"
         with self.assertRaises(conformance.ConformanceError):
