@@ -102,7 +102,9 @@ describe("PR #61 conformance diagnostics (content-pinned exception)", () => {
   const ns = (rows: [string, string][]) => rows.map(([s, p]) => `${s}\t${p}`).join("\n");
   const CONF = "tools/monstera/monstera/conformance.py";
   const TEST = "tools/monstera/tests/test_scenarios.py";
-  const approved = { [CONF]: "9e096004a8d8c892e82afce923e65efda7b04af8", [TEST]: "c7f763a96781bac51422eb54093ce3462dca6fba" };
+  const CONF_BLOB = "9e096004a8d8c892e82afce923e65efda7b04af8";
+  const TEST_BLOB = "c7f763a96781bac51422eb54093ce3462dca6fba";
+  const approved: Record<string, string> = { [CONF]: CONF_BLOB, [TEST]: TEST_BLOB };
   const both = ns([["M", CONF], ["M", TEST]]);
   it("pins exactly the two paths, as modifications, to fixed blobs, and leaves the E1 and E2 lists without them", () => {
     expect(Object.keys(DIAGNOSTICS_PINNED).sort()).toEqual([CONF, TEST]);
@@ -130,7 +132,7 @@ describe("PR #61 conformance diagnostics (content-pinned exception)", () => {
     }
   });
   it("fails closed when the blob is missing or the caller passes none", () => {
-    expect(classifyE1Diff({ nameStatus: both, blobs: { [TEST]: approved[TEST] } }).status).toBe("FAIL");
+    expect(classifyE1Diff({ nameStatus: both, blobs: { [TEST]: TEST_BLOB } }).status).toBe("FAIL");
     expect(classifyE1Diff({ nameStatus: both, blobs: { ...approved, [CONF]: null } }).status).toBe("FAIL");
     expect(classifyE1Diff({ nameStatus: both }).status).toBe("FAIL");
   });
@@ -142,7 +144,7 @@ describe("PR #61 conformance diagnostics (content-pinned exception)", () => {
   });
   it("fails for an extra path next to the approved diagnostics change, including another test file and the oracle", () => {
     for (const extra of ["tools/monstera/tests/test_presentation_extra.py", "tools/monstera/monstera/oracle/sim.py", "tools/monstera/monstera/cli.py", "spec/schema/conformance.schema.json"]) {
-      const r = classifyE1Diff({ nameStatus: `${both}\nM\t${extra}`, blobs: { ...approved, [extra]: approved[CONF] } });
+      const r = classifyE1Diff({ nameStatus: `${both}\nM\t${extra}`, blobs: { ...approved, [extra]: CONF_BLOB } });
       expect(r.status, extra).toBe("FAIL");
       expect(r.summary).toContain(extra);
     }
