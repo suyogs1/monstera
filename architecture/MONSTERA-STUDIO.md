@@ -130,7 +130,7 @@ contracts and are not mixed.
   pack and are shown in Studio previews, but the generated apps do not read them: the Asset and Sprite editors are not yet wired to
   `game.atlas` and `kinds[].sprite`, which Studio keeps read-only. Content written for spec v4 (stored projects, imports, bundles,
   legacy drafts) is upgraded to v5 on opening with neutral sprite fields; the upgraded project is saved as one atomic record, and
-  a refused upgrade leaves the original untouched. Gate decision (`docs/STUDIO-FOUNDRY-GATE-E.md`): E1 approved, E2 conditional,
+  a refused upgrade leaves the original untouched. Gate decision (`docs/STUDIO-FOUNDRY-GATE-E.md`): E1 approved, E2 approved 2026-11-24,
   E3 deferred.
 
 ## 10. Studio pack, ownership and drift
@@ -152,8 +152,7 @@ The pack layout (`studio/src/pack/layout.ts`) assigns every path to one ownershi
 unchanged, edited, missing or unknown. Only scaffold files count as drift. Edits to write-once files, studio data and
 engine-owned files do not.
 
-Extension roots and scaffold files are not compiled into the app. Compiling developer-owned source roots is engine track E2,
-which is deferred.
+Extension roots are compiled into the app (engine track E2, approved 2026-11-24). The generated Gradle project adds `<project>/extensions/android` as a Kotlin source set, and the generated SwiftPM project links `<project>/extensions/ios/MonsteraExtensions` (one level down, because SwiftPM names a local package after its folder and `ios` is taken). When a root is absent the engine's own no-op `MonsteraExtensions` default in `android/` or `ios/ExtensionDefaults` is compiled instead. The engine never reads, lists, writes or deletes `extensions/`.
 
 ## 11. Backend and monetization scaffolding
 
@@ -162,7 +161,7 @@ which is deferred.
 - Both emit **scaffold text** (Kotlin and Swift interface stubs, a mock rewarded ad service, a SETUP guide) into
   `studio-pack/scaffold/`. The developer adopts the files by hand.
 - **Firebase is scaffold and mock. It is not a live backend.** Studio makes no call to Firebase and creates no account or
-  resource. **AdMob is mock and test only.** No ad is shown, nothing is compiled into the app, and Studio never stores or
+  resource. **AdMob is mock and test only.** The exported app shows a labelled MOCK overlay in place of an ad; no ad is requested, no ad network is contacted, and Studio never stores or
   emits a production ad id. Real ad ids and `google-services.json` or `GoogleService-Info.plist` are added by the developer
   after export.
 

@@ -56,7 +56,7 @@
       "status": "prototype",
       "targetStatus": "mock",
       "nativeOutput": "scaffold",
-      "limits": "Scaffold text only: Firebase service choices, a read-only preview and scaffold files written into the Studio pack. Not compiled into the app, not connected to any backend, no keys or config files."
+      "limits": "Scaffold only: Firebase service choices, a read-only preview and Kotlin and Swift interfaces with inert stubs written once into extensions/ of the exported project, where the generated Android and iOS projects compile them. Not connected to any backend, no SDK, no keys or config files."
     },
     {
       "id": "monetization",
@@ -64,7 +64,7 @@
       "status": "prototype",
       "targetStatus": "mock",
       "nativeOutput": "mock",
-      "limits": "Mock and test placements with a labelled mock behaviour preview and scaffold files in the Studio pack. Not compiled into the app, no ad is shown, no production ad ids and no ad unit id fields."
+      "limits": "Mock and test placements with a labelled mock behaviour preview. The exported app compiles a labelled MOCK rewarded overlay from extensions/. No ad is requested, no ad network is contacted, no production ad ids and no ad unit id fields."
     },
     {
       "id": "kiro",
@@ -311,12 +311,12 @@
       "targetStatus": "prototype",
       "nativeOutput": "scaffold",
       "evidence": [
-        "studio/src/integrations/ops.test.ts",
         "studio/src/integrations/scaffold/emit.test.ts",
-        "studio/src/integrations/ui.test.tsx",
-        "studio/src/release/exportPack.test.ts"
+        "studio/src/integrations/scaffold/native.test.ts",
+        "tools/monstera/tests/test_extensions.py",
+        "studio/src/integrations/ui.test.tsx"
       ],
-      "limits": "Not connected to any backend. The scaffold text is written into the Studio pack as scaffold files for the developer to adopt; nothing is compiled into the app and no keys or config files are produced.",
+      "limits": "Not connected to any backend. The scaffold is written once into extensions/ (developer-owned, never overwritten on re-export) and compiled by the generated Gradle and SwiftPM projects. No SDK, keys or config files are produced. Compile and test results per platform are recorded in the E2 pull request and CI, not in this registry.",
       "requires": "",
       "designRow": "Firebase interfaces and stubs, AdMob placements and mock rewarded ad"
     },
@@ -340,12 +340,12 @@
       "targetStatus": "mock",
       "nativeOutput": "mock",
       "evidence": [
-        "studio/src/integrations/ops.test.ts",
         "studio/src/integrations/scaffold/emit.test.ts",
-        "studio/src/integrations/ui.test.tsx",
-        "studio/src/release/exportPack.test.ts"
+        "studio/src/integrations/scaffold/native.test.ts",
+        "tools/monstera/tests/test_extensions.py",
+        "studio/src/integrations/ui.test.tsx"
       ],
-      "limits": "Mock and test placements only. No ad is shown, nothing is compiled into the app unless engine track E2 is approved, and there are no production ad ids.",
+      "limits": "Mock and test placements only. The exported app shows a labelled MOCK overlay in place of an ad: no ad is requested, no ad network is contacted and there are no production ad ids.",
       "requires": "",
       "designRow": ""
     },

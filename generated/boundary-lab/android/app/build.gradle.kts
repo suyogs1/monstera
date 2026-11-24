@@ -4,6 +4,10 @@ plugins {
     id("org.jetbrains.kotlin.plugin.compose")
 }
 
+// E2: developer-owned native code lives outside the generator-owned android/ tree. When
+// <project>/extensions/android exists, its sources and tests are compiled into the app; otherwise the
+// generated no-op monstera.extensions.MonsteraExtensions in src/extensionDefaults is compiled instead.
+val extensionsDir = rootProject.projectDir.resolve("../extensions/android")
 android {
     namespace = "app.monstera.boundarylab"
     compileSdk = 36
@@ -18,6 +22,18 @@ android {
 
     buildFeatures {
         compose = true
+    }
+    sourceSets {
+        getByName("main") {
+            if (extensionsDir.isDirectory) {
+                kotlin.srcDir(extensionsDir.resolve("src/main/kotlin"))
+            } else {
+                kotlin.srcDir("src/extensionDefaults/kotlin")
+            }
+        }
+        getByName("test") {
+            if (extensionsDir.isDirectory) kotlin.srcDir(extensionsDir.resolve("src/test/kotlin"))
+        }
     }
 }
 

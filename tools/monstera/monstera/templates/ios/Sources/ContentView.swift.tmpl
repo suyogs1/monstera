@@ -1,4 +1,5 @@
 @@{header_slash}
+import MonsteraExtensions
 import SpriteKit
 import SwiftUI
 
@@ -7,6 +8,13 @@ struct ContentView: View {
     @State private var scene = GameScene(spec: GeneratedSpec.spec, verified: SpecIntegrity.check().label == "verified")
 
     var body: some View {
+        ZStack {
+            gameView
+            MonsteraExtensions.overlay()
+        }
+    }
+
+    private var gameView: some View {
         GeometryReader { proxy in
             SpriteView(scene: scene, preferredFramesPerSecond: spec.game.targetFps)
                 .ignoresSafeArea()

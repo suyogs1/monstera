@@ -58,6 +58,19 @@ export const E1_ALLOWED = Object.freeze({
   "tools/monstera/tests/test_presentation.py": "M",
   "tools/monstera/tests/test_sprites.py": "A",
 });
+// Gate E2 (docs/STUDIO-FOUNDRY-GATE-E.md, owner approval 2026-11-24): template-only extension wiring. No schema, oracle, emitter
+// or runtime-core path is allowed here. The generated Gradle and SwiftPM projects compile developer-owned extensions/ roots, and
+// the engine's own no-op defaults are compiled when a root is absent.
+export const E2_ALLOWED = Object.freeze({
+  "tools/monstera/monstera/templates/android/app/build.gradle.kts.tmpl": "M",
+  "tools/monstera/monstera/templates/android/app/src/main/kotlin/MainActivity.kt.tmpl": "M",
+  "tools/monstera/monstera/templates/android/extensions/MonsteraExtensions.kt.tmpl": "A",
+  "tools/monstera/monstera/templates/ios/ExtensionDefaults/MonsteraExtensions.swift.tmpl": "A",
+  "tools/monstera/monstera/templates/ios/ExtensionDefaults/Package.swift.tmpl": "A",
+  "tools/monstera/monstera/templates/ios/Sources/ContentView.swift.tmpl": "M",
+  "tools/monstera/tests/test_extensions.py": "A",
+});
+const ALLOWED = Object.freeze({ ...E1_ALLOWED, ...E2_ALLOWED });
 export const E1_PASS_MESSAGE = "E1 changes are limited to the approved contract, validation, bundling and presentation paths; the runtime core and oracle are unchanged since the pre-E1 main.";
 // input: { nameStatus: string (git diff --name-status --no-renames E1_BASE HEAD -- tools/monstera spec/schema) }
 export function classifyE1Diff({ nameStatus }) {
@@ -65,8 +78,8 @@ export function classifyE1Diff({ nameStatus }) {
     const [status, ...rest] = l.split(/\t+/);
     return { status, path: rest.join("\t") };
   });
-  const bad = entries.filter((e) => E1_ALLOWED[e.path] !== e.status);
-  if (bad.length > 0) return { status: "FAIL", summary: `changes outside the E1 allowlist: ${bad.map((e) => `${e.status} ${e.path}`).join("; ")}` };
+  const bad = entries.filter((e) => ALLOWED[e.path] !== e.status);
+  if (bad.length > 0) return { status: "FAIL", summary: `changes outside the E1 and E2 allowlists: ${bad.map((e) => `${e.status} ${e.path}`).join("; ")}` };
   if (entries.length === 0) return { status: "PASS", summary: "no engine or schema change since the pre-E1 main" };
   return { status: "PASS", summary: `${E1_PASS_MESSAGE} (${entries.length} approved paths changed)` };
 }

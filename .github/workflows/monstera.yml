@@ -7,9 +7,9 @@ on:
   # every job (including the macOS one).
   push:
     branches: [main]
-    paths: ["spec/**", "tools/monstera/**", "tools/monstera-mcp/**", "generated/**", "apps/**", "device-lab/**", ".kiro/**", ".github/workflows/**", "!.github/workflows/studio-ci.yml", "!.kiro/specs/g4-studio/**"]
+    paths: ["spec/**", "tools/monstera/**", "tools/monstera-mcp/**", "tools/e2/**", "studio/src/integrations/scaffold/**", "generated/**", "apps/**", "device-lab/**", ".kiro/**", ".github/workflows/**", "!.github/workflows/studio-ci.yml", "!.kiro/specs/g4-studio/**"]
   pull_request:
-    paths: ["spec/**", "tools/monstera/**", "tools/monstera-mcp/**", "generated/**", "apps/**", "device-lab/**", ".kiro/**", ".github/workflows/**", "!.github/workflows/studio-ci.yml", "!.kiro/specs/g4-studio/**"]
+    paths: ["spec/**", "tools/monstera/**", "tools/monstera-mcp/**", "tools/e2/**", "studio/src/integrations/scaffold/**", "generated/**", "apps/**", "device-lab/**", ".kiro/**", ".github/workflows/**", "!.github/workflows/studio-ci.yml", "!.kiro/specs/g4-studio/**"]
   workflow_dispatch:
 
 permissions:
@@ -114,6 +114,20 @@ jobs:
             echo "::endgroup::"
           done
           cat g6-clean-room-reports/*.android-junit.json
+      # E2: a fresh project plus the extensions/ tree Studio exports (Firebase scaffold, AdMob mock, MOCK rewarded overlay,
+      # native tests). The generated Gradle project must compile and run them. extensions/ is developer-owned: the engine
+      # never lists it, so `verify` stays clean (checked by the prepare script).
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: "22.18.0"
+      - name: E2 native extensions (generate, secret-scan, compile, JVM tests)
+        run: |
+          bash tools/e2/prepare-extension-project.sh spec/samples/lantern-run/monstera.spec.json e2-native/lantern-run-ext
+          RUN_ID="$RUN_ID-lantern-run-ext" DL_APP_DIR="e2-native/lantern-run-ext/android" bash device-lab/android/adapter.sh build
+          (cd e2-native/lantern-run-ext/android && ./gradlew testDebugUnitTest --no-daemon)
+          xml=e2-native/lantern-run-ext/android/app/build/test-results/testDebugUnitTest/TEST-monstera.studio.scaffold.ScaffoldTest.xml
+          test -f "$xml"
+          grep -E 'tests="3".*failures="0" errors="0"' "$xml"
       - name: Upload build result and clean-room reports
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
@@ -125,7 +139,7 @@ jobs:
           if-no-files-found: warn
       - name: Remove the fresh generated trees
         if: always()
-        run: rm -rf g6-clean-room
+        run: rm -rf g6-clean-room e2-native
 
   ios-generated:
     needs: spec
@@ -152,6 +166,14 @@ jobs:
           curl -fsSL "https://github.com/xtool-org/xtool/releases/download/${XTOOL_VERSION}/xtool.app.zip" -o "$RUNNER_TEMP/xtool.zip"
           ditto -x -k "$RUNNER_TEMP/xtool.zip" "$RUNNER_TEMP"
           echo "XTOOL=$RUNNER_TEMP/xtool.app/Contents/Resources/bin/xtool" >> "$GITHUB_ENV"
+      # E2: the same fresh project plus Studio's extensions/ tree as the Android job; the generated SwiftPM project links it.
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: "22.18.0"
+      - name: E2 prepare the fresh project with extensions (generate, secret-scan)
+        run: bash tools/e2/prepare-extension-project.sh spec/samples/lantern-run/monstera.spec.json e2-native/lantern-run-ext
+      - name: E2 Swift tests of the extension package (hand-computed frequency table, mock labels)
+        run: swift test --package-path e2-native/lantern-run-ext/extensions/ios/MonsteraExtensions
       - name: Boot an available iPhone simulator
         run: |
           UDID="$(xcrun simctl list devices available | grep -m1 -E '^[[:space:]]+iPhone' | grep -oE '[0-9A-F-]{36}')"
@@ -197,6 +219,7 @@ jobs:
           g6-clean-room/pumpkin-blaster PumpkinBlaster app.monstera.pumpkinblaster apps/pumpkin-blaster/monstera.spec.json
           g6-clean-room/trick-or-treat-rush TrickOrTreatRush app.monstera.trickortreatrush apps/trick-or-treat-rush/monstera.spec.json
           generated/lantern-run LanternRun app.monstera.lanternrun spec/samples/lantern-run/monstera.spec.json
+          e2-native/lantern-run-ext LanternRun app.monstera.lanternrun spec/samples/lantern-run/monstera.spec.json
           EOF
       - name: Upload Device Lab run (evidence only, no .app)
         if: always()
@@ -211,7 +234,7 @@ jobs:
           if-no-files-found: warn
       - name: Remove the fresh generated trees
         if: always()
-        run: rm -rf g6-clean-room
+        run: rm -rf g6-clean-room e2-native
   conformance:
     needs: spec
     runs-on: ubuntu-24.04

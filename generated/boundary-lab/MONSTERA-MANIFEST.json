@@ -18,8 +18,15 @@
       "kind": "template",
       "mode": "644",
       "path": "android/app/build.gradle.kts",
-      "sha256": "4f510edc090d684be5e43e96d62d7fa751ba226b1461fc74a58a50e39b23eff3",
+      "sha256": "e49f9132d65a34dc1bd006ce6054c13b5ec05a76a54a559d4297871597b5d380",
       "source": "templates/android/app/build.gradle.kts.tmpl"
+    },
+    {
+      "kind": "template",
+      "mode": "644",
+      "path": "android/app/src/extensionDefaults/kotlin/monstera/extensions/MonsteraExtensions.kt",
+      "sha256": "0a65025efb24bc0bc27d1f3531d1ca714ff8723d1aacc047ab2e626fd539efcb",
+      "source": "templates/android/extensions/MonsteraExtensions.kt.tmpl"
     },
     {
       "kind": "template",
@@ -46,7 +53,7 @@
       "kind": "template",
       "mode": "644",
       "path": "android/app/src/main/kotlin/app/monstera/boundarylab/MainActivity.kt",
-      "sha256": "99596edaad8c722c599b9322a53703b893f0362ef9523674425b6b0b7eb0bf6c",
+      "sha256": "2bb68f99d7578715ae775c6deb8b9bbbc2e63f312de5ad71fc2f8dbbdc819495",
       "source": "templates/android/app/src/main/kotlin/MainActivity.kt.tmpl"
     },
     {
@@ -185,6 +192,20 @@
     {
       "kind": "template",
       "mode": "644",
+      "path": "ios/ExtensionDefaults/Package.swift",
+      "sha256": "4ea2b83ac1ecdfd13070760fb5b466af9ec8df5d0f45dc3fd039da3ba32e8758",
+      "source": "templates/ios/ExtensionDefaults/Package.swift.tmpl"
+    },
+    {
+      "kind": "template",
+      "mode": "644",
+      "path": "ios/ExtensionDefaults/Sources/MonsteraExtensions/MonsteraExtensions.swift",
+      "sha256": "3d361b4729422fee923b06efbe92f66bd4edbade28fd72e27abed76c2f999ad2",
+      "source": "templates/ios/ExtensionDefaults/MonsteraExtensions.swift.tmpl"
+    },
+    {
+      "kind": "template",
+      "mode": "644",
       "path": "ios/Info.plist",
       "sha256": "ac7cc6e8a016c1fd0076c470fd35e7689ac3fdb0cf2dcec281278b367bbde907",
       "source": "templates/ios/Info.plist.tmpl"
@@ -193,7 +214,7 @@
       "kind": "template",
       "mode": "644",
       "path": "ios/Package.swift",
-      "sha256": "ff7f77b717875187a5133a19423eed2492c3f0f8d341612c21f68ff32a185235",
+      "sha256": "c9c946e4860afa99753ffd50dcf91a6aae32f68a0b0af9679b938b83223a9791",
       "source": "templates/ios/Package.swift.tmpl"
     },
     {
@@ -291,7 +312,7 @@
       "kind": "template",
       "mode": "644",
       "path": "ios/Sources/BoundaryLab/ContentView.swift",
-      "sha256": "84f88430a07688f663f8b0282fb4af4c579d12682ec2584c3140b4e2c535f2f8",
+      "sha256": "0338aa764054f6fcfc29b3eb69f117772142426e747121808153e1774eacdad6",
       "source": "templates/ios/Sources/ContentView.swift.tmpl"
     },
     {

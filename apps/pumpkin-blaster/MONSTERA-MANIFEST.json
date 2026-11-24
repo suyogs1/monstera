@@ -11,8 +11,15 @@
       "kind": "template",
       "mode": "644",
       "path": "android/app/build.gradle.kts",
-      "sha256": "f2bc8ff5070d9180914b55f7c14d8f8ad1df01d62d06b1697ed41c65149356b1",
+      "sha256": "069fc36d8c464c6030856efccd5ab245993ed52602373a873ea1dbcaf5fa8284",
       "source": "templates/android/app/build.gradle.kts.tmpl"
+    },
+    {
+      "kind": "template",
+      "mode": "644",
+      "path": "android/app/src/extensionDefaults/kotlin/monstera/extensions/MonsteraExtensions.kt",
+      "sha256": "894114423f7648df6b86d4054d52f8250fd78a6b99853bce41b8abe4ce7c472c",
+      "source": "templates/android/extensions/MonsteraExtensions.kt.tmpl"
     },
     {
       "kind": "template",
@@ -46,7 +53,7 @@
       "kind": "template",
       "mode": "644",
       "path": "android/app/src/main/kotlin/app/monstera/pumpkinblaster/MainActivity.kt",
-      "sha256": "62c0334633cbac9f94b56d4566c03b86e8d7c654f47a99eba8f2119505615868",
+      "sha256": "16ac7c37be5524b0a0c51e6c275e188e23564bf0b79c0c065827a6078eea77ca",
       "source": "templates/android/app/src/main/kotlin/MainActivity.kt.tmpl"
     },
     {
@@ -185,6 +192,20 @@
     {
       "kind": "template",
       "mode": "644",
+      "path": "ios/ExtensionDefaults/Package.swift",
+      "sha256": "26b54e69cc3665174f1a0386ec7dca217f12f278ec50188b0615dd7cc3548c33",
+      "source": "templates/ios/ExtensionDefaults/Package.swift.tmpl"
+    },
+    {
+      "kind": "template",
+      "mode": "644",
+      "path": "ios/ExtensionDefaults/Sources/MonsteraExtensions/MonsteraExtensions.swift",
+      "sha256": "e29c3c8bebc6da84ee156d6da4e99abebf4d473477da24b11d2589cbd133690d",
+      "source": "templates/ios/ExtensionDefaults/MonsteraExtensions.swift.tmpl"
+    },
+    {
+      "kind": "template",
+      "mode": "644",
       "path": "ios/Info.plist",
       "sha256": "0f4b0ac51c91e197a7f90cee6ffd96044fcff3efb76620f1ef0e320aa9baa6e8",
       "source": "templates/ios/Info.plist.tmpl"
@@ -193,7 +214,7 @@
       "kind": "template",
       "mode": "644",
       "path": "ios/Package.swift",
-      "sha256": "99621cb96fd77e39b1d285438ac6abf5ecf03b71fee8c9245ac6badd36a62b7e",
+      "sha256": "aafa06109559710afb74973ca97069c2a81875853e2ce6c1e759c64c4534be20",
       "source": "templates/ios/Package.swift.tmpl"
     },
     {
@@ -284,7 +305,7 @@
       "kind": "template",
       "mode": "644",
       "path": "ios/Sources/PumpkinBlaster/ContentView.swift",
-      "sha256": "4fb5b36342080eba9706338042b89f31d12dce1f2bc6048b76183e7836ffcb83",
+      "sha256": "3d26cdab229906eae0a50eee26962489adc4e235f5d74b3ccad6445a83d37952",
       "source": "templates/ios/Sources/ContentView.swift.tmpl"
     },
     {

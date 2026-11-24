@@ -34,7 +34,7 @@ describe("permanent scaffold and mock banners", () => {
   it("banner text says scaffold, mock, and not connected", () => {
     expect(BACKEND_BANNER).toBe("Scaffold only. Not connected to any backend.");
     expect(MONETIZATION_BANNER).toMatch(/^Mock only\./);
-    expect(MONETIZATION_BANNER).toMatch(/No ad is shown/);
+    expect(MONETIZATION_BANNER).toMatch(/labelled MOCK overlay/);
   });
 });
 

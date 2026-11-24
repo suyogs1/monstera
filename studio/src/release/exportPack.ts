@@ -3,7 +3,7 @@
 // the Studio manifests and asset bytes in the Task 1.5 layout). It defines no second pack format.
 import { assetPath, manifestPath, SPEC_PATH } from "../export/bundle";
 import type { ExportPlan } from "../engine/protocol";
-import { emitScaffold } from "../integrations/scaffold/emit";
+import { emitExtensions, EXTENSION_MAP_PATH, extensionMap } from "../integrations/scaffold/native";
 import { refuseSecrets } from "../integrations/secrets";
 import { kiroTemplates } from "../pack/kiroTemplates";
 import { exportPack, type ExportResult, type PackFile, type ScaffoldChoice } from "../pack/export";
@@ -60,8 +60,13 @@ export async function releaseExport(input: ReleaseExportInput): Promise<ReleaseE
   }
   put("tools/check-drift.sh", enc.encode(input.driftScript), 0o755);
   for (const f of kiroTemplates(input.plan.projectId)) put(f.path, f.data);
-  // A fixed build label keeps the pack deterministic; the scaffold has no other use for it.
-  for (const f of emitScaffold(input.manifests.integrations, "studio")) put(`studio-pack/${f.path}`, enc.encode(f.text));
+  // E2: the scaffold, the mock rewarded overlay and their tests are native sources the generated projects compile. They are
+  // write-once under extensions/ (kept on re-export). A fixed build label keeps the pack deterministic.
+  const iosTarget = (doc as { project?: { platforms?: { ios?: { deploymentTarget?: unknown } } } } | null)?.project?.platforms?.ios?.deploymentTarget;
+  if (typeof iosTarget !== "string") return refuse("no-project", "The spec has no iOS deployment target.");
+  const extensions = emitExtensions(input.manifests.integrations, "studio", iosTarget);
+  for (const f of extensions) put(f.path, enc.encode(f.text));
+  put(EXTENSION_MAP_PATH, enc.encode(extensionMap(extensions, "studio")));
   const r = await exportPack({ files: [...files.values()], existing: input.existing, choices: input.choices });
   return r.ok ? r : { ok: false, reason: "pack", message: r.error, conflicts: r.conflicts };
 }
