@@ -1,0 +1,9 @@
+[
+{"op":"build","target":"ios-simulator","status":"ok","run_id":"ci-45362548326-atlas-proof","timestamp":"2026-11-24T09:44:14Z","artifact":"device-lab/reports/runs/ci-45362548326-atlas-proof/ios-simulator/AtlasProof.app"},
+{"op":"install","target":"ios-simulator","status":"ok","run_id":"ci-45362548326-atlas-proof","timestamp":"2026-11-24T09:44:43Z"},
+{"op":"launch","target":"ios-simulator","status":"ok","run_id":"ci-45362548326-atlas-proof","timestamp":"2026-11-24T09:44:45Z"},
+{"op":"screenshot","target":"ios-simulator","status":"ok","run_id":"ci-45362548326-atlas-proof","timestamp":"2026-11-24T09:44:51Z","artifact":"device-lab/reports/runs/ci-45362548326-atlas-proof/ios-simulator/01-launched.png"},
+{"op":"screenshot","target":"ios-simulator","status":"ok","run_id":"ci-45362548326-atlas-proof","timestamp":"2026-11-24T09:44:57Z","artifact":"device-lab/reports/runs/ci-45362548326-atlas-proof/ios-simulator/02-later.png"},
+{"op":"logs","target":"ios-simulator","status":"ok","run_id":"ci-45362548326-atlas-proof","timestamp":"2026-11-24T09:45:00Z","artifact":"device-lab/reports/runs/ci-45362548326-atlas-proof/ios-simulator/logs.txt"},
+{"op":"stop","target":"ios-simulator","status":"ok","run_id":"ci-45362548326-atlas-proof","timestamp":"2026-11-24T09:45:01Z"}
+]

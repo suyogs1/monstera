@@ -295,12 +295,12 @@
       "targetStatus": "prototype",
       "nativeOutput": "compiles to native",
       "evidence": [
+        "docs/evidence/atlas-native-proof/SUMMARY.md",
+        "studio/scripts/atlas-proof.mjs",
         "studio/src/sprites/atlas/atlas.test.ts",
-        "studio/src/sprites/atlas/atlas.e2e.test.ts",
-        "studio/src/sprites/atlas/atlas.ui.test.tsx",
-        "studio/src/preview/worldDraw.sprite.test.ts"
+        "studio/src/sprites/atlas/atlas.e2e.test.ts"
       ],
-      "limits": "GENERATED and checked only: the engine validates an authored spec, the real oracle reproduces every recorded checkpoint, and both native projects get the atlas bytes and sprite mappings. Not compiled or run on a device. One atlas, equal-size frames up to 128x128, 24 KiB of base64, two animated kinds, loop animations only.",
+      "limits": "SIMULATOR-TESTED: a sheet authored in Studio was exported, generated and drawn on an Android emulator and an iOS simulator (frame log checked). Attract mode only, no gameplay or device. One atlas, equal-size frames up to 128x128, 24 KiB base64, two animated kinds, loops only.",
       "requires": "",
       "designRow": ""
     },    {
