@@ -4,6 +4,7 @@ import type { Sheet } from "../project/manifests";
 import { useKindIds } from "../ui/fields";
 import { AnimationEditor } from "./AnimationEditor";
 import type { AnimationsManifest, Result } from "./edit";
+import { AtlasAuthoring } from "./atlas/AtlasAuthoring";
 import { SheetEditor } from "./SheetEditor";
 /** The sheet image with one outline per frame (CSS only, pixelated). Bytes come from the asset store; the URL is revoked on close. */
 function SheetPreview({ sheet, width, height }: { sheet: Sheet; width: number; height: number }) {
@@ -58,6 +59,7 @@ export function SpriteStudio() {
       <SheetEditor animations={animations} images={images} selectedId={sheetId} onSelect={(id) => { setSheetId(id); setMessage(null); }} apply={apply}
         preview={sheet && image ? <SheetPreview sheet={sheet} width={image.width} height={image.height} /> : null} />
       <AnimationEditor animations={animations} kindIds={kindIds} selectedId={animId} onSelect={(id) => { setAnimId(id); setMessage(null); }} apply={apply} />
+      <AtlasAuthoring />
     </div>
   );
 }

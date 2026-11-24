@@ -10,7 +10,7 @@
 export type Role = "editable" | "read-only" | "engine-managed";
 
 const e = (): { role: Role; note?: string } => ({ role: "editable" });
-const sprite = (): { role: Role; note?: string } => ({ role: "engine-managed", note: "Sprite atlas data (spec v5, contract section 10). Studio preserves it; it is not edited here yet." });
+const sprite = (): { role: Role; note?: string } => ({ role: "engine-managed", note: "Sprite atlas data (spec v5, contract section 10). Authored in the Sprite editor (Atlas section) through the engine-checked apply path, not through a field control; everywhere else Studio preserves it." });
 
 export const COVERAGE: Record<string, { role: Role; note?: string }> = {
   "specVersion": { role: "engine-managed", note: "Format version. Only the engine (and docs/SPEC-V2-MIGRATION.md) define it; Studio shows it and keeps it." },
@@ -24,7 +24,7 @@ export const COVERAGE: Record<string, { role: Role; note?: string }> = {
   "game.world.width": e(), "game.world.height": e(),
   "game.palette.background": e(), "game.palette.primary": e(), "game.palette.accent": e(),
   "game.hud.lifeGlyph": e(), "game.hud.scoreLabel": e(),
-  // Spec v5 sprite data (Gate E1). Studio keeps it unchanged; wiring the Sprite editor to it is a separate Studio task.
+  // Spec v5 sprite data (Gate E1). Written only by the Sprite editor's Atlas section (sprites/atlas/apply.ts).
   "game.atlas.png": sprite(), "game.atlas.frameWidth": sprite(), "game.atlas.frameHeight": sprite(),
   "game.atlas.columns": sprite(), "game.atlas.rows": sprite(),
   "game.runtime.kinds[].sprite.frames[]": sprite(), "game.runtime.kinds[].sprite.ticksPerFrame": sprite(),
