@@ -8,5 +8,6 @@ export interface EngineDiffInput { nameStatus: string; numstat: string; baseline
 export function classifyEngineSchemaDiff(input: EngineDiffInput): { status: "PASS" | "FAIL"; summary: string };
 export const E1_BASE: string;
 export const E1_ALLOWED: Readonly<Record<string, "A" | "M">>;
+export const E2_ALLOWED: Readonly<Record<string, "A" | "M">>;
 export const E1_PASS_MESSAGE: string;
 export function classifyE1Diff(input: { nameStatus: string }): { status: "PASS" | "FAIL"; summary: string };

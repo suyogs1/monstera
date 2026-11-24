@@ -71,6 +71,9 @@ describe("frequency limit", () => {
     expect(canShowAd(0, 5, 2, 50, 50)).toBe(true);      // no spacing needed
     expect(canShowAd(0, 0, 0, -1, 0)).toBe(false);      // max 0 means never
   });
+  it("the shared table (rendered into the Kotlin and Swift tests) holds", () => {
+    for (const [min, max, shown, last, now, expected] of FREQUENCY_CASES) expect(canShowAd(min, max, shown, last, now), [min, max, shown, last, now].join()).toBe(expected);
+  });
 
   it("the rendered rule expressions agree with the TS function on a grid", () => {
     const f = new Function("minSecondsBetween", "maxPerSession", "shownCount", "lastShownSeconds", "nowSeconds",
