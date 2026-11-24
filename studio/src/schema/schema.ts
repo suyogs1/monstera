@@ -18,6 +18,7 @@ export interface FieldInfo {
   exclusiveMinimum: number | undefined;
   minLength: number | undefined;
   maxLength: number | undefined;
+  maxItems: number | undefined;
   regex: string | undefined;
   /** Names of the $defs this field passed through, innermost first (e.g. ["fixed"]). */
   defs: string[];
@@ -73,7 +74,7 @@ export class SchemaModel {
       enum: Array.isArray(node["enum"]) ? (node["enum"] as Json[]) : undefined,
       const: node["const"],
       minimum: num("minimum"), maximum: num("maximum"), exclusiveMinimum: num("exclusiveMinimum"),
-      minLength: num("minLength"), maxLength: num("maxLength"), regex: str("pattern"),
+      minLength: num("minLength"), maxLength: num("maxLength"), maxItems: num("maxItems"), regex: str("pattern"),
       defs, unit: defs.some((d) => Q16_DEFS.has(d)) ? "q16" : undefined,
     };
   }

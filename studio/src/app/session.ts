@@ -1,5 +1,6 @@
 import { applyActiveLevel, applyReviewedGameplay, derivationState, inputsSha256, reviewGameplay, type ApplyResult, type GameplayApplyResult, type GameplayReview } from "../derive/apply";
 import { browserProbes } from "../assets/browserProbes";
+import { applySprites, type SpriteApplyResult, type SpriteChange } from "../sprites/atlas/apply";
 import { exportBundle, importBundle } from "../export/bundle";
 import { refuseSecrets } from "../integrations/secrets";
 import type { ReplacementRisk } from "../project/controller";
@@ -302,6 +303,8 @@ export class Session {
   /** A template becomes a new project (history cleared, saved in the background). */
   /** Compiles the active level into the spec (engine-validated, oracle-checked) and commits it as one undo step, or refuses. */
   applyActiveLevel(): Promise<ApplyResult> { return applyActiveLevel(this.project, this.engine); }
+  /** Sprite authoring: writes game.atlas and kinds[].sprite through the engine check and the oracle invariance check, as one undo step. */
+  applySprites(change: SpriteChange): Promise<SpriteApplyResult> { return applySprites(this.project, this.engine, change); }
   /** Gameplay step 1: compiles and engine-checks the gameplay manifest against the current spec; writes nothing. */
   reviewGameplay(): Promise<GameplayReview> { return reviewGameplay(this.project, this.engine); }
   /** Gameplay step 2: commits a reviewed plan as one undo step, only if the project is unchanged since the review. */

@@ -32,7 +32,7 @@ function draw(ctx: CanvasRenderingContext2D, L: Layout, d: Display, s: PreviewSn
     const box = entityBox(s, i, d.kinds);
     if (!kind || !box || L.visible(box) === null) continue;
     const px = L.toScreen(box);
-    drawEntityBox(ctx, kind, px);
+    drawEntityBox(ctx, kind, px, s.tick, d.atlas);
 
     if (s.entities[i + 1] === highlight) {
       highlighted++;
