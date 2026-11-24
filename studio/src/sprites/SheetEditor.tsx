@@ -38,7 +38,7 @@ export function SheetEditor({ animations, images, selectedId, onSelect, apply, p
   return (
     <section data-testid="sheet-editor">
       <h3>Sheets</h3>
-      <p className="muted">Prototype. Sheets, frames and animations are stored, previewed and exported by Studio. The generated native apps do not use them yet.</p>
+      <p className="muted">Prototype. Sheets, frames and animations are stored, previewed and exported by Studio. A sheet becomes the native atlas in the Native sprites section below; the animation data itself is Studio data.</p>
       <ul className="asset-list">
         {animations.sheets.map((s) => (
           <li key={s.id} data-testid={`sheet-row-${s.id}`} data-selected={s.id === selectedId ? "true" : undefined}>

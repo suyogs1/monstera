@@ -128,6 +128,16 @@ jobs:
           xml=e2-native/lantern-run-ext/android/app/build/test-results/testDebugUnitTest/TEST-monstera.studio.scaffold.ScaffoldTest.xml
           test -f "$xml"
           grep -E 'tests="3".*failures="0" errors="0"' "$xml"
+      # Authored sprites: the spec Studio exported (docs/evidence/atlas-native-proof, reproduced by studio/scripts/atlas-proof.mjs in the studio
+      # workflow) is generated, verified and compiled like the official games; the bundled atlas is the authored one, byte for byte.
+      - name: Authored sprite proof (generate from the Studio export, verify, compile, JVM tests, atlas bytes)
+        run: |
+          spec=docs/evidence/atlas-native-proof/monstera.spec.json
+          bash tools/monstera/bin/monstera generate "$spec" --out g6-clean-room/atlas-proof --layout fixture
+          bash tools/monstera/bin/monstera verify g6-clean-room/atlas-proof
+          python3 tools/scripts/check-atlas-bytes.py "$spec" g6-clean-room/atlas-proof
+          RUN_ID="$RUN_ID-atlas-proof" DL_APP_DIR=g6-clean-room/atlas-proof/android bash device-lab/android/adapter.sh build
+          (cd g6-clean-room/atlas-proof/android && ./gradlew testDebugUnitTest --no-daemon)
       - name: Upload build result and clean-room reports
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
@@ -174,6 +184,12 @@ jobs:
         run: bash tools/e2/prepare-extension-project.sh spec/samples/lantern-run/monstera.spec.json e2-native/lantern-run-ext
       - name: E2 Swift tests of the extension package (hand-computed frequency table, mock labels)
         run: swift test --package-path e2-native/lantern-run-ext/extensions/ios/MonsteraExtensions
+      - name: Authored sprite proof, generate the iOS project from the Studio export
+        run: |
+          spec=docs/evidence/atlas-native-proof/monstera.spec.json
+          bash tools/monstera/bin/monstera generate "$spec" --out g6-clean-room/atlas-proof --layout fixture
+          bash tools/monstera/bin/monstera verify g6-clean-room/atlas-proof
+          python3 tools/scripts/check-atlas-bytes.py "$spec" g6-clean-room/atlas-proof
       - name: Boot an available iPhone simulator
         run: |
           UDID="$(xcrun simctl list devices available | grep -m1 -E '^[[:space:]]+iPhone' | grep -oE '[0-9A-F-]{36}')"
@@ -190,7 +206,7 @@ jobs:
           A=device-lab/ios/adapter.sh
           BASE_RUN_ID="$RUN_ID"
           # fd 3, not stdin: swift and simctl read stdin and would swallow the remaining lines.
-          while read -r -u 3 app product bundle spec; do
+          while read -r -u 3 app product bundle spec strict; do
             echo "::group::$app"
             export RUN_ID="$BASE_RUN_ID-$(basename "$app")" DL_APP_DIR="$app/ios" DL_APP_PRODUCT="$product" DL_APP_BUNDLE_ID="$bundle"
             bash $A build
@@ -202,7 +218,7 @@ jobs:
             sleep 5
             # simctl captures the device framebuffer: a landscape game on a portrait device is captured sideways (E1 evidence).
             bash $A screenshot 01-launched
-            sleep 1
+            sleep 5
             bash $A screenshot 02-later
             bash $A logs
             bash $A stop
@@ -213,6 +229,9 @@ jobs:
             grep -F "spec sha256=$(shasum -a 256 "$spec" | cut -d' ' -f1) " "$log"
             # The fixed-tick GameLoop ran in the simulator: at least 60 ticks within the 5 s wait.
             grep -E "runtime ticks=[0-9]+ hash=[0-9a-f]{16} seed=" "$log"
+            # Sprites: for a spec with an atlas the app logged it decoded at the declared size, and every frame it drew follows
+            # frames[(tick div ticksPerFrame) mod count]. The authored project must also have drawn every frame of its animated kind.
+            python3 tools/scripts/check-sprite-log.py ${strict:+--require-all-frames} "$spec" "$log"
             echo "::endgroup::"
           done 3<<'EOF'
           generated/monstera-sample MonsteraSample app.monstera.sample spec/samples/monstera-sample/monstera.spec.json
@@ -220,6 +239,7 @@ jobs:
           g6-clean-room/trick-or-treat-rush TrickOrTreatRush app.monstera.trickortreatrush apps/trick-or-treat-rush/monstera.spec.json
           generated/lantern-run LanternRun app.monstera.lanternrun spec/samples/lantern-run/monstera.spec.json
           e2-native/lantern-run-ext LanternRun app.monstera.lanternrun spec/samples/lantern-run/monstera.spec.json
+          g6-clean-room/atlas-proof AtlasProof app.monstera.atlasproof docs/evidence/atlas-native-proof/monstera.spec.json strict
           EOF
       - name: Upload Device Lab run (evidence only, no .app)
         if: always()

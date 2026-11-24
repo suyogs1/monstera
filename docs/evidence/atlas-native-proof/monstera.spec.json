@@ -1,0 +1,188 @@
+{
+  "game": {
+    "atlas": {
+      "columns": 8,
+      "frameHeight": 16,
+      "frameWidth": 16,
+      "png": "iVBORw0KGgoAAAANSUhEUgAAAIAAAAAQCAYAAADeWHeIAAACJUlEQVR4nO2YvU7DMBDHne48AQImOsJOVYkNiQdgQMCARCdGyoCEEAsDZWQKAokPMTAxIbEhVX0AGGHhQzyHkZOeOTvnj7QJFJOfZMU5+xK7//PZKWMlMrc7yUUp8x0VI4qv+CernwMHyDC+PvBGI/jgjUwNey9cmfz+dGTsi+E7zPqjRQfqO0HEjctxr+cP6+cLiB/1eqU8f1SoUUYh/uYUY6Jgm+1BQngQv/ucbQcb7ofBq3lt5izTjm2ule/yzwPOAiFmhEwAYKGP38xtGNeq9/XRgwAXqo8Nk7/X2EDodk+9DxAyAzBCfBOKkK1WWkxo7cJXT+Eg8PnYqbRBXRfflv4pf6/56GIHHgTyB7zj+Sa4GKV7owwAJGx3K2bNutpfbAHNIxQccZwOoH8mwOJ2H+/JdzZnF2QdxKcygo+//hxAX/2STiMdb2BngmQyIP5V54OttCdko+teBAGVyhOx6ygo4vjbpg9AOxS60vXF03pGAJ/gAaggAjLiz9+k14el9BpgENTwysfi+tznzRo+UAK72rCQvv7OrwcQX68HhvEMkBtq7xdpvp/qnX0RIJS44rrNhwoCk39Zn45/keSHWD4c7N+66+33iDoDeKGdAYpCbAcmgW1tQLINWLaAkNK/An9tcdO9rY2hb3thl1dXfYBPx59ABEBSbpla+vbfHl/RFBbNWFDqwKfbil75RWISOsTVX+iEfFf1KItfUVFR8X/4Am5idrb0uiVKAAAAAElFTkSuQmCC",
+      "rows": 1
+    },
+    "genre": "endless-runner",
+    "hud": {
+      "lifeGlyph": "🕯",
+      "scoreLabel": "LIGHT"
+    },
+    "input": {
+      "dragGain": 65536,
+      "scheme": "swipe",
+      "swipeSpeed": 393216,
+      "tapKind": "",
+      "tapVx": 0,
+      "tapVy": 0
+    },
+    "orientation": "portrait",
+    "palette": {
+      "accent": "#7DF9FF",
+      "background": "#12081F",
+      "primary": "#FFB703"
+    },
+    "runtime": {
+      "collisions": [
+        {
+          "a": "lantern",
+          "b": "keeper",
+          "despawnA": true,
+          "despawnB": false,
+          "lives": 0,
+          "score": 10
+        },
+        {
+          "a": "wisp",
+          "b": "keeper",
+          "despawnA": true,
+          "despawnB": false,
+          "lives": -1,
+          "score": 0
+        }
+      ],
+      "initialEntities": [
+        {
+          "controlled": true,
+          "kind": "keeper",
+          "vx": 0,
+          "vy": 0,
+          "x": 32112640,
+          "y": 98304000
+        }
+      ],
+      "kinds": [
+        {
+          "color": "#FFB703",
+          "effect": "none",
+          "exitPolicy": "clamp",
+          "glyph": "🧙",
+          "height": 6553600,
+          "id": "keeper",
+          "lifetimeTicks": 0,
+          "sprite": {
+            "frames": [
+              0
+            ],
+            "ticksPerFrame": 1
+          },
+          "width": 6553600
+        },
+        {
+          "color": "#FFD166",
+          "effect": "pickup",
+          "exitPolicy": "despawn",
+          "glyph": "🏮",
+          "height": 5242880,
+          "id": "lantern",
+          "lifetimeTicks": 0,
+          "sprite": {
+            "frames": [
+              4
+            ],
+            "ticksPerFrame": 1
+          },
+          "width": 5242880
+        },
+        {
+          "color": "#7DF9FF",
+          "effect": "burst",
+          "exitPolicy": "despawn",
+          "glyph": "👻",
+          "height": 6553600,
+          "id": "wisp",
+          "lifetimeTicks": 0,
+          "sprite": {
+            "frames": [
+              2,
+              3
+            ],
+            "ticksPerFrame": 8
+          },
+          "width": 6553600
+        }
+      ],
+      "lives": 3,
+      "maxEntities": 64,
+      "spawners": [
+        {
+          "intervalTicks": 90,
+          "kind": "lantern",
+          "startTick": 30,
+          "stream": "lanterns",
+          "vx": 0,
+          "vy": 262144,
+          "xMax": 65536000,
+          "xMin": 0,
+          "yMax": -5242880,
+          "yMin": -6553600
+        },
+        {
+          "intervalTicks": 150,
+          "kind": "wisp",
+          "startTick": 180,
+          "stream": "wisps",
+          "vx": 0,
+          "vy": 327680,
+          "xMax": 64487424,
+          "xMin": 0,
+          "yMax": -6553600,
+          "yMin": -7864320
+        },
+        {
+          "intervalTicks": 100,
+          "kind": "wisp",
+          "startTick": 1200,
+          "stream": "wisps-late",
+          "vx": 0,
+          "vy": 458752,
+          "xMax": 64487424,
+          "xMin": 0,
+          "yMax": -6553600,
+          "yMin": -7864320
+        }
+      ],
+      "winScore": 150
+    },
+    "screens": {
+      "loseTitle": "The lights went out",
+      "startHint": "Swipe to move",
+      "winTitle": "The path is lit!"
+    },
+    "simulation": {
+      "maxTicksPerFrame": 5,
+      "tickRate": 60
+    },
+    "targetFps": 60,
+    "world": {
+      "height": 1920,
+      "width": 1080
+    }
+  },
+  "project": {
+    "displayName": "Atlas Proof",
+    "id": "atlas-proof",
+    "identifier": "app.monstera.atlasproof",
+    "platforms": {
+      "android": {
+        "minSdk": 26
+      },
+      "ios": {
+        "deploymentTarget": "17.0"
+      }
+    },
+    "targets": [
+      "android",
+      "ios"
+    ],
+    "version": {
+      "code": 1,
+      "name": "0.1.0"
+    }
+  },
+  "specVersion": 5
+}

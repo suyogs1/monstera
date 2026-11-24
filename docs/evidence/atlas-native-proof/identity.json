@@ -1,0 +1,25 @@
+{
+  "specSha256": "0f1ba683b85ed3b0271a47ad0eb8f09e61efbebf6d045d9ca6892b7efe11b241",
+  "specBytes": 4760,
+  "sourceSheetSha256": "bd53cbe6d011b7e0fa2bbb2a206c6144d0108943fe9fc5aa1869c7bc5cd8f45f",
+  "fork": {
+    "id": "atlas-proof",
+    "displayName": "Atlas Proof",
+    "identifier": "app.monstera.atlasproof"
+  },
+  "assign": {
+    "keeper": {
+      "frames": "0",
+      "tpf": 1
+    },
+    "lantern": {
+      "frames": "4",
+      "tpf": 1
+    },
+    "wisp": {
+      "frames": "2, 3",
+      "tpf": 8
+    }
+  },
+  "atlasSha256": "ae938487e172a0a7fa455292442517119be200a915372b3edf8522d2176b0788"
+}
