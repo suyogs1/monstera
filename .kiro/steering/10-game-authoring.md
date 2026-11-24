@@ -64,7 +64,7 @@ Sections under `game`: `genre`, `hud`, `screens`, `input`, `simulation`, `runtim
 - Winning: `winScore` above 0. Losing: `lives` reaching 0.
 
 ## Not expressible (stop and say so; never patch the engine)
-Jumping or gravity, enemies that aim or chase, power-up timers, levels or scenes, sound, haptics, art assets, networking, saves.
+Jumping or gravity, enemies that aim or chase, power-up timers, levels or scenes, sound, haptics, art beyond the one sprite atlas, networking, saves.
 
 ## Honesty
 A generated project is GENERATED. COMPILED needs a real Gradle or Xcode build, SIMULATOR-TESTED needs a launch log and screenshot.

@@ -21,8 +21,31 @@ const V4 = readFileSync(join(__dirname, "..", "project", "fixtures", "pumpkin-bl
 const prov: Provenance = { origin: "user-owned", author: "me", license: "proprietary-owned", source: "", tool: "", model: "", promptSha256: "", acquiredOn: "", notes: "" };
 type Doc = { specVersion: number; game: { atlas?: unknown; runtime: { lives: number; kinds: { id: string; sprite?: unknown }[] } } };
 const parse = (t: string): Doc => JSON.parse(t) as Doc;
-/** The v5 engine: a v4 document parses but fails validation (specVersion must be 5). */
-const v5Engine = (): FakeEngine => { const e = new FakeEngine(); e.invalid = (t) => /"specVersion":\s*4\b/.test(t); return e; };
+/**
+ * The v5 engine as the migration sees it: a v4 document parses but fails with exactly the issues the real engine reports
+ * (specVersion const, missing atlas, missing sprite per kind), a decimal integer is a type error, and the engine's canonical
+ * text keeps 4.0 as written (the fake's own canonical form would erase it). Duplicate keys fail the strict loader.
+ */
+const v5Engine = (): FakeEngine => {
+  const e = new FakeEngine();
+  e.invalid = (t) => /"specVersion":\s*4\b/.test(t) || /": 60\.0\b/.test(t);
+  e.reject = (t) => (t.match(/"targetFps"/g) ?? []).length > 1;
+  const answer = e.validateDraft.bind(e);
+  e.validateDraft = async (t: string) => {
+    const v = await answer(t);
+    if (!v.parsed || v.canonicalText === null) return v;
+    const issues = [];
+    if (/"specVersion":\s*4\b/.test(t)) {
+      issues.push({ path: "$.specVersion", code: "const", message: "must be 5, got integer 4" });
+      if (!/"atlas"/.test(t)) issues.push({ path: "$.game", code: "required", message: "missing required property 'atlas'" });
+      if (!/"sprite"/.test(t)) issues.push({ path: "$.game.runtime.kinds[0]", code: "required", message: "missing required property 'sprite'" });
+    }
+    if (/": 60\.0\b/.test(t)) issues.push({ path: "$.game.targetFps", code: "type", message: "write 60 without a decimal point" });
+    const canonicalText = /"specVersion": 4\.0/.test(t) ? t : v.canonicalText;
+    return issues.length ? { ...v, ok: false, issues, canonicalText } : { ...v, canonicalText };
+  };
+  return e;
+};
 async function boot(deps: Omit<SessionDeps, "engine" | "schedule">, engine = v5Engine()): Promise<Harness> {
   const h = harness({ marker: memoryMarker(), ...deps }, engine);
   await h.session.start();
@@ -194,6 +217,66 @@ describe("imports", () => {
     const newSha = doc.validation!.sha256!;
     expect(s.manifests!.project.spec).toEqual({ path: "monstera.spec.json", baseSha256: newSha, currentSha256: newSha });
     expect(s.manifests!.assets).toEqual(manifests.assets);
+  });
+});
+
+describe("review findings (PR #58 adversarial review)", () => {
+  it("F2: derivation that was fresh for the v4 text is fresh for its v5 form, so export is not blocked", async () => {
+    const { derivationState, inputsSha256 } = await import("../derive/apply");
+    const factory = newFactory();
+    const sha = await sha256Hex(V4);
+    const m = manifestsFor("pumpkin-blaster");
+    const active = m.levels.levels[0]!.id;
+    m.project = { ...m.project, derivation: { ...m.project.derivation, levels: true, activeLevel: active }, spec: { ...m.project.spec, baseSha256: sha, currentSha256: sha } };
+    m.project = { ...m.project, derived: { inputsSha256: await inputsSha256(JSON.parse(V4) as Json, m) } };
+    expect(await derivationState(JSON.parse(V4) as Json, m)).toBe("fresh"); // control
+    const ps = new ProjectStore({ factory });
+    await ps.open();
+    expect(await ps.save({ projectKey: "derived", name: "Derived", projectId: "pumpkin-blaster", specText: V4, manifests: m,
+      baseline: { label: "x", templateId: null, group: "import", canonicalText: V4, sha256: sha, origin: null } })).toBe("saved");
+    const b = await boot({ factory });
+    expect(b.session.migrationNotice).toBe(MIGRATION_NOTICE);
+    const s = b.session.project.currentState()!;
+    expect(await derivationState(s.doc, s.manifests)).toBe("fresh");
+  });
+  it("F3: a legacy draft with a duplicate key is not migrated and stays in localStorage", async () => {
+    const factory = newFactory();
+    const dup = V4.replace('"targetFps": 60,', '"targetFps": 30,\n    "targetFps": 60,');
+    expect(dup).not.toBe(V4);
+    const raw = JSON.stringify({ version: 1, docText: dup, baseline: { label: "x", templateId: null, group: "import", canonicalText: null, sha256: null } });
+    const legacy = readOnlyStorage({ [LEGACY_KEY]: raw });
+    const h = await boot({ factory, legacy });
+    expect(h.session.projects.getState().migration?.status).toBe("refused");
+    expect(legacy.getItem(LEGACY_KEY)).toBe(raw);
+    expect(h.session.migrationNotice).toBeNull();
+    const h2 = await boot({ factory: newFactory() });
+    expect((await h2.session.importText(dup, "dup.json")).ok).toBe(false); // the same text is refused by direct import too
+  });
+  it("F1: a decimal integer or specVersion 4.0 is not turned into a valid v5 spec", async () => {
+    const h = await boot({ factory: newFactory() });
+    const key = h.session.project.getState().projectKey;
+    const decimal = await h.session.importText(V4.replace('"targetFps": 60,', '"targetFps": 60.0,'), "decimal.json");
+    expect(decimal.ok).toBe(false);
+    if (!decimal.ok) expect(decimal.message).toMatch(/not a valid v4 specification/);
+    expect(h.session.project.getState().projectKey).toBe(key);
+    const four = await h.session.importText(V4.replace('"specVersion": 4', '"specVersion": 4.0'), "four.json");
+    expect(four.ok && four.migratedFrom).toBeFalsy(); // not recognised as v4: opened as written, never migrated
+    expect(h.session.migrationNotice).toBeNull();
+  });
+  it("F6: an origin whose template no longer exists is cleared, not left as v4 text", async () => {
+    const factory = newFactory();
+    const sha = await sha256Hex(V4);
+    const m = manifestsFor("pumpkin-blaster");
+    m.project = { ...m.project, spec: { ...m.project.spec, baseSha256: sha, currentSha256: sha } };
+    const ps = new ProjectStore({ factory });
+    await ps.open();
+    expect(await ps.save({ projectKey: "retired", name: "Retired", projectId: "pumpkin-blaster", specText: V4, manifests: m,
+      baseline: { label: "x", templateId: null, group: "import", canonicalText: V4, sha256: sha,
+        origin: { templateId: "retired-template", path: "apps/retired/monstera.spec.json", basis: "identical", canonicalText: V4 } } })).toBe("saved");
+    await boot({ factory });
+    const [rec] = await records(factory);
+    expect(rec!.baseline.origin ?? null).toBeNull();
+    expect(parse(rec!.baseline.canonicalText!).specVersion).toBe(5);
   });
 });
 

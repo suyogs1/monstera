@@ -13,7 +13,7 @@ MONSTERA Studio is a static web app in `studio/` (Vite, React, TypeScript). A pe
 repository's own Python engine runs unmodified in the page (Pyodide) to validate the game, preview it, check determinism and
 produce the native Android (Kotlin) and iOS (Swift) **source** as a ZIP. Nothing is uploaded and there is no server.
 
-The canonical specification file, `monstera.spec.json` (schema v4), is the only contract between Studio, the engine, Kiro
+The canonical specification file, `monstera.spec.json` (schema v5), is the only contract between Studio, the engine, Kiro
 and the generated apps. Studio never pretends to be Kiro and has no connection to Kiro.
 
 Studio is a source authoring and verification tool. **The browser does not compile native applications.** The engine
@@ -32,7 +32,7 @@ status allows.
 | Asset Studio | Import, library, provenance, preview, delete protection, assignment of an asset to a kind | Studio only |
 | Sprite and Animation Editor | Sheet slicing, frames, animation sequences, tick-based preview | Studio only |
 | Level Studio | Levels as Studio data; the active level compiles into the spec; other levels export as variants | Active level only |
-| Gameplay Systems | Lives, win score, collectibles, enemies compiled into `lives`, `winScore`, `collisions` | Yes, as v4 fields |
+| Gameplay Systems | Lives, win score, collectibles, enemies compiled into `lives`, `winScore`, `collisions` | Yes, as v5 fields |
 | Backend and Services | Firebase service choices as scaffold text | Scaffold only |
 | Monetization | AdMob mock and test placements with a labelled mock preview | Mock only |
 | Kiro Development | Developer Integration inventory, handoff prompts, pack drift view, proposal inbox | Studio only |
@@ -104,7 +104,7 @@ contracts and are not mixed.
 ## 8. Level and gameplay compilers
 
 - The **level compiler** (`studio/src/derive/levels.ts`) turns the active level's placements, waves and difficulty steps into
-  `initialEntities` and `spawners`. A difficulty step compiles to an extra spawner that starts later, because v4 spawners
+  `initialEntities` and `spawners`. A difficulty step compiles to an extra spawner that starts later, because v5 spawners
   cannot stop or change. Output is deterministic and covered by golden fixtures.
 - The **gameplay compiler** (`studio/src/derive/gameplay.ts`) turns lives, win score, collectibles and enemies into `lives`,
   `winScore` and `collisions`.
@@ -112,7 +112,7 @@ contracts and are not mixed.
   oracle must accept the result. A rejected result leaves the project unchanged.
 - Other levels are Studio-only variants. Level Studio exports each as a standalone `monstera.spec.json` under
   `studio-pack/derived/levels/<id>/`, and every exported variant is checked with `monstera validate`.
-- **Not supported:** level selection, per-level win rules and wave end inside the native app. Schema v4 has one runtime and
+- **Not supported:** level selection, per-level win rules and wave end inside the native app. Schema v5 has one runtime and
   spawners that never stop. Health, power-ups and progression need a contract change and are planned only.
 
 ## 9. Assets, sprites and animations

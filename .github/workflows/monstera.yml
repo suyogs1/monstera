@@ -178,27 +178,13 @@ jobs:
             bash $A install
             bash $A launch
             sleep 5
-            # simctl has no rotate command and captures the device framebuffer, so a landscape game on a portrait device is
-            # captured sideways. Simulator's Device > Rotate Left turns the device first; if the runner refuses UI scripting the
-            # capture stays as it is and this line says so. The orientation comes from the spec, not from the project name.
-            rotated=0
-            if [ "$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["game"]["orientation"])' "$spec")" = landscape ]; then
-              open -a Simulator || true
-              sleep 3
-              if osascript -e 'tell application "Simulator" to activate' \
-                   -e 'tell application "System Events" to tell process "Simulator" to click menu item "Rotate Left" of menu "Device" of menu bar 1'; then
-                rotated=1; echo "simulator rotated to landscape"; sleep 3
-              else echo "rotation unavailable: the capture shows the portrait framebuffer"; fi
-            fi
+            # simctl captures the device framebuffer: a landscape game on a portrait device is captured sideways (E1 evidence).
             bash $A screenshot 01-launched
             sleep 1
             bash $A screenshot 02-later
             bash $A logs
             bash $A stop
             bash $A report
-            if [ "$rotated" = 1 ]; then
-              osascript -e 'tell application "System Events" to tell process "Simulator" to click menu item "Rotate Right" of menu "Device" of menu bar 1' || true
-            fi
             log="device-lab/reports/runs/$RUN_ID/ios-simulator/logs.txt"
             grep -E "bundledMatches=true decodedMatches=true" "$log"
             # The hash the app logged is the hash of the canonical spec file, not only its own bundled copy.

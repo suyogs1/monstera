@@ -16,7 +16,11 @@ from typing import Any
 PNG_SIGNATURE = b"\x89PNG\r\n\x1a\n"
 ATLAS_FILE = "monstera-atlas.png"
 _CHANNELS = {2: 3, 6: 4}  # colour type -> channels (8-bit truecolour, truecolour with alpha)
-MAX_INFLATED = 4 * 1024 * 1024  # 2048x512 RGBA plus filter bytes; the schema limits keep real atlases far below this
+# The largest atlas the schema allows: 16 columns x 128 px by 16 rows x 128 px, RGBA, one filter byte per scanline.
+MAX_INFLATED = 2048 * (1 + 2048 * 4)
+# Chunks an atlas may carry: the critical ones of an 8-bit RGB(A) image and uncompressed ancillary metadata. Anything else
+# (PLTE, compressed text or ICC profiles that a decoder would inflate, unknown chunks) is refused.
+ALLOWED_CHUNKS = frozenset({b"IHDR", b"IDAT", b"IEND", b"sRGB", b"gAMA", b"cHRM", b"pHYs", b"tEXt", b"tIME"})
 
 
 def atlas_bytes(atlas: dict[str, Any]) -> bytes | None:
@@ -47,6 +51,10 @@ def png_issues(data: bytes, width: int, height: int) -> list[str]:
         (crc,) = struct.unpack(">I", data[pos + 8 + length:end])
         if zlib.crc32(kind + body) & 0xFFFFFFFF != crc:
             return [f"PNG chunk {kind.decode('latin-1')!r} has a wrong CRC"]
+        if not all(65 <= c <= 90 or 97 <= c <= 122 for c in kind):
+            return ["a PNG chunk type is not four ASCII letters"]
+        if kind not in ALLOWED_CHUNKS:
+            return [f"PNG chunk {kind.decode('ascii')!r} is not accepted in an atlas"]
         chunks.append((kind, body))
         pos = end
         if kind == b"IEND":
@@ -57,6 +65,8 @@ def png_issues(data: bytes, width: int, height: int) -> list[str]:
         return ["the PNG does not start with a valid IHDR chunk"]
     if chunks[-1][0] != b"IEND":
         return ["the PNG has no IEND chunk"]
+    if chunks[-1][1]:
+        return ["the PNG's IEND chunk is not empty"]
     kinds = [kind for kind, _ in chunks]
     if kinds.count(b"IHDR") != 1:
         return ["the PNG has more than one IHDR chunk"]

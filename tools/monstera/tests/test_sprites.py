@@ -117,9 +117,27 @@ class AtlasValidationTests(unittest.TestCase):
 
     def test_the_documented_inflate_limit_is_checked_from_the_header(self) -> None:
         from monstera import atlas
-        # A header whose scanlines exceed MAX_INFLATED is refused before inflating (the schema keeps real atlases far below it).
-        found = png_issues(make_png(1100, 1000, raw=b"\x00"), 1100, 1000)
+        # A header whose scanlines exceed MAX_INFLATED (the schema's largest atlas) is refused before inflating.
+        found = png_issues(make_png(4096, 2100, raw=b"\x00"), 4096, 2100)
         self.assertTrue(found and str(atlas.MAX_INFLATED) in found[0], found)
+        self.assertEqual(png_issues(make_png(2048, 512, raw=b"".join(b"\x00" + bytes(2048 * 4) for _ in range(512))), 2048, 512), [])  # a large atlas inside the schema limits is accepted
+
+    def test_only_the_atlas_chunk_set_is_accepted(self) -> None:
+        good = make_png(8, 4)
+        head, tail = good[:33], good[33:]
+        iend = chunk(b"IEND", b"")
+        cases = {
+            "unknown critical chunk": head + chunk(b"ABCD", b"x") + tail,
+            "chunk type not letters": head + chunk(b"\x00\x00\x00\x00", b"x") + tail,
+            "IEND with a body": good[:-12] + chunk(b"IEND", b"junk"),
+            "PLTE": head + chunk(b"PLTE", b"\x00\x00\x00") + tail,
+            "compressed ICC profile (inflate bomb)": head + chunk(b"iCCP", b"p\x00\x00" + zlib.compress(bytes(16_000_000), 9)) + tail,
+            "compressed text": head + chunk(b"zTXt", b"k\x00\x00" + zlib.compress(b"v")) + tail,
+        }
+        for label, data in cases.items():
+            self.assertNotEqual(png_issues(data, 8, 4), [], label)
+        self.assertEqual(png_issues(head + chunk(b"tEXt", b"k\x00v") + chunk(b"pHYs", bytes(9)) + tail, 8, 4), [])
+        self.assertTrue(tail.endswith(iend))
 
     def test_text_that_is_not_strict_base64_is_refused_by_the_schema(self) -> None:
         for text in ("abc", "ab=c", "a b=", "iVBORw0KGgo\n"):
@@ -164,6 +182,52 @@ class V4MigrationTests(unittest.TestCase):
         for kind in back["game"]["runtime"]["kinds"]:
             del kind["sprite"]
         self.assertEqual(back, v4)
+
+
+def frame_at(frames: list[int], ticks_per_frame: int, tick: int) -> int | None:
+    """Contract section 10, the reference both platforms must agree with: frames[(tick div ticksPerFrame) mod count]."""
+    if not frames or ticks_per_frame < 1 or tick < 0:
+        return None
+    return frames[(tick // ticks_per_frame) % len(frames)]
+
+
+TEMPLATES = PACKAGE / "templates"
+KOTLIN_TEST = TEMPLATES / "android" / "presentation" / "PresentationTest.kt.tmpl"
+SWIFT_TEST = TEMPLATES / "ios" / "Presentation" / "PresentationTests.swift.tmpl"
+
+
+def platform_cases() -> dict[str, set[tuple[int, int, int]]]:
+    """(expected frame, ticksPerFrame, tick) of every hand-computed frameAt assertion on `frames`, per platform test template."""
+    import re
+    kt = KOTLIN_TEST.read_text(encoding="utf-8")
+    sw = SWIFT_TEST.read_text(encoding="utf-8")
+    kotlin = {(int(e), int(t), int(k.replace("_", ""))) for e, t, k in
+              re.findall(r"assertEquals\((\d+), Sprites\.frameAt\(frames, (\d+), ([\d_]+)L\)\)", kt)}
+    swift = {(int(e), int(t), int(k.replace("_", ""))) for t, k, e in
+             re.findall(r"XCTAssertEqual\(Sprites\.frameAt\(frames, ticksPerFrame: (\d+), tick: ([\d_]+)\), (\d+)\)", sw)}
+    return {"kotlin": kotlin, "swift": swift}
+
+
+class CrossPlatformFrameRuleTests(unittest.TestCase):
+    """The frame rule is presentation-only, so conformance does not compare it. Both platform tests share this golden table instead."""
+    FRAMES = [4, 5, 7]  # the `frames` both platform tests use
+
+    def test_both_platforms_assert_the_same_cases_and_they_match_the_reference(self) -> None:
+        cases = platform_cases()
+        self.assertGreaterEqual(len(cases["kotlin"]), 6)
+        self.assertEqual(cases["kotlin"], cases["swift"], "Kotlin and Swift must assert the same (frame, ticksPerFrame, tick) cases")
+        for expected, tpf, tick in cases["kotlin"]:
+            self.assertEqual(frame_at(self.FRAMES, tpf, tick), expected, (tpf, tick))
+
+    def test_a_wrong_rule_is_detected_by_the_table(self) -> None:
+        cases = platform_cases()["kotlin"]
+        mutants = {
+            "tick + 1": lambda f, t, k: f[((k + 1) // t) % len(f)],
+            "rounding up": lambda f, t, k: f[(-(-k // t)) % len(f)],
+            "modulus off by one": lambda f, t, k: f[(k // t) % (len(f) + 1) % len(f)],
+        }
+        for name, rule in mutants.items():
+            self.assertTrue(any(rule(self.FRAMES, t, k) != e for e, t, k in cases), f"mutant '{name}' survives the shared table")
 
 
 class BundlingTests(unittest.TestCase):

@@ -1,4 +1,4 @@
-import { applyActiveLevel, applyReviewedGameplay, reviewGameplay, type ApplyResult, type GameplayApplyResult, type GameplayReview } from "../derive/apply";
+import { applyActiveLevel, applyReviewedGameplay, derivationState, inputsSha256, reviewGameplay, type ApplyResult, type GameplayApplyResult, type GameplayReview } from "../derive/apply";
 import { browserProbes } from "../assets/browserProbes";
 import { exportBundle, importBundle } from "../export/bundle";
 import { refuseSecrets } from "../integrations/secrets";
@@ -153,9 +153,17 @@ export class Session {
 
   /** The v5 engine's verdict on the v5 form of a v4 text (specV5.ts). Never guesses another version. */
   private async upgradeV4(text: string): Promise<V4Upgrade> {
-    let doc: Json;
-    try { doc = JSON.parse(text) as Json; } catch { return { kind: "none" }; }
+    // The engine reads the v4 text first, with its strict loader: duplicate keys, a BOM or invalid UTF-8 are never migrated.
+    const first = await this.engine.validateDraft(text);
+    if (!first.parsed || first.canonicalText === null) return { kind: "none" };
+    // Exactly the integer 4 in the engine's own canonical text (not 4.0, which JSON.parse would turn into 4).
+    if (!/"specVersion": 4[,\r\n}]/.test(first.canonicalText)) return { kind: "none" };
+    const doc = JSON.parse(first.canonicalText) as Json;
     if (!isV4(doc)) return { kind: "none" };
+    // Only a valid v4 spec: every issue the v5 engine reports must be one of the v5 additions. Anything else (a wrong type
+    // such as 60.0 for an integer, an invalid value) means the document was not valid v4, and it is not migrated.
+    const other = first.issues.filter((i) => !(i.path === "$.specVersion" || (i.code === "required" && /'(atlas|sprite)'/.test(i.message))));
+    if (other.length > 0) return { kind: "refused", message: `it is not a valid v4 specification (${other[0]!.path} ${other[0]!.message}), so it is not migrated` };
     const m = migrateV4Doc(doc);
     if (!m.ok) return { kind: "refused", message: "it declares specification v4 but already has v5 fields or no entity kinds, so it is not migrated" };
     const v = await this.engine.validateDraft(stableText(m.doc));
@@ -188,6 +196,8 @@ export class Session {
         // "identical" stays only while the baseline really equals the template; a v4 copy of it no longer does.
         const basis = o.basis === "identical" && next.sha256 !== t.sha256 ? "template" : o.basis;
         next = { ...next, origin: { ...o, path: t.info.path, canonicalText: t.canonicalText, basis } };
+      } else {
+        next = { ...next, origin: null }; // the template no longer exists: no goldens are claimed for this project
       }
     }
     return next === b ? null : next;
@@ -200,8 +210,21 @@ export class Session {
     const baseline = await this.upgradeBaseline(p.baseline);
     if (spec.kind === "none" && baseline === null) return null;
     const specText = spec.kind === "migrated" ? spec.v.canonicalText : p.specText;
-    const manifests = spec.kind === "migrated" ? Session.rebindSpecHashes(p.manifests, await sha256Hex(p.specText), spec.v.sha256) : p.manifests;
+    const manifests = spec.kind === "migrated"
+      ? await Session.carryDerivation(p.specText, specText, p.manifests, Session.rebindSpecHashes(p.manifests, await sha256Hex(p.specText), spec.v.sha256))
+      : p.manifests;
     return { ...p, specText, baseline: baseline ?? p.baseline, manifests };
+  }
+
+  /**
+   * Derivation that was in sync with the v4 text stays in sync with its v5 form: the recorded input hash is recomputed for the
+   * migrated document. Derivation that was already stale (or never applied) is left as it was.
+   */
+  private static async carryDerivation(oldText: string, newText: string, before: ManifestMap, after: ManifestMap): Promise<ManifestMap> {
+    let oldDoc: Json, newDoc: Json;
+    try { oldDoc = JSON.parse(oldText) as Json; newDoc = JSON.parse(newText) as Json; } catch { return after; }
+    if ((await derivationState(oldDoc, before)) !== "fresh") return after;
+    return { ...after, project: { ...after.project, derived: { inputsSha256: await inputsSha256(newDoc, after) } } };
   }
 
   private readonly migrationListeners = new Set<() => void>();
@@ -432,7 +455,10 @@ export class Session {
     // Every bundle integrity check above ran on the bundle as written; only then is a v4 specification upgraded.
     const up = await this.upgradeV4(specText);
     if (up.kind === "refused") return { ok: false, message: `the bundle holds a specification v4 file, but ${up.message}. Your project was not changed.` };
-    if (up.kind === "migrated") { manifests = Session.rebindSpecHashes(manifests, v.sha256, up.v.sha256); v = up.v; }
+    if (up.kind === "migrated") {
+      manifests = await Session.carryDerivation(v.canonicalText, up.v.canonicalText, manifests, Session.rebindSpecHashes(manifests, v.sha256, up.v.sha256));
+      v = up.v;
+    }
     const doc = JSON.parse(v.canonicalText ?? specText) as Json; // non-null: checked above, and a migrated verdict always has it
     if (doc === null || typeof doc !== "object" || Array.isArray(doc)) return { ok: false, message: "the bundle's specification is not a JSON object. Your project was not changed." };
     const refusal = refuseSecrets({ doc, manifests });

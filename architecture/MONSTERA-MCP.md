@@ -92,7 +92,7 @@ per-tool permissions.
     "schemas": { "<file>": "sha256" },
     "toolchain": "object",
     "file_count": "integer",
-    "files_by_kind": { "template": "integer", "static": "integer", "model": "integer", "spec": "integer" },
+    "files_by_kind": { "template": "integer", "static": "integer", "model": "integer", "spec": "integer", "scenarios": "integer", "asset": "integer" },
     "verify": { "clean": "boolean", "changed": ["path"], "missing": ["path"], "unexpected": ["path"] }
   }
 }
