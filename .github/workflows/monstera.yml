@@ -7,9 +7,9 @@ on:
   # every job (including the macOS one).
   push:
     branches: [main]
-    paths: ["spec/**", "tools/monstera/**", "tools/monstera-mcp/**", "tools/e2/**", "studio/src/integrations/scaffold/**", "generated/**", "apps/**", "device-lab/**", ".kiro/**", ".github/workflows/**", "!.github/workflows/studio-ci.yml", "!.kiro/specs/g4-studio/**"]
+    paths: ["spec/**", "tools/monstera/**", "tools/monstera-mcp/**", "tools/e2/**", "studio/src/integrations/scaffold/**", "generated/**", "apps/**", "docs/evidence/mixed-size-atlas/**", "docs/evidence/atlas-native-proof/**", "device-lab/**", ".kiro/**", ".github/workflows/**", "!.github/workflows/studio-ci.yml", "!.kiro/specs/g4-studio/**"]
   pull_request:
-    paths: ["spec/**", "tools/monstera/**", "tools/monstera-mcp/**", "tools/e2/**", "studio/src/integrations/scaffold/**", "generated/**", "apps/**", "device-lab/**", ".kiro/**", ".github/workflows/**", "!.github/workflows/studio-ci.yml", "!.kiro/specs/g4-studio/**"]
+    paths: ["spec/**", "tools/monstera/**", "tools/monstera-mcp/**", "tools/e2/**", "studio/src/integrations/scaffold/**", "generated/**", "apps/**", "docs/evidence/mixed-size-atlas/**", "docs/evidence/atlas-native-proof/**", "device-lab/**", ".kiro/**", ".github/workflows/**", "!.github/workflows/studio-ci.yml", "!.kiro/specs/g4-studio/**"]
   workflow_dispatch:
 
 permissions:
@@ -140,6 +140,16 @@ jobs:
           # A fork carries no recorded goldens (they belong to the template spec), so only the presentation tests run here: they
           # include the sprite frame rule. Simulation equality with the template is proven by the oracle check in the Studio apply path.
           (cd g6-clean-room/atlas-proof/android && ./gradlew testDebugUnitTest --no-daemon --tests "*.presentation.*")
+      # Mixed-size artwork: crops of different sizes (one wider than 128 px) normalized by Studio into 48x48 cells, an atlas larger than the old
+      # 24 KiB limit. studio/src/sprites/atlas/mixedFixture.test.ts keeps this spec equal to what Studio builds.
+      - name: Mixed-size atlas fixture (generate, verify, compile, JVM tests, atlas bytes)
+        run: |
+          spec=docs/evidence/mixed-size-atlas/monstera.spec.json
+          bash tools/monstera/bin/monstera generate "$spec" --out g6-clean-room/mixed-atlas --layout fixture
+          bash tools/monstera/bin/monstera verify g6-clean-room/mixed-atlas
+          python3 tools/scripts/check-atlas-bytes.py "$spec" g6-clean-room/mixed-atlas
+          RUN_ID="$RUN_ID-mixed-atlas" DL_APP_DIR=g6-clean-room/mixed-atlas/android bash device-lab/android/adapter.sh build
+          (cd g6-clean-room/mixed-atlas/android && ./gradlew testDebugUnitTest --no-daemon --tests "*.presentation.*")
       - name: Upload build result and clean-room reports
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
@@ -192,6 +202,12 @@ jobs:
           bash tools/monstera/bin/monstera generate "$spec" --out g6-clean-room/atlas-proof --layout fixture
           bash tools/monstera/bin/monstera verify g6-clean-room/atlas-proof
           python3 tools/scripts/check-atlas-bytes.py "$spec" g6-clean-room/atlas-proof
+      - name: Mixed-size atlas fixture, generate the iOS project
+        run: |
+          spec=docs/evidence/mixed-size-atlas/monstera.spec.json
+          bash tools/monstera/bin/monstera generate "$spec" --out g6-clean-room/mixed-atlas --layout fixture
+          bash tools/monstera/bin/monstera verify g6-clean-room/mixed-atlas
+          python3 tools/scripts/check-atlas-bytes.py "$spec" g6-clean-room/mixed-atlas
       - name: Boot an available iPhone simulator
         run: |
           UDID="$(xcrun simctl list devices available | grep -m1 -E '^[[:space:]]+iPhone' | grep -oE '[0-9A-F-]{36}')"
@@ -243,6 +259,7 @@ jobs:
           generated/lantern-run LanternRun app.monstera.lanternrun spec/samples/lantern-run/monstera.spec.json
           e2-native/lantern-run-ext LanternRun app.monstera.lanternrun spec/samples/lantern-run/monstera.spec.json
           g6-clean-room/atlas-proof AtlasProof app.monstera.atlasproof docs/evidence/atlas-native-proof/monstera.spec.json strict
+          g6-clean-room/mixed-atlas MixedAtlas app.monstera.mixedatlas docs/evidence/mixed-size-atlas/monstera.spec.json strict
           EOF
       - name: Upload Device Lab run (evidence only, no .app)
         if: always()

@@ -137,9 +137,17 @@ export function GameplayModulesView({ gameplay, kinds, issues, on, validated, in
   return (
     <div className="gameplay-modules" data-testid="gameplay-modules">
       <p className="banner" data-testid="gameplay-banner">
-        These forms edit the gameplay manifest only. The spec changes only when you review and apply. Lives, win score, collectibles and
-        enemies reach the native apps through the spec; health, power-ups and progression do not (see Planned).
+        These forms edit the gameplay manifest only. The spec changes only when you review and apply.
       </p>
+      <div className="gameplay-scope-strip" data-testid="gameplay-scope">
+        <span className="scope-item is-implemented">
+          <strong>Implemented:</strong> Lives, Win Score, Collectibles, Enemies (compiles to spec &amp; native)
+        </span>
+        <span className="scope-item is-planned">
+          <strong>Roadmap (not in contract):</strong> Health, Power-ups, Progression —{" "}
+          <a href="#/gameplay/planned">view contract audit</a>
+        </span>
+      </div>
       {notice !== null && <p className="status bad" role="alert" data-testid="gameplay-notice">{notice}</p>}
       <section className="card" aria-labelledby="gp-rules-h" data-testid="region-rules">
         <header><h3 id="gp-rules-h">Lives and winning</h3></header>

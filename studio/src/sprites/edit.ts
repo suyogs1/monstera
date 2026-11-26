@@ -58,6 +58,45 @@ const animationsOfSheet = (m: AnimationsManifest, sheetId: string) => m.animatio
 
 // ---- sheets ----
 
+/** Add a sheet for an image asset using an explicit frame list (e.g., a selected subset of a grid). */
+export function addSheetWithFrames(m: AnimationsManifest, id: string, image: SheetImage, grid: Grid, frames: readonly Frame[]): Result<AnimationsManifest> {
+  if (!ID.test(id)) return fail(`invalid sheet id "${id}"`);
+  if (m.sheets.some((s) => s.id === id)) return fail(`sheet id "${id}" already exists`);
+  if (m.sheets.length >= MAX_SHEETS) return fail(`at most ${MAX_SHEETS} sheets`);
+  if (image.kind !== "image") return fail(`asset "${image.id}" is not an image`);
+  if (frames.length === 0) return fail("select at least one frame");
+  if (frames.length > MAX_FRAMES_PER_SHEET) return fail(`at most ${MAX_FRAMES_PER_SHEET} frames per sheet`);
+  const seen = new Set<string>();
+  for (const f of frames) {
+    if (!ID.test(f.id)) return fail(`invalid frame id "${f.id}"`);
+    if (seen.has(f.id)) return fail(`duplicate frame id "${f.id}"`);
+    seen.add(f.id);
+    const e = rectError(f, image);
+    if (e) return fail(`${f.id}: ${e}`);
+  }
+  return { ok: true, value: { ...m, sheets: byId([...m.sheets, { id, assetId: image.id, grid: { ...grid }, frames: frames.map((f) => ({ ...f })) }]) } };
+}
+/** Re-slice a sheet with an explicit frame list. Refused when an animation uses a frame id the new list lacks. */
+export function resliceSheetWithFrames(m: AnimationsManifest, sheetId: string, image: SheetImage, grid: Grid, frames: readonly Frame[]): Result<AnimationsManifest> {
+  return withSheet(m, sheetId, (s) => {
+    if (frames.length === 0) return fail("select at least one frame");
+    if (frames.length > MAX_FRAMES_PER_SHEET) return fail(`at most ${MAX_FRAMES_PER_SHEET} frames per sheet`);
+    const seen = new Set<string>();
+    for (const f of frames) {
+      if (!ID.test(f.id)) return fail(`invalid frame id "${f.id}"`);
+      if (seen.has(f.id)) return fail(`duplicate frame id "${f.id}"`);
+      seen.add(f.id);
+      const e = rectError(f, image);
+      if (e) return fail(`${f.id}: ${e}`);
+    }
+    const ids = new Set(frames.map((f) => f.id));
+    for (const a of animationsOfSheet(m, sheetId)) {
+      const gone = a.sequence.find((e) => !ids.has(e.frameId));
+      if (gone) return fail(`animation "${a.id}" uses frame "${gone.frameId}", which the selected frames do not include`);
+    }
+    return { ok: true, value: { ...s, grid: { ...grid }, frames: frames.map((f) => ({ ...f })) } };
+  });
+}
 /** Add a sheet for an image asset and slice it by the grid. The id must be new (sheets are kept sorted by id). */
 export function addSheet(m: AnimationsManifest, id: string, image: SheetImage, grid: Grid): Result<AnimationsManifest> {
   if (!ID.test(id)) return fail(`invalid sheet id "${id}"`);
@@ -123,6 +162,29 @@ export const moveFrame = (m: AnimationsManifest, sheetId: string, frameId: strin
 /** Resize a frame to w,h (top left corner unchanged). */
 export const resizeFrame = (m: AnimationsManifest, sheetId: string, frameId: string, w: number, h: number, image: SheetImage) =>
   setRect(m, sheetId, frameId, image, (f) => ({ x: f.x, y: f.y, w, h }));
+/** Update a frame's full rectangle in one step. */
+export const setFrameRect = (m: AnimationsManifest, sheetId: string, frameId: string, rect: Rect, image: SheetImage) =>
+  setRect(m, sheetId, frameId, image, () => ({ x: rect.x, y: rect.y, w: rect.w, h: rect.h }));
+/** Rename a frame inside a sheet and update any animations on that sheet that reference it. */
+export function renameSheetFrame(m: AnimationsManifest, sheetId: string, frameId: string, nextId: string): Result<AnimationsManifest> {
+  const trimmed = nextId.trim();
+  if (!ID.test(trimmed)) return fail(`frame id "${trimmed}" must be 2–32 lowercase letters, digits, or hyphens starting with a letter`);
+  const sheet = m.sheets.find((s) => s.id === sheetId);
+  if (!sheet) return fail(`no sheet "${sheetId}"`);
+  if (!sheet.frames.some((f) => f.id === frameId)) return fail(`no frame "${frameId}" in sheet "${sheetId}"`);
+  if (trimmed === frameId) return { ok: true, value: m };
+  if (sheet.frames.some((f) => f.id === trimmed)) return fail(`frame id "${trimmed}" already exists in sheet "${sheetId}"`);
+  return {
+    ok: true,
+    value: {
+      ...m,
+      sheets: m.sheets.map((s) => (s.id === sheetId ? { ...s, frames: s.frames.map((f) => (f.id === frameId ? { ...f, id: trimmed } : f)) } : s)),
+      animations: m.animations.map((a) =>
+        a.sheetId === sheetId ? { ...a, sequence: a.sequence.map((e) => (e.frameId === frameId ? { ...e, frameId: trimmed } : e)) } : a
+      ),
+    },
+  };
+}
 export function reorderSheetFrame(m: AnimationsManifest, sheetId: string, from: number, to: number): Result<AnimationsManifest> {
   return withSheet(m, sheetId, (s) => { const r = reorderFrame(s.frames, from, to); return r.ok ? { ok: true, value: { ...s, frames: r.value } } : r; });
 }

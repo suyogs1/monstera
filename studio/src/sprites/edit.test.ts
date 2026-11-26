@@ -4,9 +4,9 @@ import { describe, expect, it } from "vitest";
 import { validateManifest } from "../project/manifests";
 import type { AnimationsManifest } from "../project/manifests/types";
 import {
-  addAnimation, addFrame, addSheet, animationsUsingFrame, appendToSequence, DEFAULT_GRID, duplicateSheetFrame, moveFrame, moveInSequence,
-  nextFrameId, removeAnimation, removeFromSequence, removeSheet, removeSheetFrame, reorderSheetFrame, resizeFrame, resliceSheet,
-  setAnimationKind, setFps, setHold, setLoop, type Result, type SheetImage,
+  addAnimation, addFrame, addSheet, addSheetWithFrames, animationsUsingFrame, appendToSequence, DEFAULT_GRID, duplicateSheetFrame, moveFrame, moveInSequence,
+  nextFrameId, removeAnimation, removeFromSequence, removeSheet, removeSheetFrame, renameSheetFrame, reorderSheetFrame, resizeFrame, resliceSheet,
+  resliceSheetWithFrames, setAnimationKind, setFps, setFrameRect, setHold, setLoop, type Result, type SheetImage,
 } from "./edit";
 
 const img: SheetImage = { id: "asset-0001", kind: "image", width: 64, height: 32 };
@@ -143,5 +143,30 @@ describe("animations", () => {
     ok(setFps(m, "anim-1", 30)); ok(appendToSequence(m, "anim-1", "f1")); ok(removeSheetFrame(m, "sheet-1", "f3"));
     expect(JSON.stringify(m)).toBe(before);
     expect(err(removeAnimation(m, "nope"))).toMatch(/no animation/);
+  });
+});
+
+describe("manual & selective slicing helpers", () => {
+  it("addSheetWithFrames and resliceSheetWithFrames keep only selected frames and guard animation references", () => {
+    const subset = [{ id: "f0", x: 0, y: 0, w: 16, h: 16 }, { id: "f2", x: 32, y: 0, w: 16, h: 16 }];
+    const m = ok(addSheetWithFrames(empty(), "sheet-1", img, grid, subset));
+    expect(m.sheets[0]?.frames.map((f) => f.id)).toEqual(["f0", "f2"]);
+    expect(err(addSheetWithFrames(empty(), "sheet-1", img, grid, []))).toMatch(/select at least one frame/);
+    const withA = ok(addAnimation(m, "anim-1", "sheet-1", "player"));
+    expect(err(resliceSheetWithFrames(withA, "sheet-1", img, grid, [{ id: "f2", x: 32, y: 0, w: 16, h: 16 }]))).toMatch(/uses frame "f0"/);
+    const updated = ok(resliceSheetWithFrames(withA, "sheet-1", img, grid, [{ id: "f0", x: 0, y: 0, w: 16, h: 16 }]));
+    expect(updated.sheets[0]?.frames).toHaveLength(1);
+  });
+
+  it("setFrameRect updates position and size in bounds, and renameSheetFrame updates animation sequences", () => {
+    const m = ok(addAnimation(withSheet(), "anim-1", "sheet-1", "player"));
+    const moved = ok(setFrameRect(m, "sheet-1", "f0", { x: 4, y: 4, w: 20, h: 20 }, img));
+    expect(moved.sheets[0]?.frames[0]).toEqual({ id: "f0", x: 4, y: 4, w: 20, h: 20 });
+    expect(err(setFrameRect(m, "sheet-1", "f0", { x: 60, y: 0, w: 10, h: 10 }, img))).toMatch(/image is 64x32/);
+    const renamed = ok(renameSheetFrame(moved, "sheet-1", "f0", "idle-0"));
+    expect(renamed.sheets[0]?.frames[0]?.id).toBe("idle-0");
+    expect(renamed.animations[0]?.sequence[0]?.frameId).toBe("idle-0");
+    expect(err(renameSheetFrame(renamed, "sheet-1", "idle-0", "f1"))).toMatch(/already exists/);
+    expect(err(renameSheetFrame(renamed, "sheet-1", "idle-0", "1bad"))).toMatch(/2–32 lowercase/);
   });
 });

@@ -300,7 +300,7 @@
         "studio/src/sprites/atlas/atlas.test.ts",
         "studio/src/sprites/atlas/atlas.e2e.test.ts"
       ],
-      "limits": "SIMULATOR-TESTED: a sheet authored in Studio was exported, generated and drawn on an Android emulator and an iOS simulator (frame log checked). Attract mode only, no gameplay or device. One atlas, equal-size frames up to 128x128, 24 KiB base64, two animated kinds, loops only.",
+      "limits": "SIMULATOR-TESTED: a sheet authored in Studio was exported, generated and drawn on an Android emulator and an iOS simulator (frame log checked). Attract mode only, no gameplay or device. One atlas of uniform cells up to 128x128, 1 MiB base64; other crop sizes are normalized into the cell (mixed-size fixture: GENERATED only, native run pending CI); two animated kinds, loops only.",
       "requires": "",
       "designRow": ""
     },    {

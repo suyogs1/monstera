@@ -9,7 +9,7 @@ import { pumpkinDoc } from "../../project/xref.testkit";
 import type { Json } from "../../schema/schema";
 import { applyChange, describeIssues, planSpriteApply, spritesOfDoc, type SpriteChange } from "./apply";
 import { parseFrames, parseTicksPerFrame, spriteFromAnimation } from "./assign";
-import { atlasGrid, atlasLimits, buildAtlas } from "./build";
+import { atlasGrid, atlasLimits, buildAtlas, normalizeFrameRgba, suggestNormalization } from "./build";
 import { frameRect, spriteFrameAt } from "./frame";
 import { fromBase64, toBase64 } from "./png";
 import { colourOf, decodePng, LIMITS, paintedSheet, pixelAt, schemaModel } from "./atlas.testkit";
@@ -20,7 +20,7 @@ const blank = (): Json => { const r = applyChange(pumpkinDoc(), neutralChange(pu
 
 describe("limits come from the engine schema", () => {
   it("are read from the schema model, and a schema that lacks one yields none", () => {
-    expect(LIMITS).toEqual({ maxFrameWidth: 128, maxFrameHeight: 128, maxColumns: 16, maxRows: 16, maxPngBase64: 24576, maxSpriteFrames: 4, maxTicksPerFrame: 600 });
+    expect(LIMITS).toEqual({ maxFrameWidth: 128, maxFrameHeight: 128, maxColumns: 16, maxRows: 16, maxPngBase64: 1048576, maxSpriteFrames: 4, maxTicksPerFrame: 600 });
     expect(atlasLimits({ field: (p: string) => (p === "game.atlas.png" ? undefined : schemaModel.field(p)) })).toBeNull();
   });
 });
@@ -52,25 +52,57 @@ describe("buildAtlas", () => {
     expect(atlasGrid(sheet, 16)).toEqual({ columns: 5, rows: 1 });
     expect(atlasGrid(sheet, 3)).toEqual({ columns: 3, rows: 2 });
   });
-  it("refuses with the exact reason: no frames, mixed sizes, oversize frames, frames outside the image, too many rows, too large a PNG", async () => {
+  it("normalizes mixed-size and >128x128 source crops into uniform <=128x128 Spec v5 cells", async () => {
+    const w = 220, h = 160;
+    const data = new Uint8Array(w * h * 4);
+    // Paint frame 0 (160x140) red in the center and transparent at corners
+    for (let y = 10; y < 130; y++) for (let x = 10; x < 150; x++) data.set([220, 40, 40, 255], (y * w + x) * 4);
+    // Paint frame 1 (40x20) green at (170, 0)
+    for (let y = 0; y < 20; y++) for (let x = 170; x < 210; x++) data.set([40, 200, 80, 255], (y * w + x) * 4);
+    const sheet = {
+      id: "mixed",
+      frames: [
+        { id: "big", x: 0, y: 0, w: 160, h: 140 },
+        { id: "small", x: 170, y: 0, w: 40, h: 20 },
+      ],
+      grid: { frameWidth: 32, frameHeight: 32, columns: 2, rows: 1, margin: 0, spacing: 0 },
+    };
+    const suggested = suggestNormalization(sheet.frames, LIMITS);
+    expect(suggested).toEqual({ cellWidth: 128, cellHeight: 128, fit: "contain", scaling: "nearest" });
+    const r = await buildAtlas({ width: w, height: h, data }, sheet, LIMITS, { normalization: { cellWidth: 64, cellHeight: 64, fit: "contain", scaling: "nearest" } });
+    if (!r.ok) throw new Error(r.error);
+    expect(r.normalized).toBe(true);
+    expect(r.atlas).toMatchObject({ frameWidth: 64, frameHeight: 64, columns: 2, rows: 1 });
+    const out = decodePng(fromBase64(r.atlas.png)!);
+    expect([out.width, out.height]).toEqual([128, 64]);
+    // Contain preserves aspect ratio of 40x20 -> 64x32 centered vertically (y padding 0..15 is transparent)
+    expect(pixelAt(out, 64 + 10, 4)).toEqual([0, 0, 0, 0]);
+    expect(pixelAt(out, 64 + 32, 32)).toEqual([40, 200, 80, 255]);
+    // Bilinear scaling also produces valid RGBA output
+    const bi = normalizeFrameRgba({ width: w, height: h, data }, sheet.frames[0]!, { cellWidth: 32, cellHeight: 32, fit: "contain", scaling: "bilinear" });
+    expect(bi.length).toBe(32 * 32 * 4);
+  });
+
+  it("refuses with the exact reason: no frames, oversize cell normalization, frames outside the image, too many rows, too large a PNG", async () => {
     const { image, sheet } = paintedSheet({ columns: 2, rows: 1, cell: 8 });
     expect(await buildAtlas(image, { ...sheet, frames: [] }, LIMITS)).toMatchObject({ ok: false, error: expect.stringContaining("has no frames") });
-    const mixed = { ...sheet, frames: [sheet.frames[0]!, { ...sheet.frames[1]!, w: 4 }] };
-    expect(await buildAtlas(image, mixed, LIMITS)).toMatchObject({ ok: false, error: expect.stringContaining("frames of one size") });
-    const wide = paintedSheet({ columns: 1, rows: 1, cell: 129 });
-    expect(await buildAtlas(wide.image, wide.sheet, LIMITS)).toMatchObject({ ok: false, error: expect.stringContaining("at most 128x128") });
+    expect(await buildAtlas(image, sheet, LIMITS, { normalization: { cellWidth: 129, cellHeight: 64, fit: "contain", scaling: "nearest" } })).toMatchObject({ ok: false, error: expect.stringContaining("at most 128x128") });
     const outside = { ...sheet, frames: [{ ...sheet.frames[0]!, x: 12 }] };
     expect(await buildAtlas(image, outside, LIMITS)).toMatchObject({ ok: false, error: expect.stringContaining("outside") });
     const many = { ...sheet, frames: Array.from({ length: 257 }, (_, i) => ({ id: `g${i}`, x: 0, y: 0, w: 8, h: 8 })), grid: { ...sheet.grid, columns: 1, rows: 1 } };
     expect(await buildAtlas(image, many, LIMITS)).toMatchObject({ ok: false, error: expect.stringContaining("17 rows") });
-    // Incompressible noise: 16 frames of 32x32 cannot fit in 24576 characters of base64.
+    // Realistic >24 KiB atlas (16 frames of 32x32 incompressible noise, ~65 KiB base64) now succeeds under 1 MiB limit,
+    // while exceeding LIMITS.maxPngBase64 is still refused with the schema limit message.
     const n = 32, frames = 16;
     const noise = new Uint8Array(n * frames * n * 4);
     let s = 12345;
     for (let i = 0; i < noise.length; i++) { s ^= s << 13; s >>>= 0; s ^= s >>> 17; s ^= s << 5; s >>>= 0; noise[i] = s & 255; }
     const sheetN = { id: "noise", frames: Array.from({ length: frames }, (_, i) => ({ id: `f${i}`, x: i * n, y: 0, w: n, h: n })), grid: { frameWidth: n, frameHeight: n, columns: frames, rows: 1, margin: 0, spacing: 0 } };
-    const big = await buildAtlas({ width: n * frames, height: n, data: noise }, sheetN, LIMITS);
-    expect(big).toMatchObject({ ok: false, error: expect.stringContaining("the specification allows 24576") });
+    const realistic = await buildAtlas({ width: n * frames, height: n, data: noise }, sheetN, LIMITS);
+    expect(realistic.ok).toBe(true);
+    if (realistic.ok) expect(realistic.atlas.png.length).toBeGreaterThan(24576);
+    const overTight = await buildAtlas({ width: n * frames, height: n, data: noise }, sheetN, { ...LIMITS, maxPngBase64: 24576 });
+    expect(overTight).toMatchObject({ ok: false, error: expect.stringContaining("the specification allows 24576") });
   });
 });
 

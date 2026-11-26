@@ -37,6 +37,10 @@ describe("sheet editor", () => {
     expect(html).toContain('data-testid="p"');
     expect(html).toMatch(/Prototype\./);
   });
+  it("wraps frame-list in a scrollable container so actions never overlap the side panel", () => {
+    const html = render("sheet-lantern");
+    expect(html).toMatch(/class="frame-list-scroll"[^>]*data-testid="frame-list-container"[^>]*>[\s\S]*<table[^>]*data-testid="frame-list"[\s\S]*data-testid="frame-remove-f0"/);
+  });
 });
 
 describe("animation editor", () => {

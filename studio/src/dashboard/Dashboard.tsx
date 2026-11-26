@@ -13,6 +13,7 @@ import { populatedModules } from "../project/catalog";
 import { indicatorOf } from "../ui/persistence";
 import { copyName, deleteWarning, determinismLine, evidenceLine, projectRows, validationLine, type LiveProject } from "./model";
 import { replaceWithConfirm } from "../ui/replaceConfirm";
+import { IconArrowRight } from "../ui/icons";
 import { BundleView, CreateView, ProjectListView, StatusCards, type Notice } from "./views";
 
 const INDEX = raw as unknown as NativeIndex;
@@ -61,7 +62,7 @@ export function Projects() {
     void listProjects().then((r) => { if (current) setListing(r); });
     return () => { current = false; };
   }, [listProjects, project.projectKey, project.storeStatus, project.name, tick]);
-  const rows = useMemo(() => projectRows(listing?.ok ? listing.entries : [], live, INDEX), [listing, live]);
+  const rows = useMemo(() => projectRows(listing?.ok ? listing.entries : [], live, INDEX, project.detail.lastSavedAt), [listing, live, project.detail.lastSavedAt]);
   const refresh = useCallback(() => setTick((n) => n + 1), []);
   const done = (r: { ok: true } | { ok: false; reason: string }, ok: string): void => {
     setNotice(r.ok ? { kind: "ok", text: ok } : { kind: "error", text: r.reason });
@@ -73,64 +74,56 @@ export function Projects() {
     try { await work(); } finally { setBusyKey(null); }
   };
   return (
-    <section aria-labelledby="dashboard-projects-h">
-      <header className="section-head">
-        <h2 id="dashboard-projects-h">Projects</h2>
-        <p>Every project saved in this browser. Open one to edit it in the other modules.</p>
+    <section aria-label="Projects" className="dashboard-projects-shell">
+      <header className="dashboard-header-hero">
+        <div className="dashboard-title-row">
+          <h1 className="dashboard-main-heading">Projects</h1>
+          <span className="projects-count-badge">{rows.length} {rows.length === 1 ? "project" : "projects"}</span>
+        </div>
+        <nav className="workflow-strip" aria-label="Studio workflow">
+          <span className="workflow-label">Workflow</span>
+          <span className="workflow-steps">
+            <a href={hashForSection("dashboard-projects")} className="workflow-step is-current">Create</a>
+            <IconArrowRight size={13} className="workflow-arrow" />
+            <a href={hashForSection("overview")} className="workflow-step">Design</a>
+            <IconArrowRight size={13} className="workflow-arrow" />
+            <a href={hashForSection("assets")} className="workflow-step">Author Assets</a>
+            <IconArrowRight size={13} className="workflow-arrow" />
+            <a href={hashForSection("determinism")} className="workflow-step">Preview</a>
+            <IconArrowRight size={13} className="workflow-arrow" />
+            <a href={hashForSection("export")} className="workflow-step">Generate</a>
+          </span>
+        </nav>
       </header>
-      <CreateView
-        templates={templates} busy={creating}
-        onCreate={(id) => {
-          setCreating(true); setNotice(null);
-          void (async () => {
-            try {
-              const r = await replaceWithConfirm((o) => session.loadTemplate(id, o));
-              setNotice(r.ok ? { kind: "ok", text: `Created a new project from ${id}. It is now the open project.` } : { kind: "error", text: r.message });
-            } catch (e) {
-              setNotice({ kind: "error", text: `The project could not be created: ${e instanceof Error ? e.message : "unknown error"}.` });
-            } finally { setCreating(false); refresh(); }
-          })();
-        }}
-        onImportFile={(file) => {
-          setCreating(true); setNotice(null);
-          void (async () => {
-            try {
-              const read = await readSpecFile(file);
-              if (!read.ok) { setNotice({ kind: "error", text: `Could not import ${file.name}: ${read.message} Nothing was changed.` }); return; }
-              const r = await replaceWithConfirm((o) => session.importText(read.text, file.name, o));
-              setNotice(r.ok ? { kind: "ok", text: `Imported ${file.name} as a new project. It is now the open project.` } : { kind: "error", text: `Could not import ${file.name}: ${r.message}` });
-            } finally { setCreating(false); refresh(); }
-          })();
-        }}
-      />
-      <BundleView
-        busy={creating} canExport={live !== null}
-        onExport={() => {
-          setCreating(true); setNotice(null);
-          void (async () => {
-            try {
-              const r = await session.exportBundleBytes();
-              if (!r.ok) { setNotice({ kind: "error", text: `The bundle could not be exported: ${r.message}.` }); return; }
-              const url = URL.createObjectURL(new Blob([r.bytes as Uint8Array<ArrayBuffer>], { type: "application/zip" }));
-              const a = document.createElement("a");
-              a.href = url; a.download = `${live?.projectId ?? "project"}-bundle.zip`;
-              document.body.appendChild(a); a.click(); a.remove();
-              setTimeout(() => URL.revokeObjectURL(url), 1000);
-              setNotice({ kind: "ok", text: "Exported the project bundle." });
-            } finally { setCreating(false); }
-          })();
-        }}
-        onImportFile={(file) => {
-          setCreating(true); setNotice(null);
-          void (async () => {
-            try {
-              const data = new Uint8Array(await file.arrayBuffer());
-              const r = await replaceWithConfirm((o) => session.importBundleBytes(data, file.name, o));
-              setNotice(r.ok ? { kind: "ok", text: `Imported ${file.name} as a new project. It is now the open project.` } : { kind: "error", text: `Could not import ${file.name}: ${r.message}` });
-            } finally { setCreating(false); refresh(); }
-          })();
-        }}
-      />
+
+      <div className="dashboard-hero-actions-container">
+        <CreateView
+          templates={templates} busy={creating}
+          onCreate={(id) => {
+            setCreating(true); setNotice(null);
+            void (async () => {
+              try {
+                const r = await replaceWithConfirm((o) => session.loadTemplate(id, o));
+                setNotice(r.ok ? { kind: "ok", text: `Created a new project from ${id}. It is now the open project.` } : { kind: "error", text: r.message });
+              } catch (e) {
+                setNotice({ kind: "error", text: `The project could not be created: ${e instanceof Error ? e.message : "unknown error"}.` });
+              } finally { setCreating(false); refresh(); }
+            })();
+          }}
+          onImportFile={(file) => {
+            setCreating(true); setNotice(null);
+            void (async () => {
+              try {
+                const read = await readSpecFile(file);
+                if (!read.ok) { setNotice({ kind: "error", text: `Could not import ${file.name}: ${read.message} Nothing was changed.` }); return; }
+                const r = await replaceWithConfirm((o) => session.importText(read.text, file.name, o));
+                setNotice(r.ok ? { kind: "ok", text: `Imported ${file.name} as a new project. It is now the open project.` } : { kind: "error", text: `Could not import ${file.name}: ${r.message}` });
+              } finally { setCreating(false); refresh(); }
+            })();
+          }}
+        />
+      </div>
+
       <ProjectListView
         rows={rows} listError={listing !== null && !listing.ok ? listing.message : null} busyKey={busyKey} notice={notice}
         onOpen={(key) => void withBusy(key, async () => {
@@ -150,6 +143,37 @@ export function Projects() {
           void withBusy(key, async () => done(await session.deleteProject(key), `Deleted "${row.name}".`));
         }}
       />
+
+      <div className="dashboard-secondary-shelf">
+        <BundleView
+          busy={creating} canExport={live !== null}
+          onExport={() => {
+            setCreating(true); setNotice(null);
+            void (async () => {
+              try {
+                const r = await session.exportBundleBytes();
+                if (!r.ok) { setNotice({ kind: "error", text: `The bundle could not be exported: ${r.message}.` }); return; }
+                const url = URL.createObjectURL(new Blob([r.bytes as Uint8Array<ArrayBuffer>], { type: "application/zip" }));
+                const a = document.createElement("a");
+                a.href = url; a.download = `${live?.projectId ?? "project"}-bundle.zip`;
+                document.body.appendChild(a); a.click(); a.remove();
+                setTimeout(() => URL.revokeObjectURL(url), 1000);
+                setNotice({ kind: "ok", text: "Exported the project bundle." });
+              } finally { setCreating(false); }
+            })();
+          }}
+          onImportFile={(file) => {
+            setCreating(true); setNotice(null);
+            void (async () => {
+              try {
+                const data = new Uint8Array(await file.arrayBuffer());
+                const r = await replaceWithConfirm((o) => session.importBundleBytes(data, file.name, o));
+                setNotice(r.ok ? { kind: "ok", text: `Imported ${file.name} as a new project. It is now the open project.` } : { kind: "error", text: `Could not import ${file.name}: ${r.message}` });
+              } finally { setCreating(false); refresh(); }
+            })();
+          }}
+        />
+      </div>
     </section>
   );
 }
