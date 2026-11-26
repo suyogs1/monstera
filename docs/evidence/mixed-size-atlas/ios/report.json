@@ -1,0 +1,9 @@
+[
+{"op":"build","target":"ios-simulator","status":"ok","run_id":"ci-45788638779-mixed-atlas","timestamp":"2026-11-26T09:31:29Z","artifact":"device-lab/reports/runs/ci-45788638779-mixed-atlas/ios-simulator/MixedAtlas.app"},
+{"op":"install","target":"ios-simulator","status":"ok","run_id":"ci-45788638779-mixed-atlas","timestamp":"2026-11-26T09:32:15Z"},
+{"op":"launch","target":"ios-simulator","status":"ok","run_id":"ci-45788638779-mixed-atlas","timestamp":"2026-11-26T09:32:18Z"},
+{"op":"screenshot","target":"ios-simulator","status":"ok","run_id":"ci-45788638779-mixed-atlas","timestamp":"2026-11-26T09:32:24Z","artifact":"device-lab/reports/runs/ci-45788638779-mixed-atlas/ios-simulator/01-launched.png"},
+{"op":"screenshot","target":"ios-simulator","status":"ok","run_id":"ci-45788638779-mixed-atlas","timestamp":"2026-11-26T09:32:30Z","artifact":"device-lab/reports/runs/ci-45788638779-mixed-atlas/ios-simulator/02-later.png"},
+{"op":"logs","target":"ios-simulator","status":"ok","run_id":"ci-45788638779-mixed-atlas","timestamp":"2026-11-26T09:32:52Z","artifact":"device-lab/reports/runs/ci-45788638779-mixed-atlas/ios-simulator/logs.txt"},
+{"op":"stop","target":"ios-simulator","status":"ok","run_id":"ci-45788638779-mixed-atlas","timestamp":"2026-11-26T09:32:53Z"}
+]
