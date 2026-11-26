@@ -239,6 +239,9 @@ jobs:
             bash $A screenshot 01-launched
             sleep 5
             bash $A screenshot 02-later
+            # Strict rows must show every frame of the animated kind. Its first spawn is at tick 180 and the CI simulator runs well below
+            # 60 ticks/s (ticks=60 is logged ~3 s after launch), so 10 s can end before it appears: wait a fixed 20 s more, no polling.
+            if [ -n "${strict:-}" ]; then sleep 20; fi
             bash $A logs
             bash $A stop
             bash $A report
