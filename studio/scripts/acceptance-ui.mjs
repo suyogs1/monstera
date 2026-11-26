@@ -1,5 +1,6 @@
 // UI-level acceptance checks, run by acceptance.mjs against the production build.
 // Every check observes the rendered page; edits go through the same store the controls use.
+import { projectActions } from "./project-actions.mjs";
 import { readFileSync } from "node:fs";
 import { createHash } from "node:crypto";
 import { acceptUnloadDialogs, activeRecord, indicatorKind, livesOf, resetStudioStorage, storedMeta, storedProjects, studioDbExists, waitSaved } from "./storage.mjs";
@@ -35,14 +36,14 @@ export default async function ui({ page, origin, check, committed, TEMPLATES }) 
 
   // ---- export of an unmodified template is the committed file (R2.1 / AC3)
   const exportBytes = async () => {
-    const [dl] = await Promise.all([page.waitForEvent("download"), page.click('[data-testid="export-button"]')]);
+    const [dl] = await projectActions(page, () => Promise.all([page.waitForEvent("download"), page.click('[data-testid="export-button"]')]));
     return readFileSync(await dl.path()).toString("utf8");
   };
   check("export of an unedited template equals the committed file byte for byte", (await exportBytes()) === committed[OFFICIAL.id]);
 
   // ---- every template loads through the picker
   for (const t of TEMPLATES) {
-    await page.selectOption('[data-testid="template-select"]', t.id);
+    await projectActions(page, () => page.selectOption('[data-testid="template-select"]', t.id));
     await page.waitForFunction((x) => window.session.store.getState().baseline?.templateId === x, t.id, { timeout: 15000 });
     await settled();
     const exported = await exportBytes();
@@ -55,7 +56,7 @@ export default async function ui({ page, origin, check, committed, TEMPLATES }) 
     groups[1].includes("Kiro-authored") && groups[1].endsWith("lantern-run"), groups.join(" | "));
 
   // ---- edit, validate, revert
-  await page.selectOption('[data-testid="template-select"]', OFFICIAL.id);
+  await projectActions(page, () => page.selectOption('[data-testid="template-select"]', OFFICIAL.id));
   await page.waitForFunction((x) => window.session.store.getState().baseline?.templateId === x, OFFICIAL.id, { timeout: 15000 });
   await settled();
   const original = await page.evaluate(() => window.session.store.getState().validation.sha256);
@@ -79,7 +80,7 @@ export default async function ui({ page, origin, check, committed, TEMPLATES }) 
   check("the invalid draft was not written to IndexedDB (the stored project keeps the last valid lives)", afterInvalid !== null && livesOf(afterInvalid) === 5 && (await indicatorKind(page)) === "unsaved");
   const unloadPrompt = (await page.evaluate(() => { const e = new Event("beforeunload", { cancelable: true }); window.dispatchEvent(e); return e.defaultPrevented; }));
   check("closing with an unsaved invalid draft raises the browser prompt", unloadPrompt === true);
-  const [recDl] = await Promise.all([page.waitForEvent("download"), page.click('[data-testid="recovery-export-button"]')]);
+  const [recDl] = await projectActions(page, () => Promise.all([page.waitForEvent("download"), page.click('[data-testid="recovery-export-button"]')]));
   const recovery = JSON.parse(readFileSync(await recDl.path(), "utf8"));
   check("Export recovery data preserves the invalid draft, marks it non-canonical and keeps manifests and baseline",
     recDl.suggestedFilename().startsWith("monstera-recovery-") && recovery.format === 3 && recovery.specTextCanonical === false &&
@@ -140,7 +141,7 @@ export default async function ui({ page, origin, check, committed, TEMPLATES }) 
   await edit(["game", "runtime", "lives"], 7);
   await waitSaved(page);
   page.once("dialog", (d) => d.accept());
-  await page.click('[data-testid="reset-button"]');
+  await projectActions(page, () => page.click('[data-testid="reset-button"]'));
   await page.waitForFunction(() => window.session.store.getState().doc.game.runtime.lives === 5);
   await settled();
   check("Reset returns to the template's exact SHA-256", (await page.evaluate(() => window.session.store.getState().validation.sha256)) === original);
@@ -173,7 +174,7 @@ export default async function ui({ page, origin, check, committed, TEMPLATES }) 
   await refused("a file that is not valid UTF-8", "bin.json", Buffer.from([0xff, 0xfe, 0x7b]), "not valid UTF-8");
 
   // =================================================================== Project Brain
-  await page.selectOption('[data-testid="template-select"]', OFFICIAL.id);
+  await projectActions(page, () => page.selectOption('[data-testid="template-select"]', OFFICIAL.id));
   await page.waitForFunction(() => window.session.store.getState().baseline.label === "pumpkin-blaster");
   await settled();
   const sel = (path) => `[data-path="${path}"]`;
@@ -345,7 +346,7 @@ export default async function ui({ page, origin, check, committed, TEMPLATES }) 
   check("agent game-author and tool validate_spec appear in the inventory", (await page.locator("main").innerText()).includes("game-author") && (await page.locator('th code:text("validate_spec")').count()) === 1);
 
   // ---- M3-A: committed native build and simulator-launch evidence, bound to the exact spec SHA-256
-  await page.selectOption('[data-testid="template-select"]', OFFICIAL.id);
+  await projectActions(page, () => page.selectOption('[data-testid="template-select"]', OFFICIAL.id));
   await page.waitForFunction((x) => window.session.store.getState().baseline?.templateId === x, OFFICIAL.id, { timeout: 15000 });
   await settled();
   await open("determinism");
@@ -387,7 +388,7 @@ export default async function ui({ page, origin, check, committed, TEMPLATES }) 
   await settled();
   await open("determinism");
   check("an imported file of the same project with a different hash gets no evidence", (await nativeOf("data-matched")) === "no" && (await nativeOf("data-label")) === "GENERATED");
-  await page.selectOption('[data-testid="template-select"]', OFFICIAL.id);
+  await projectActions(page, () => page.selectOption('[data-testid="template-select"]', OFFICIAL.id));
   await page.waitForFunction((x) => window.session.store.getState().baseline?.templateId === x, OFFICIAL.id, { timeout: 15000 });
   await settled();  // ---- Studio has no Kiro/chat/build affordances
   const body = (await page.locator("body").innerText()).toLowerCase();

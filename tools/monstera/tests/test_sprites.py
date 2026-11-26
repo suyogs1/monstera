@@ -142,7 +142,7 @@ class AtlasValidationTests(unittest.TestCase):
     def test_text_that_is_not_strict_base64_is_refused_by_the_schema(self) -> None:
         for text in ("abc", "ab=c", "a b=", "iVBORw0KGgo\n"):
             self.assertIn(("$.game.atlas.png", "pattern"), codes(with_atlas(text)), repr(text))
-        self.assertIn(("$.game.atlas.png", "maxLength"), codes(with_atlas("A" * 24580)))
+        self.assertIn(("$.game.atlas.png", "maxLength"), codes(with_atlas("A" * 1048580)))
 
     def test_frames_must_exist_need_an_atlas_and_at_most_two_kinds_animate(self) -> None:
         spec = with_atlas(make_png(8, 4), sprites={0: {"frames": [0, 2], "ticksPerFrame": 1}})

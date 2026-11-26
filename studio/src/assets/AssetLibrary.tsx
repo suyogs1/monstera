@@ -65,7 +65,10 @@ function ImportForm() {
       </div>
       <fieldset>
         <legend>Provenance</legend>
-        <p className="muted">These are your declarations. Studio checks only the shape of the license value; it does not check the SPDX list, whether the license is valid, or that you own the asset.</p>
+        <details className="technical-details">
+          <summary>Provenance and license declaration rules</summary>
+          <p className="muted small">These are your declarations. Studio checks only the shape of the license value; it does not check the SPDX list, whether the license is valid, or that you own the asset.</p>
+        </details>
         <div className="actions small">
           <label>Origin{" "}
             <select name="origin" data-testid="asset-origin" value={origin} onChange={(e) => setOrigin(e.target.value as Provenance["origin"])}>{ORIGINS.map((o) => <option key={o} value={o}>{o}</option>)}</select>
@@ -98,7 +101,15 @@ export function AssetLibrary() {
   const open = assets.find((a) => a.id === previewId);
   return (
     <div className="asset-studio">
-      <p className="banner" data-testid="asset-status-note">Prototype. Assets are stored, previewed and exported by Studio. The generated native apps do not render or play them yet.</p>
+      <div className="banner" data-testid="asset-status-note">
+        <p style={{ margin: "0 0 0.4rem 0" }}>
+          <strong>Asset Library vs. Native Atlas:</strong> Media files stored here (audio, UI art and background images) are preserved and exported in the Studio project pack.
+        </p>
+        <p style={{ margin: 0, fontWeight: "normal", fontSize: "0.9em" }}>
+          To render graphics natively in Android and iOS apps, import a sprite sheet image here, then open the{" "}
+          <a href="#/sprites" className="accent-link"><strong>Sprite and Animation Editor</strong></a> to slice frames and compile the embedded native sprite atlas (spec v5).
+        </p>
+      </div>
       <AssetList
         assets={assets} filter={filter} kindIds={kindIds} previewId={open ? open.id : null}
         preview={open ? <AssetPreview asset={open} /> : null}

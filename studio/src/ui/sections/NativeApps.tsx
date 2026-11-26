@@ -56,10 +56,16 @@ export function NativeApps({ sha, projectId }: { sha: string | null; projectId: 
     <section className="card" aria-labelledby="native-apps-h" data-testid="native-apps" data-matched={exact ? "yes" : "no"} data-label={exact?.label ?? "GENERATED"}>
       <header><h3 id="native-apps-h">Native app build and simulator launch (committed evidence)</h3></header>
       <p className="muted small">
-        Separate from simulation conformance above. This is what happened when the generated Android and iOS apps were built and launched on an
-        emulator and a simulator, read from <code>{INDEX.evidenceDir}/</code> at build time. Studio cannot build or launch apps. Evidence applies
-        only to the exact specification SHA-256 it was recorded for. {INDEX.scope} No physical device was used, and none is claimed.
+        Pre-recorded simulator runs verifying that generated Android and iOS apps compile, launch and render with exact specification parity.
       </p>
+      <details className="technical-details">
+        <summary>Verification scope and environment details</summary>
+        <p className="muted small">
+          Separate from simulation conformance above. This is what happened when the generated Android and iOS apps were built and launched on an
+          emulator and a simulator, read from <code>{INDEX.evidenceDir}/</code> at build time. Studio cannot build or launch apps. Evidence applies
+          only to the exact specification SHA-256 it was recorded for. {INDEX.scope} No physical device was used, and none is claimed.
+        </p>
+      </details>
       {exact ? (
         <>
           <p data-testid="native-apps-headline">

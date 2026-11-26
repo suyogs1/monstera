@@ -4,6 +4,7 @@
 // Env: SMOKE_LABEL (report name, default local-preview or deployed), SMOKE_CHANNEL (e.g. "chrome" to use an installed
 // Chrome; default is Playwright's Chromium), SMOKE_REPORT (JSON path, default docs/evidence/studio-m3b/smoke-<label>.json).
 // Scope: load, engine start, validation, template switching, preview running, evidence binding. It does not play the game.
+import { projectActions } from "./project-actions.mjs";
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -101,7 +102,7 @@ try {
   };
   // A template switch is asynchronous: wait for the baseline to be the requested template, then for its validation.
   const pickTemplate = async (id) => {
-    await page.selectOption('[data-testid="template-select"]', id);
+    await projectActions(page, () => page.selectOption('[data-testid="template-select"]', id));
     await page.waitForFunction((x) => window.session.store.getState().baseline?.templateId === x, id, { timeout: 30000 });
     await settled();
   };

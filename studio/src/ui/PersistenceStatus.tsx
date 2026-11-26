@@ -21,8 +21,11 @@ export function PersistenceIndicatorView({ view }: { view: PersistenceView }) {
   const i = indicatorOf(view);
   return (
     <p className="persist-state small" data-testid="persistence-status" data-kind={i.kind} role="status" aria-live="polite">
-      <span className={`status ${i.kind === "saved" ? "ok" : i.kind === "saving" || i.kind === "loading" || i.kind === "unsaved" ? "pending" : "bad"}`}>{i.label}</span>
-      {i.reason !== null && <span className="muted" data-testid="persistence-reason">{i.reason}</span>}
+      <span className={`status-pill ${i.kind === "saved" ? "ok" : i.kind === "saving" || i.kind === "loading" || i.kind === "unsaved" ? "pending" : "bad"}`}>
+        <span className={`dot dot-${i.kind === "saved" ? "ok" : i.kind === "saving" || i.kind === "loading" || i.kind === "unsaved" ? "pending" : "bad"}`} aria-hidden="true" />
+        {i.label}
+      </span>
+      {i.reason !== null && <span className="muted persist-reason-hint" data-testid="persistence-reason">{i.reason}</span>}
     </p>
   );
 }
@@ -54,9 +57,9 @@ export interface BannerViewProps {
 
 export function PersistenceBannerView({ view, notice, confirm, busy, onAction, onConfirmDiscard, onCancelDiscard }: BannerViewProps) {
   const banners = bannersOf(view);
-  if (banners.length === 0 && notice === null) return null;
+  if (banners.length === 0 && notice === null && confirm === null) return null;
   return (
-    <section className="persist-banners" aria-label="Storage and recovery" data-testid="persistence-banners">
+    <section className="persist-banners-dock" aria-label="Storage and recovery" data-testid="persistence-banners">
       {banners.map((b) => (
         <div key={b.id} className={`persist-banner ${b.role === "alert" ? "bad" : "warn"}`} role={b.role} data-testid={`banner-${b.id}`}>
           <strong>{b.title}</strong>
@@ -75,8 +78,8 @@ export function PersistenceBannerView({ view, notice, confirm, busy, onAction, o
         <div className="persist-banner bad" role="alertdialog" aria-label="Confirm discarding in-memory changes" data-testid="banner-confirm-discard">
           <p>{confirm}</p>
           <div className="actions">
-            <button type="button" className="danger" disabled={busy} data-testid="persist-discard-confirm" onClick={onConfirmDiscard}>Discard my in-memory changes and reload</button>
-            <button type="button" disabled={busy} data-testid="persist-discard-cancel" onClick={onCancelDiscard}>Keep my changes</button>
+            <button type="button" className="btn-danger-sm" disabled={busy} data-testid="persist-discard-confirm" onClick={onConfirmDiscard}>Discard my in-memory changes and reload</button>
+            <button type="button" className="btn-secondary-sm" disabled={busy} data-testid="persist-discard-cancel" onClick={onCancelDiscard}>Keep my changes</button>
           </div>
         </div>
       )}
@@ -137,14 +140,24 @@ export function StorageProtectionView({ last, estimate, busy, onRequest, onRefre
   const p = protectionView(last);
   const e = estimateView(estimate);
   return (
-    <section className="storage-protect small" aria-label="Browser storage protection" data-testid="storage-protection">
-      <div className="actions">
-        <button type="button" disabled={busy} onClick={onRequest} title={PROTECT_EXPLANATION} data-testid="protect-storage-button">{p.buttonLabel}</button>
-        <span className="muted" data-testid="storage-estimate" data-kind={e.kind}>{e.text}</span>
-        <button type="button" disabled={busy} onClick={onRefresh} data-testid="storage-refresh">Refresh estimate</button>
+    <section className="storage-protect-compact" aria-label="Browser storage protection" data-testid="storage-protection">
+      <div className="storage-protect-row">
+        <button type="button" className="btn-secondary-sm" disabled={busy} onClick={onRequest} title={PROTECT_EXPLANATION} data-testid="protect-storage-button">
+          {p.buttonLabel}
+        </button>
+        <button type="button" className="btn-ghost-sm" disabled={busy} onClick={onRefresh} title="Refresh estimate" data-testid="storage-refresh">
+          ↻
+        </button>
       </div>
-      <p className="muted" data-testid="protect-storage-help">{PROTECT_EXPLANATION}</p>
-      {p.result !== null && <p className={p.result.ok ? "" : "bad"} role="status" data-testid="protect-storage-result" data-outcome={p.result.outcome}>{p.result.text}</p>}
+      <div className="storage-estimate-meta muted small" data-testid="storage-estimate" data-kind={e.kind}>
+        {e.text}
+      </div>
+      <p className="sr-only" data-testid="protect-storage-help">{PROTECT_EXPLANATION}</p>
+      {p.result !== null && (
+        <p className={`storage-result-msg small ${p.result.ok ? "ok" : "bad"}`} role="status" data-testid="protect-storage-result" data-outcome={p.result.outcome}>
+          {p.result.text}
+        </p>
+      )}
     </section>
   );
 }

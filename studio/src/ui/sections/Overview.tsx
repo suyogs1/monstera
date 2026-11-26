@@ -16,11 +16,15 @@ export function Overview() {
     <section aria-labelledby="overview-h">
       <header className="section-head">
         <h2 id="overview-h">Project Brain</h2>
-        <p>
-          One specification describes the whole game. This page reads it back in plain words and links each line to the
-          control that changes it. Everything you edit here is the same <code>monstera.spec.json</code> that Kiro and the
-          generator use.
-        </p>
+        <p>The single specification describing game identity, rules, entities and world systems.</p>
+        <details className="technical-details">
+          <summary>Canonical specification architecture</summary>
+          <p className="muted small">
+            One specification describes the whole game. This page reads it back in plain words and links each line to the
+            control that changes it. Everything you edit here is the same <code>monstera.spec.json</code> that Kiro and the
+            native code generator use.
+          </p>
+        </details>
       </header>
 
       <dl className="facts health" data-testid="health">

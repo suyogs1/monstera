@@ -6,6 +6,7 @@
 // the script. Serves dist/ with `vite preview` (run `npm run build` first).
 // Env: SMOKE_CHANNEL (e.g. "chrome"). Exit code 1 on any failed check. Writes nothing under docs/evidence/.
 // Nothing is recorded as PENDING here any more; a PENDING line would mean a step could not run.
+import { reveal } from "./project-actions.mjs";
 import { spawnSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import { appendFileSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
@@ -132,6 +133,7 @@ try {
 
   // ---- A3 second half: export the project bundle, import it, find the identical project
   await go("/dashboard");
+  await reveal(page, '[data-testid="bundle-export"]');
   await page.waitForSelector('[data-testid="bundle-export"]', { timeout: 15000 });
   const exported = await projectState();
   const [bdl] = await Promise.all([page.waitForEvent("download", { timeout: 60000 }), page.click('[data-testid="bundle-export"]')]);

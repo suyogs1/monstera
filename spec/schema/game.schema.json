@@ -62,7 +62,7 @@
       "additionalProperties": false,
       "required": ["png", "frameWidth", "frameHeight", "columns", "rows"],
       "properties": {
-        "png": { "description": "Standard base64 of an 8-bit RGB or RGBA PNG (no line breaks), at most 24 KiB of base64, or the empty string.", "type": "string", "maxLength": 24576, "pattern": "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$" },
+        "png": { "description": "Standard base64 of an 8-bit RGB or RGBA PNG (no line breaks), at most 1 MiB of base64 (1,048,576 chars), or the empty string.", "type": "string", "maxLength": 1048576, "pattern": "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$" },
         "frameWidth": { "description": "Width of one frame in pixels.", "type": "integer", "minimum": 1, "maximum": 128 },
         "frameHeight": { "description": "Height of one frame in pixels.", "type": "integer", "minimum": 1, "maximum": 128 },
         "columns": { "description": "Frames per atlas row. Frame n is at column n mod columns, row n div columns.", "type": "integer", "minimum": 1, "maximum": 16 },

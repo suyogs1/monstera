@@ -59,10 +59,16 @@ function NativeEvidence({ sha, projectId }: { sha: string | null; projectId: str
     <section className="card" aria-labelledby="native-h" data-testid="native-conformance" data-matched={exact.length > 0 ? "yes" : "no"}>
       <header><h3 id="native-h">Native conformance (committed evidence)</h3></header>
       <p className="muted small">
-        Separate from the badge. Native conformance is measured by <code>monstera conformance</code>, which builds and runs the Kotlin and
-        Swift cores with Gradle and Swift. The browser cannot run them, and Studio never infers native results from what runs here.
-        A report is shown only when it was recorded for exactly this specification&apos;s SHA-256.
+        Cross-platform engine conformance verified against recorded golden scenarios.
       </p>
+      <details className="technical-details">
+        <summary>Conformance measurement details</summary>
+        <p className="muted small">
+          Separate from the badge. Native conformance is measured by <code>monstera conformance</code>, which builds and runs the Kotlin and
+          Swift cores with Gradle and Swift. The browser cannot run them, and Studio never infers native results from what runs here.
+          A report is shown only when it was recorded for exactly this specification&apos;s SHA-256.
+        </p>
+      </details>
       {exact.length > 0 ? exact.map((r) => (
         <p key={r.file}>
           <strong>{r.verdict.toUpperCase()}</strong> for this exact specification: {r.platforms.map((p) => `${p.platform} ${p.status}`).join(", ")};{" "}

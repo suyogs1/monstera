@@ -3,6 +3,7 @@
 // controls, the real engine worker and the real IndexedDB. Serves dist/ with `vite preview` (run `npm run build` first).
 // Env: SMOKE_CHANNEL (e.g. "chrome"). Exit code 1 on any failed check. Writes nothing under docs/evidence/.
 // The second half of A3 (export bundle, import bundle) belongs to task 1.5.
+import { reveal } from "./project-actions.mjs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { chromium } from "playwright-core";
@@ -79,10 +80,12 @@ try {
 
   await go("/dashboard/projects");
   await page.waitForSelector(`[data-testid="project-${first}"]`, { timeout: 15000 });
+  await reveal(page, `[data-testid="project-name-${first}"]`);
   await page.fill(`[data-testid="project-name-${first}"]`, "First renamed");
   await page.click(`[data-testid="project-rename-${first}"]`);
   await page.waitForFunction((k) => document.querySelector(`[data-testid="project-${k}"] h3`)?.textContent?.startsWith("First renamed"), first, { timeout: 15000 });
   check("renaming a stored project changes its name in the list", (await storedProjects(page)).find((r) => r.projectKey === first)?.name === "First renamed");
+  await reveal(page, `[data-testid="project-name-${second}"]`);
   await page.fill(`[data-testid="project-name-${second}"]`, "Open renamed");
   await page.click(`[data-testid="project-rename-${second}"]`);
   await settled();

@@ -40,6 +40,7 @@ export function AssetList({ assets, filter, kindIds, previewId, preview, onFilte
         {shown.map((a) => (
           <li key={a.id} data-testid={`asset-row-${a.id}`} data-kind={a.kind} data-category={a.category}>
             <span><strong>{a.file}</strong> <code>{a.id}</code> <span className="badge-inline">{a.category}</span>{" "}
+              {a.kind === "image" && <span className="badge-inline candidate" title="Can be sliced into the native sprite atlas">native atlas candidate</span>}{" "}
               <span className="muted">{a.mime}, {sizeText(a)}, {a.bytes} bytes</span><br />
               <small className="muted">sha256 <code>{a.sha256.slice(0, 12)}</code> · {a.provenance.origin} · license {a.provenance.license}{a.provenance.author !== "" ? ` · ${a.provenance.author}` : ""}{a.kindRefs.length > 0 ? ` · linked: ${a.kindRefs.join(", ")}` : ""}</small>
             </span>

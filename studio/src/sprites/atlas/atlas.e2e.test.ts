@@ -184,3 +184,111 @@ describe("the authored spec against the real engine, oracle and generator", { ti
     expect(doc.game.runtime.kinds.filter((k) => k.sprite.frames.length > 1)).toHaveLength(1);
   });
 });
+
+describe("Priority 4 E2E: arbitrary crops (>128x128, mixed sizes, transparency) -> normalized atlas -> engine -> native Android/iOS", { timeout: 120_000 }, () => {
+  it("preserves source crops, normalizes into uniform Spec v5 cells, validates, persists, exports/imports, and generates Android & iOS", async () => {
+    const { h, factory } = await boot();
+    const c = h.session.project.actions;
+    const added = await c.importAsset({ fileName: "mixed-hero.png", bytes: stubPng(240, 160), category: "sprite", provenance: prov });
+    if (!added.ok) throw new Error(added.reason);
+    await drain(h);
+    const asset = h.session.project.getState().manifests!.assets.assets.find((a) => a.id === added.id)!;
+
+    // 4 arbitrary crops: one >128x128 (160x140), plus 48x24, 32x32, 64x40, with transparent background (alpha=0)
+    const width = 240, height = 160;
+    const data = new Uint8Array(width * height * 4); // initialized to transparent (0,0,0,0)
+    const paint = (rx: number, ry: number, rw: number, rh: number, rgba: [number, number, number, number]) => {
+      for (let y = ry + 4; y < ry + rh - 4; y++) {
+        for (let x = rx + 4; x < rx + rw - 4; x++) {
+          data.set(rgba, (y * width + x) * 4);
+        }
+      }
+    };
+    paint(0, 0, 160, 140, [255, 110, 0, 255]);    // hero-big (160x140)
+    paint(160, 0, 48, 24, [40, 220, 120, 255]);   // step-a (48x24)
+    paint(160, 30, 32, 32, [60, 160, 255, 255]);  // step-b (32x32)
+    paint(160, 70, 64, 40, [240, 80, 200, 255]);  // step-c (64x40)
+
+    const customFrames = [
+      { id: "hero-big", x: 0, y: 0, w: 160, h: 140 },
+      { id: "step-a", x: 160, y: 0, w: 48, h: 24 },
+      { id: "step-b", x: 160, y: 30, w: 32, h: 32 },
+      { id: "step-c", x: 160, y: 70, w: 64, h: 40 },
+    ];
+    const animManifest = {
+      ...emptyAnimations(),
+      schema: "monstera.studio.animations" as const,
+      version: 1 as const,
+      sheets: [{ id: "mixed-sheet", assetId: asset.id, grid: { frameWidth: 32, frameHeight: 32, columns: 4, rows: 1, margin: 0, spacing: 0 }, frames: customFrames }],
+    };
+    expect(c.commitManifest("animations", animManifest, "animations.sheets")).toMatchObject({ ok: true });
+    await drain(h);
+
+    // Normalize to uniform 64x64 cells with Contain + Nearest-neighbour
+    const built = await buildAtlas({ width, height, data }, animManifest.sheets[0]!, LIMITS, {
+      normalization: { cellWidth: 64, cellHeight: 64, fit: "contain", scaling: "nearest" },
+    });
+    if (!built.ok) throw new Error(built.error);
+    expect(built.normalized).toBe(true);
+    expect(built.atlas).toMatchObject({ frameWidth: 64, frameHeight: 64, columns: 4, rows: 1 });
+    expect(built.sourceSizes).toEqual([
+      { id: "hero-big", w: 160, h: 140 },
+      { id: "step-a", w: 48, h: 24 },
+      { id: "step-b", w: 32, h: 32 },
+      { id: "step-c", w: 64, h: 40 },
+    ]);
+
+    const kinds = spritesOfDoc(h.session.store.getState().doc as Json).kinds.map((k) => k.id);
+    const change: SpriteChange = {
+      atlas: built.atlas,
+      sprites: {
+        ...Object.fromEntries(kinds.map((id) => [id, { frames: [], ticksPerFrame: 1 }])),
+        [kinds[0]!]: { frames: [0], ticksPerFrame: 1 },
+        [kinds[2]!]: { frames: [1, 2, 3], ticksPerFrame: 4 },
+      },
+    };
+
+    const applied = await applySprites(h.session.project, new Engine(), change);
+    if (!applied.ok) throw new Error(JSON.stringify(applied));
+    await drain(h);
+
+    // 1. Source crops preserved in Studio manifest
+    expect(h.session.project.getState().manifests!.animations.sheets[0]!.frames).toEqual(customFrames);
+    // 2. Canonical spec has normalized atlas & sprite assignments
+    expect(spritesOfDoc(h.session.store.getState().doc as Json).atlas).toEqual(built.atlas);
+    expect(spritesOfDoc(h.session.store.getState().doc as Json).kinds.find((k) => k.id === kinds[2])?.sprite).toEqual({ frames: [1, 2, 3], ticksPerFrame: 4 });
+
+    // 3. Reload from IndexedDB preserves both source crops and normalized atlas
+    const reloaded = harness({ marker: memoryMarker(), factory });
+    await reloaded.session.start();
+    await drain(reloaded);
+    expect(reloaded.session.project.getState().manifests!.animations.sheets[0]!.frames).toEqual(customFrames);
+    expect(spritesOfDoc(reloaded.session.store.getState().doc as Json).atlas).toEqual(built.atlas);
+
+    // 4. Bundle export/import preserves source crops and normalized atlas byte-for-byte
+    const exported = await h.session.exportBundleBytes();
+    if (!exported.ok) throw new Error(exported.message);
+    const imported = (await boot()).h;
+    expect(await imported.session.importBundleBytes(exported.bytes, "mixed.zip")).toEqual({ ok: true });
+    await drain(imported);
+    expect(imported.session.project.getState().manifests!.animations.sheets[0]!.frames).toEqual(customFrames);
+    expect(spritesOfDoc(imported.session.store.getState().doc as Json).atlas).toEqual(built.atlas);
+
+    // 5. Real Python CLI validate + real generator for Android & iOS
+    const dir = mkdtempSync(join(tmpdir(), "monstera-norm-"));
+    const specObj = JSON.parse(applied.canonicalText);
+    specObj.project.id = "norm-e2e";
+    const specFile = join(dir, "monstera.spec.json");
+    writeFileSync(specFile, JSON.stringify(specObj, null, 2));
+    expect(JSON.parse(py(["tools/monstera/monstera.py", "validate", specFile, "--json"]))).toMatchObject({ valid: true });
+
+    const out = join(dir, "out");
+    py(["tools/monstera/monstera.py", "generate", specFile, "--out", out, "--layout", "fixture"]);
+    const expectedPng = Buffer.from(fromBase64(built.atlas.png)!);
+    const androidAtlas = readFileSync(join(out, "android/app/src/main/assets/monstera-atlas.png"));
+    const iosDirs = readdirSync(join(out, "ios/Sources"));
+    const iosAtlas = readFileSync(join(out, `ios/Sources/${iosDirs[0]!}/Resources/monstera-atlas.png`));
+    expect(androidAtlas.equals(expectedPng)).toBe(true);
+    expect(iosAtlas.equals(expectedPng)).toBe(true);
+  });
+});

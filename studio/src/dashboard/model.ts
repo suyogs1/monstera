@@ -55,6 +55,10 @@ export interface ProjectRow {
   evidence: Line;
   /** Set for a record that cannot be read: the reason, and no actions except delete. */
   unreadable: string | null;
+  /** Resolved native simulator screenshot URL when committed evidence exists for this project. */
+  previewUrl?: string | null;
+  /** Human-readable last modified / save state indicator. */
+  lastModified?: string | null;
 }
 
 export interface LiveProject {
@@ -67,40 +71,60 @@ export interface LiveProject {
   validation: Line;
 }
 
+export function previewUrlFor(index: NativeIndex, sha: string | null, projectId: string | null): string | null {
+  const { exact, otherSpec } = matchNativeApps(index, sha, projectId);
+  const match = exact ?? otherSpec;
+  if (!match) return null;
+  for (const p of match.platforms) {
+    if (p.files.screenshot?.url) {
+      const base = (typeof import.meta !== "undefined" && import.meta.env?.BASE_URL) || "";
+      return `${base}${p.files.screenshot.url}`;
+    }
+  }
+  return null;
+}
+
 /**
  * One row per stored project plus the open project when it is not stored yet. The open project's row uses live facts, so
  * an edit shows at once; any other row says what the SAVED text is. Saved text is only ever written after the engine
  * validated it, which the wording says; it is checked again when the project is opened.
  */
-export function projectRows(entries: readonly CatalogEntry[], live: LiveProject | null, index: NativeIndex): ProjectRow[] {
+const formatUtcTime = (ms: number): string => `${new Date(ms).toISOString().slice(11, 19)} UTC`;
+
+export function projectRows(entries: readonly CatalogEntry[], live: LiveProject | null, index: NativeIndex, lastSavedAt: number | null = null): ProjectRow[] {
   const rows: ProjectRow[] = [];
   for (const e of entries) {
     if (e.state === "unreadable") {
       rows.push({
         projectKey: e.projectKey, name: e.name ?? e.projectKey, projectId: null, sha256: null, targets: [], populated: [], isOpen: false,
         validation: { text: "Unreadable.", tone: "bad" }, evidence: { text: "None.", tone: "pending" }, unreadable: e.message,
+        previewUrl: null, lastModified: null,
       });
       continue;
     }
     const isOpen = live !== null && live.projectKey === e.projectKey;
     if (isOpen && live) {
-      rows.push(liveRow(live, index));
+      rows.push(liveRow(live, index, lastSavedAt));
       continue;
     }
     rows.push({
       projectKey: e.projectKey, name: e.name, projectId: e.projectId, sha256: e.specSha256, targets: e.targets, populated: e.populated, isOpen: false,
       validation: { text: "Valid when saved. Checked again when opened.", tone: "ok" }, evidence: evidenceLine(index, e.specSha256, e.projectId), unreadable: null,
+      previewUrl: previewUrlFor(index, e.specSha256, e.projectId),
+      lastModified: `Saved in browser (rev ${e.writeSeq})`,
     });
   }
-  if (live !== null && !rows.some((r) => r.projectKey === live.projectKey)) rows.unshift(liveRow(live, index));
+  if (live !== null && !rows.some((r) => r.projectKey === live.projectKey)) rows.unshift(liveRow(live, index, lastSavedAt));
   return rows;
 }
 
-function liveRow(live: LiveProject, index: NativeIndex): ProjectRow {
+function liveRow(live: LiveProject, index: NativeIndex, lastSavedAt: number | null = null): ProjectRow {
   return {
     projectKey: live.projectKey, name: live.name, projectId: live.projectId, sha256: live.sha256, targets: live.targets,
     populated: live.manifests ? populatedModules(live.manifests) : [], isOpen: true, validation: live.validation,
     evidence: evidenceLine(index, live.sha256, live.projectId), unreadable: null,
+    previewUrl: previewUrlFor(index, live.sha256, live.projectId),
+    lastModified: lastSavedAt !== null ? `Saved ${formatUtcTime(lastSavedAt)}` : "In workspace",
   };
 }
 

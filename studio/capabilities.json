@@ -296,11 +296,11 @@
       "nativeOutput": "compiles to native",
       "evidence": [
         "docs/evidence/atlas-native-proof/SUMMARY.md",
-        "studio/scripts/atlas-proof.mjs",
+        "docs/evidence/mixed-size-atlas/SUMMARY.md",
         "studio/src/sprites/atlas/atlas.test.ts",
         "studio/src/sprites/atlas/atlas.e2e.test.ts"
       ],
-      "limits": "SIMULATOR-TESTED: a sheet authored in Studio was exported, generated and drawn on an Android emulator and an iOS simulator (frame log checked). Attract mode only, no gameplay or device. One atlas, equal-size frames up to 128x128, 24 KiB base64, two animated kinds, loops only.",
+      "limits": "SIMULATOR-TESTED: Studio-authored atlases (including mixed-size crops normalized >24 KiB) were generated and drawn on native simulators (atlas-native-proof on Android & iOS; mixed-size-atlas SIMULATOR-TESTED on iOS in CI run 45788638779, with docs/evidence/mixed-size-atlas/ios/ screenshots & logs; Android CI compiled/JVM-tested). Attract mode only; no gameplay or physical device. Spec v5 limits: 128x128 max cell, 16x16 grid, 1 MiB base64, 2 animated kinds, max 4 frames/kind, loops only.",
       "requires": "",
       "designRow": ""
     },    {
