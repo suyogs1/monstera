@@ -67,7 +67,7 @@
       "kind": "model",
       "mode": "644",
       "path": "android/app/src/main/kotlin/app/monstera/pumpkinblaster/generated/MonsteraSpec.kt",
-      "sha256": "7a8b420d4ad41b093d353dca3d8d8a66a245a4be6b71dbd06744141197287fef",
+      "sha256": "9dc9eda5b1fa457b933175236a81080bea36e302b7de4e829517ec071578d234",
       "source": "schema:conformance.schema.json,game.schema.json,monstera.spec.schema.json,project.schema.json,scenario.schema.json"
     },
     {
@@ -326,7 +326,7 @@
       "kind": "model",
       "mode": "644",
       "path": "ios/Sources/PumpkinBlaster/Generated/MonsteraSpec.swift",
-      "sha256": "bb2b435544acd9a055ecd4dbdc5be66ed8e6a9327a5dc6bda34340d22469d0c8",
+      "sha256": "456a391c5a9e59c803c0a683ba679e201b8a10f421ba02893f4b7343d03284a7",
       "source": "schema:conformance.schema.json,game.schema.json,monstera.spec.schema.json,project.schema.json,scenario.schema.json"
     },
     {
@@ -377,7 +377,7 @@
   ],
   "schemas": {
     "conformance.schema.json": "04e5184d077a8f2bd5197072f617d12a6f57992b6cc563e3e506a70f72426843",
-    "game.schema.json": "84741cbcdaf1bf5277f6d08f7acaa4ee81fd54423e59c1ea2ff4ff495eaec406",
+    "game.schema.json": "ebc3cd443ed8ff9f5f99c7f27e2bdba984b599336ad8fb75a05bdddbce3a2537",
     "monstera.spec.schema.json": "1722beea9d8891f5cf4f89d43fa0e6266a98d14b3705b0141bebd33b15b372d7",
     "project.schema.json": "741ca6bec8d9d9d60c1dbe92211c7bf9fcfecbf0adc3dd4d9725eed1a9b2f5d0",
     "scenario.schema.json": "317bf00bc9048ddccc4c6d70f00de4ecf02633cc93608b68556efa8815636de6"

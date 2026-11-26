@@ -47,7 +47,7 @@ the 29 scenarios of the four shipped specs when v4 was introduced: only `spec.sh
 neutral value that keeps the v4 look (glyphs or color rectangles). There are no hidden defaults: write the neutral value explicitly.
 | Where | New property | Constraint | Neutral value |
 |---|---|---|---|
-| `game` | `atlas` | `png`: standard base64 of one 8-bit RGB or RGBA PNG, at most 24 KiB of text, or `""`; `frameWidth`, `frameHeight` 1 to 128; `columns`, `rows` 1 to 16; the PNG must be `columns*frameWidth` x `rows*frameHeight` pixels | `{"png": "", "frameWidth": 1, "frameHeight": 1, "columns": 1, "rows": 1}` |
+| `game` | `atlas` | `png`: standard base64 of one 8-bit RGB or RGBA PNG, at most 1 MiB of text (1,048,576 characters), or `""`; `frameWidth`, `frameHeight` 1 to 128; `columns`, `rows` 1 to 16; the PNG must be `columns*frameWidth` x `rows*frameHeight` pixels | `{"png": "", "frameWidth": 1, "frameHeight": 1, "columns": 1, "rows": 1}` |
 | `game.runtime.kinds[]` | `sprite` | `frames`: 0 to 4 atlas frame indices (they need an atlas); `ticksPerFrame` 1 to 600; at most two kinds of a project have more than one frame | `{"frames": [], "ticksPerFrame": 1}` |
 Migrate by adding the neutral values and setting `"specVersion": 5`, then `monstera format`, `monstera scenarios record --all` (only the spec hash
 changes; review that), `monstera generate`. A v4 spec is refused with `must be 5`; nothing is defaulted silently.

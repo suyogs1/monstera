@@ -109,7 +109,7 @@ struct HudConfig: Codable, Equatable, Sendable {
 
 /// The one sprite atlas of the project (presentation only; never read by the simulation): a PNG of columns x rows frames of frameWidth x frameHeight pixels, embedded as base64 so the spec stays the single source. The empty string means no atlas; then every kinds[].sprite.frames must be empty. Contract section 10.
 struct SpriteAtlas: Codable, Equatable, Sendable {
-    /// Standard base64 of an 8-bit RGB or RGBA PNG (no line breaks), at most 24 KiB of base64, or the empty string.
+    /// Standard base64 of an 8-bit RGB or RGBA PNG (no line breaks), at most 1 MiB of base64 (1,048,576 chars), or the empty string.
     let png: String
     /// Width of one frame in pixels.
     let frameWidth: Int

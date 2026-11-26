@@ -217,8 +217,8 @@ and the older `kinds[].color` and `game.palette`.
 ## 10. Sprites and the atlas (visual only, spec v5, Gate E1)
 Spec v5 adds `game.atlas` and `game.runtime.kinds[].sprite`. Both are presentation fields with every property of section 9: the core never
 receives them, they change the spec SHA-256 and nothing else, and recorded checkpoints stay identical.
-1. **One atlas per project.** `game.atlas.png` is standard base64 of one 8-bit RGB or RGBA PNG (the empty string: no atlas) holding
-   `columns` x `rows` frames of `frameWidth` x `frameHeight` pixels. Frame `n` is the rectangle at column `n mod columns`, row
+1. **One atlas per project.** `game.atlas.png` is standard base64 (at most 1 MiB / `1,048,576` characters) of one 8-bit RGB or RGBA PNG (the empty string: no atlas) holding
+   `columns` x `rows` frames of `frameWidth` x `frameHeight` pixels (`1..128` px per cell, up to `16 x 16` cells). Frame `n` is the rectangle at column `n mod columns`, row
    `n div columns`, counted from the top left. `monstera validate` decodes the PNG fully (signature, chunk CRCs, IHDR first, IDAT
    inflating to exactly the declared scanlines, IEND last) and requires its size to be `columns*frameWidth` x `rows*frameHeight`.
 2. **Sprite of a kind.** `sprite.frames` lists 0 to 4 frame indices, each below `columns*rows`; frames require an atlas. No frames:
